@@ -39,11 +39,13 @@ function valid4A (str) {
 }
 
 function validABC(str){
+	if (!str) {
+		throw new Error('str is null or undefined')
+	}
 	var result=str.split(/\s+/)
-	if (result.length!=3) {throw new Error(`str${str} must have three value`)};
+	if (result.length!=3) {throw new Error('str must have three value')};
 	let [s1,s2,s3] = result
 	//判断首字母是否相同以及 是否是1，2，3这样的顺序
 	let isABC = (s2[1]-1==s1[1] && s3[1]-1 == s2[1]) && (s1[0]==s2[0] && s2[0]==s3[0])
 	return isABC
 }
-

@@ -1,10 +1,5 @@
 // var  tt = require('./tt')
-describe('base valid', function() {
-	it('should behave...', function() {
-		expect('abc').toEqual(tt(1));
-		expect('this').toBe('this');
-		expect('ABCD').toEqual('DCBA'.split("").reverse().join(''))
-	});
+describe('Base Valid', function() {
 	it('should validAA', function() {
 		expect(validAA('b1 b1')).toBe(true)
 	});
@@ -40,9 +35,15 @@ describe('base valid', function() {
 		it('should validABC false', function() {
 			expect(validABC('b1 b2 b4')).toBe(false)
 		});
-		it('should validABC error', function() {
-			expect(validABC('b1 b2 b4 b5')).toBe(false)
+		it('should validABC throw null error', function() {
+			expect(validABC).toThrowError('str is null or undefined')
+			// expect(foo(1)).toThrowError(/foo/)
 		});
+		it('should validABC throw values error', function() {
+			let str='b1 b2 b4 b5'
+			expect(validABC.bind(null,str)).toThrowError('str must have three value')
+		});
+
 
 
 	});
