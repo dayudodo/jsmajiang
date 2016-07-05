@@ -1,22 +1,25 @@
-// import React from 'react';
-// var react= require('react');
+// 全局常量，所有的牌
+var BING = ['b1','b2','b3','b4','b5','b6','b7','b8','b9']
+var TIAO   = ['t1','t2','t3','t4','t5','t6','t7','t8','t9']
+// 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
+var ZHIPAI    = ['zh','fa','di']
 
-function tt (argument) {
-	if (argument=='1') {	return "abc";};
-	// return name.split("").reverse().join("");
-
-}
-function checkNullAndReturnArr(str) {
+/*
+可以把b1b1b1或者说b1 b1 b1或者数组形式的直接返回，最终结果类似于：["b1","b1","b1"]
+*/
+function checkValidAndReturnArr(str) { //todo: 检查牌的合法性，不能有五张相同的牌
 	if (!str) {
 		throw new Error('str is null or undefined')
 	}else if(str instanceof Array){
 		return str
 	}else	{
-		return str.split(/\s+/).sort()
+		let result = str.replace(/\s+/g,'') //首先去掉空格
+		result = result.match(/(..)/g)      //再二二分割
+		return result.sort()
 	}
 }
-function validAA (str) {
-	var result=checkNullAndReturnArr(str)
+function isAA (str) {
+	let result=checkValidAndReturnArr(str)
 	if (result.length!=2) {throw new Error(`str${str} must have 2 values`)};
 	//不支持Es6语法，奈何？
 	// let s1=result[0]
@@ -25,24 +28,24 @@ function validAA (str) {
 	return(s1==s2)
 }
 
-function validAAA (str) {
-	var result=checkNullAndReturnArr(str)
+function isAAA (str) {
+	let result=checkValidAndReturnArr(str)
 	if (result.length!=3) {throw new Error(`str${str} must have 3 values`)};
 	let [s1,s2,s3]=result
 	return s1==s2 && s2==s3
 }
 
 
-function valid4A (str) {
-	var result=checkNullAndReturnArr(str)
+function is4A (str) {
+	let result=checkValidAndReturnArr(str)
 	if (result.length!=4) {throw new Error(`str${str} must have 4 values`)};
 	let [s1,s2,s3,s4]=result
 	return s1==s2 && s2==s3 && s3==s4
 }
 
 
-function validABC(str){
-	var result=checkNullAndReturnArr(str)
+function isABC(str){
+	let result=checkValidAndReturnArr(str)
 	if (result.length!=3) {throw new Error(`str${str} must have 3 values`)};
 	let [s1,s2,s3] = result
 	//判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
@@ -51,17 +54,17 @@ function validABC(str){
 }
 
 function isABCorAAA (str) {
-	return validAAA(str) || validABC(str)
+	return isAAA(str) || isABC(str)
 }
-function valid2ABC (str) { //like 123456 or 122334,233445这样的牌型
-	var result = checkNullAndReturnArr(str)
+function is2ABC (str) { //like 123456 or 122334,233445这样的牌型
+	let result = checkValidAndReturnArr(str)
 	if (result.length!=6) {throw new Error(`str${str} must have 6 values`)};
 	let [s1,s2,s3,s4,s5,s6] = result
 	let frontThree = [s1,s2,s3]
 	let lastThree  = [s4,s5,s6]
 	//特殊情况，比如112233的情况？
 	if (s1==s2 && s3==s4 && s5==s6) {
-		return validABC([s1,s3,s5])
+		return isABC([s1,s3,s5])
 	};
 	if (isABCorAAA(frontThree) && isABCorAAA(lastThree)) {
 		return true
@@ -78,24 +81,24 @@ function valid2ABC (str) { //like 123456 or 122334,233445这样的牌型
 	}
 }
 
-function valid3ABC (str) {
-	var result = checkNullAndReturnArr(str)
+function is3ABC (str) {
+	let result = checkValidAndReturnArr(str)
 	if (result.length!=9) {throw new Error(`str${str} must have 9 values`)};
 	let frontThree = result.slice(0,3)
 	let lastSix = result.slice(3,9)
 	let frontSix = result.slice(0,6)
 	let lastThree = result.slice(6,9)
 	// console.log(frontThree,lastSix)
-	if (isABCorAAA(frontThree) && valid2ABC(lastSix)) {
+	if (isABCorAAA(frontThree) && is2ABC(lastSix)) {
 		return true
-	}else if (valid2ABC(frontSix) && isABCorAAA(lastThree)) {
+	}else if (is2ABC(frontSix) && isABCorAAA(lastThree)) {
 		return true
 	}else{
 		return false
 	}
 }
-function valid4ABC (str) {
-	var result = checkNullAndReturnArr(str)
+function is4ABC (str) {
+	let result = checkValidAndReturnArr(str)
 	if (result.length!=12) {throw new Error(`str${str} must have 9 values`)};
 	let frontThree = result.slice(0,3)
 	let lastNine = result.slice(3,12)
@@ -103,14 +106,103 @@ function valid4ABC (str) {
 	let lastThree = result.slice(9,12)
 	let frontSix = result.slice(0,6)
 	let lastSix = result.slice(6,12)
-	if (valid2ABC(frontSix) && valid2ABC(lastSix)) {
+	if (is2ABC(frontSix) && is2ABC(lastSix)) {
 		return true
 	}
-	if (isABCorAAA(frontThree) && valid3ABC(lastNine)) {
+	if (isABCorAAA(frontThree) && is3ABC(lastNine)) {
 		return true
-	}else if (valid3ABC(frontNine) && isABCorAAA(lastThree)) {
+	}else if (is3ABC(frontNine) && isABCorAAA(lastThree)) {
 		return true
 	}else{
 		return false
 	}
+}
+/*
+返回所有的将，比如"b1b2b2b3b3b4b4b5b5b5b6b7b7b7"会返回
+["b2b2", "b3b3", "b4b4", "b5b5", "b7b7"]
+*/
+function getAllJiangArr (result) {
+	return result.join('').match(/(..)\1/g)
+}
+function isPihu (str) {
+	let result = checkValidAndReturnArr(str)
+	let allJiang = getAllJiangArr(result)
+	let bool_hu = false
+	let reg_four = /(..)\1\1\1/g
+	let reg_three = /(..)\1\1/g
+	// console.log(allJiang)
+	//循环的目的是因为可能胡不止一张牌
+	allJiang.forEach(function(item){
+		console.log(item)
+		var newstr = result.join('')
+		//首先去掉四个一样的牌，杠可能有多个
+		newstr = newstr.replace(item,'')
+		var origin = newstr
+		newstr = newstr.replace(reg_four,'')
+		// console.log(newstr)
+		for (var i = 0; i < 2; i++) {
+			let last_result = checkValidAndReturnArr(newstr)
+			console.log(last_result)
+			switch (last_result.length)
+			{
+				case 3:
+				  if(isABCorAAA(last_result)){ bool_hu = true}
+				  break;
+				case 6:
+				  if(is2ABC(last_result)){ bool_hu = true}
+				  break;
+				case 9:
+				  if(is3ABC(last_result)){ bool_hu = true}
+				  break;
+				case 12:
+				  if(is4ABC(last_result)){ bool_hu = true}
+				  break;
+			}
+			if (false == bool_hu) {
+				newstr = origin.replace(reg_three,'')
+			}
+		}
+	})
+	return bool_hu
+}
+
+function isQidui(str){ //判断是否是七对
+	let result = checkValidAndReturnArr(str)
+	if (result.length!=14) {throw new Error(`str${str} must have 14 values`)};
+	// console.log(result)
+	for (var i = 0; i < result.length; i+=2) {
+		if (result[i] == result[i+1]){
+			continue
+		}else{
+			return false
+		}
+	}
+	return true
+}
+function isNongQiDui (str) {
+	let result = checkValidAndReturnArr(str)
+	if (result.length!=14) {throw new Error(`str${str} must have 14 values`)};
+	if (isQidui(str)) {
+		let uniq= new Set(result)
+		return uniq.size < 7
+	}else{
+		return false
+	}
+}
+function isYise (str) { //判断是否是一色
+	let result = checkValidAndReturnArr(str)
+	if (result.length < 14) {throw new Error(`str${str}  must larger than 14 values`)};
+	let first = result.map( item=>item[0] )
+	isUniq = new Set(first).size
+	return isUniq == 1
+}
+function isPengpeng (str) {
+	let result = checkValidAndReturnArr(str)
+	if (result.length < 14) {throw new Error(`str${str} must larger than 14 values`)};
+	//把所有三个或四个相同的干掉，看最后剩下的是否是将
+	reg=/(..)\1\1\1?/g
+	jiang = (result.join('')).replace(reg,'')
+	if (jiang.length !=4) { return false};
+	// console.log(jiang)
+	return isAA(jiang)
 }
