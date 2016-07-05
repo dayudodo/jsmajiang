@@ -5,7 +5,7 @@ var TIAO   = ['t1','t2','t3','t4','t5','t6','t7','t8','t9']
 var ZHIPAI    = ['zh','fa','di']
 
 /*
-可以把b1b1b1或者说b1 b1 b1或者数组形式的直接返回，最终结果类似于：["b1","b1","b1"]
+可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
 */
 function checkValidAndReturnArr(str) { //todo: 检查牌的合法性，不能有五张相同的牌
 	if (!str) {
@@ -133,7 +133,7 @@ function isPihu (str) {
 	// console.log(allJiang)
 	//循环的目的是因为可能胡不止一张牌
 	allJiang.forEach(function(item){
-		console.log(item)
+		// console.log(item)
 		var newstr = result.join('')
 		//首先去掉四个一样的牌，杠可能有多个
 		newstr = newstr.replace(item,'')
@@ -142,7 +142,7 @@ function isPihu (str) {
 		// console.log(newstr)
 		for (var i = 0; i < 2; i++) {
 			let last_result = checkValidAndReturnArr(newstr)
-			console.log(last_result)
+			// console.log(last_result)
 			switch (last_result.length)
 			{
 				case 3:
@@ -205,4 +205,22 @@ function isPengpeng (str) {
 	if (jiang.length !=4) { return false};
 	// console.log(jiang)
 	return isAA(jiang)
+}
+
+function whoIsHu(str) {
+	let result = checkValidAndReturnArr(str)
+	let hupai_zhang = []
+	all_single_pai=BING.concat(TIAO).concat(ZHIPAI)
+	all_single_pai.forEach((single_pai)=>{
+		let newstr = (result.concat(single_pai)).sort().join('')
+		// console.log(newstr)
+		let isFiveRepeat = /(..)\1\1\1\1/g.test(newstr)
+		if(isFiveRepeat){ 
+			throw new Error('irregular Pai, record in database, maybe Hacker.')
+		}
+		else if(isPihu(newstr)){
+		  hupai_zhang.push(single_pai)
+		}
+	})
+	return hupai_zhang.sort()
 }

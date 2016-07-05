@@ -166,29 +166,32 @@ describe('Base is', function() {
 });
 
 describe('屁胡', function() {
-	// it('普通屁胡', function() {
-	// 	let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh zh'
-	// 	expect(isPihu(str)).toBe(true)
-	// });
-	// it('多个同花色规则屁胡', function() {
-	// 	let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t5 t5 t6 fa fa fa'
-	// 	expect(isPihu(str)).toBe(true)
-	// });
-	// it('带杠屁胡', function() {
-	// 	let str= 't1 t2 t3 t4 t5 t6 b4 b5 b6 fa fa fa fa zh zh'
-	// 	expect(isPihu(str)).toBe(true)
-	// });
+	it('普通屁胡', function() {
+		let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh zh'
+		expect(isPihu(str)).toBe(true)
+	});
+	it('多个同花色规则屁胡', function() {
+		let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t5 t5 t6 fa fa fa'
+		expect(isPihu(str)).toBe(true)
+	});
+	it('带杠屁胡', function() {
+		let str= 't1 t2 t3 t4 t5 t6 b4 b5 b6 fa fa fa fa zh zh'
+		expect(isPihu(str)).toBe(true)
+	});
+	it('双杠屁胡', function() {
+		let str= 'b1 b1 b1 b1 b2 b2 b2 b2 t1 t2 t2 t3 t3 t4 t5 t5'
+		expect(isPihu(str)).toBe(true)
+	});
 	it('屁胡清一色', function() {
 		let str= 'b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b5 b6 b7 b7'
 		expect(isPihu(str)).toBe(true)
 	});
-	// describe('false', function() {
-	// 	it('should behave...', function() {
-	// 		let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh t9'
-	// 		expect(isPihu(str)).toBe(false)
-	// 	});
-
-	// });
+	describe('false', function() {
+		it('should behave...', function() {
+			let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh t9'
+			expect(isPihu(str)).toBe(false)
+		});
+	});
 });
 
 describe('特殊胡', function() {
@@ -214,7 +217,7 @@ describe('特殊胡', function() {
 		expect(isPengpeng(str)).toBe(true)
 	});
 	it('碰碰糊带2杠', function() {
-		let str='b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 fa fa fa t5 t5'
+		let str = 'b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 fa fa fa t5 t5'
 		expect(isPengpeng(str)).toBe(true)
 	});
 	it('碰碰糊带3杠', function() {
@@ -234,5 +237,37 @@ describe('特殊胡', function() {
 			let str='b1 b1 b1 b2 b2 b2 t3 t4 t5 fa fa fa di di'
 			expect(isPengpeng(str)).toBe(false)
 		});
+	});
+});
+
+describe('胡啥牌', function() {
+	it('清一色听牌', function() {
+		let str= 'b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7'
+		expect(whoIsHu(str)).toEqual(["b5", "b7"])
+	});
+	it('清一色听7张', function() {
+		let str = 'b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 b9 b9 b9'
+		expect(whoIsHu(str)).toEqual(["b1", "b3", "b4", "b6", "b7", "b8", "b9"])
+	});
+
+	it('双将倒', function() {
+		let str = 'zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa'
+		expect(whoIsHu(str)).toEqual(["di","zh"])
+	});
+	it('单钓将', function() {
+		let str = 'b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b7 b7 b8'
+		expect(whoIsHu(str)).toEqual(["b3","b6","b8","b9"])
+	});
+	it('清一色听牌false', function() {
+		let str= 'b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 t1 t3 t5'
+		expect(whoIsHu(str)).toEqual([])
+	});
+});
+
+describe('合理性项目', function() {
+	it('不能有五张牌', function() {
+		//todo:检查牌面正确性		
+		let str= 'b1 b2 b2 b2 b3  t1 t1 t1 t1 t2 t2 t3 t3'
+		expect(whoIsHu.bind(null,str)).toThrowError(/irregular/)
 	});
 });
