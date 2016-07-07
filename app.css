@@ -1,3 +1,8 @@
 img{
 	margin: 5px;
+	border: solid;
+}
+
+body{
+	background-color: #d7ffd9;
 }

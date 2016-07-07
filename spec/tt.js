@@ -5,18 +5,39 @@ var TIAO   = ['t1','t2','t3','t4','t5','t6','t7','t8','t9']
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
 var ZHIPAI    = ['zh','fa','di']
 
+var all_single_pai=BING.concat(TIAO).concat(ZHIPAI)
+
+
+Array.prototype.remove = function(val) {
+	var index = this.indexOf(val);
+	if (index > -1) {
+	this.splice(index, 1);
+	}
+};
+Array.prototype.equalArrays =function(b){
+    if (this.length != b.length) return false; // Different-size arrays not equal
+    for(var i = 0; i < this.length; i++)       // Loop through all elements
+        if (this[i] !== b[i]) return false;    // If any differ, arrays not equal
+    return true;                            // Otherwise they are equal
+}
+
 /*
 可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
 */
 function checkValidAndReturnArr(str) { //todo: 检查牌的合法性，不能有五张相同的牌
-	if (!str) {
-		throw new Error('str is null or undefined')
+	if (!str || str.length==0 ) {
+		throw new Error('str is empty')
 	}else if(str instanceof Array){
 		return str
 	}else	{
 		let result = str.replace(/\s+/g,'') //首先去掉空格
+		if (result.length==0) { throw new Error('str is empty') };
 		result = result.match(/(..)/g)      //再二二分割
-		return result.sort()
+		if (result.length ==0 ) {
+			throw new Error('result is empty')
+		}else{
+			return result.sort()
+		}
 	}
 }
 function isAA (str) {
@@ -133,38 +154,46 @@ function isPihu (str) {
 	let reg_three = /(..)\1\1/g
 	// console.log(allJiang)
 	//循环的目的是因为可能胡不止一张牌
-	allJiang.forEach(function(item){
-		// console.log(item)
-		var newstr = result.join('')
-		//首先去掉四个一样的牌，杠可能有多个
-		newstr = newstr.replace(item,'')
-		var origin = newstr
-		newstr = newstr.replace(reg_four,'')
-		// console.log(newstr)
-		for (var i = 0; i < 2; i++) {
-			let last_result = checkValidAndReturnArr(newstr)
-			// console.log(last_result)
-			switch (last_result.length)
-			{
-				case 3:
-				  if(isABCorAAA(last_result)){ bool_hu = true}
-				  break;
-				case 6:
-				  if(is2ABC(last_result)){ bool_hu = true}
-				  break;
-				case 9:
-				  if(is3ABC(last_result)){ bool_hu = true}
-				  break;
-				case 12:
-				  if(is4ABC(last_result)){ bool_hu = true}
-				  break;
+	if (allJiang) {
+		allJiang.forEach(function(item){
+			// console.log(item)
+			var newstr = result.join('')
+			//首先去掉四个一样的牌，杠可能有多个
+			newstr = newstr.replace(item,'')
+			var origin = newstr
+			newstr = newstr.replace(reg_four,'')
+			// console.log(newstr)
+			for (var i = 0; i < 2; i++) {
+				if (newstr.length == 0) {
+					console.log('检查str, 可能不是一手牌')
+					return false
+				}
+				let last_result = checkValidAndReturnArr(newstr)
+				// console.log(last_result)
+				switch (last_result.length)
+				{
+					case 3:
+					  if(isABCorAAA(last_result)){ bool_hu = true}
+					  break;
+					case 6:
+					  if(is2ABC(last_result)){ bool_hu = true}
+					  break;
+					case 9:
+					  if(is3ABC(last_result)){ bool_hu = true}
+					  break;
+					case 12:
+					  if(is4ABC(last_result)){ bool_hu = true}
+					  break;
+				}
+				if (false == bool_hu) {
+					newstr = origin.replace(reg_three,'')
+				}
 			}
-			if (false == bool_hu) {
-				newstr = origin.replace(reg_three,'')
-			}
-		}
-	})
+		})
 	return bool_hu
+	}else{ //连将都没有，自然不是屁胡
+		return false;
+	}
 }
 
 function isQidui(str){ //判断是否是七对
@@ -194,15 +223,15 @@ function isYise (str) { //判断是否是一色
 	let result = checkValidAndReturnArr(str)
 	if (result.length < 14) {throw new Error(`str${str}  must larger than 14 values`)};
 	let first = result.map( item=>item[0] )
-	isUniq = new Set(first).size
+	let isUniq = new Set(first).size
 	return isUniq == 1
 }
 function isPengpeng (str) {
 	let result = checkValidAndReturnArr(str)
 	if (result.length < 14) {throw new Error(`str${str} must larger than 14 values`)};
 	//把所有三个或四个相同的干掉，看最后剩下的是否是将
-	reg=/(..)\1\1\1?/g
-	jiang = (result.join('')).replace(reg,'')
+	let reg=/(..)\1\1\1?/g
+	let jiang = (result.join('')).replace(reg,'')
 	if (jiang.length !=4) { return false};
 	// console.log(jiang)
 	return isAA(jiang)
@@ -211,17 +240,43 @@ function isPengpeng (str) {
 function whoIsHu(str) {
 	let result = checkValidAndReturnArr(str)
 	let hupai_zhang = []
-	all_single_pai=BING.concat(TIAO).concat(ZHIPAI)
-	all_single_pai.forEach((single_pai)=>{
-		let newstr = (result.concat(single_pai)).sort().join('')
-		// console.log(newstr)
-		let isFiveRepeat = /(..)\1\1\1\1/g.test(newstr)
-		if(isFiveRepeat){ 
-			throw new Error('irregular Pai, record in database, maybe Hacker.')
-		}
-		else if(isPihu(newstr)){
-		  hupai_zhang.push(single_pai)
-		}
-	})
-	return hupai_zhang.sort()
+	
+	for(var i=0;i<all_single_pai.length; i++){
+		let single_pai = all_single_pai[i]
+			let newstr = (result.concat(single_pai)).sort().join('')
+			// console.log(newstr)
+			let isFiveRepeat = /(..)\1\1\1\1/g.test(newstr)
+			if(isFiveRepeat){ 
+				continue
+				// console.log(newstr.match(/(..)\1\1\1\1/g))
+				// throw new Error('irregular Pai, record in database, maybe Hacker.')
+			}
+			else if(isPihu(newstr)){
+			  hupai_zhang.push(single_pai)
+			}
+		
+	}
+	if (hupai_zhang.length==0) { //如果没有找到，就返回false,便于判断
+		return false
+	}else{
+		return hupai_zhang.sort()
+	}
+	
+}
+
+function isKaWuXinG (str, na_pai) {
+	let yi_shou_pai= str + na_pai
+	let result = checkValidAndReturnArr(yi_shou_pai)
+	if (result.length < 14) {throw new Error(`str${str} must larger than 14 values`)};
+	//胡牌但是并不是碰胡也不是将牌，就是卡五星,或者胡牌并且两边有4，5，也是卡五星，如果是45556的情况？
+	if (isPihu(yi_shou_pai)) {
+	  if (na_pai[1]==5) {
+	  	let four = na_pai[0]+'4'
+	  	let six = na_pai[0]+'6'
+	  	if (result.includes(four) && result.includes(six)) {
+	  		return true;
+	  	}
+	  }
+	}
+	return false
 }

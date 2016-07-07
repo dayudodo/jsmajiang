@@ -4,7 +4,7 @@
   "description": "ma jiang js version",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/karma start karma.conf.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,14 @@
     "react-dom": "^15.2.0"
   },
   "devDependencies": {
-    "http-server": "^0.9.0"
+    "http-server": "^0.9.0",
+    "webpack": "^1.13.1",
+    "babel-core": "^6.9.1",
+    "babel-eslint": "^6.0.4",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "webpack-dev-server": "^1.14.1",
+    "babel-preset-stage-1": "^6.5.0"
   }
 }

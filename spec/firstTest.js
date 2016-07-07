@@ -56,7 +56,7 @@ describe('Base is', function() {
 			expect(isABC('b1 b2 b4')).toBe(false)
 		});
 		it('should isABC throw null error', function() {
-			expect(isABC).toThrowError('str is null or undefined')
+			expect(isABC).toThrowError(/empty/)
 			// expect(foo(1)).toThrowError(/foo/)
 		});
 		it('should isABC throw values error', function() {
@@ -191,6 +191,10 @@ describe('屁胡', function() {
 			let str= 'b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh t9'
 			expect(isPihu(str)).toBe(false)
 		});
+		it('将都没有', function() {
+			let str='b1b2b3'
+			expect(isPihu(str)).toBe(false)
+		});
 	});
 });
 
@@ -224,6 +228,17 @@ describe('特殊胡', function() {
 		let str='b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 t3 fa fa fa t5 t5'
 		expect(isPengpeng(str)).toBe(true)
 	});
+	it('卡五星', function() {
+		var str='b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 t3 b4 b6 t5 t5'
+		var na_pai= 'b5'
+		expect(isKaWuXinG(str, na_pai)).toBe(true)
+	});
+	it('清一色卡五星', function() {
+		let str= 'b1 b1 b1 b2 b3 b4 b6 b7 b7 b7 b7 b8 b9'
+		var na_pai= 'b5'
+		expect(isKaWuXinG(str, na_pai)).toBe(true)
+		expect(isYise(str + na_pai)).toBe(true)
+	});
 	describe('should false', function() {
 		it('非七对', function() {
 			let str="b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 t8"
@@ -236,6 +251,12 @@ describe('特殊胡', function() {
 		it('不是碰碰胡', function() {
 			let str='b1 b1 b1 b2 b2 b2 t3 t4 t5 fa fa fa di di'
 			expect(isPengpeng(str)).toBe(false)
+		});
+		it('可胡但不是卡五星', function() {
+			let str= 't1 t2 t3 t4 t5 t6 b6 b7 b7 b7 b7 b8 b9'
+			var na_pai= 'b5'
+			expect(isKaWuXinG(str, na_pai)).toBe(false)
+			expect(isPihu(str + na_pai)).toBe(true)
 		});
 	});
 });
@@ -260,14 +281,14 @@ describe('胡啥牌', function() {
 	});
 	it('清一色听牌false', function() {
 		let str= 'b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 t1 t3 t5'
-		expect(whoIsHu(str)).toEqual([])
+		expect(whoIsHu(str)).toBe(false)
 	});
 });
 
 describe('合理性项目', function() {
-	it('不能有五张牌', function() {
-		//todo:检查牌面正确性		
-		let str= 'b1 b2 b2 b2 b3  t1 t1 t1 t1 t2 t2 t3 t3'
-		expect(whoIsHu.bind(null,str)).toThrowError(/irregular/)
-	});
+	// it('不能有五张牌', function() {
+	// 	//todo:检查牌面正确性		
+	// 	let str= 'b1 b2 b2 b2 b3  t1 t1 t1 t1 t2 t2 t3 t3'
+	// 	expect(whoIsHu.bind(null,str)).toThrowError(/irregular/)
+	// });
 });
