@@ -13,6 +13,7 @@ Array.prototype.remove = function(val) {
 	if (index > -1) {
 	this.splice(index, 1);
 	}
+	return this;
 };
 Array.prototype.equalArrays =function(b){
     if (this.length != b.length) return false; // Different-size arrays not equal
@@ -165,32 +166,34 @@ function isPihu (str) {
 			// console.log(newstr)
 			for (var i = 0; i < 2; i++) {
 				if (newstr.length == 0) {
-					console.log('检查str, 可能不是一手牌')
-					return false
-				}
-				let last_result = checkValidAndReturnArr(newstr)
-				// console.log(last_result)
-				switch (last_result.length)
-				{
-					case 3:
-					  if(isABCorAAA(last_result)){ bool_hu = true}
-					  break;
-					case 6:
-					  if(is2ABC(last_result)){ bool_hu = true}
-					  break;
-					case 9:
-					  if(is3ABC(last_result)){ bool_hu = true}
-					  break;
-					case 12:
-					  if(is4ABC(last_result)){ bool_hu = true}
-					  break;
-				}
-				if (false == bool_hu) {
-					newstr = origin.replace(reg_three,'')
+					console.log(`检查${origin}, 可能不是一手牌`)
+					// 有可能遇到全是杠的情况
+					bool_hu = true; break;
+				}else{
+					let last_result = checkValidAndReturnArr(newstr)
+					// console.log(last_result)
+					switch (last_result.length)
+					{
+						case 3:
+						  if(isABCorAAA(last_result)){ bool_hu = true}
+						  break;
+						case 6:
+						  if(is2ABC(last_result)){ bool_hu = true}
+						  break;
+						case 9:
+						  if(is3ABC(last_result)){ bool_hu = true}
+						  break;
+						case 12:
+						  if(is4ABC(last_result)){ bool_hu = true}
+						  break;
+					}
+					if (false == bool_hu) {
+						newstr = origin.replace(reg_three,'')
+					}
 				}
 			}
 		})
-	return bool_hu
+		return bool_hu
 	}else{ //连将都没有，自然不是屁胡
 		return false;
 	}
@@ -260,7 +263,6 @@ function whoIsHu(str) {
 	}else{
 		return hupai_zhang.sort()
 	}
-	
 }
 
 function isKaWuXinG (str, na_pai) {
@@ -272,8 +274,14 @@ function isKaWuXinG (str, na_pai) {
 	  if (na_pai[1]==5) {
 	  	let four = na_pai[0]+'4'
 	  	let six = na_pai[0]+'6'
-	  	if (result.includes(four) && result.includes(six)) {
-	  		return true;
+	  	let is_huwu = result.includes(four) && result.includes(six)
+	  	//去掉这三张牌，看剩下的是否符合手牌规则
+	  	if ( is_huwu ) {
+		  	let after_delete_kawa = result
+		  		.remove(na_pai)
+		  	 	.remove(four)
+		  	 	.remove(six);
+		  	return isPihu(after_delete_kawa);
 	  	}
 	  }
 	}
