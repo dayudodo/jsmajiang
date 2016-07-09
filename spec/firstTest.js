@@ -228,6 +228,11 @@ describe('特殊胡', function() {
 		let str='b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 t3 fa fa fa t5 t5'
 		expect(isPengpeng(str)).toBe(true)
 	});
+	it('碰碰糊带3杠少将', function() {
+		let str="b2 fa fa fa fa t1 t1 t1 t1 zh zh zh zh"
+		let na_pai = "b2"
+		expect(isPengpeng(str + na_pai)).toBe(true)
+	});
 	it('卡五星', function() {
 		var str='b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 t3 b4 b6 t5 t5'
 		var na_pai= 'b5'
@@ -263,20 +268,20 @@ describe('特殊胡', function() {
 
 describe('胡啥牌', function() {
 	it('清一色听牌', function() {
-		let str= 'b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7'
+		let str= "b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7"
 		expect(whoIsHu(str)).toEqual(["b5", "b7"])
 	});
 	it('清一色听7张', function() {
-		let str = 'b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 b9 b9 b9'
+		let str = "b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 b9 b9 b9"
 		expect(whoIsHu(str)).toEqual(["b1", "b3", "b4", "b6", "b7", "b8", "b9"])
 	});
 
 	it('双将倒', function() {
-		let str = 'zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa'
+		let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa"
 		expect(whoIsHu(str)).toEqual(["di","zh"])
 	});
 	it('单钓将', function() {
-		let str = 'b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b7 b7 b8'
+		let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b7 b7 b8"
 		expect(whoIsHu(str)).toEqual(["b3","b6","b8","b9"])
 	});
 	it('清一色听牌false', function() {

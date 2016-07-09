@@ -3,10 +3,13 @@ var ReactDOM = require('react-dom');
 
 var Images=React.createClass({
   imgClick:function(item,index){
-    if (this.props.canClick) {
+    if (this.props.sendMeToUser) {
       //点击后改变results里面的数据，也许用redux会比较方便？这儿其实比较简单。
-      this.props.sendMe(item)
+      this.props.sendMeToUser(item)
     };
+    if (this.props.deleteMe) {
+      this.props.deleteMe(item)
+    }
   },
   render: function(){
      const lineBreak = this.props.lineBreak? this.props.lineBreak : 100

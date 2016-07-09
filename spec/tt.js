@@ -211,7 +211,7 @@ function isQidui(str){ //判断是否是七对
 }
 function isNongQiDui (str) {
 	let result = checkValidAndReturnArr(str)
-	if (result.length!=14) {throw new Error(`str${str} must have 14 values`)};
+	if (result.length!=14) {throw new Error(`str:${str} must have 14 values`)};
 	if (isQidui(str)) {
 		let uniq= new Set(result)
 		return uniq.size < 7
@@ -221,19 +221,18 @@ function isNongQiDui (str) {
 }
 function isYise (str) { //判断是否是一色
 	let result = checkValidAndReturnArr(str)
-	if (result.length < 14) {throw new Error(`str${str}  must larger than 14 values`)};
+	if (result.length < 14) {throw new Error(`str:${str}  must larger than 14 values`)};
 	let first = result.map( item=>item[0] )
 	let isUniq = new Set(first).size
 	return isUniq == 1
 }
 function isPengpeng (str) {
 	let result = checkValidAndReturnArr(str)
-	if (result.length < 14) {throw new Error(`str${str} must larger than 14 values`)};
+	if (result.length < 13) {throw new Error(`str:${str} must larger than 13 values`)};
 	//把所有三个或四个相同的干掉，看最后剩下的是否是将
 	let reg=/(..)\1\1\1?/g
 	let jiang = (result.join('')).replace(reg,'')
 	if (jiang.length !=4) { return false};
-	// console.log(jiang)
 	return isAA(jiang)
 }
 
@@ -251,7 +250,7 @@ function whoIsHu(str) {
 				// console.log(newstr.match(/(..)\1\1\1\1/g))
 				// throw new Error('irregular Pai, record in database, maybe Hacker.')
 			}
-			else if(isPihu(newstr)){
+			else if( isPihu(newstr) || isPengpeng(newstr) ){
 			  hupai_zhang.push(single_pai)
 			}
 		
