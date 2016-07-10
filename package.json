@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.14.0",
     "react": "^15.2.0",
     "react-dom": "^15.2.0",
-    "react-timer-mixin": "^0.13.3"
+    "react-route": "^1.0.3",
+    "socket.io": "^1.4.8"
   },
   "devDependencies": {
     "babel-core": "^6.9.1",
