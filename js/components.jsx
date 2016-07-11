@@ -14,7 +14,7 @@ var Images=React.createClass({
   render: function(){
      const lineBreak = this.props.lineBreak? this.props.lineBreak : 100
      const allImages = this.props.results.map((item,index)=>{
-              if (all_single_pai.includes(item)) {
+              if (all_single_pai.indexOf(item)!==-1) {
                let imgSrc = `image/${item}.png` 
                return (  <div1 key={index}>
                            <img  src={imgSrc} onClick={this.imgClick.bind(null,item,index)} />

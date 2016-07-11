@@ -34,6 +34,7 @@ module.exports ={
 		,"b2 b3 b4 b5 b6 b7 b8 t5 t5 t5 t6 t7 t8"
 		,"fa fa fa t2 t3 t4 t5 t6 t7 t8 t9 zh zh"
 		,"di di di fa fa fa t2 t3 t4 t5 t6 t7 t8"
+		,"b7 b7 fa fa fa t1 t1 t1 t4 t4 t4 t5 t6"
 	],
 
 	"4":[

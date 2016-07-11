@@ -114,6 +114,19 @@ var MJInput=React.createClass({
       this.changeTextAndMakeResults()
     })
  },
+ randomPai(times){
+  //给用户出牌多一个，即在userAnswer里面多添加一张牌，不过不能超过4张？
+  let how_many= all_single_pai.length-1
+  var userAnswer = this.state.userAnswer;
+  var added = [];
+  for (var i = 0; i < times; i++) {
+     let index = Math.floor(Math.random()*how_many)
+     added.push(all_single_pai[index]) 
+  }
+  userAnswer = userAnswer.concat(added).sort()
+  this.setState({userAnswer})
+
+ },
  componentWillMount:function(){
     if (firstChangeText) {
       console.log(this.state.text)
@@ -135,14 +148,17 @@ var MJInput=React.createClass({
               <Images results={this.state.results} />
               <h2>胡哪些牌呢？</h2> 
               <Images results={all_single_pai}  lineBreak={12} sendMeToUser={this.sendMeToUser}/>
-              <h2>我的答案：
-                <button onClick={this.redo}>重选</button>
+              <h2>
+                <button onClick={ this.randomPai.bind(null,13) }>随机一手牌</button>
+                我的答案：
+                <button onClick={ this.redo }>重选</button>
                 <button onClick={ this.asShouPai }>作为手牌</button> 
+                <button onClick={ this.randomPai.bind(null,1) }>发牌</button>
                 一共{ this.state.userAnswer.length }张牌，{ this.state.userAnswer.join(' ')} 
               </h2>
-              <Images results={this.state.userAnswer}   deleteMe={this.deleteMe} />
-              <button onClick={this.IamSure}>确定</button>
-              { this.state.isCorrect? <h1>回答正确,{ nextShouPaiWaitTime}秒后下一题</h1>:null }
+              <Images results={ this.state.userAnswer }   deleteMe={ this.deleteMe } />
+              <button onClick={ this.IamSure }>确定</button>
+              { this.state.isCorrect? <h1>回答正确,{ nextShouPaiWaitTime }秒后下一题</h1>:null }
 
       </div>
    )

@@ -45,16 +45,14 @@ function isAA (str) {
 	let result=checkValidAndReturnArr(str)
 	if (result.length!=2) {throw new Error(`str${str} must have 2 values`)};
 	//不支持Es6语法，奈何？
-	// let s1=result[0]
-	// let s2=result[1]
-	let [s1,s2]=result
+	let s1=result[0], s2=result[1]
 	return(s1==s2)
 }
 
 function isAAA (str) {
 	let result=checkValidAndReturnArr(str)
 	if (result.length!=3) {throw new Error(`str${str} must have 3 values`)};
-	let [s1,s2,s3]=result
+	let s1=result[0], s2=result[1], s3=result[2]
 	return s1==s2 && s2==s3
 }
 
@@ -62,7 +60,7 @@ function isAAA (str) {
 function is4A (str) {
 	let result=checkValidAndReturnArr(str)
 	if (result.length!=4) {throw new Error(`str${str} must have 4 values`)};
-	let [s1,s2,s3,s4]=result
+	let s1=result[0], s2=result[1], s3=result[2], s4=result[3]
 	return s1==s2 && s2==s3 && s3==s4
 }
 
@@ -70,7 +68,7 @@ function is4A (str) {
 function isABC(str){
 	let result=checkValidAndReturnArr(str)
 	if (result.length!=3) {throw new Error(`str${str} must have 3 values`)};
-	let [s1,s2,s3] = result
+	let s1=result[0], s2=result[1], s3=result[2]
 	//判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
 	let isABC = (s2[1]-1==s1[1] && s3[1]-1 == s2[1]) && (s1[0]==s2[0] && s2[0]==s3[0])
 	return isABC
@@ -82,7 +80,7 @@ function isABCorAAA (str) {
 function is2ABC (str) { //like 123456 or 122334,233445这样的牌型
 	let result = checkValidAndReturnArr(str)
 	if (result.length!=6) {throw new Error(`str${str} must have 6 values`)};
-	let [s1,s2,s3,s4,s5,s6] = result
+	let s1=result[0], s2=result[1], s3=result[2], s4=result[3], s5=result[4], s6=result[5]
 	let frontThree = [s1,s2,s3]
 	let lastThree  = [s4,s5,s6]
 	//特殊情况，比如112233的情况？
