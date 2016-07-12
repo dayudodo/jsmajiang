@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Router, Route, hashHistory } from 'react-router';
 // import TimerMixin from 'react-timer-mixin';
 
 import Images from './components'
+import Play from './play'
+import About from './about'
 
 //level定义了可以胡的牌，剩下的需要用户来做
 
@@ -119,11 +122,13 @@ var MJInput=React.createClass({
   let how_many= all_single_pai.length-1
   var userAnswer = this.state.userAnswer;
   var added = [];
-  for (var i = 0; i < times; i++) {
-     let index = Math.floor(Math.random()*how_many)
-     added.push(all_single_pai[index]) 
+  if (userAnswer.length!=14) {
+    for (var i = 0; i < times; i++) {
+       let index = Math.floor(Math.random()*how_many)
+       added.push(all_single_pai[index]) 
+    }
+    userAnswer = userAnswer.concat(added).sort()
   }
-  userAnswer = userAnswer.concat(added).sort()
   this.setState({userAnswer})
 
  },
@@ -165,4 +170,10 @@ var MJInput=React.createClass({
  }
 });
 
-ReactDOM.render( <MJInput />,  document.getElementById('app') );
+ReactDOM.render((
+  <Router history={hashHistory}>
+    <Route path="/" component={MJInput}/>
+    <Route path="/play/:name" component={ Play }/>
+    <Route path="/about" component={About}/>
+  </Router>
+), document.getElementById('app'));
