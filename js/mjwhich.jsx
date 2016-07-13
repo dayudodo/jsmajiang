@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Images from './Images'
+import { Link } from 'react-router'
 
 import LevelData from './level_data';
 let all_level = []
@@ -139,6 +140,8 @@ var MJWhich=React.createClass({
             <h2>有如下一手牌
               <button onClick={this.prevShouPai}>上</button>
               <button onClick={this.nextShouPai}>下</button>
+              <Link to="/play" >玩牌</Link>
+              <Link to="/about" className="about">关于我</Link>
             </h2>
               <form onSubmit={this.handleSubmit}>
                 <input onChange={this.onChange} value={this.state.text} /> 

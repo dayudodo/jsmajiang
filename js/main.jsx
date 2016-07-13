@@ -13,8 +13,9 @@ import Rules from './Rules'
 ReactDOM.render((
   <Router history={ hashHistory }>
     <Route path="/" component={ MJWhich }/>
-    <Route path="/play/:name" component={ Play }/>
+    <Route path="/play" component={ Play }/>
     <Route path="/about" component={ About }/>
     <Route path="/rules" component={ Rules }/>
+
   </Router>
 ), document.getElementById('app'));
