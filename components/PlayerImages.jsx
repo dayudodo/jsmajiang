@@ -20,20 +20,17 @@ mouseout(e){
      const allImages = this.props.results.map((item,index)=>{
               if (all_single_pai.indexOf(item)!==-1) {
                let imgSrc = `image/${item}.png` 
-               return ( 
-                           <img key={index} src={imgSrc} className="moveDown"
+               return  <img key={index} src={imgSrc} className="moveDown"
                              onClick={this.imgClick.bind(null,item,index)} 
                              onMouseOver={ this.moveUp } 
                              onMouseOut={ this.mouseout } >
                            { (index + 1) % lineBreak ==0  ? <br />:null}
-                           </img>
-                         
-                     )
+                        </img>
               }
            })
 
      return(
-       <div className='col-lg-12 col-sm-3 moveDown' ref="player_images">
+       <div className='col-lg-12 col-md-12 moveDown' ref="player_images">
            { allImages }
        </div>
      );

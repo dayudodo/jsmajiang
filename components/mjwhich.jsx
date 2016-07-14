@@ -27,8 +27,8 @@ var MJWhich=React.createClass({
     , isCorrect: false
     , index : 0
     , all_level_data: all_level
-    	}
-    },
+   }
+ },
  onChange:function(e){
    	this.setState({ text: e.target.value })
  },

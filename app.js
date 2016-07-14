@@ -9,6 +9,7 @@ var _ = require('lodash');
 
 var connections = []
 var ArrayPlayer = []
+var current_player 
 // ArrayPlayer.prototype.toString = function(){
 
 // }
@@ -27,7 +28,7 @@ io.sockets.on('connection', function (socket) {
 
     // 玩家对象
     var player = {
-      socket:socket,
+      id:socket.id,
       username:undefined
     }
 
@@ -35,7 +36,7 @@ io.sockets.on('connection', function (socket) {
       //退出时要删除这个用户！
       connections.splice(connections.indexOf(socket),1)
       let disconnect_player = _.remove(ArrayPlayer, function(item){
-        return item.socket == socket;
+        return item.id == socket.id;
       })
       console.log("disconnect_player:%s",disconnect_player)
       if (new String(disconnect_player) != "") {
@@ -46,15 +47,17 @@ io.sockets.on('connection', function (socket) {
       console.log(socket.id + ' Disconnect');
       console.log("%s connections remaining.", connections.length)
 
-    });
+    })
 
     connections.push(socket);
-    console.log("Connected: %s connectionss", connections.length)
+    console.log("Connected: %s connectionss", connections.length);
 
-    socket.on('player', function(new_player){
-      let nameStr = ArrayPlayer.map(function(item){
-        return item.username 
-      })
+    function joined(socket, obj){
+      socket.emit('joined', obj)
+    }
+
+    socket.on('player_enter', function(new_player){
+      let nameStr = ArrayPlayer.map(item=>item.username)
       console.log(nameStr)
       let isPlayer_joined = _.findIndex(ArrayPlayer, { username: new_player.username})
       if (isPlayer_joined != -1 ) {
@@ -66,15 +69,26 @@ io.sockets.on('connection', function (socket) {
           nameStr = ArrayPlayer.map(function(item){
             return item.username 
           })
+          socket.emit('room_full')
           console.log(nameStr)
         }else {
-          player.socket = socket
           player.username = new_player.username
           ArrayPlayer.push(player)
-          console.log(player.username + ":joined")
+          socket.emit('login')
+          socket.broadcast.emit('joined', ArrayPlayer)
+          nameStr = ArrayPlayer.map(item=>item.username)
+          console.log(player.username + ":joined! Broadcast to %s player", nameStr)
         }
       }
     })
+
+    socket.on('start game', function(){
+      let index = _.findIndex(ArrayPlayer, { id: socket.id })
+      let current_player = ArrayPlayer[index]
+      console.log("current_player ready to start:", current_player.username)
+    })
+
+
       // socket.emit('room_full')
       // console.log("Already have 3 connectionss in here!")
 
