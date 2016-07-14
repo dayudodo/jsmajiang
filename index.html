@@ -5,14 +5,27 @@
 	<title>MaJiang</title>
 
 	
-	<link rel="stylesheet" type="text/css" href="app.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="css/app.css">
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-
-	<div id="app"></div>
+	<div class="container">
+		<div id="app"></div>
+	</div>
 </body>
 
 <script type="text/javascript" src="spec/tt.js"></script>
 <script type="text/javascript" src="./build/bundle.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+</script>
+
+
 
 </html>

@@ -20,7 +20,7 @@ var Images = React.createClass({
            })
 
      return(
-       <div>
+       <div className='col-lg-12 col-sm-3'>
            { allImages }
        </div>
      );

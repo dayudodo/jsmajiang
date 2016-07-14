@@ -22,7 +22,7 @@ module.exports ={
 		,"b1 b1 b2 b2 t1 t2 t3 t3 t4 t5 t5 t6 t7"
 		,"fa fa t1 t2 t3 t4 t5 t6 t7 t8 t9 zh zh"
 		,"t4 t5 t6 t7 t7 t7 t8 t8 t8 t9 t9 t9 t9"
-		,"b2 b3 b4 b4 b6 b6 b7 b7 b8 fa fa zh zh"
+		,"b2 b3 b4 b6 b6 b7 b7 b8 fa fa zh zh zh"
 	],
 	"3":[
 		 "b2 b3 b4 b5 b6 b7 b8 t1 t2 t3 zh zh zh"
@@ -36,6 +36,7 @@ module.exports ={
 		,"di di di fa fa fa t2 t3 t4 t5 t6 t7 t8"
 		,"b7 b7 fa fa fa t1 t1 t1 t4 t4 t4 t5 t6"
 		,"b4 b5 b6 t2 t2 t4 t5 t6 t7 t7 t8 t8 t9"
+		,"b2 b3 b4 b8 b8 b8 t2 t3 t4 t5 t6 t7 t8"
 	],
 
 	"4":[

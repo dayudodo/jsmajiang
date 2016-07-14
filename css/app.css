@@ -1,0 +1,24 @@
+img{
+	margin: 5px;
+	border: solid;
+	width: 75px;
+}
+
+body{
+	background-color: #d7ffd9;
+}
+
+.about{
+	color: #DCB856;
+}
+#player_images{
+	height: 120px;
+	
+}
+
+.moveUp{
+	margin-top: 0px;
+}
+.moveDown{
+	margin-top: 20px;
+}

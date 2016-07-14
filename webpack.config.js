@@ -4,7 +4,7 @@ var path = require('path');
 module.exports = {
     devtool: 'source-map',
     entry: [
-      path.resolve(__dirname, 'js/main.jsx')
+      path.resolve(__dirname, 'components/main.jsx')
     ],
     output: {
         path: path.resolve(__dirname, 'build'),
@@ -24,8 +24,7 @@ module.exports = {
   resolve: {
     extensions: ['',  '.jsx','.js']
   },
-  // plugins: [
-  //   new webpack.HotModuleReplacementPlugin(),
-  //   new webpack.NoErrorsPlugin()
-  // ]
+  plugins: [
+    // new webpack.NoErrorsPlugin()
+  ]
 };

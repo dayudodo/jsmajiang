@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Images from './Images'
 import { Link } from 'react-router'
+import Header from './Header';
 
 import LevelData from './level_data';
 let all_level = []
@@ -137,12 +138,10 @@ var MJWhich=React.createClass({
  render: function(){
     return(
       <div>
-            <h2>有如下一手牌
-              <button onClick={this.prevShouPai}>上</button>
-              <button onClick={this.nextShouPai}>下</button>
-              <Link to="/play" >玩牌</Link>
-              <Link to="/about" className="about">关于我</Link>
-            </h2>
+            <h1>有如下一手牌
+              <button onClick={this.prevShouPai} className='btn btn-warning'>上</button>
+              <button onClick={this.nextShouPai} className='btn btn-warning'>下</button>
+            </h1>
               <form onSubmit={this.handleSubmit}>
                 <input onChange={this.onChange} value={this.state.text} /> 
                 一共{ this.state.paiCount }张牌，自动排序为:{ this.state.results.join(' ')}
@@ -151,15 +150,15 @@ var MJWhich=React.createClass({
               <h2>胡哪些牌呢？</h2> 
               <Images results={all_single_pai}  lineBreak={12} sendMeToUser={this.sendMeToUser}/>
               <h2>
-                <button onClick={ this.randomPai.bind(null,13) }>随机一手牌</button>
+                <button onClick={ this.randomPai.bind(null,13) } className='btn btn-default btn-primary'>随机一手牌</button>
                 我的答案：
-                <button onClick={ this.redo }>重选</button>
-                <button onClick={ this.asShouPai }>作为手牌</button> 
-                <button onClick={ this.randomPai.bind(null,1) }>发牌</button>
+                <button onClick={ this.redo } className='btn btn-default'>重选</button>
+                <button onClick={ this.asShouPai } className='btn btn-default'>作为手牌</button> 
+                <button onClick={ this.randomPai.bind(null,1) } className='btn btn-default'>发牌</button>
                 一共{ this.state.userAnswer.length }张牌，{ this.state.userAnswer.join(' ')} 
               </h2>
               <Images results={ this.state.userAnswer }   deleteMe={ this.deleteMe } />
-              <button onClick={ this.IamSure }>确定</button>
+              <button onClick={ this.IamSure } className='btn btn-success' >确定</button>
               { this.state.isCorrect? <h1>回答正确,{ nextShouPaiWaitTime }秒后下一题</h1>:null }
 
       </div>
