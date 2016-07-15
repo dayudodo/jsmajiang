@@ -4,6 +4,8 @@
   "description": "ma jiang js version",
   "main": "index.js",
   "scripts": {
+    "w":"webpack --watch",
+    "start": "node app.js",
     "test": "node_modules/.bin/karma start karma.conf.js"
   },
   "author": "",
