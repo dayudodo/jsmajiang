@@ -5,6 +5,7 @@ var Images = React.createClass({
   imgClick: function(item,index){
     if(this.props.sendMeToUser) {   this.props.sendMeToUser(item)   }
     if(this.props.deleteMe)     {   this.props.deleteMe(item)       }
+      // this.props.onClick && this.props.onClick()
   },
   render: function(){
      const lineBreak = this.props.lineBreak? this.props.lineBreak : 100

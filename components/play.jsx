@@ -18,8 +18,8 @@ var Play=React.createClass({
           , left_info: ''
           , info_room: ''
           , results: []
-          , tablePai: ''
-          , paiFromTable: ''
+          , tablePai: []
+          , paiFromTable: []
       };
   },
   onChange:function(e){
@@ -116,7 +116,10 @@ var Play=React.createClass({
         })
       })
       this.socket.on('dapai', (one_pai)=>{ this.setState({ tablePai: one_pai}) })
-      this.socket.on('table_fa_pai', (one_pai)=>{ this.setState({ paiFromTable: one_pai}) })
+      this.socket.on('table_fa_pai', (pai)=>{ 
+        console.log('table_fa_pai:', pai)
+        this.setState({ paiFromTable: pai}) 
+      })
   },
   handleImgClick( item,index ){
     // console.log( 'user clicked, item:%s index:%s', item, index )
@@ -124,7 +127,10 @@ var Play=React.createClass({
     this.setState({ 
         results: results
     })
-    this.socket.emit('dapai', item)
+    this.socket.emit('dapai', [item])
+  },
+  paiFromTableClicked(){
+    console.log('paiFromTableClicked')
   },
   render: function(){
      return(
@@ -144,9 +150,9 @@ var Play=React.createClass({
              </form>
            </div>
         }
-        <center><Images results={ [this.state.tablePai] } /></center>
+        <center><Images results={ this.state.tablePai } /></center>
         <PlayerImages results={ this.state.results.sort() } imgClick={ this.handleImgClick }/>
-        <Images results={ [this.state.paiFromTable] } />
+        <Images results={ this.state.paiFromTable } onClick={ this.paiFromTableClicked} />
        </div>
      );
   }

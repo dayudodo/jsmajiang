@@ -19,6 +19,7 @@ Array.prototype.repeat= function(times){
 
 var connections = []
 var ArrayPlayer = []
+var Hobby = [] //大厅，用来保存房间
 
 var BING = ['b1','b2','b3','b4','b5','b6','b7','b8','b9']
 var TIAO   = ['t1','t2','t3','t4','t5','t6','t7','t8','t9']
@@ -27,7 +28,7 @@ var ZHIPAI    = ['zh','fa','di']
 
 var all_single_pai=BING.concat(TIAO).concat(ZHIPAI)
 var all_pai = BING.repeat(4).concat(TIAO.repeat(4)).concat(ZHIPAI.repeat(4))
-var clone_pai = _.shuffle( _.clone(all_pai) )
+var table_random_pai = _.shuffle( all_pai )
 // console.log(_.shuffle(all_pai), all_pai.length)
 var RoomName = 'room'
 
@@ -39,14 +40,26 @@ app.use(express.static('./'))
 //   res.sendFile(__dirname + '/socket.html');
 // });
 
+table_pai桌面有多少牌
+var function getTable(){
+  let table = new Object()
+  table.current_player = 0
+  table.table_pai = _.shuffle( _.clone(all_pai))
+  table.room_name = ''
+  table.ArrayPlayer = []
+  return table
+}
+
+
 io.sockets.on('connection', function (socket) {
 
     // 玩家对象
     var player = {
         id:socket.id
-      , username:undefined
+      , username:''
       , ready: false
       , east: false
+      , shou_pai: []
     }
 
     socket.on('disconnect', function () {  
@@ -122,6 +135,7 @@ io.sockets.on('connection', function (socket) {
           return _.find(connections, { id: item.id})
         })
         // console.log(others.length)
+        let clone_pai = _.clone(table_random_pai)
         let dongJia = _.find(ArrayPlayer, { east:true })
         others.forEach(otherSocket=>{
           if (otherSocket.id == dongJia.id) {
@@ -133,7 +147,6 @@ io.sockets.on('connection', function (socket) {
             otherSocket.emit('game_start', clone_pai.splice(0,13))
           }
         })
-        
       }
     })
 
