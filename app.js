@@ -27,6 +27,7 @@ var ZHIPAI    = ['zh','fa','di']
 
 var all_single_pai=BING.concat(TIAO).concat(ZHIPAI)
 var all_pai = BING.repeat(4).concat(TIAO.repeat(4)).concat(ZHIPAI.repeat(4))
+var clone_pai = _.shuffle( _.clone(all_pai) )
 // console.log(_.shuffle(all_pai), all_pai.length)
 var RoomName = 'room'
 
@@ -45,7 +46,7 @@ io.sockets.on('connection', function (socket) {
         id:socket.id
       , username:undefined
       , ready: false
-      , first: false
+      , east: false
     }
 
     socket.on('disconnect', function () {  
@@ -89,7 +90,7 @@ io.sockets.on('connection', function (socket) {
           console.log(nameStr)
         }else {
           if ( ArrayPlayer.length ==0 ) {
-            player.first = true;
+            player.east = true;
           }
           player.username = new_player.username
           socket.join(RoomName,function(){
@@ -116,18 +117,28 @@ io.sockets.on('connection', function (socket) {
       console.log('ready count:',player_ready_count)
       let allReady = ( player_ready_count == 3 ) 
       if ( allReady ) {
-        let yiShou = all_pai.splice(0,13)
-        socket.emit('game_start', yiShou)
         console.log('all players ready, start game')
         let others = ArrayPlayer.map(item=>{
           return _.find(connections, { id: item.id})
         })
         // console.log(others.length)
+        let dongJia = _.find(ArrayPlayer, { east:true })
         others.forEach(otherSocket=>{
-          otherSocket.emit('game_start', all_pai.splice(0,13))
+          if (otherSocket.id == dongJia.id) {
+            otherSocket.emit('game_start', clone_pai.splice(0,13))
+            let fa_pai = clone_pai.splice(0,1)
+            console.log('服务器发牌：%s', fa_pai)
+            otherSocket.emit('table_fa_pai', fa_pai)
+          }else{
+            otherSocket.emit('game_start', clone_pai.splice(0,13))
+          }
         })
         
       }
+    })
+
+    socket.on('dapai', function(pai){
+      io.in(RoomName).emit('dapai', pai)
     })
 
     socket.on('chat_cast',function(info){
@@ -136,6 +147,6 @@ io.sockets.on('connection', function (socket) {
 
 
 
-});
+})
 
 

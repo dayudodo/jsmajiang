@@ -2,10 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 var PlayerImages = React.createClass({
-  imgClick: function(item,index){
-    if(this.props.sendMeToUser) {   this.props.sendMeToUser(item)   }
-    if(this.props.deleteMe)     {   this.props.deleteMe(item)       }
-  },
+imgClick: function(item,index){
+  this.props.imgClick( item,index )
+},
 moveUp(e){
   let img = ReactDOM.findDOMNode(e.target)
   $(img).removeClass('moveDown').addClass('moveUp')

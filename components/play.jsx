@@ -2,20 +2,24 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 // var _ = require('lodash');
 import io from 'socket.io-client'
+import Images from './Images';
 import PlayerImages from './PlayerImages';
 
 
 var Play=React.createClass({
   getInitialState() {
       return {
-            status: 'disconnect'
+            status: '服务器已经断开'
           , text: ''
           , chatText: ''
           , username: ''
           , ready: false
           , ArrayPlayer: []
+          , left_info: ''
           , info_room: ''
           , results: []
+          , tablePai: ''
+          , paiFromTable: ''
       };
   },
   onChange:function(e){
@@ -61,11 +65,22 @@ var Play=React.createClass({
       this.socket.on('connect',()=>{ this.setState({ status: '服务器连接成功'})})
 
       this.socket.on('disconnect',()=>{ 
-        this.setState({ 
-            status: '服务器已经断开'
-          , username: '', info_room: ''
-          , ready: false
-        }) 
+        // this.setState({ 
+        //     status: '服务器已经断开'
+        //   , username: ''
+        //   , info_room: ''
+        //   , ready: false
+        //   , results: []
+        //   , left_info: ''
+        //   , tablePai: ''
+        // }) 
+        this.setState( this.getInitialState() )
+        
+      })
+
+      this.socket.on('player_left', (username)=>{ //用户离开的时候会给服务器发信息，服务器也会广播player_left
+        this.setState({ left_info: username})
+        setTimeout(()=>{ this.setState({ left_info: ''}) }, 2000)
       })
 
       this.socket.on('room_full',()=>{ this.setState({ info_room: '房间已满'})})
@@ -100,30 +115,38 @@ var Play=React.createClass({
           , results: serverData
         })
       })
-
-
+      this.socket.on('dapai', (one_pai)=>{ this.setState({ tablePai: one_pai}) })
+      this.socket.on('table_fa_pai', (one_pai)=>{ this.setState({ paiFromTable: one_pai}) })
   },
-
+  handleImgClick( item,index ){
+    // console.log( 'user clicked, item:%s index:%s', item, index )
+    let results = this.state.results.remove(item)
+    this.setState({ 
+        results: results
+    })
+    this.socket.emit('dapai', item)
+  },
   render: function(){
-    
      return(
        <div>
         <h1>{ this.state.status }</h1>
-        <h1>{ this.state.info_room }</h1>
-       <button onClick={ this.send_test }>test</button> 
+        <h1>  { this.state.info_room }  
+              { this.state.left_info.length==0 ? null : '|'+this.state.left_info+'已经离开'}
+        </h1>
         { (this.state.username.length == 0) ? 
-           <form onSubmit={this.handleSubmit}  >
-             用户名：<input onChange={this.onChange} value={this.state.text} /> 
+           <form onSubmit={ this.handleSubmit }  >
+             用户名：<input onChange={ this.onChange } value={ this.state.text } /> 
            </form> : 
            <div>{ this.state.username } 登入
              { this.state.ready? null : <button onClick={ this.startGame }>开始</button> }
-             <form onSubmit={this.handleChatSubmit}  >
-             发信息：<input onChange={this.chatChange} value={this.state.chatText} /> 
+             <form onSubmit={ this.handleChatSubmit }  >
+             发信息：<input onChange={ this.chatChange } value={ this.state.chatText } /> 
              </form>
            </div>
         }
-
-        <PlayerImages results={ this.state.results.sort() } />
+        <center><Images results={ [this.state.tablePai] } /></center>
+        <PlayerImages results={ this.state.results.sort() } imgClick={ this.handleImgClick }/>
+        <Images results={ [this.state.paiFromTable] } />
        </div>
      );
   }
