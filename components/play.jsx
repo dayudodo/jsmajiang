@@ -5,6 +5,7 @@ import io from 'socket.io-client'
 import Images from './Images';
 import PlayerImages from './PlayerImages';
 
+var can_da_pai = false //客户端能否打牌，是由服务器发牌所改变
 
 var Play=React.createClass({
   getInitialState() {
@@ -21,6 +22,12 @@ var Play=React.createClass({
           , tablePai: []
           , paiFromTable: []
       };
+  },
+  propTypes:{
+      results: React.PropTypes.array
+    , tablePai:React.PropTypes.array
+    , paiFromTable:React.PropTypes.array
+
   },
   onChange:function(e){
       this.setState({ text: e.target.value })
@@ -112,25 +119,35 @@ var Play=React.createClass({
       this.socket.on('game_start', (serverData)=>{
         this.setState({ 
             status: '游戏开始'
-          , results: serverData
+          , results: serverData.sort()
         })
       })
       this.socket.on('dapai', (one_pai)=>{ this.setState({ tablePai: one_pai}) })
       this.socket.on('table_fa_pai', (pai)=>{ 
-        console.log('table_fa_pai:', pai)
-        this.setState({ paiFromTable: pai}) 
+        // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
+        can_da_pai = true
+        let results= this.state.results.concat(pai)
+        this.setState({ results }) 
+      })
+      this.socket.on('game over',()=>{
+        this.setState({
+            ready: false
+          , results:[]
+          , tablePai: []
+
+        })
       })
   },
   handleImgClick( item,index ){
     // console.log( 'user clicked, item:%s index:%s', item, index )
-    let results = this.state.results.remove(item)
-    this.setState({ 
-        results: results
-    })
-    this.socket.emit('dapai', [item])
-  },
-  paiFromTableClicked(){
-    console.log('paiFromTableClicked')
+    // 如果有服务器发的牌，你可以打出一张，否则就不能打
+    let results = this.state.results
+    if ( can_da_pai ) {
+      can_da_pai = false
+      results.remove(item).sort()
+      this.setState({ results })
+      this.socket.emit('dapai', [item])
+    }
   },
   render: function(){
      return(
@@ -151,8 +168,7 @@ var Play=React.createClass({
            </div>
         }
         <center><Images results={ this.state.tablePai } /></center>
-        <PlayerImages results={ this.state.results.sort() } imgClick={ this.handleImgClick }/>
-        <Images results={ this.state.paiFromTable } onClick={ this.paiFromTableClicked} />
+        <PlayerImages results={ this.state.results } imgClick={ this.handleImgClick }/>
        </div>
      );
   }

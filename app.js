@@ -29,8 +29,12 @@ var ZHIPAI    = ['zh','fa','di']
 var all_single_pai=BING.concat(TIAO).concat(ZHIPAI)
 var all_pai = BING.repeat(4).concat(TIAO.repeat(4)).concat(ZHIPAI.repeat(4))
 var table_random_pai = _.shuffle( all_pai )
+
+// var clone_pai = _.clone(table_random_pai).splice(0,45) // 全局变量，开发时记得重启，开发时使用45张牌
+var clone_pai = _.clone(table_random_pai)
 // console.log(_.shuffle(all_pai), all_pai.length)
-var RoomName = 'room'
+var RoomName = 'roomAnge'
+var player_index = 0
 
 server.listen(3000, function(){
   console.log("Express server listening on port " + 3000);
@@ -40,8 +44,8 @@ app.use(express.static('./'))
 //   res.sendFile(__dirname + '/socket.html');
 // });
 
-table_pai桌面有多少牌
-var function getTable(){
+// table_pai桌面有多少牌
+var  getTable= function(){
   let table = new Object()
   table.current_player = 0
   table.table_pai = _.shuffle( _.clone(all_pai))
@@ -120,6 +124,8 @@ io.sockets.on('connection', function (socket) {
     })
 
     socket.on('ready_server', function(){
+      // let testData= io.sockets.connected
+      // console.log(testData)
       let current_player = _.find(ArrayPlayer, { id: socket.id })
       current_player.ready = true
       socket.emit('ready_client', current_player.username)
@@ -135,7 +141,7 @@ io.sockets.on('connection', function (socket) {
           return _.find(connections, { id: item.id})
         })
         // console.log(others.length)
-        let clone_pai = _.clone(table_random_pai)
+        
         let dongJia = _.find(ArrayPlayer, { east:true })
         others.forEach(otherSocket=>{
           if (otherSocket.id == dongJia.id) {
@@ -152,10 +158,27 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('dapai', function(pai){
       io.in(RoomName).emit('dapai', pai)
+      // 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
+      //找到下一家，再发牌
+      let index  = ( ++player_index ) % 3
+      let shouPaiPlayer = ArrayPlayer[index]
+      let playerSocket = _.find(connections, { id: shouPaiPlayer.id })
+      if (clone_pai.length == 0) {
+        io.in(RoomName).emit('game over')
+        // 牌要重新发了
+        clone_pai = _.shuffle( _.clone(table_random_pai) )
+        // 用户也需要重新准备
+        ArrayPlayer.forEach(item=> item.ready = false )
+      }else {
+        let fa_pai = clone_pai.splice(0,1)
+        console.log('服务器发牌 %s 给：%s', fa_pai, shouPaiPlayer.username)
+        console.log('本桌牌还有%s张', clone_pai.length)
+        playerSocket.emit('table_fa_pai', fa_pai)
+      }
     })
 
     socket.on('chat_cast',function(info){
-      socket.to('room').emit('chat_cast', info)
+      socket.to('room').emit('chat_cast', clone_pai)
     })
 
 
