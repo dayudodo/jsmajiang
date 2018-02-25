@@ -4,8 +4,9 @@ var ReactDOM = require('react-dom');
 import io from 'socket.io-client'
 import Images from './Images';
 import PlayerImages from './PlayerImages';
+import * as config from './../config'
 
-var can_da_pai = false //客户端能否打牌，是由服务器发牌所改变
+// var can_da_pai = false //客户端能否打牌，是由服务器发牌所改变
 
 var Play=React.createClass({
   getInitialState() {
@@ -15,6 +16,7 @@ var Play=React.createClass({
           , chatText: ''
           , username: ''
           , ready: false
+          , can_da_pai: false
           , ArrayPlayer: []
           , left_info: ''
           , info_room: ''
@@ -68,7 +70,7 @@ var Play=React.createClass({
     this.setState({ info_room: allNames.join(',') + '进入房间' })
   },
   componentWillMount() {
-      this.socket = io('http://localhost:3000');
+      this.socket = io(`http://localhost:${config.PORT}`);
       this.socket.on('connect',()=>{ this.setState({ status: '服务器连接成功'})})
 
       this.socket.on('disconnect',()=>{ 
@@ -125,9 +127,9 @@ var Play=React.createClass({
       this.socket.on('dapai', (one_pai)=>{ this.setState({ tablePai: one_pai}) })
       this.socket.on('table_fa_pai', (pai)=>{ 
         // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
-        can_da_pai = true
+        // can_da_pai = true
         let results= this.state.results.concat(pai)
-        this.setState({ results }) 
+        this.setState({ results: results, can_da_pai: true }) 
       })
       this.socket.on('game over',()=>{
         this.setState({
@@ -142,10 +144,10 @@ var Play=React.createClass({
     // console.log( 'user clicked, item:%s index:%s', item, index )
     // 如果有服务器发的牌，你可以打出一张，否则就不能打
     let results = this.state.results
-    if ( can_da_pai ) {
-      can_da_pai = false
+    if ( this.state.can_da_pai ) {
+      // can_da_pai = false
       results.remove(item).sort()
-      this.setState({ results })
+      this.setState({ results: results, can_da_pai: false })
       this.socket.emit('dapai', [item])
     }
   },
@@ -169,6 +171,7 @@ var Play=React.createClass({
         }
         <center><Images results={ this.state.tablePai } /></center>
         <PlayerImages results={ this.state.results } imgClick={ this.handleImgClick }/>
+        <center>{ this.state.can_da_pai? '请出牌': '' }</center>
        </div>
      );
   }

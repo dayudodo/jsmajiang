@@ -1,4 +1,4 @@
-'use strict'
+// 'use strict'
 //引入程序包
 var express = require('express')
   , path = require('path')
@@ -6,6 +6,7 @@ var express = require('express')
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
 var _ = require('lodash');
+import * as config from './config'
 
 Array.prototype.repeat= function(times){
   var result = []
@@ -36,8 +37,8 @@ var clone_pai = _.clone(table_random_pai)
 var RoomName = 'roomAnge'
 var player_index = 0
 
-server.listen(3000, function(){
-  console.log("Express server listening on port " + 3000);
+server.listen(config.PORT, function(){
+  console.log("Express server listening on port " + config.PORT);
 });
 app.use(express.static('./'))
 // app.get('/', function (req, res) {
@@ -92,7 +93,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('player_enter', function(new_player){
       let nameStr = ArrayPlayer.map(item=>item.username)
-      console.log(nameStr)
+      console.log('nameStr:',nameStr)
       let isPlayer_joined = _.findIndex(ArrayPlayer, { username: new_player.username})
       if (isPlayer_joined != -1 ) {
         console.log("%s already exist.", new_player.username)
