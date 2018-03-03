@@ -169,9 +169,9 @@ var Play=React.createClass({
              </form>
            </div>
         }
+        <center>{ this.state.can_da_pai? '请出牌': '' }</center>
         <center><Images results={ this.state.tablePai } /></center>
         <PlayerImages results={ this.state.results } imgClick={ this.handleImgClick }/>
-        <center>{ this.state.can_da_pai? '请出牌': '' }</center>
        </div>
      );
   }

@@ -5,9 +5,11 @@ var express = require('express')
   , app = express()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server);
-var _ = require('lodash');
+// var _ = require('lodash');
+import _ from 'lodash'
 import * as config from './config'
 
+//以前还不熟悉如何复制一个数组
 Array.prototype.repeat= function(times){
   var result = []
   for (var i = 0; i < times; i++) {

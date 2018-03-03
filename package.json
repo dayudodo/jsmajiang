@@ -19,6 +19,7 @@
     "socket.io": "^1.7.4"
   },
   "devDependencies": {
+    "babel-cli":"latest",
     "babel-core": "^6.26.0",
     "babel-eslint": "^6.0.4",
     "babel-loader": "^6.4.1",
