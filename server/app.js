@@ -8,6 +8,8 @@ var express = require('express')
 // var _ = require('lodash');
 import _ from 'lodash'
 import * as config from './config'
+import { Player } from'./player'
+import { Room } from './room'
 
 //以前还不熟悉如何复制一个数组
 Array.prototype.repeat= function(times){
@@ -61,13 +63,20 @@ var  getTable= function(){
 io.sockets.on('connection', function (socket) {
 
     // 玩家对象
-    var player = {
-        id:socket.id
+    var player = new Player({
+        socket_id:socket.id
       , username:''
       , ready: false
       , east: false
       , shou_pai: []
-    }
+    })
+    // var player = {
+    //     id:socket.id
+    //   , username:''
+    //   , ready: false
+    //   , east: false
+    //   , shou_pai: []
+    // }
 
     socket.on('disconnect', function () {  
       //退出时要删除这个用户！
@@ -86,6 +95,7 @@ io.sockets.on('connection', function (socket) {
 
     })
 
+    //显示当前有多少连接
     connections.push(socket);
     console.log("Connected: %s connections", connections.length);
 

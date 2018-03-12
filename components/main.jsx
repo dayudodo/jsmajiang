@@ -5,7 +5,7 @@ import { Router, Route, hashHistory } from 'react-router';
 // import TimerMixin from 'react-timer-mixin';
 
 import MJWhich from './MJWhich'
-import Play from './Play'
+import Client from './Client'
 import About from './About'
 import Rules from './Rules'
 import Header from './Header';
@@ -25,7 +25,7 @@ var routes = (
 	<div>
 		<Header />
 		<Router history={ hashHistory } >
-		  <Route path="/" component={ Play }/>
+		  <Route path="/" component={ Client }/>
 		  <Route path="/mjwhich" component={ MJWhich }/>
 		  <Route path="/about" component={ About }/>
 		  <Route path="/rules" component={ Rules }/>

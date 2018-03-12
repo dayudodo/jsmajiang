@@ -1,10 +1,11 @@
 import * as config from "./../config";
 
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
-class  Room{
-    constructor(){
+export class  Room{
+    constructor(socket){
         // this.allowed_users_count
-
+        //应该是唯一的，用户需要根据这个id进入房间
+        this.id = null;
     }
     //用户加入房间，还需要告诉其它的用户我已经加入了
     join_me(person){
