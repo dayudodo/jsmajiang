@@ -95,7 +95,7 @@ io.sockets.on('connection', function (socket) {
 
     })
 
-    //显示当前有多少连接
+    //显示当前有多少连接，这其实应该是lobby的事情，也就是app
     connections.push(socket);
     console.log("Connected: %s connections", connections.length);
 
