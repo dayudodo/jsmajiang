@@ -22,6 +22,7 @@ export class Connector {
     }
     let dc = _.remove(this.conn_array, item => item.socket_id == socket.id);
     // console.dir(this.conn_array);
+    // console.dir(dc),dc其实是个数组，里面包含了你删除的那几个元素，找不到会返回个空数组
     return dc;
   }
   find_conn_by(socket) {

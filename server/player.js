@@ -5,7 +5,7 @@ export class Player {
   //初始化第一手牌，肯定是有13张
 
   //连接之后，用户就会有一个socket_id，一个socket其实就是一个连接了
-  constructor({shou_pai, socket,  username}) {
+  constructor({shou_pai=[], socket,  username}) {
     this.room = null
     this.socket = socket
     //用户是否连接？有可能掉线！
@@ -16,6 +16,7 @@ export class Player {
     this.east = false
     //用户名称，以后可以显示微信名称
     this.username = username;
+    //todo: this.user_id = null; 用户应该有一个唯一的id, 这样断线后再登录才知道你在哪个服务器
 
     // let _len = shou_pai.length;
     // if (_len != config.first_shouPai_COUNT) {

@@ -87,11 +87,12 @@ io.sockets.on("connection", function(socket) {
     //连接的socketId, player信息，room信息，这样就不需要再去player中查找了，那样比较麻烦，玩家一多找起来可就麻烦了。
     //需要一个房间一个房间的找，效率太慢！一个socket来了，就建立好相关的信息。
     let disconnect_client = g_lobby.dis_connect(socket);
-    // console.log("disconnect_player:%s", disconnect_player);
-    if (disconnect_client.player) {
-      console.log("%s连接断开", disconnect_client.player.username);
+    // console.dir(disconnect_client);
+    let first = _.first(disconnect_client)
+    if (first && first.player) {
+      console.log("玩家：%s 连接断开", first.player.username);
     } else {
-      console.log(socket.id + " 已经断开，用户未登录");
+      console.log(socket.id + " 用户未登录的情况下断开连接");
     }
     //只有进入房间的才算是真正的玩家
     // console.log("剩%s个用户...", g_lobby.players_count);
@@ -111,23 +112,20 @@ io.sockets.on("connection", function(socket) {
       console.log(`${joined_conn.player.username}玩家已经存在. 其socketId:${joined_conn.socket_id}`);
       return;
     }
-    
     let conn = g_lobby.find_conn_by(socket);
     let s_player = new Player({
-      shou_pai: [],
       socket: socket,
       username: new_player.username
     });
     //一开始连接的时候还没有用户信息，在用户登录之后再行保存到连接信息中，方便查询
     conn.player = s_player;
     console.log(`${s_player.username}玩家已经登录`)
-    // console.dir(conn)
+    //服务器给本玩家发送登录成功的消息
+    socket.emit('login')
+    
     //显示一下所有的用户名称
-    let player_names = g_lobby.player_names;
-    console.log("当前全部的player_names:", player_names);
+    console.log("当前全部的player_names:", g_lobby.player_names);
     // quit()
-    //检测是否有重复的用户名，其实应该是在房间里面检查的，毕竟还没有实现微信登录
-
     // else {
     //   if (ArrayPlayer.length == 3) {
     //     console.log("人员已满，最多3人");
@@ -165,10 +163,19 @@ io.sockets.on("connection", function(socket) {
       console.log(`用户未登录执行了创建房间：${conn.socket.id}`)
     }else{
       let owner_room = new Room()
-      owner_room.id = Room.make()
+      let room_name = Room.make()
+      if (room_name) {
+        owner_room.id = room_name 
+      }else{
+        socket.emit('room_sold_out')
+        return
+      }
       owner_room.join_player(conn.player)
       //创建房间后，应该把房间添加到此socket的连接信息中
       conn.room = owner_room
+      console.log(`${conn.player.username}创建了房间${owner_room.id}`)
+      //成功创建房间后要给前端发送成功的消息
+      socket.emit('made_room', owner_room.id)
     }
   });
   //玩家加入某个指定房间room_name
