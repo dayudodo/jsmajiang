@@ -31,43 +31,44 @@ var Play = React.createClass({
     tablePai: React.PropTypes.array,
     paiFromTable: React.PropTypes.array
   },
-  onChange: function(e) {
+  onChange: function (e) {
     this.setState({ text: e.target.value });
   },
   onRoomChange(e) {
     this.setState({ room_id: e.target.value });
   },
-  chatChange: function(e) {
+  chatChange: function (e) {
     this.setState({ chatText: e.target.value });
   },
-  handleSubmit: function(e) {
+  handleSubmit: function (e) {
     e.preventDefault();
-    let isEmpty = this.state.text.replace(/\s+/g).length == 0;
-    if (isEmpty) {
+    let isUsernameEmpty = this.state.text.replace(/\s+/g).length == 0;
+    if (isUsernameEmpty) {
       alert("用户名不能为空");
     } else {
       //登录之后再选择房间号的！
-      this.socket.emit("player_enter", {
+      this.socket.emit("login", {
         username: this.state.text
       });
     }
   },
-  handleRoomSubmit(e){
-    e.preventDefault()
-    let isEmpty = this.state.room_id.replace(/\s+/g).length == 0;
-    if (isEmpty) {
+  create_room() {
+    this.socket.emit('create_room')
+  },
+  join_room() {
+    let isRoomTextEmpty = this.state.room_id.replace(/\s+/g).length == 0;
+    if (isRoomTextEmpty) {
       alert("房间号不能为空")
-    }else{
-      this.socket.emit('join_room',{
-        username: this.state.text,
-        room_id: this.state.room_id
-      })
+    } else {
+      //玩家想要加入房间room_id, 给服务器发join_room消息，并带有房间号数据
+      //因为服务器的连接中保存了相关了用户信息，所以并不需要再传递用户名
+      this.socket.emit('join_room', this.state.room_id)
     }
   },
-  handleChatSubmit: function(e) {
+  handleChatSubmit: function (e) {
     e.preventDefault();
-    let isEmpty = this.state.chatText.replace(/\s+/g).length == 0;
-    if (isEmpty) {
+    let isChatTextEmpty = this.state.chatText.replace(/\s+/g).length == 0;
+    if (isChatTextEmpty) {
       alert("用户名不能为空");
     } else {
       this.socket.emit("chat_cast", {
@@ -76,11 +77,11 @@ var Play = React.createClass({
       });
     }
   },
-  startGame: function() {
+  startGame: function () {
     // console.log(this.state.username + "ready_server")
     this.socket.emit("ready_server");
   },
-  show_info_room: function(ArrayPlayer) {
+  show_info_room: function (ArrayPlayer) {
     let filtered = ArrayPlayer.filter(
       item => item.username != this.state.username
     );
@@ -126,7 +127,7 @@ var Play = React.createClass({
       this.setState({ username: this.state.text });
       this.show_info_room(ArrayPlayer);
     });
-
+    //接收服务器发来的room_enter消息，表明服务器已经将本玩家加入房间中。
     this.socket.on("room_enter", info => {
       console.log("new user entered", info);
     });
@@ -176,7 +177,7 @@ var Play = React.createClass({
       this.socket.emit("dapai", [item]);
     }
   },
-  render: function() {
+  render: function () {
     return (
       <div>
         <h1>{this.state.status}</h1>
@@ -192,25 +193,27 @@ var Play = React.createClass({
             用户名：<input onChange={this.onChange} value={this.state.text} />
           </form>
         ) : (
-          <div>
-            {this.state.username} 登入
+            <div>
+              {this.state.username} 登入
             {this.state.ready ? null : (
-              <button onClick={this.startGame}>开始</button>
-            )}
-            <form onSubmit={this.handleChatSubmit}>
-              发信息：<input
-                onChange={this.chatChange}
-                value={this.state.chatText}
-              />
-            </form>
-            <form onSubmit={this.handleRoomSubmit}>
-              房间号：<input
-                onChange={this.onRoomChange}
-                value={this.state.room_id}
-              />
-            </form>
-          </div>
-        )}
+                <button onClick={this.startGame}>开始</button>
+              )}
+              <form onSubmit={this.handleChatSubmit}>
+                发信息：<input
+                  onChange={this.chatChange}
+                  value={this.state.chatText}
+                />
+              </form>
+              <div class="room_staff">
+                房间号：<input
+                  onChange={this.onRoomChange}
+                  value={this.state.room_id}
+                />
+                <button onClick={this.create_room}>创建房间</button>
+                <button onClick={this.join_room}>加入房间</button>
+              </div>
+            </div>
+          )}
         <center>{this.state.can_da_pai ? "请出牌" : ""}</center>
         <center>
           <Images results={this.state.tablePai} />

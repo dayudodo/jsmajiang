@@ -25,7 +25,10 @@ export class Player {
     // }
     this.shou_pai = shou_pai;
   }
+  //这种地方感觉用ts会更好一些，免费传递错参数了
   join_room(room){
+    //将自己加入到房间中
+    room.join_me(this)
     this.room = room
   }
   //用户也可以自己退出房间，不过会有一定的惩罚

@@ -9,8 +9,12 @@ export class  Room{
         this.id = null;
         this.players = []
     }
+    //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
+    static make(){
+        return "roomAnge"
+    }
     //用户加入房间，还需要告诉其它的用户我已经加入了
-    join_me(person){
+    join_player(person){
         this.players.push(person)
         // tellOtherPeopleIamIn();
     }

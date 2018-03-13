@@ -105,7 +105,7 @@ io.sockets.on("connection", function(socket) {
   // }
 
   //玩家进入，这儿其实只管用户登录，房间的话还需要另外处理
-  socket.on("player_enter", function(new_player) {
+  socket.on("login", function(new_player) {
     let joined_conn = g_lobby.find_conn_by_username(new_player.username)
     if (joined_conn) {
       console.log(`${joined_conn.player.username}玩家已经存在. 其socketId:${joined_conn.socket_id}`);
@@ -120,10 +120,11 @@ io.sockets.on("connection", function(socket) {
     });
     //一开始连接的时候还没有用户信息，在用户登录之后再行保存到连接信息中，方便查询
     conn.player = s_player;
+    console.log(`${s_player.username}玩家已经登录`)
     // console.dir(conn)
     //显示一下所有的用户名称
     let player_names = g_lobby.player_names;
-    console.log("player_names:", player_names);
+    console.log("当前全部的player_names:", player_names);
     // quit()
     //检测是否有重复的用户名，其实应该是在房间里面检查的，毕竟还没有实现微信登录
 
@@ -156,8 +157,33 @@ io.sockets.on("connection", function(socket) {
     // }
   });
 
-  //玩家创建房间，玩家先前已经登录
-  socket.on("create_room", function(new_player) {});
+  //玩家创建房间，玩家先前应已登录
+  socket.on("create_room", function() {
+    let conn = g_lobby.find_conn_by(socket)
+    if (!conn.player) {
+      socket.disconnect()
+      console.log(`用户未登录执行了创建房间：${conn.socket.id}`)
+    }else{
+      let owner_room = new Room()
+      owner_room.id = Room.make()
+      owner_room.join_player(conn.player)
+      //创建房间后，应该把房间添加到此socket的连接信息中
+      conn.room = owner_room
+    }
+  });
+  //玩家加入某个指定房间room_name
+  socket.on("join_room",function(room_name){
+    //用户能够发出这个事件说明已经登录，否则就直接断开连接。
+    let player = g_lobby.get_player(socket)
+    if (player.room) {
+      socket.join(room_name, function () {
+        //告诉房间的其它人我已经加入房间
+        socket.to(room_name,emit('room_enter', player.username))
+      })
+    }else{
+      socket.emit('no_such_room', room_name)
+    }
+  })
   socket.on("ready_server", function() {
     // let testData= io.sockets.connected
     // console.log(testData)
@@ -198,6 +224,7 @@ io.sockets.on("connection", function(socket) {
     }
   });
 
+  //玩家打了一张牌
   socket.on("dapai", function(pai) {
     io.in(RoomName).emit("dapai", pai);
     // 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
