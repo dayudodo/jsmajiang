@@ -24,6 +24,9 @@ export class  Room{
         // _.find(this.players, {socket_id: socket_id})
         this.players.find(p=>p.socket_id == socket_id)
     }
+    get count(){
+        return this.players.length
+    }
     start_game(){
 
     }

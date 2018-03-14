@@ -28,14 +28,24 @@ export class Connector {
   find_conn_by(socket) {
     return this.conn_array.find(item => item.socket_id == socket.id);
   }
-  find_conn_by_username(name){
-    return this.conn_array.find(item=>{
+  find_conn_by_username(name) {
+    return this.conn_array.find(item => {
       if (item.player) {
-        return item.player.username == name
-      }else{
-        return false
+        return item.player.username == name;
+      } else {
+        return null;
       }
-    })
+    });
+  }
+  //查找存在的房间
+  find_room_by_id(room_name) {
+    return this.conn_array.find(item => {
+      if (item.room) {
+        return item.room.id == room_name;
+      } else {
+        return null;
+      }
+    });
   }
   get_player(socket) {
     return this.find_conn_by(socket).player;
@@ -47,12 +57,12 @@ export class Connector {
   get clients_count() {
     return this.conn_array.length;
   }
-  get player_names(){
-      return this.conn_array.reduce((result, item)=>{
-          if (item.player) {
-              result.push(item.player.username)
-          }
-          return result
-      },[])
+  get player_names() {
+    return this.conn_array.reduce((result, item) => {
+      if (item.player) {
+        result.push(item.player.username);
+      }
+      return result;
+    }, []);
   }
 }

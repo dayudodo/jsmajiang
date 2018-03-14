@@ -60,7 +60,7 @@ io.sockets.on("connection", function(socket) {
   // connections.push(socket);
   g_lobby.new_connect(socket);
   console.log(
-    `socket: ${socket.id} | Connected count: ${g_lobby.clients_count}`
+    `有新的连接：${socket.id} | Connected count: ${g_lobby.clients_count}`
   );
 
   // 玩家对象
@@ -88,11 +88,11 @@ io.sockets.on("connection", function(socket) {
     //需要一个房间一个房间的找，效率太慢！一个socket来了，就建立好相关的信息。
     let disconnect_client = g_lobby.dis_connect(socket);
     // console.dir(disconnect_client);
-    let first = _.first(disconnect_client)
+    let first = _.first(disconnect_client);
     if (first && first.player) {
-      console.log("玩家：%s 连接断开", first.player.username);
+      console.log(`玩家：${first.player.username} 连接断开`);
     } else {
-      console.log(socket.id + " 用户未登录的情况下断开连接");
+      console.log(`用户未登录的情况下断开连接: ${socket.id}`);
     }
     //只有进入房间的才算是真正的玩家
     // console.log("剩%s个用户...", g_lobby.players_count);
@@ -107,9 +107,13 @@ io.sockets.on("connection", function(socket) {
 
   //玩家进入，这儿其实只管用户登录，房间的话还需要另外处理
   socket.on("login", function(new_player) {
-    let joined_conn = g_lobby.find_conn_by_username(new_player.username)
+    let joined_conn = g_lobby.find_conn_by_username(new_player.username);
     if (joined_conn) {
-      console.log(`${joined_conn.player.username}玩家已经存在. 其socketId:${joined_conn.socket_id}`);
+      console.log(
+        `${joined_conn.player.username}玩家已经存在. 其socketId:${
+          joined_conn.socket_id
+        }`
+      );
       return;
     }
     let conn = g_lobby.find_conn_by(socket);
@@ -119,10 +123,10 @@ io.sockets.on("connection", function(socket) {
     });
     //一开始连接的时候还没有用户信息，在用户登录之后再行保存到连接信息中，方便查询
     conn.player = s_player;
-    console.log(`${s_player.username}玩家已经登录`)
+    console.log(`${s_player.username}玩家已经登录`);
     //服务器给本玩家发送登录成功的消息
-    socket.emit('login')
-    
+    socket.emit("login");
+
     //显示一下所有的用户名称
     console.log("当前全部的player_names:", g_lobby.player_names);
     // quit()
@@ -157,40 +161,41 @@ io.sockets.on("connection", function(socket) {
 
   //玩家创建房间，玩家先前应已登录
   socket.on("create_room", function() {
-    let conn = g_lobby.find_conn_by(socket)
+    let conn = g_lobby.find_conn_by(socket);
     if (!conn.player) {
-      socket.disconnect()
-      console.log(`用户未登录执行了创建房间：${conn.socket.id}`)
-    }else{
-      let owner_room = new Room()
-      let room_name = Room.make()
+      socket.disconnect();
+      console.log(`用户未登录执行了创建房间：${conn.socket.id}`);
+    } else {
+      let owner_room = new Room();
+      let room_name = Room.make();
       if (room_name) {
-        owner_room.id = room_name 
-      }else{
-        socket.emit('room_sold_out')
-        return
+        owner_room.id = room_name;
+      } else {
+        socket.emit("server_room_sold_out");
+        // process.exit(1500); //如果不退出，client多次点击创建房间后会发送多个room_sold_out
+        return;
       }
-      owner_room.join_player(conn.player)
-      //创建房间后，应该把房间添加到此socket的连接信息中
-      conn.room = owner_room
-      console.log(`${conn.player.username}创建了房间${owner_room.id}`)
+      owner_room.join_player(conn.player); //新建的房间要加入本玩家
+      conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
+      console.log(`${conn.player.username}创建了房间${owner_room.id}`);
       //成功创建房间后要给前端发送成功的消息
-      socket.emit('made_room', owner_room.id)
+      socket.emit("server_made_room", owner_room.id);
     }
   });
   //玩家加入某个指定房间room_name
-  socket.on("join_room",function(room_name){
+  socket.on("join_room", function(room_name) {
     //用户能够发出这个事件说明已经登录，否则就直接断开连接。
-    let player = g_lobby.get_player(socket)
+    let player = g_lobby.get_player(socket);
     if (player.room) {
-      socket.join(room_name, function () {
+      //todo: 检查房间玩家数量，超过3人就不能再添加了
+      socket.join(room_name, function() {
         //告诉房间的其它人我已经加入房间
-        socket.to(room_name,emit('room_enter', player.username))
-      })
-    }else{
-      socket.emit('no_such_room', room_name)
+        socket.to(room_name, emit("room_enter", player.username));
+      });
+    } else {
+      socket.emit("server_no_such_room", room_name);
     }
-  })
+  });
   socket.on("ready_server", function() {
     // let testData= io.sockets.connected
     // console.log(testData)

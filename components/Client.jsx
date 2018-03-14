@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import Images from "./Images";
 import PlayerImages from "./PlayerImages";
 import * as config from "./../config";
+import _ from "lodash";
 
 // var can_da_pai = false //客户端能否打牌，是由服务器发牌所改变
 
@@ -24,7 +25,7 @@ var Play = React.createClass({
       results: [],
       tablePai: [],
       paiFromTable: [],
-      room_name: "",
+      room_name: ""
     };
   },
   propTypes: {
@@ -51,10 +52,24 @@ var Play = React.createClass({
       this.socket.emit("login", {
         username: this.state.text
       });
+      //监听服务器的login事件，有则成功登录服务器
+      this.socket.on("login", () => {
+        this.setState({ username: this.state.text });
+        // this.show_info_room(ArrayPlayer);
+      });
     }
   },
+  //给服务器发消息，要创建一个房间，同时可以把接收服务器的消息放在这儿，权当是返回值了！放在一起其实更好阅读
   create_room() {
     this.socket.emit("create_room");
+    //服务器已经创建好房间，但是貌似多次执行后会重复的接收
+    this.socket.once("server_made_room", room_name => {
+      this.setState({ room_name });
+    });
+    //没有可用的房间了
+    this.socket.once("server_room_sold_out", () => {
+      alert("很抱歉，无可用房间，请联系客服！");
+    });
   },
   join_room() {
     let isRoomTextEmpty = this.state.room_id.replace(/\s+/g).length == 0;
@@ -64,6 +79,16 @@ var Play = React.createClass({
       //玩家想要加入房间room_id, 给服务器发join_room消息，并带有房间号数据
       //因为服务器的连接中保存了相关了用户信息，所以并不需要再传递用户名
       this.socket.emit("join_room", this.state.room_id);
+      //加入房间成功
+      this.socket.once("joined", room_player_names => {
+        this.show_info_room(room_player_names);
+      });
+      this.socket.once("server_room_full", () => {
+        this.setState({ info_room: "房间已满" });
+      });
+      this.socket.once("server_no_such_room", room_name => {
+        alert(`无此房间号:${room_name}`);
+      });
     }
   },
   handleChatSubmit: function(e) {
@@ -116,27 +141,6 @@ var Play = React.createClass({
       }, 2000);
     });
 
-    this.socket.on("room_full", () => {
-      this.setState({ info_room: "房间已满" });
-    });
-
-    this.socket.on("joined", ArrayPlayer => {
-      this.show_info_room(ArrayPlayer);
-    });
-
-    this.socket.on("login", () => {
-      this.setState({ username: this.state.text });
-      // this.show_info_room(ArrayPlayer);
-    });
-
-    //服务器已经创建好房间
-    this.socket.on("made_room", room_name => {
-      this.setState({ room_name });
-    });
-    //没有可用的房间了
-    this.socket.on("room_sold_out", () => {
-      alert('很抱歉，无可用房间，请联系客服！')
-    });
     //接收服务器发来的room_enter消息，表明服务器已经将本玩家加入房间中。
     this.socket.on("room_enter", info => {
       console.log("new user entered", info);
@@ -206,16 +210,12 @@ var Play = React.createClass({
         ) : (
           <div>
             {this.state.username} 登入
-            {this.state.ready ? null : (
-              <button onClick={this.startGame}>开始</button>
-            )}
             <form onSubmit={this.handleChatSubmit}>
               发信息：<input
                 onChange={this.chatChange}
                 value={this.state.chatText}
               />
             </form>
-            
             {this.state.room_name.length == 0 ? (
               <div className="room_staff">
                 房间号：<input
@@ -226,7 +226,12 @@ var Play = React.createClass({
                 <button onClick={this.join_room}>加入房间</button>
               </div>
             ) : (
-              <div>房间名称：{this.state.room_name}</div>
+              <div>
+                房间名称：{this.state.room_name}
+                {this.state.ready ? null : (
+                  <button onClick={this.startGame}>开始</button>
+                )}
+              </div>
             )}
           </div>
         )}
