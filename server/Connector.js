@@ -15,8 +15,8 @@ export class Connector {
     });
   }
   dis_connect(socket) {
-    let player = this.get_player(socket);
-    let room = this.get_player(socket);
+    let player = this.find_player_by_socket(socket);
+    let room = this.find_room_by_socket(socket);
     if (player && room) {
       //todo:如果用户已经进入房间，还需要在房间里面断开连接，告诉其它人此用户已经掉线
     }
@@ -33,27 +33,29 @@ export class Connector {
       if (item.player) {
         return item.player.username == name;
       } else {
-        return null;
+        return false;
       }
-    });
+    })
+  }
+  //通过socket_id找到玩家所在的房间
+  find_room_by_socket(socket) {
+    return this.find_conn_by(socket).room;
   }
   //查找存在的房间
   find_room_by_id(room_name) {
-    return this.conn_array.find(item => {
+    let conn = this.conn_array.find(item => {
       if (item.room) {
         return item.room.id == room_name;
       } else {
-        return null;
+        return false;
       }
     });
+    return conn.room;
   }
-  get_player(socket) {
+  find_player_by_socket(socket) {
     return this.find_conn_by(socket).player;
   }
-  //通过socket_id找到玩家所在的房间
-  get_room(socket) {
-    return this.find_conn_by(socket).room;
-  }
+
   get clients_count() {
     return this.conn_array.length;
   }

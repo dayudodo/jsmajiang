@@ -60,7 +60,7 @@ io.sockets.on("connection", function(socket) {
   // connections.push(socket);
   g_lobby.new_connect(socket);
   console.log(
-    `有新的连接：${socket.id} | Connected count: ${g_lobby.clients_count}`
+    `有新的连接：${socket.id} | 服务器连接数: ${g_lobby.clients_count}`
   );
 
   // 玩家对象
@@ -88,15 +88,20 @@ io.sockets.on("connection", function(socket) {
     //需要一个房间一个房间的找，效率太慢！一个socket来了，就建立好相关的信息。
     let disconnect_client = g_lobby.dis_connect(socket);
     // console.dir(disconnect_client);
-    let first = _.first(disconnect_client);
-    if (first && first.player) {
-      console.log(`玩家：${first.player.username} 连接断开`);
+    let d_client = _.first(disconnect_client);
+    //断开其实要考虑的事情也比较多，登录后断开，加入房间后断开，都要想到，所以写这东西对游戏服务器肯定是有基础的了解了！
+    if (d_client && d_client.player) {
+      console.log(`玩家:${d_client.player.username} 连接断开`);
+      let room = d_client.room
+      if (room) {
+        room.exit_room(socket)
+        console.log(`玩家:${d_client.player.username}退出房间${room.id}`);
+      }
     } else {
       console.log(`用户未登录的情况下断开连接: ${socket.id}`);
     }
     //只有进入房间的才算是真正的玩家
     // console.log("剩%s个用户...", g_lobby.players_count);
-
     socket.disconnect();
     console.log("剩%s个连接...", g_lobby.clients_count);
   });
@@ -172,28 +177,40 @@ io.sockets.on("connection", function(socket) {
         owner_room.id = room_name;
       } else {
         socket.emit("server_room_sold_out");
-        // process.exit(1500); //如果不退出，client多次点击创建房间后会发送多个room_sold_out
+        // process.exit(1500);
         return;
       }
       owner_room.join_player(conn.player); //新建的房间要加入本玩家
       conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
       console.log(`${conn.player.username}创建了房间${owner_room.id}`);
+      // console.dir(conn)
+      socket.join(room_name) //成功后你还需要让此socket加入此房间，不然创建者收不到任何消息
       //成功创建房间后要给前端发送成功的消息
       socket.emit("server_made_room", owner_room.id);
     }
   });
   //玩家加入某个指定房间room_name
-  socket.on("join_room", function(room_name) {
-    //用户能够发出这个事件说明已经登录，否则就直接断开连接。
-    let player = g_lobby.get_player(socket);
-    if (player.room) {
+  socket.on("join_room", function(room_id) {
+    let room = g_lobby.find_room_by_id(room_id);
+    // console.dir(room);
+    let _me = g_lobby.find_player_by_socket(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
+    console.log(`用户${_me.username}想要加入房间${room_id}`);
+    console.dir(room)
+    if (room) {
       //todo: 检查房间玩家数量，超过3人就不能再添加了
-      socket.join(room_name, function() {
-        //告诉房间的其它人我已经加入房间
-        socket.to(room_name, emit("room_enter", player.username));
-      });
+      console.log(`${room_id}房间内全部玩家：${room.all_player_names}`);
+      if (room.players_count == 3) {
+        socket.emit("server_room_full");
+      } else {
+        console.log(`用户${_me.username}成功加入房间${room_id}`);
+        room.join_player(_me)
+        socket.join(room_id, () => {
+          //告诉房间的其它人我已经加入房间
+          io.to(room_id).emit("server_player_enter_room", room.all_player_names);
+        });
+      }
     } else {
-      socket.emit("server_no_such_room", room_name);
+      socket.emit("server_no_such_room", room_id);
     }
   });
   socket.on("ready_server", function() {

@@ -25,7 +25,8 @@ var Play = React.createClass({
       results: [],
       tablePai: [],
       paiFromTable: [],
-      room_name: ""
+      room_name: "",
+      player_names: ""
     };
   },
   propTypes: {
@@ -78,11 +79,9 @@ var Play = React.createClass({
     } else {
       //玩家想要加入房间room_id, 给服务器发join_room消息，并带有房间号数据
       //因为服务器的连接中保存了相关了用户信息，所以并不需要再传递用户名
+      console.log("room_id:", this.state.room_id);
       this.socket.emit("join_room", this.state.room_id);
-      //加入房间成功
-      this.socket.once("joined", room_player_names => {
-        this.show_info_room(room_player_names);
-      });
+
       this.socket.once("server_room_full", () => {
         this.setState({ info_room: "房间已满" });
       });
@@ -142,8 +141,11 @@ var Play = React.createClass({
     });
 
     //接收服务器发来的room_enter消息，表明服务器已经将本玩家加入房间中。
-    this.socket.on("room_enter", info => {
-      console.log("new user entered", info);
+    this.socket.on("server_player_enter_room", player_names => {
+      console.log(`进入房间的玩家们：${player_names}`);
+      this.setState({
+        player_names
+      });
     });
 
     this.socket.on("chat_cast", info => {
@@ -209,7 +211,7 @@ var Play = React.createClass({
           </form>
         ) : (
           <div>
-            {this.state.username} 登入
+            {this.state.username} 登入，房间内全部玩家：{this.state.player_names}
             <form onSubmit={this.handleChatSubmit}>
               发信息：<input
                 onChange={this.chatChange}
