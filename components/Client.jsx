@@ -14,7 +14,6 @@ var Play = React.createClass({
     return {
       status: "服务器已经断开",
       text: "",
-      room_id: "roomAnge",
       chatText: "",
       username: "",
       ready: false,
@@ -26,6 +25,7 @@ var Play = React.createClass({
       tablePai: [],
       paiFromTable: [],
       room_name: "",
+      room_id: "roomAnge",
       player_names: ""
     };
   },
@@ -144,7 +144,8 @@ var Play = React.createClass({
     this.socket.on("server_player_enter_room", player_names => {
       console.log(`进入房间的玩家们：${player_names}`);
       this.setState({
-        player_names
+        player_names: player_names,
+        room_name: this.state.room_id
       });
     });
 
@@ -195,6 +196,7 @@ var Play = React.createClass({
     }
   },
   render: function() {
+    let isRoomValid = this.state.room_name.length != 0;
     return (
       <div>
         <h1>{this.state.status}</h1>
@@ -211,14 +213,23 @@ var Play = React.createClass({
           </form>
         ) : (
           <div>
-            {this.state.username} 登入，房间内全部玩家：{this.state.player_names}
+            {this.state.username} 登入，房间内全部玩家：{
+              this.state.player_names
+            }
             <form onSubmit={this.handleChatSubmit}>
               发信息：<input
                 onChange={this.chatChange}
                 value={this.state.chatText}
               />
             </form>
-            {this.state.room_name.length == 0 ? (
+            {isRoomValid ? (
+              <div>
+                房间名称：{this.state.room_name}
+                {this.state.ready ? null : (
+                  <button onClick={this.startGame}>开始</button>
+                )}
+              </div>
+            ) : (
               <div className="room_staff">
                 房间号：<input
                   onChange={this.onRoomChange}
@@ -226,13 +237,6 @@ var Play = React.createClass({
                 />
                 <button onClick={this.create_room}>创建房间</button>
                 <button onClick={this.join_room}>加入房间</button>
-              </div>
-            ) : (
-              <div>
-                房间名称：{this.state.room_name}
-                {this.state.ready ? null : (
-                  <button onClick={this.startGame}>开始</button>
-                )}
               </div>
             )}
           </div>
