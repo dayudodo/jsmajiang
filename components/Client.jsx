@@ -62,15 +62,19 @@ var Play = React.createClass({
   },
   //给服务器发消息，要创建一个房间，同时可以把接收服务器的消息放在这儿，权当是返回值了！放在一起其实更好阅读
   create_room() {
-    this.socket.emit("create_room");
-    //服务器已经创建好房间，但是貌似多次执行后会重复的接收
-    this.socket.once("server_made_room", room_name => {
-      this.setState({ room_name });
+    this.socket.emit("create_room", data => {
+      if (data.error) {
+        alert(data.error);
+      } else {
+        this.setState({ room_name: data.room_name });
+      }
     });
-    //没有可用的房间了
-    this.socket.once("server_room_sold_out", () => {
-      alert("很抱歉，无可用房间，请联系客服！");
-    });
+    // //服务器已经创建好房间，但是貌似多次执行后会重复的接收
+    // this.socket.once("server_made_room", room_name => {});
+    // //没有可用的房间了
+    // this.socket.once("server_room_sold_out", () => {
+    //   alert("很抱歉，无可用房间，请联系客服！");
+    // });
   },
   join_room() {
     let isRoomTextEmpty = this.state.room_id.replace(/\s+/g).length == 0;
@@ -96,8 +100,11 @@ var Play = React.createClass({
     }
   },
   startGame: function() {
-    console.log(this.state.username + "ready_server")
-    this.socket.emit("player_ready");
+    console.log(this.state.username + " click startGame");
+    this.socket.emit("player_ready", data => {
+      console.log(`我自己准备好了`);
+      this.setState({ ready: true });
+    });
   },
   show_info_room: function(ArrayPlayer) {
     let filtered = ArrayPlayer.filter(
@@ -153,12 +160,11 @@ var Play = React.createClass({
       console.log("%s : %s", info.username, info.chatText);
     });
 
-    this.socket.on("server_receive_ready", info => {
+    this.socket.on("server_receive_ready", username => {
       this.setState({
-        ready: true,
-        status: this.state.username + "已准备，等待其它玩家加入"
+        status: username + "已准备"
       });
-      console.log("%s 准备开始", info);
+      // console.log("%s 准备开始", username);
     });
 
     this.socket.on("server_game_start", serverData => {

@@ -167,7 +167,8 @@ io.sockets.on("connection", function(socket) {
   });
 
   //玩家创建房间，玩家先前应已登录
-  socket.on("create_room", function() {
+  socket.on("create_room", function(callback) {
+    // console.dir(callback)
     let conn = g_lobby.find_conn_by(socket);
     if (!conn.player) {
       socket.disconnect();
@@ -178,7 +179,8 @@ io.sockets.on("connection", function(socket) {
       if (room_name) {
         owner_room.id = room_name;
       } else {
-        socket.emit("server_room_sold_out");
+        // socket.emit("server_room_sold_out");
+        callback({"error":"很抱歉，无可用房间，请联系客服！"});
         // process.exit(1500);
         return;
       }
@@ -188,7 +190,8 @@ io.sockets.on("connection", function(socket) {
       // console.dir(conn)
       socket.join(room_name); //成功后你还需要让此socket加入此房间，不然创建者收不到任何消息
       //成功创建房间后要给前端发送成功的消息
-      socket.emit("server_made_room", owner_room.id);
+      // socket.emit("server_made_room", owner_room.id);
+      callback({"room_name": owner_room.id})
     }
   });
   //玩家加入某个指定房间room_name
@@ -203,11 +206,11 @@ io.sockets.on("connection", function(socket) {
     // console.log('本玩家连接信息')
     // console.dir(conn);
     if (room) {
-      //todo: 检查房间玩家数量，超过3人就不能再添加了
       let room_name  = room.id
+      //todo: 检查房间玩家数量，超过3人就不能再添加了
       console.log(`${room_name}房间内全部玩家：${room.all_player_names}`);
       if (room.players_count == config.LIMIT_IN_ROOM) {
-        console.log(`房间${room.id}已满，玩家有：${room.all_player_names}`)
+        console.log(`房间${room_name}已满，玩家有：${room.all_player_names}`)
         socket.emit("server_room_full");
       } else {
         console.log(`用户${_me.username}成功加入房间${room_name}`);
@@ -224,23 +227,23 @@ io.sockets.on("connection", function(socket) {
         });
       }
     } else {
-      console.log(`服务器无此房间：${room_name}`)
-      socket.emit("server_no_such_room", room_name);
+      console.log(`服务器无此房间：${room_id}`)
+      socket.emit("server_no_such_room", room_id);
     }
   });
   //玩家点击开始
-  socket.on("player_ready", function() {
+  socket.on("player_ready", function(fn) {
     let player = g_lobby.find_player_by_socket(socket)
     let room = g_lobby.find_room_by_socket(socket)
     let room_name = room.id
     player.ready = true;
-    // socket.emit("ready_client", player.username);
+    
     //向房间内的所有人广播说我已经开始了
-    io.to(room_name).emit("server_receive_ready", player.username);
+    socket.to(room_name).emit("server_receive_ready", player.username);
     console.log(`房间：${room_name}内用户：${player.username}准备开始游戏 。。。`);
     // 如果所有的人都准备好了，就开始游戏！
     if (room.all_ready) {
-      console.log(`=>房间${room_name}全部玩家已经准备好！`);
+      console.log(`=>房间${room_name}全部玩家准备完毕，可以游戏啦！`);
       // let others = ArrayPlayer.map(item => {
       //   return _.find(connections, {
       //     id: item.id
@@ -260,6 +263,7 @@ io.sockets.on("connection", function(socket) {
       //   }
       // });
     }
+    fn(player.username);
   });
 
   //玩家打了一张牌
