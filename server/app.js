@@ -128,7 +128,7 @@ io.sockets.on("connection", function(socket) {
     });
     //一开始连接的时候还没有用户信息，在用户登录之后再行保存到连接信息中，方便查询
     conn.player = s_player;
-    console.log(`${s_player.username}玩家已经登录`);
+    console.log(`玩家: ${s_player.username}已经登录`);
     //服务器给本玩家发送登录成功的消息
     socket.emit("login");
 

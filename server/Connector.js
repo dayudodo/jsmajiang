@@ -35,7 +35,7 @@ export class Connector {
       } else {
         return false;
       }
-    })
+    });
   }
   //通过socket_id找到玩家所在的房间
   find_room_by_socket(socket) {
@@ -50,7 +50,7 @@ export class Connector {
         return false;
       }
     });
-    return conn.room;
+    return conn ? conn.room : null;
   }
   find_player_by_socket(socket) {
     return this.find_conn_by(socket).player;
