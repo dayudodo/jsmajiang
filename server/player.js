@@ -6,7 +6,7 @@ export class Player {
 
   //连接之后，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({shou_pai=[], socket,  username}) {
-    this.room = null
+    // this.room = null
     this.socket = socket
     //用户是否连接？有可能掉线！
     this.connect = false

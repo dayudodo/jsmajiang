@@ -87,15 +87,17 @@ io.sockets.on("connection", function(socket) {
     //连接的socketId, player信息，room信息，这样就不需要再去player中查找了，那样比较麻烦，玩家一多找起来可就麻烦了。
     //需要一个房间一个房间的找，效率太慢！一个socket来了，就建立好相关的信息。
     let disconnect_client = g_lobby.dis_connect(socket);
-    // console.dir(disconnect_client);
+    console.dir(disconnect_client);
     let d_client = _.first(disconnect_client);
     //断开其实要考虑的事情也比较多，登录后断开，加入房间后断开，都要想到，所以写这东西对游戏服务器肯定是有基础的了解了！
     if (d_client && d_client.player) {
       console.log(`玩家:${d_client.player.username} 连接断开`);
-      let room = d_client.room
+      let room = d_client.room;
+      console.dir(room)
       if (room) {
-        room.exit_room(socket)
+        room.exit_room(socket);
         console.log(`玩家:${d_client.player.username}退出房间${room.id}`);
+        //todo: 断开连接还需要通知其它用户我断线了
       }
     } else {
       console.log(`用户未登录的情况下断开连接: ${socket.id}`);
@@ -184,7 +186,7 @@ io.sockets.on("connection", function(socket) {
       conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
       console.log(`${conn.player.username}创建了房间${owner_room.id}`);
       // console.dir(conn)
-      socket.join(room_name) //成功后你还需要让此socket加入此房间，不然创建者收不到任何消息
+      socket.join(room_name); //成功后你还需要让此socket加入此房间，不然创建者收不到任何消息
       //成功创建房间后要给前端发送成功的消息
       socket.emit("server_made_room", owner_room.id);
     }
@@ -194,62 +196,69 @@ io.sockets.on("connection", function(socket) {
     let room = g_lobby.find_room_by_id(room_id);
     // console.dir(room);
     let _me = g_lobby.find_player_by_socket(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
+    let conn = g_lobby.find_conn_by(socket)
+    //找到房间后，还要把当前连接的room保存到其连接信息中，而在登录时conn中已经保存有用户信息了
+    conn.room = room
     console.log(`用户${_me.username}想要加入房间${room_id}`);
-    console.dir(room)
+    // console.log('本玩家连接信息')
+    // console.dir(conn);
     if (room) {
       //todo: 检查房间玩家数量，超过3人就不能再添加了
-      console.log(`${room_id}房间内全部玩家：${room.all_player_names}`);
-      if (room.players_count == 3) {
+      let room_name  = room.id
+      console.log(`${room_name}房间内全部玩家：${room.all_player_names}`);
+      if (room.players_count == config.LIMIT_IN_ROOM) {
+        console.log(`房间${room.id}已满，玩家有：${room.all_player_names}`)
         socket.emit("server_room_full");
       } else {
-        console.log(`用户${_me.username}成功加入房间${room_id}`);
-        room.join_player(_me)
-        socket.join(room_id, () => {
+        console.log(`用户${_me.username}成功加入房间${room_name}`);
+        room.join_player(_me);
+        // console.dir(room)
+        socket.join(room_name, () => {
           //告诉房间的其它人我已经加入房间
-          io.to(room_id).emit("server_player_enter_room", room.all_player_names);
+          io
+            .to(room_name)
+            .emit("server_player_enter_room", {
+              player_names: room.all_player_names,
+              room_name: room_name
+            });
         });
       }
     } else {
-      socket.emit("server_no_such_room", room_id);
+      console.log(`服务器无此房间：${room_name}`)
+      socket.emit("server_no_such_room", room_name);
     }
   });
-  socket.on("ready_server", function() {
-    // let testData= io.sockets.connected
-    // console.log(testData)
-    //用户所带有的socketid其实就是其唯一身份！
-    let current_player = _.find(ArrayPlayer, {
-      id: socket.id
-    });
-    current_player.ready = true;
-    socket.emit("ready_client", current_player.username);
-    socket.to("room").emit("ready_client", current_player.username);
-    console.log("%s is ready to start:", current_player.username);
+  //玩家点击开始
+  socket.on("player_ready", function() {
+    let player = g_lobby.find_player_by_socket(socket)
+    let room = g_lobby.find_room_by_socket(socket)
+    let room_name = room.id
+    player.ready = true;
+    // socket.emit("ready_client", player.username);
+    //向房间内的所有人广播说我已经开始了
+    io.to(room_name).emit("server_receive_ready", player.username);
+    console.log(`房间：${room_name}内用户：${player.username}准备开始游戏 。。。`);
     // 如果所有的人都准备好了，就开始游戏！
-    let player_ready_count = ArrayPlayer.filter(item => item.ready).length;
-    console.log("ready count:", player_ready_count);
-    let allReady = player_ready_count == 3;
-    if (allReady) {
-      console.log("all players ready, start game");
-      let others = ArrayPlayer.map(item => {
-        return _.find(connections, {
-          id: item.id
-        });
-      });
-      // console.log(others.length)
-
-      let dongJia = _.find(ArrayPlayer, {
-        east: true
-      });
-      others.forEach(otherSocket => {
-        if (otherSocket.id == dongJia.id) {
-          otherSocket.emit("game_start", clone_pai.splice(0, 13));
-          let fa_pai = clone_pai.splice(0, 1);
-          console.log("服务器发牌：%s", fa_pai);
-          otherSocket.emit("table_fa_pai", fa_pai);
-        } else {
-          otherSocket.emit("game_start", clone_pai.splice(0, 13));
-        }
-      });
+    if (room.all_ready) {
+      console.log(`=>房间${room_name}全部玩家已经准备好！`);
+      // let others = ArrayPlayer.map(item => {
+      //   return _.find(connections, {
+      //     id: item.id
+      //   });
+      // });
+      // let dongJia = _.find(ArrayPlayer, {
+      //   east: true
+      // });
+      // others.forEach(otherSocket => {
+      //   if (otherSocket.id == dongJia.id) {
+      //     otherSocket.emit("server_game_start", clone_pai.splice(0, 13));
+      //     let fa_pai = clone_pai.splice(0, 1);
+      //     console.log("服务器发牌：%s", fa_pai);
+      //     otherSocket.emit("table_fa_pai", fa_pai);
+      //   } else {
+      //     otherSocket.emit("server_game_start", clone_pai.splice(0, 13));
+      //   }
+      // });
     }
   });
 
@@ -277,7 +286,7 @@ io.sockets.on("connection", function(socket) {
     }
   });
 
-  socket.on("chat_cast", function(info) {
+  socket.on("server_chat_cast", function(info) {
     socket.to("room").emit("chat_cast", clone_pai);
   });
 });

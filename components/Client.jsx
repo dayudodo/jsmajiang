@@ -81,13 +81,6 @@ var Play = React.createClass({
       //因为服务器的连接中保存了相关了用户信息，所以并不需要再传递用户名
       console.log("room_id:", this.state.room_id);
       this.socket.emit("join_room", this.state.room_id);
-
-      this.socket.once("server_room_full", () => {
-        this.setState({ info_room: "房间已满" });
-      });
-      this.socket.once("server_no_such_room", room_name => {
-        alert(`无此房间号:${room_name}`);
-      });
     }
   },
   handleChatSubmit: function(e) {
@@ -103,8 +96,8 @@ var Play = React.createClass({
     }
   },
   startGame: function() {
-    // console.log(this.state.username + "ready_server")
-    this.socket.emit("ready_server");
+    console.log(this.state.username + "ready_server")
+    this.socket.emit("player_ready");
   },
   show_info_room: function(ArrayPlayer) {
     let filtered = ArrayPlayer.filter(
@@ -140,28 +133,35 @@ var Play = React.createClass({
       }, 2000);
     });
 
+    this.socket.on("server_room_full", () => {
+      this.setState({ info_room: "房间已满" });
+    });
+    this.socket.on("server_no_such_room", room_name => {
+      alert(`无此房间号:${room_name}`);
+    });
+
     //接收服务器发来的room_enter消息，表明服务器已经将本玩家加入房间中。
-    this.socket.on("server_player_enter_room", player_names => {
-      console.log(`进入房间的玩家们：${player_names}`);
+    this.socket.on("server_player_enter_room", data => {
+      console.log(`进入房间的玩家们：${data.player_names}`);
       this.setState({
-        player_names: player_names,
-        room_name: this.state.room_id
+        player_names: data.player_names,
+        room_name: data.room_name
       });
     });
 
-    this.socket.on("chat_cast", info => {
+    this.socket.on("server_chat_cast", info => {
       console.log("%s : %s", info.username, info.chatText);
     });
 
-    this.socket.on("ready_client", info => {
+    this.socket.on("server_receive_ready", info => {
       this.setState({
         ready: true,
         status: this.state.username + "已准备，等待其它玩家加入"
       });
-      console.log("%s is ready to start", info);
+      console.log("%s 准备开始", info);
     });
 
-    this.socket.on("game_start", serverData => {
+    this.socket.on("server_game_start", serverData => {
       this.setState({
         status: "游戏开始",
         results: serverData.sort()

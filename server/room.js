@@ -22,12 +22,17 @@ export class Room {
   }
   exit_room(socket) {
     _.remove(this.players, function(item) {
-      item.socket == socket;
+      return item.socket.id == socket.id;
     });
   }
   get_player(socket_id) {
     // _.find(this.players, {socket_id: socket_id})
     this.players.find(p => p.socket_id == socket_id);
+  }
+  get all_ready() {
+    let player_ready_count = this.players.filter(item => item.ready).length;
+    console.log(`房间:${this.id}内玩家准备开始计数：${player_ready_count}`);
+    return player_ready_count == config.LIMIT_IN_ROOM;
   }
   get players_count() {
     return this.players.length;
