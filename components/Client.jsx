@@ -25,14 +25,9 @@ var Play = React.createClass({
       tablePai: [],
       paiFromTable: [],
       room_name: "",
-      room_id: "roomAnge",
+      room_id: "rose",
       player_names: ""
     };
-  },
-  propTypes: {
-    results: React.PropTypes.array,
-    tablePai: React.PropTypes.array,
-    paiFromTable: React.PropTypes.array
   },
   onChange: function(e) {
     this.setState({ text: e.target.value });
@@ -176,10 +171,13 @@ var Play = React.createClass({
     this.socket.on("dapai", one_pai => {
       this.setState({ tablePai: one_pai });
     });
-    this.socket.on("table_fa_pai", pai => {
+    this.socket.on("server_table_fa_pai", pai => {
       // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
-      // can_da_pai = true
-      let results = this.state.results.concat(pai);
+      console.dir(this.state.results)
+      console.log('接收到服务器发牌%s', pai)
+      let results = _.clone(this.state.results).concat(pai);
+      console.dir(results);
+      // let results = _.clone(this.state.results).
       this.setState({ results: results, can_da_pai: true });
     });
     this.socket.on("game over", () => {

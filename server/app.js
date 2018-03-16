@@ -12,36 +12,11 @@ import { Player } from "./player";
 import { Room } from "./room";
 import { Connector } from "./Connector";
 
-//以前还不熟悉如何复制一个数组
-Array.prototype.repeat = function(times) {
-  var result = [];
-  for (var i = 0; i < times; i++) {
-    this.map(item => {
-      result.push(item);
-    });
-  }
-  return result;
-};
 
 //初始化几个可用房间，每次用完就将其删除掉，直接房间全部占完
 var g_rooms = [];
 var g_lobby = new Connector();
-var ArrayPlayer = [];
-var Hobby = []; //大厅，用来保存房间
 
-var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
-var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
-// 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-var ZHIPAI = ["zh", "fa", "di"];
-
-var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
-var all_pai = BING.repeat(4)
-  .concat(TIAO.repeat(4))
-  .concat(ZHIPAI.repeat(4));
-var table_random_pai = _.shuffle(all_pai);
-
-// var clone_pai = _.clone(table_random_pai).splice(0,45) // 全局变量，开发时记得重启，开发时使用45张牌
-var clone_pai = _.clone(table_random_pai);
 // console.log(_.shuffle(all_pai), all_pai.length)
 // var RoomName = "roomAnge";
 var player_index = 0;
@@ -87,7 +62,7 @@ io.sockets.on("connection", function(socket) {
     //连接的socketId, player信息，room信息，这样就不需要再去player中查找了，那样比较麻烦，玩家一多找起来可就麻烦了。
     //需要一个房间一个房间的找，效率太慢！一个socket来了，就建立好相关的信息。
     let disconnect_client = g_lobby.dis_connect(socket);
-    console.dir(disconnect_client);
+    // console.dir(disconnect_client);
     let d_client = _.first(disconnect_client);
     //断开其实要考虑的事情也比较多，登录后断开，加入房间后断开，都要想到，所以写这东西对游戏服务器肯定是有基础的了解了！
     if (d_client && d_client.player) {
@@ -184,6 +159,7 @@ io.sockets.on("connection", function(socket) {
         // process.exit(1500);
         return;
       }
+      conn.player.east = true //创建房间者即为东家，初始化时会多一张牉！
       owner_room.join_player(conn.player); //新建的房间要加入本玩家
       conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
       console.log(`${conn.player.username}创建了房间${owner_room.id}`);
@@ -243,7 +219,9 @@ io.sockets.on("connection", function(socket) {
     console.log(`房间：${room_name}内用户：${player.username}准备开始游戏 。。。`);
     // 如果所有的人都准备好了，就开始游戏！
     if (room.all_ready) {
-      console.log(`=>房间${room_name}全部玩家准备完毕，可以游戏啦！`);
+      console.log(`===>房间${room_name}全部玩家准备完毕，可以游戏啦！`);
+      //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
+      room.start_game()
       // let others = ArrayPlayer.map(item => {
       //   return _.find(connections, {
       //     id: item.id

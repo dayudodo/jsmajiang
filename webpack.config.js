@@ -1,27 +1,29 @@
 var webpack = require('webpack');
 var path = require('path');
 
+const rules = [
+  {
+    test: /\.(js|jsx)$/,
+    exclude: /node_modules/,
+    use: [
+      'babel-loader',
+    ],
+  },
+];
+
 module.exports = {
+  mode:"development",
   devtool: "source-map",
-  entry: [path.resolve(__dirname, "components/main.jsx")],
+  entry: "./components/main.jsx",
   output: {
     path: path.resolve(__dirname, "build"),
     publicPath: "app/",
     filename: "bundle.js"
   },
   module: {
-    loaders: [
-      {
-        test: /\.js|jsx$/,
-        loaders: ["babel"],
-        exclude: /node_modules/
-      }
-    ]
+    rules
   },
   resolve: {
-    extensions: ["", ".jsx", ".js"]
+    extensions: [ ".jsx", ".js"]
   },
-  plugins: [
-    // new webpack.NoErrorsPlugin()
-  ]
 };
