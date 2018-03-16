@@ -11,14 +11,14 @@ import * as config from "../config";
 import { Player } from "./player";
 import { Room } from "./room";
 import { Connector } from "./Connector";
-
+import chalk from "chalk";
 
 //初始化几个可用房间，每次用完就将其删除掉，直接房间全部占完
 var g_rooms = [];
 var g_lobby = new Connector();
 
 // console.log(_.shuffle(all_pai), all_pai.length)
-// var RoomName = "roomAnge";
+// var room_name = "roomAnge";
 var player_index = 0;
 
 server.listen(config.PORT, function() {
@@ -68,7 +68,7 @@ io.sockets.on("connection", function(socket) {
     if (d_client && d_client.player) {
       console.log(`玩家:${d_client.player.username} 连接断开`);
       let room = d_client.room;
-      console.dir(room)
+      console.dir(room);
       if (room) {
         room.exit_room(socket);
         console.log(`玩家:${d_client.player.username}退出房间${room.id}`);
@@ -125,8 +125,8 @@ io.sockets.on("connection", function(socket) {
     //       player.east = true;
     //     }
     //     player.username = new_player.username;
-    //     socket.join(RoomName, function() {
-    //       socket.to(RoomName).emit("room_enter", player.username);
+    //     socket.join(room_name, function() {
+    //       socket.to(room_name).emit("room_enter", player.username);
     //       console.log("%s join room ", player.username);
     //     });
     //     ArrayPlayer.push(player);
@@ -155,11 +155,12 @@ io.sockets.on("connection", function(socket) {
         owner_room.id = room_name;
       } else {
         // socket.emit("server_room_sold_out");
-        callback({"error":"很抱歉，无可用房间，请联系客服！"});
+        callback({ error: "很抱歉，无可用房间，请联系客服！" });
         // process.exit(1500);
         return;
       }
-      conn.player.east = true //创建房间者即为东家，初始化时会多一张牉！
+      conn.player.east = true; //创建房间者即为东家，初始化时会多一张牉！
+      conn.player.seat_index = 0; //玩家座位号从0开始
       owner_room.join_player(conn.player); //新建的房间要加入本玩家
       conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
       console.log(`${conn.player.username}创建了房间${owner_room.id}`);
@@ -167,7 +168,7 @@ io.sockets.on("connection", function(socket) {
       socket.join(room_name); //成功后你还需要让此socket加入此房间，不然创建者收不到任何消息
       //成功创建房间后要给前端发送成功的消息
       // socket.emit("server_made_room", owner_room.id);
-      callback({"room_name": owner_room.id})
+      callback({ room_name: owner_room.id });
     }
   });
   //玩家加入某个指定房间room_name
@@ -175,97 +176,74 @@ io.sockets.on("connection", function(socket) {
     let room = g_lobby.find_room_by_id(room_id);
     // console.dir(room);
     let _me = g_lobby.find_player_by_socket(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
-    let conn = g_lobby.find_conn_by(socket)
+    let conn = g_lobby.find_conn_by(socket);
     //找到房间后，还要把当前连接的room保存到其连接信息中，而在登录时conn中已经保存有用户信息了
-    conn.room = room
+    conn.room = room;
     console.log(`用户${_me.username}想要加入房间${room_id}`);
     // console.log('本玩家连接信息')
     // console.dir(conn);
     if (room) {
-      let room_name  = room.id
+      let room_name = room.id;
       //todo: 检查房间玩家数量，超过3人就不能再添加了
       console.log(`${room_name}房间内全部玩家：${room.all_player_names}`);
       if (room.players_count == config.LIMIT_IN_ROOM) {
-        console.log(`房间${room_name}已满，玩家有：${room.all_player_names}`)
+        console.log(`房间${room_name}已满，玩家有：${room.all_player_names}`);
         socket.emit("server_room_full");
       } else {
         console.log(`用户${_me.username}成功加入房间${room_name}`);
+        //设置其座位号
+        _me.seat_index = room.last_join_player.seat_index + 1;
         room.join_player(_me);
         // console.dir(room)
         socket.join(room_name, () => {
           //告诉房间的其它人我已经加入房间
-          io
-            .to(room_name)
-            .emit("server_player_enter_room", {
-              player_names: room.all_player_names,
-              room_name: room_name
-            });
+          io.to(room_name).emit("server_player_enter_room", {
+            player_names: room.all_player_names,
+            room_name: room_name
+          });
         });
       }
     } else {
-      console.log(`服务器无此房间：${room_id}`)
+      console.log(`服务器无此房间：${room_id}`);
       socket.emit("server_no_such_room", room_id);
     }
   });
   //玩家点击开始
   socket.on("player_ready", function(fn) {
-    let player = g_lobby.find_player_by_socket(socket)
-    let room = g_lobby.find_room_by_socket(socket)
-    let room_name = room.id
+    let player = g_lobby.find_player_by_socket(socket);
+    let room = g_lobby.find_room_by_socket(socket);
+    let room_name = room.id;
     player.ready = true;
-    
+
     //向房间内的所有人广播说我已经开始了
     socket.to(room_name).emit("server_receive_ready", player.username);
-    console.log(`房间：${room_name}内用户：${player.username}准备开始游戏 。。。`);
+    console.log(
+      `房间：${room_name}内用户：${player.username}准备开始游戏 。。。`
+    );
     // 如果所有的人都准备好了，就开始游戏！
     if (room.all_ready) {
-      console.log(`===>房间${room_name}全部玩家准备完毕，可以游戏啦！`);
+      console.log(
+        chalk.green(`===>房间${room_name}全部玩家准备完毕，可以游戏啦！`)
+      );
       //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
-      room.start_game()
-      // let others = ArrayPlayer.map(item => {
-      //   return _.find(connections, {
-      //     id: item.id
-      //   });
-      // });
-      // let dongJia = _.find(ArrayPlayer, {
-      //   east: true
-      // });
-      // others.forEach(otherSocket => {
-      //   if (otherSocket.id == dongJia.id) {
-      //     otherSocket.emit("server_game_start", clone_pai.splice(0, 13));
-      //     let fa_pai = clone_pai.splice(0, 1);
-      //     console.log("服务器发牌：%s", fa_pai);
-      //     otherSocket.emit("table_fa_pai", fa_pai);
-      //   } else {
-      //     otherSocket.emit("server_game_start", clone_pai.splice(0, 13));
-      //   }
-      // });
+      room.start_game();
     }
     fn(player.username);
   });
 
   //玩家打了一张牌
   socket.on("dapai", function(pai) {
-    io.in(RoomName).emit("dapai", pai);
-    // 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
-    //找到下一家，再发牌
-    let index = ++player_index % 3;
-    let shouPaiPlayer = ArrayPlayer[index];
-    let playerSocket = _.find(connections, {
-      id: shouPaiPlayer.id
-    });
-    if (clone_pai.length == 0) {
-      io.in(RoomName).emit("game over");
-      // 牌要重新发了
-      clone_pai = _.shuffle(_.clone(table_random_pai));
-      // 用户也需要重新准备
-      ArrayPlayer.forEach(item => (item.ready = false));
-    } else {
-      let fa_pai = clone_pai.splice(0, 1);
-      console.log("服务器发牌 %s 给：%s", fa_pai, shouPaiPlayer.username);
-      console.log("本桌牌还有%s张", clone_pai.length);
-      playerSocket.emit("table_fa_pai", fa_pai);
-    }
+    console.dir(pai)
+    let room = g_lobby.find_room_by_socket(socket);
+    //告诉房间，哪个socket打了啥牌
+    room.da_pai(socket, pai)
+    // let room_name = room.id;
+    
+    // io.in(room_name).emit("dapai", pai);
+    // let player = g_lobby.find_player_by_socket(socket);
+    // //服务器帮玩家记录下打的是哪个牌
+    // player.da_pai(pai);
+    
   });
 
   socket.on("server_chat_cast", function(info) {

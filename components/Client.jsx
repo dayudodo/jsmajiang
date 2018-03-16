@@ -26,7 +26,9 @@ var Play = React.createClass({
       paiFromTable: [],
       room_name: "",
       room_id: "rose",
-      player_names: ""
+      player_names: "",
+      can_peng: false,
+      can_hu: false
     };
   },
   onChange: function(e) {
@@ -101,6 +103,8 @@ var Play = React.createClass({
       this.setState({ ready: true });
     });
   },
+  pengPai() {},
+  huPai() {},
   show_info_room: function(ArrayPlayer) {
     let filtered = ArrayPlayer.filter(
       item => item.username != this.state.username
@@ -169,15 +173,12 @@ var Play = React.createClass({
       });
     });
     this.socket.on("dapai", one_pai => {
-      this.setState({ tablePai: one_pai });
+      this.setState({ tablePai: [one_pai] });
     });
     this.socket.on("server_table_fa_pai", pai => {
       // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
-      console.dir(this.state.results)
-      console.log('接收到服务器发牌%s', pai)
-      let results = _.clone(this.state.results).concat(pai);
-      console.dir(results);
-      // let results = _.clone(this.state.results).
+      console.log("接收到服务器发牌%s", pai);
+      let results = this.state.results.concat(pai);
       this.setState({ results: results, can_da_pai: true });
     });
     this.socket.on("game over", () => {
@@ -196,7 +197,7 @@ var Play = React.createClass({
       // can_da_pai = false
       results.remove(item).sort();
       this.setState({ results: results, can_da_pai: false });
-      this.socket.emit("dapai", [item]);
+      this.socket.emit("dapai", item);
     }
   },
   render: function() {
@@ -232,6 +233,12 @@ var Play = React.createClass({
                 {this.state.ready ? null : (
                   <button onClick={this.startGame}>开始</button>
                 )}
+                {this.state.can_peng ? (
+                  <button onClick={this.pengPai}>碰</button>
+                ) : null}
+                {this.state.can_hu ? (
+                  <button onClick={this.huPai}>胡牌</button>
+                ) : null}
               </div>
             ) : (
               <div className="room_staff">
