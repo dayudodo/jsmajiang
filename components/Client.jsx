@@ -177,22 +177,36 @@ var Play = React.createClass({
     });
     this.client.on("server_canPeng", (pai, callback) => {
       this.setState({ show_peng: true });
+      //有可能以前的读秒器还没有删除
+      if (this.interv) {
+        clearInterval(this.interv);
+      }
       //倒数读秒，等待用户点击碰
       this.interv = setInterval(() => {
         this.setState({ pengText: this.state.pengText - 1 });
+        //按说应该是玩家点击碰后直接就碰的，但是在这儿使用每秒检测，服务器好处理一些！
+        //另外，还有过的情况，用户不想碰，这时候就要过去！另外，其它用户其实也需要知道能碰玩家的读秒情况！
+        //所以，其实还是挺复杂的！以后还有杠的情况也需要处理！
+        if (this.wantToPengPai) {
+          //碰牌后先把牌拿过来，再打一张牌！并且隐藏碰文字
+          let new_shouPai = this.state.results.concat(pai);
+          this.setState({
+            result: new_shouPai,
+            pengText: config.PengMaxWaitTime,
+            show_peng: false,
+            can_da_pai: true
+          });
+          callback(true);
+        }
       }, 1000);
       //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。
       setTimeout(() => {
         clearInterval(this.interv);
+        //10秒之后，一切正常，
         //将此碰牌加入此人手牌中！
-        this.setState({results : this.state.results.concat(pai)})
-        //碰牌后自然是需要打一张牌！
-        this.setState({ show_peng: false, can_da_pai: true });
-        if (this.wantToPengPai) {
-          callback(true);
-        } else {
-          callback(false);
-        }
+        this.setState({ show_peng: false });
+
+        callback(false);
       }, 10 * 1000);
     });
     this.client.on("server_table_fapai", pai => {

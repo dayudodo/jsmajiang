@@ -59,7 +59,7 @@ export class Room {
   }
   get next_player() {
     ++this.player_index;
-    let next_index = this.player_index % 3;
+    let next_index = this.player_index % config.LIMIT_IN_ROOM;
     return this.players[next_index];
   }
   //除了person外的其它玩家们
@@ -72,6 +72,8 @@ export class Room {
     if (_.isEmpty(pai)) {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
     }
+    //发牌给谁，谁就是当前玩家
+    this.player_index = player.seat_index;
     player.receive_pai(pai[0]);
     let c_player = _.clone(player);
     c_player.socket = "hidden, 属于clone(player)";
@@ -79,7 +81,7 @@ export class Room {
     console.log("服务器发牌 %s 给：%s", pai, player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
     player.socket.emit("server_table_fapai", pai);
-    // return pai;
+    return pai;
   }
   find_player_by_socket(socket) {
     return this.players.find(item => item.socket == socket);
@@ -89,7 +91,7 @@ export class Room {
     //首先向房间内的所有玩家显示出当前玩家打的牌
     // socket.emit("dapai", pai);
     // socket.to(room_name).emit("dapai", pai);
-    io.to(room_name).emit("server_dapai",pai)
+    io.to(room_name).emit("server_dapai", pai);
     let player = this.find_player_by_socket(socket);
     //帮玩家记录下打的是哪个牌
     player.da_pai(pai);
@@ -115,7 +117,7 @@ export class Room {
             let client_decide_peng = answer == true;
             if (client_decide_peng) {
               console.log(`玩家${p.username}决定碰牌:${pai}`);
-              //当前玩家顺序改变，不再是下一家，还有可能是上一家！
+              //当前玩家顺序改变
               this.player_index = p.seat_index;
             }
           });
@@ -147,10 +149,11 @@ export class Room {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         p.socket.emit("server_game_start", p.shou_pai);
         let fa_pai = this.fa_pai(p); //然后再发一张牌给东家
-        this.player_index = index;
-        //告诉房间的其它人，发的是啥牌
+        this.player_index = p.seat_index;
+        //给自己发个消息，服务器发的啥牌
         p.socket.emit("server_table_fa_pai", fa_pai);
       } else {
+        //非东家，接收到牌即可
         p.socket.emit("server_game_start", p.shou_pai);
       }
     });
