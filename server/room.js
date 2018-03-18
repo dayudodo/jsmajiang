@@ -93,9 +93,11 @@ export class Room {
     } else {
       //发牌给下一个玩家
       let fa_pai = this.fa_pai(next_player);
-      console.dir(next_player);
+      let c_next_player = _.clone(next_player);
+      c_next_player.socket = 'hidden, 属于clone(next_player)'
+      console.dir(c_next_player);
       console.log("服务器发牌 %s 给：%s", fa_pai, next_player.username);
-      console.log("本桌牌还有%s张", this.clone_pai.length);
+      console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
       next_player.socket.emit("server_table_fa_pai", fa_pai);
     }
   }

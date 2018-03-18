@@ -233,7 +233,8 @@ io.sockets.on("connection", function(socket) {
 
   //玩家打了一张牌
   socket.on("dapai", function(pai) {
-    console.dir(pai)
+    let player = g_lobby.find_player_by_socket(socket)
+    console.log(`用户${player.username}打牌:${pai}`)
     let room = g_lobby.find_room_by_socket(socket);
     //告诉房间，哪个socket打了啥牌
     room.da_pai(socket, pai)
