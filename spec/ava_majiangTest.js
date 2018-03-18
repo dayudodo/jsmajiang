@@ -1,3 +1,5 @@
+//麻将算法的测试程序，里面也包括了胡牌的一些用例
+
 import test from "ava";
 import { Majiang } from "../server/Majiang";
 // var Majiang = require("../server/Majiang");
@@ -157,7 +159,7 @@ test("is4ABC 12张牌", function(t) {
   t.is(Majiang.is4ABC(str), true);
 });
 
-// describe('屁胡', function(t) {
+// 屁胡
 test("普通屁胡", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh zh";
   t.is(Majiang.isPihu(str), true);
@@ -191,7 +193,7 @@ test("非屁胡 将都没有", function(t) {
   t.is(Majiang.isPihu(str), false);
 });
 
-// describe('特殊胡', function(t) {
+// 特殊胡
 test("七对及龙七对", function(t) {
   let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 t9";
   t.is(Majiang.isQidui(str), true);
@@ -242,7 +244,8 @@ test("清一色卡五星", function(t) {
   t.is(Majiang.isKaWuXinG(str, na_pai), true);
   t.is(Majiang.isYise(str + na_pai), true);
 });
-//     describe('false', function(t) {
+
+//false'
 test("非七对", function(t) {
   let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 t8";
   t.is(Majiang.isQidui(str), false);
@@ -267,28 +270,51 @@ test("胡五条但不是卡", function(t) {
   t.is(Majiang.isKaWuXinG(str, na_pai), false);
   t.is(Majiang.isPihu(str + na_pai), true);
 });
-//     });
 
-// describe('胡啥牌', function(t) {
+// '胡啥牌'
 test("清一色听牌", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7";
-  t.deepEqual(Majiang.whoIsHu(str),["b5", "b7"]);
+  t.deepEqual(Majiang.whoIsHu(str), ["b5", "b7"]);
 });
 test("清一色听7张", function(t) {
   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 b9 b9 b9";
-  t.deepEqual(Majiang.whoIsHu(str),["b1", "b3", "b4", "b6", "b7", "b8", "b9"]);
+  t.deepEqual(Majiang.whoIsHu(str), ["b1", "b3", "b4", "b6", "b7", "b8", "b9"]);
 });
 
 test("双将倒", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
-  t.deepEqual(Majiang.whoIsHu(str),["di", "zh"]);
+  t.deepEqual(Majiang.whoIsHu(str), ["di", "zh"]);
 });
 test("单钓将", function(t) {
   let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b7 b7 b8";
-  t.deepEqual(Majiang.whoIsHu(str),["b3", "b6", "b8", "b9"]);
+  t.deepEqual(Majiang.whoIsHu(str), ["b3", "b6", "b8", "b9"]);
 });
 test("清一色听牌false", function(t) {
   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 t1 t3 t5";
   t.is(Majiang.whoIsHu(str), false);
+});
+
+//能否杠
+test("能否杠fa", function(t) {
+  let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
+  t.is(Majiang.canGang(str, "fa"), true);
+});
+test("能否杠t2", function(t) {
+  let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
+  t.is(Majiang.canGang(str, "t2"), true);
+});
+test("能否杠t2, 使用手牌数组", function(t) {
+  let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa".split(" ");
+  t.is(Majiang.canGang(str, "t2"), true);
+});
+
+//能否碰
+test("能否杠fa", function(t) {
+  let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
+  t.is(Majiang.canPeng(str, "di"), true);
+});
+test("能否杠t2", function(t) {
+  let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
+  t.is(Majiang.canPeng(str, "zh"), true);
 });
 // });

@@ -237,14 +237,7 @@ io.sockets.on("connection", function(socket) {
     console.log(`用户${player.username}打牌:${pai}`)
     let room = g_lobby.find_room_by_socket(socket);
     //告诉房间，哪个socket打了啥牌
-    room.da_pai(socket, pai)
-    // let room_name = room.id;
-    
-    // io.in(room_name).emit("dapai", pai);
-    // let player = g_lobby.find_player_by_socket(socket);
-    // //服务器帮玩家记录下打的是哪个牌
-    // player.da_pai(pai);
-    
+    room.da_pai(io,socket, pai)
   });
 
   socket.on("server_chat_cast", function(info) {

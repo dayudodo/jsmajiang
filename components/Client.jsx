@@ -27,7 +27,8 @@ var Play = React.createClass({
       room_name: "",
       room_id: "rose",
       player_names: "",
-      can_peng: false,
+      show_peng: false,
+      pengText: config.PengMaxWaitTime,
       can_hu: false
     };
   },
@@ -47,11 +48,11 @@ var Play = React.createClass({
       alert("用户名不能为空");
     } else {
       //登录之后再选择房间号的！
-      this.socket.emit("login", {
+      this.client.emit("login", {
         username: this.state.text
       });
       //监听服务器的login事件，有则成功登录服务器
-      this.socket.on("login", () => {
+      this.client.on("login", () => {
         this.setState({ username: this.state.text });
         // this.show_info_room(ArrayPlayer);
       });
@@ -59,7 +60,7 @@ var Play = React.createClass({
   },
   //给服务器发消息，要创建一个房间，同时可以把接收服务器的消息放在这儿，权当是返回值了！放在一起其实更好阅读
   create_room() {
-    this.socket.emit("create_room", data => {
+    this.client.emit("create_room", data => {
       if (data.error) {
         alert(data.error);
       } else {
@@ -67,9 +68,9 @@ var Play = React.createClass({
       }
     });
     // //服务器已经创建好房间，但是貌似多次执行后会重复的接收
-    // this.socket.once("server_made_room", room_name => {});
+    // this.client.once("server_made_room", room_name => {});
     // //没有可用的房间了
-    // this.socket.once("server_room_sold_out", () => {
+    // this.client.once("server_room_sold_out", () => {
     //   alert("很抱歉，无可用房间，请联系客服！");
     // });
   },
@@ -81,7 +82,7 @@ var Play = React.createClass({
       //玩家想要加入房间room_id, 给服务器发join_room消息，并带有房间号数据
       //因为服务器的连接中保存了相关了用户信息，所以并不需要再传递用户名
       console.log("room_id:", this.state.room_id);
-      this.socket.emit("join_room", this.state.room_id);
+      this.client.emit("join_room", this.state.room_id);
     }
   },
   handleChatSubmit: function(e) {
@@ -90,7 +91,7 @@ var Play = React.createClass({
     if (isChatTextEmpty) {
       alert("用户名不能为空");
     } else {
-      this.socket.emit("chat_cast", {
+      this.client.emit("chat_cast", {
         username: this.state.username,
         chatText: this.state.chatText
       });
@@ -98,12 +99,11 @@ var Play = React.createClass({
   },
   startGame: function() {
     console.log(this.state.username + " click startGame");
-    this.socket.emit("player_ready", data => {
+    this.client.emit("player_ready", data => {
       console.log(`我自己准备好了`);
       this.setState({ ready: true });
     });
   },
-  pengPai() {},
   huPai() {},
   show_info_room: function(ArrayPlayer) {
     let filtered = ArrayPlayer.filter(
@@ -113,12 +113,12 @@ var Play = React.createClass({
     this.setState({ info_room: allNames.join(",") + "进入房间" });
   },
   componentWillMount() {
-    this.socket = io(`http://localhost:${config.PORT}`);
-    this.socket.on("connect", () => {
+    this.client = io(`http://localhost:${config.PORT}`);
+    this.client.on("connect", () => {
       this.setState({ status: "服务器连接成功" });
     });
 
-    this.socket.on("disconnect", () => {
+    this.client.on("disconnect", () => {
       // this.setState({
       //     status: '服务器已经断开'
       //   , username: ''
@@ -131,7 +131,7 @@ var Play = React.createClass({
       this.setState(this.getInitialState());
     });
 
-    this.socket.on("player_left", username => {
+    this.client.on("player_left", username => {
       //用户离开的时候会给服务器发信息，服务器也会广播player_left
       this.setState({ left_info: username });
       setTimeout(() => {
@@ -139,15 +139,15 @@ var Play = React.createClass({
       }, 2000);
     });
 
-    this.socket.on("server_room_full", () => {
+    this.client.on("server_room_full", () => {
       this.setState({ info_room: "房间已满" });
     });
-    this.socket.on("server_no_such_room", room_name => {
+    this.client.on("server_no_such_room", room_name => {
       alert(`无此房间号:${room_name}`);
     });
 
     //接收服务器发来的room_enter消息，表明服务器已经将本玩家加入房间中。
-    this.socket.on("server_player_enter_room", data => {
+    this.client.on("server_player_enter_room", data => {
       console.log(`进入房间的玩家们：${data.player_names}`);
       this.setState({
         player_names: data.player_names,
@@ -155,33 +155,53 @@ var Play = React.createClass({
       });
     });
 
-    this.socket.on("server_chat_cast", info => {
+    this.client.on("server_chat_cast", info => {
       console.log("%s : %s", info.username, info.chatText);
     });
 
-    this.socket.on("server_receive_ready", username => {
+    this.client.on("server_receive_ready", username => {
       this.setState({
         status: username + "已准备"
       });
       // console.log("%s 准备开始", username);
     });
 
-    this.socket.on("server_game_start", serverData => {
+    this.client.on("server_game_start", serverData => {
       this.setState({
         status: "游戏开始",
         results: serverData.sort()
       });
     });
-    this.socket.on("dapai", one_pai => {
+    this.client.on("server_dapai", one_pai => {
       this.setState({ tablePai: [one_pai] });
     });
-    this.socket.on("server_table_fa_pai", pai => {
+    this.client.on("server_canPeng", (pai, callback) => {
+      this.setState({ show_peng: true });
+      //倒数读秒，等待用户点击碰
+      this.interv = setInterval(() => {
+        this.setState({ pengText: this.state.pengText - 1 });
+      }, 1000);
+      //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。
+      setTimeout(() => {
+        clearInterval(this.interv);
+        //将此碰牌加入此人手牌中！
+        this.setState({results : this.state.results.concat(pai)})
+        //碰牌后自然是需要打一张牌！
+        this.setState({ show_peng: false, can_da_pai: true });
+        if (this.wantToPengPai) {
+          callback(true);
+        } else {
+          callback(false);
+        }
+      }, 10 * 1000);
+    });
+    this.client.on("server_table_fapai", pai => {
       // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
       console.log("接收到服务器发牌%s", pai);
       let results = this.state.results.concat(pai);
       this.setState({ results: results, can_da_pai: true });
     });
-    this.socket.on("game over", () => {
+    this.client.on("game over", () => {
       this.setState({
         ready: false,
         results: [],
@@ -189,7 +209,7 @@ var Play = React.createClass({
       });
     });
   },
-  handleImgClick(item, index) {
+  clientDaPai(item, index) {
     // console.log( 'user clicked, item:%s index:%s', item, index )
     // 如果有服务器发的牌，你可以打出一张，否则就不能打
     let results = this.state.results;
@@ -197,7 +217,7 @@ var Play = React.createClass({
       // can_da_pai = false
       results.remove(item).sort();
       this.setState({ results: results, can_da_pai: false });
-      this.socket.emit("dapai", item);
+      this.client.emit("dapai", item);
     }
   },
   render: function() {
@@ -233,8 +253,14 @@ var Play = React.createClass({
                 {this.state.ready ? null : (
                   <button onClick={this.startGame}>开始</button>
                 )}
-                {this.state.can_peng ? (
-                  <button onClick={this.pengPai}>碰</button>
+                {this.state.show_peng ? (
+                  <button
+                    onClick={() => {
+                      this.wantToPengPai = true;
+                    }}
+                  >
+                    碰{this.state.pengText}
+                  </button>
                 ) : null}
                 {this.state.can_hu ? (
                   <button onClick={this.huPai}>胡牌</button>
@@ -258,7 +284,7 @@ var Play = React.createClass({
         </center>
         <PlayerImages
           results={this.state.results}
-          imgClick={this.handleImgClick}
+          imgClick={this.clientDaPai}
         />
       </div>
     );

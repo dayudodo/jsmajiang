@@ -27,9 +27,9 @@ Array.prototype.equalArrays = function(b) {
 };
 
 function checkValidAndReturnArr(str) {
-  //todo: 检查牌的合法性，不能有五张相同的牌
   if (!str || str.length == 0) {
     throw new Error("str is empty");
+    //如果是数组，那么就直接返回，可能就是一套手牌，比如["b1","b2"...]
   } else if (str instanceof Array) {
     return str;
   } else {
@@ -88,7 +88,29 @@ export class Majiang {
       s4 = result[3];
     return s1 == s2 && s2 == s3 && s3 == s4;
   }
-
+  //一套牌能够碰给出的pai
+  static canPeng(shouPai, pai) {
+    if (typeof pai != "string") {
+      throw new Error(`pai must be a string`);
+    }
+    let result = checkValidAndReturnArr(shouPai);
+    let newstr = result
+      .concat(pai)
+      .sort()
+      .join("");
+    return /(..)\1\1/.test(newstr.replace(/\s+/g, ""));
+  }
+  static canGang(shouPai, pai) {
+    if (typeof pai != "string") {
+      throw new Error(`pai must be a string`);
+    }
+    let result = checkValidAndReturnArr(shouPai);
+    let newstr = result
+      .concat(pai)
+      .sort()
+      .join("");
+    return /(..)\1\1\1/.test(newstr.replace(/\s+/g, ""));
+  }
   static isABC(str) {
     let result = checkValidAndReturnArr(str);
     if (result.length != 3) {
@@ -195,7 +217,7 @@ export class Majiang {
     // console.log(allJiang)
     //循环的目的是因为可能胡不止一张牌
     if (allJiang) {
-      allJiang.forEach((item)=> {
+      allJiang.forEach(item => {
         // console.log(item)
         var newstr = result.join("");
         //首先去掉四个一样的牌，杠可能有多个
