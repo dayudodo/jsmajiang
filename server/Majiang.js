@@ -1,5 +1,6 @@
 //麻将判胡算法主程序
-// "use strict";
+
+import _ from "lodash";
 // 全局常量，所有的牌
 var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
@@ -93,12 +94,14 @@ export class Majiang {
     if (typeof pai != "string") {
       throw new Error(`pai must be a string`);
     }
-    let result = checkValidAndReturnArr(shouPai);
+    //貌似会改变以前的数组值，所以得克隆一份来进行检测
+    let result = _.clone(checkValidAndReturnArr(shouPai));
     let newstr = result
       .concat(pai)
       .sort()
       .join("");
-    return /(..)\1\1/.test(newstr.replace(/\s+/g, ""));
+    let paiThreeTimesReg = new RegExp(`(${pai})\\1\\1`);
+    return paiThreeTimesReg.test(newstr.replace(/\s+/g, ""));
   }
   static canGang(shouPai, pai) {
     if (typeof pai != "string") {

@@ -15,13 +15,16 @@ export class Room {
     this.id = null;
     this.players = [];
     this.clone_pai = [];
+    this.current_player = null;
     this.current_player_dapai = null; //当前玩家打的牌
     this.player_index = null; //哪个玩家在打牌，以便确定下一家
   }
   //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
   static make() {
-    //暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
-    return room_valid_names.pop();
+    //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
+    //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
+    //return room_valid_names.pop();
+    return "rose";
   }
   //用户加入房间，还需要告诉其它的用户我已经加入了
   join_player(person) {
@@ -32,10 +35,6 @@ export class Room {
     _.remove(this.players, function(item) {
       return item.socket.id == socket.id;
     });
-  }
-  get_player(socket_id) {
-    // _.find(this.players, {socket_id: socket_id})
-    this.players.find(p => p.socket_id == socket_id);
   }
   get all_ready() {
     let player_ready_count = this.players.filter(item => item.ready).length;
@@ -54,17 +53,18 @@ export class Room {
   get last_join_player() {
     return _.last(this.players);
   }
-  get current_player() {
-    return this.players[this.player_index];
-  }
   get next_player() {
-    ++this.player_index;
-    let next_index = this.player_index % config.LIMIT_IN_ROOM;
-    return this.players[next_index];
+    let next_index =
+      (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
+    //最后通过座位号来找到玩家,而不是数组序号,更不容易出错
+    return this.players.find(p => p.seat_index == next_index);
   }
   //除了person外的其它玩家们
   other_players(person) {
-    return this.players.filter(p => p != person);
+    // console.log("查找本玩家%s的其它玩家", person.username);
+    let o_players = this.players.filter(p => p != person);
+    // console.log(o_players.map(p => p.username));
+    return o_players;
   }
   //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
   fa_pai(player) {
@@ -73,11 +73,11 @@ export class Room {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
     }
     //发牌给谁，谁就是当前玩家
-    this.player_index = player.seat_index;
+    this.current_player = player;
     player.receive_pai(pai[0]);
-    let c_player = _.clone(player);
-    c_player.socket = "hidden, 属于clone(player)";
-    console.dir(c_player);
+    // let c_player = _.clone(player);
+    // c_player.socket = "hidden, 属于clone(player)";
+    // console.dir(c_player);
     console.log("服务器发牌 %s 给：%s", pai, player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
     player.socket.emit("server_table_fapai", pai);
@@ -86,6 +86,7 @@ export class Room {
   find_player_by_socket(socket) {
     return this.players.find(item => item.socket == socket);
   }
+  //玩家所在socket打牌pai
   da_pai(io, socket, pai) {
     let room_name = this.id;
     //首先向房间内的所有玩家显示出当前玩家打的牌
@@ -93,12 +94,12 @@ export class Room {
     // socket.to(room_name).emit("dapai", pai);
     io.to(room_name).emit("server_dapai", pai);
     let player = this.find_player_by_socket(socket);
-    //帮玩家记录下打的是哪个牌
+    //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
     player.da_pai(pai);
     //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
-    let next_player = this.next_player; //找到下一家，再发牌
+
     let isRoomPaiEmpty = this.clone_pai.length == 0;
-    let otherPlayerCanPeng = false;
+    let canNormalFaPai = true; //能否正常给下一家发牌
     if (isRoomPaiEmpty) {
       // socket.emit("game over");
       // socket.to(room_name).emit("game over");
@@ -109,30 +110,36 @@ export class Room {
     } else {
       //看其它玩家能否碰！
       let oplayers = this.other_players(player);
-      oplayers.forEach(p => {
+      for (let p of oplayers) {
         //其实只有一个玩家可以碰！
         if (Majiang.canPeng(p.shou_pai, pai)) {
-          otherPlayerCanPeng = true;
+          //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
+          canNormalFaPai = false;
+          console.log(`房间${this.id}内发现玩家${p.username}可以碰牌${pai}`);
+          console.dir(`玩家${p.username}的手牌为:${p.shou_pai.join(" ")}`);
           p.socket.emit("server_canPeng", pai, answer => {
             let client_decide_peng = answer == true;
             if (client_decide_peng) {
               console.log(`玩家${p.username}决定碰牌:${pai}`);
+              p.receive_pai(pai) //碰之后此牌就属于本玩家了,前后台都需要添加!
               //当前玩家顺序改变
-              this.player_index = p.seat_index;
+              this.current_player = p;
+              //再打牌后就能够正常发牌了
+              canNormalFaPai = true;
+            }else{
+              console.log(`玩家${p.username}放弃碰牌:${pai}`);
+              canNormalFaPai = true //正常发牌
+              this.fa_pai(this.next_player)
             }
           });
           //等待10秒钟，待玩家反应，超时的话就继续发牌！否则就会改变发牌的顺序！
         }
-      });
+      }
       //不能碰就发牌给下一个玩家
-      if (!otherPlayerCanPeng) {
-        this.fa_pai(next_player);
+      if (canNormalFaPai) {
+        this.fa_pai(this.next_player);
       }
     }
-  }
-  //玩家是否能碰牌
-  can_peng(player, pai) {
-    return Majiang.canPeng(player.shou_pai, pai);
   }
   start_game() {
     //初始化牌面
@@ -149,7 +156,8 @@ export class Room {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         p.socket.emit("server_game_start", p.shou_pai);
         let fa_pai = this.fa_pai(p); //然后再发一张牌给东家
-        this.player_index = p.seat_index;
+        // this.player_index = p.seat_index;
+        this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         p.socket.emit("server_table_fa_pai", fa_pai);
       } else {

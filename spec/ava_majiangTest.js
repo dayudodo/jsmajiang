@@ -309,12 +309,26 @@ test("能否杠t2, 使用手牌数组", function(t) {
 });
 
 //能否碰
-test("能否杠fa", function(t) {
+test("能否碰fa", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
   t.is(Majiang.canPeng(str, "di"), true);
 });
-test("能否杠t2", function(t) {
+test("能否碰t2", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
   t.is(Majiang.canPeng(str, "zh"), true);
+});
+
+//不能碰
+test("不能碰di", function(t) {
+  let str = "b1 b2 b3 b4 b5 b6 b7 t1 t2 t3 t4 t5 t6";
+  t.is(Majiang.canPeng(str, "di"), false);
+});
+test("不能碰di", function(t) {
+  let str = "di b2 b3 b4 b5 b6 b7 t1 t2 t3 t4 t5 t6";
+  t.is(Majiang.canPeng(str, "di"), false);
+});
+test("不能碰di", function(t) {
+  let str = "b2 b3 b5 b7 b8 b9 t2 t3 t6 t8 zh zh zh";
+  t.is(Majiang.canPeng(str, "b1"), false);
 });
 // });
