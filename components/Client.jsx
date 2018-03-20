@@ -179,7 +179,7 @@ var Play = React.createClass({
     this.client.on("server_canGang", (pai, callback) => {
       let userClickedGangPengPai = false; //记录用户有没有点击杠碰牌按钮;
       //服务器发送能杠，则就能够杠及碰
-      this.setState({ show_peng: true, show_gang: true });
+      this.setState({ show_peng: true, show_gang: true, waitText: config.MaxWaitTime });
       //有可能以前的读秒器还没有删除
       if (this.interv) {
         clearInterval(this.interv);
@@ -197,7 +197,6 @@ var Play = React.createClass({
           this.setState({
             tablePai: [],
             results: new_shouPai,
-            waitText: config.MaxWaitTime,
             show_peng: false,
             show_gang: false,
             can_da_pai: true
@@ -211,7 +210,6 @@ var Play = React.createClass({
           this.setState({
             tablePai: [],
             results: new_shouPai,
-            waitText: config.MaxWaitTime,
             show_peng: false,
             show_gang: false
           });
@@ -234,7 +232,7 @@ var Play = React.createClass({
     });
     this.client.on("server_canPeng", (pai, callback) => {
       let userClickedPengPai = false; //记录用户有没有点击碰牌按钮;
-      this.setState({ show_peng: true });
+      this.setState({ show_peng: true, waitText: config.MaxWaitTime });
       //有可能以前的读秒器还没有删除
       if (this.interv) {
         clearInterval(this.interv);
@@ -260,7 +258,7 @@ var Play = React.createClass({
           });
           callback(true);
         }
-      }, 1000);
+      }, config.CountDownInterval);
       //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。
       setTimeout(() => {
         clearInterval(this.interv);
@@ -270,7 +268,7 @@ var Play = React.createClass({
           console.log(`client${this.state.username}碰牌${pai}放弃`);
           callback(false);
         }
-      }, 10 * 1000);
+      }, config.MaxWaitTime * 1000);
     });
     this.client.on("server_table_fapai", pai => {
       // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
