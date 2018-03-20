@@ -83,6 +83,25 @@ export class Room {
     player.socket.emit("server_table_fapai", pai);
     return pai;
   }
+  gang_fa_pai(player) {
+    //杠发牌，是从最后切一个出来，不影响前面的顺序，所以单独写成个发牌的方法
+    let pai = this.clone_pai.splice(this.clone_pai.length - 1, 1);
+    if (_.isEmpty(pai)) {
+      throw new Error(chalk.red(`room.pai中无可用牌了`));
+    }
+    //发牌给谁，谁就是当前玩家
+    this.current_player = player;
+    player.receive_pai(pai[0]);
+    // let c_player = _.clone(player);
+    // c_player.socket = "hidden, 属于clone(player)";
+    // console.dir(c_player);
+    console.log(
+      `服务器发${chalk.yellow("杠牌")}　${pai} 给：${player.username}`
+    );
+    console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
+    player.socket.emit("server_table_fapai", pai);
+    return pai;
+  }
   find_player_by_socket(socket) {
     return this.players.find(item => item.socket == socket);
   }
@@ -111,28 +130,34 @@ export class Room {
       //看其它玩家能否碰！
       let oplayers = this.other_players(player);
       for (let p of oplayers) {
+        let gangpengOuput = "";
         //其实只有一个玩家可以碰！
         if (Majiang.canPeng(p.shou_pai, pai)) {
-          //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
-          canNormalFaPai = false;
-          console.log(`房间${this.id}内发现玩家${p.username}可以碰牌${pai}`);
-          console.dir(`玩家${p.username}的手牌为:${p.shou_pai.join(" ")}`);
-          p.socket.emit("server_canPeng", pai, answer => {
-            let client_decide_peng = answer == true;
-            if (client_decide_peng) {
-              console.log(`玩家${p.username}决定碰牌:${pai}`);
-              p.receive_pai(pai) //碰之后此牌就属于本玩家了,前后台都需要添加!
-              //当前玩家顺序改变
-              this.current_player = p;
-              //再打牌后就能够正常发牌了
-              canNormalFaPai = true;
-            }else{
-              console.log(`玩家${p.username}放弃碰牌:${pai}`);
-              canNormalFaPai = true //正常发牌
-              this.fa_pai(this.next_player)
-            }
-          });
-          //等待10秒钟，待玩家反应，超时的话就继续发牌！否则就会改变发牌的顺序！
+          if (Majiang.canGang(p.shou_pai, pai)) {
+            canNormalFaPai = this.processGang(canNormalFaPai, p, pai);
+            //只能碰，就用碰的办法处理！
+          } else {
+            //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
+            canNormalFaPai = false;
+            console.log(`房间${this.id}内发现玩家${p.username}可以碰牌${pai}`);
+            console.dir(`玩家${p.username}的手牌为:${p.shou_pai.join(" ")}`);
+            p.socket.emit("server_canPeng", pai, answer => {
+              let client_decide_peng = answer == true;
+              if (client_decide_peng) {
+                console.log(`玩家${p.username}决定碰牌:${pai}`);
+                p.receive_pai(pai); //碰之后此牌就属于本玩家了,前后台都需要添加!
+                //当前玩家顺序改变
+                this.current_player = p;
+                //再打牌后就能够正常发牌了
+                canNormalFaPai = true;
+              } else {
+                console.log(`玩家${p.username}放弃碰牌:${pai}`);
+                canNormalFaPai = true; //正常发牌
+                this.fa_pai(this.next_player);
+              }
+            });
+            //等待10秒钟，待玩家反应，超时的话就继续发牌！否则就会改变发牌的顺序！
+          }
         }
       }
       //不能碰就发牌给下一个玩家
@@ -141,9 +166,45 @@ export class Room {
       }
     }
   }
+  processGang(canNormalFaPai, p, pai) {
+    canNormalFaPai = false;
+    console.log(`房间${this.id}内发现玩家${p.username}可以杠牌${pai}`);
+    p.socket.emit("server_canGang", pai, answer => {
+      //1是想杠，2是想碰
+      switch (answer) {
+        case config.WantPeng:
+          console.log(`玩家${p.username}能杠，但决定碰牌:${pai}`);
+          p.receive_pai(pai); //碰之后此牌就属于本玩家了,前后台都需要添加!
+          //当前玩家顺序改变
+          this.current_player = p;
+          //再打牌后就能够正常发牌了
+          canNormalFaPai = true;
+          break;
+        case config.WantGang:
+          console.log(`玩家${p.username}能杠决定杠牌:${pai}`);
+          p.receive_pai(pai); //碰之后此牌就属于本玩家了,前后台都需要添加!
+          //当前玩家顺序改变，且杠之后还要从最后拿张牌发给他
+          // this.current_player = p;
+          this.gang_fa_pai(p);
+          //再打牌后就能够正常发牌了
+          canNormalFaPai = true;
+          break;
+        default:
+          //不是这两个值，就是放弃了
+          console.log(`玩家${p.username}放弃杠牌:${pai}`);
+          canNormalFaPai = true; //正常发牌
+          this.fa_pai(this.next_player);
+          break;
+      }
+    });
+    return canNormalFaPai;
+  }
+
   start_game() {
     //初始化牌面
-    this.clone_pai = _.shuffle(config.all_pai);
+    //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
+    //仅供测试用
+    this.clone_pai = _.clone(config.all_pai);
     //开始给所有人发牌，并给东家多发一张
     let dongJia = _.find(this.players, { east: true });
     if (!dongJia) {

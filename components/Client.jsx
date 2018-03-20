@@ -28,7 +28,8 @@ var Play = React.createClass({
       room_id: "rose",
       player_names: "",
       show_peng: false,
-      pengText: config.PengMaxWaitTime,
+      show_gang: false,
+      waitText: config.MaxWaitTime,
       can_hu: false
     };
   },
@@ -175,8 +176,64 @@ var Play = React.createClass({
     this.client.on("server_dapai", one_pai => {
       this.setState({ tablePai: [one_pai] });
     });
+    this.client.on("server_canGang", (pai, callback) => {
+      let userClickedGangPengPai = false; //记录用户有没有点击杠碰牌按钮;
+      //服务器发送能杠，则就能够杠及碰
+      this.setState({ show_peng: true, show_gang: true });
+      //有可能以前的读秒器还没有删除
+      if (this.interv) {
+        clearInterval(this.interv);
+      }
+      //倒数读秒，等待用户点击碰
+      this.interv = setInterval(() => {
+        this.setState({ waitText: this.state.waitText - 1 });
+        //话说使用js的时间办法吧写起来实在是不够爽。
+        if (this.wantToPengPai) {
+          this.wantToPengPai = false; //设置为false以免每秒都会执行，其实只需要执行一次！
+          userClickedGangPengPai = true; //多个布尔值用来控制10秒结束后是否显示碰牌放弃
+          //别人打的牌应该消失，跑到自己的手牌之中
+          //碰牌后先把牌拿过来，再打一张牌！并且隐藏碰文字
+          let new_shouPai = this.state.results.concat(pai);
+          this.setState({
+            tablePai: [],
+            results: new_shouPai,
+            waitText: config.MaxWaitTime,
+            show_peng: false,
+            show_gang: false,
+            can_da_pai: true
+          });
+          callback(config.WantPeng);
+        } else if (this.wantToGangPai) {
+          this.wantToGangPai = false; //设置为false以免每秒都会执行，其实只需要执行一次！
+          userClickedGangPengPai = true; //多个布尔值用来控制10秒结束后是否显示碰牌放弃
+          let new_shouPai = this.state.results.concat(pai);
+          //杠之后服务器还会发个处于，所以can_da_pai就不需要设置了，以便观察服务器是否有发牌过来
+          this.setState({
+            tablePai: [],
+            results: new_shouPai,
+            waitText: config.MaxWaitTime,
+            show_peng: false,
+            show_gang: false
+          });
+          callback(config.WantGang);
+        }
+      }, 1000);
+      //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。
+      setTimeout(() => {
+        clearInterval(this.interv);
+        if (!userClickedGangPengPai) {
+          //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
+          this.setState({
+            show_peng: false,
+            waitText: config.MaxWaitTime
+          });
+          console.log(`client${this.state.username}碰牌${pai}放弃`);
+          callback(false);
+        }
+      }, 10 * 1000);
+    });
     this.client.on("server_canPeng", (pai, callback) => {
-      let userClickedPengPai = false;　//记录用户有没有点击碰牌按钮;
+      let userClickedPengPai = false; //记录用户有没有点击碰牌按钮;
       this.setState({ show_peng: true });
       //有可能以前的读秒器还没有删除
       if (this.interv) {
@@ -184,20 +241,20 @@ var Play = React.createClass({
       }
       //倒数读秒，等待用户点击碰
       this.interv = setInterval(() => {
-        this.setState({ pengText: this.state.pengText - 1 });
+        this.setState({ waitText: this.state.waitText - 1 });
         //按说应该是玩家点击碰后直接就碰的，但是在这儿使用每秒检测，服务器好处理一些！
         //另外，还有过的情况，用户不想碰，这时候就要过去！另外，其它用户其实也需要知道能碰玩家的读秒情况！
         //所以，其实还是挺复杂的！以后还有杠的情况也需要处理！
         if (this.wantToPengPai) {
           this.wantToPengPai = false; //设置为false以免每秒都会执行，其实只需要执行一次！
-          userClickedPengPai = true ; //多个布尔值用来控制10秒结束后是否显示碰牌放弃
+          userClickedPengPai = true; //多个布尔值用来控制10秒结束后是否显示碰牌放弃
           //别人打的牌应该消失，跑到自己的手牌之中
           //碰牌后先把牌拿过来，再打一张牌！并且隐藏碰文字
           let new_shouPai = this.state.results.concat(pai);
           this.setState({
             tablePai: [],
             results: new_shouPai,
-            pengText: config.PengMaxWaitTime,
+            waitText: config.MaxWaitTime,
             show_peng: false,
             can_da_pai: true
           });
@@ -209,7 +266,7 @@ var Play = React.createClass({
         clearInterval(this.interv);
         if (!userClickedPengPai) {
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
-          this.setState({ show_peng: false, pengText: config.PengMaxWaitTime });
+          this.setState({ show_peng: false, waitText: config.MaxWaitTime });
           console.log(`client${this.state.username}碰牌${pai}放弃`);
           callback(false);
         }
@@ -273,13 +330,22 @@ var Play = React.createClass({
                 {this.state.ready ? null : (
                   <button onClick={this.startGame}>开始</button>
                 )}
+                {this.state.show_gang ? (
+                  <button
+                    onClick={() => {
+                      this.wantToGangPai = true;
+                    }}
+                  >
+                    杠{this.state.waitText}
+                  </button>
+                ) : null}
                 {this.state.show_peng ? (
                   <button
                     onClick={() => {
                       this.wantToPengPai = true;
                     }}
                   >
-                    碰{this.state.pengText}
+                    碰{this.state.waitText}
                   </button>
                 ) : null}
                 {this.state.can_hu ? (

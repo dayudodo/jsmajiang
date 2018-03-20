@@ -112,7 +112,8 @@ export class Majiang {
       .concat(pai)
       .sort()
       .join("");
-    return /(..)\1\1\1/.test(newstr.replace(/\s+/g, ""));
+    let paiFourTimesReg = new RegExp(`(${pai})\\1\\1\\1`);
+    return paiFourTimesReg.test(newstr.replace(/\s+/g, ""));
   }
   static isABC(str) {
     let result = checkValidAndReturnArr(str);

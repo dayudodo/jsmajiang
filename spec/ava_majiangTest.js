@@ -295,17 +295,22 @@ test("清一色听牌false", function(t) {
 });
 
 //能否杠
-test("能否杠fa", function(t) {
+test("能杠fa", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
   t.is(Majiang.canGang(str, "fa"), true);
 });
-test("能否杠t2", function(t) {
+test("能杠t2", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
   t.is(Majiang.canGang(str, "t2"), true);
 });
-test("能否杠t2, 使用手牌数组", function(t) {
+test("能杠t2, 使用手牌数组", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa".split(" ");
   t.is(Majiang.canGang(str, "t2"), true);
+});
+
+test("不能杠b1", function(t) {
+  let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
+  t.is(Majiang.canPeng(str, "b1"), false);
 });
 
 //能否碰
@@ -318,7 +323,7 @@ test("能否碰t2", function(t) {
   t.is(Majiang.canPeng(str, "zh"), true);
 });
 
-//不能碰
+//不能
 test("不能碰di", function(t) {
   let str = "b1 b2 b3 b4 b5 b6 b7 t1 t2 t3 t4 t5 t6";
   t.is(Majiang.canPeng(str, "di"), false);
@@ -331,4 +336,6 @@ test("不能碰di", function(t) {
   let str = "b2 b3 b5 b7 b8 b9 t2 t3 t6 t8 zh zh zh";
   t.is(Majiang.canPeng(str, "b1"), false);
 });
+
+
 // });
