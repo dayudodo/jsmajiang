@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Images from "./Images";
-const ReactMarkdown = require("react-markdown");
 
 export default class Rules extends React.Component {
   constructor(props) {

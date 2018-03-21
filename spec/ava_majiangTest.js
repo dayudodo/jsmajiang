@@ -159,6 +159,8 @@ test("is4ABC 12张牌", function(t) {
   t.is(Majiang.is4ABC(str), true);
 });
 
+
+
 // 屁胡
 test("普通屁胡", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh zh";
@@ -243,6 +245,37 @@ test("清一色卡五星", function(t) {
   let na_pai = "b5";
   t.is(Majiang.HuisKaWuXing(str, na_pai), true);
   t.is(Majiang.HuisYise(str + na_pai), true);
+});
+
+//此方法其实是专门为小三元服务的，因为要判断是否只重复了二次，不能有三次的情况！
+test("should repeatTwiceOnly", t => {
+  let str = "t1t2b1b1b1";
+  t.is(Majiang.isRepeatTwiceOnly(str, "b1"), false);
+  str = "t1t2b1b1fafa";
+  t.is(Majiang.isRepeatTwiceOnly(str, "b1"), true);
+});
+test("should 大三元", t => {
+  let str = "b1 b1 b1 b2 b3 di di di zh zh zh fa fa";
+  let na_pai = "fa";
+  t.is(Majiang.HuisDaShanYuan(str, na_pai), true);
+  t.is(Majiang.HuisXiaoShanYuan(str, na_pai), false);
+});
+test("should 大三元", t => {
+  let str = "fa fa b1 b1 b1 b2 b3 di di di zh zh zh ";
+  let na_pai = "fa";
+  t.is(Majiang.HuisDaShanYuan(str, na_pai), true);
+});
+test("should 小三元", t => {
+  let str = "fa b1 b1 b1 b2 b3 di di di zh zh zh fa ";
+  let na_pai = "b1";
+  t.is(Majiang.HuisXiaoShanYuan(str, na_pai), true);
+  t.is(Majiang.HuisDaShanYuan(str, na_pai), false);
+});
+test("should not 大小三元", t => {
+  let str = "b1 b1 b1 b2 b3 di di di zh zh zh t1 t1";
+  let na_pai = "b1";
+  t.is(Majiang.HuisXiaoShanYuan(str, na_pai), false);
+  t.is(Majiang.HuisDaShanYuan(str, na_pai), false);
 });
 
 //false'
@@ -336,6 +369,5 @@ test("不能碰di", function(t) {
   let str = "b2 b3 b5 b7 b8 b9 t2 t3 t6 t8 zh zh zh";
   t.is(Majiang.canPeng(str, "b1"), false);
 });
-
 
 // });

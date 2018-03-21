@@ -1,6 +1,7 @@
 //麻将判胡算法主程序
 
 import _ from "lodash";
+import chalk from "chalk";
 import * as config from "./../config";
 // 全局常量，所有的牌
 var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
@@ -355,13 +356,12 @@ export class Majiang {
   }
 
   static HuisKaWuXing(str, na_pai) {
-    let yi_shou_pai = str + na_pai;
-    let result = checkValidAndReturnArr(yi_shou_pai);
+    let result = checkValidAndReturnArr(str).concat(na_pai);
     if (result.length < 14) {
       throw new Error(`str${str} must larger than 14 values`);
     }
     //胡牌但是并不是碰胡也不是将牌，就是卡五星,或者胡牌并且两边有4，5，也是卡五星，如果是45556的情况？
-    if (this.HuisPihu(yi_shou_pai)) {
+    if (this.HuisPihu(result)) {
       if (na_pai[1] == 5) {
         let four = na_pai[0] + "4";
         let six = na_pai[0] + "6";
@@ -379,8 +379,79 @@ export class Majiang {
     return false;
   }
 
-  static HuisXiaoShanYuan(str, na_pai) {}
-  static HuisDaShanYuan(str, na_pai) {}
+  //只能重复两次，不能重复三次！
+  static isRepeatTwiceOnly(shou_pai_str, str) {
+    if (typeof shou_pai_str != "string") {
+      throw new Error(chalk.red("isRepeatTwiceOnly首参数必须是字符串！"));
+    }
+    let m = shou_pai_str.match(new RegExp(`(${str})+`));
+    if (m && m[0]) {
+      return m[0].length == 4; //如果不等于4说明并不是重复了2次！
+    }
+    return false;
+  }
+
+  static HuisXiaoShanYuan(str, na_pai) {
+    //小三元是zh, fa, di中有一对将，其它为刻子，比如zh zh, fa fa fa, di di di。。。就是小三元了
+    let result = checkValidAndReturnArr(str).concat(na_pai);
+    if (result.length < 14) {
+      throw new Error(`str${str} must larger than 14 values`);
+    }
+    if (this.HuisPihu(result)) {
+      //将里面有没有zh, fa, di, 或者可以用表查询来做，毕竟组合就那么几个
+      let xiaoSheet = [
+        ["zh", "fafafa", "dididi"],
+        ["fa", "zhzhzh", "dididi"],
+        ["di", "zhzhzh", "fafafa"]
+      ];
+      let shouStr = result.sort().join("");
+      let isXiao = false;
+      xiaoSheet.forEach(s => {
+        //只要判断是否有上面的三种即可！
+        let [xiaoReg1, xiaoReg2] = [new RegExp(s[1]), new RegExp(s[2])];
+        if (
+          this.isRepeatTwiceOnly(shouStr, s[0]) &&
+          xiaoReg1.test(shouStr) &&
+          xiaoReg2.test(shouStr)
+        ) {
+          isXiao = true;
+        }
+      });
+      return isXiao;
+    } else {
+      //屁胡都不是，自然也不是小三元了
+      return false;
+    }
+  }
+
+  //只判断三个即可，这也包括了四个的情况！
+  static HuisDaShanYuan(str, na_pai) {
+    //大三元其实最好判断了，三个一样的zh,fa,di检测即可！
+    let result = checkValidAndReturnArr(str).concat(na_pai);
+    if (result.length < 14) {
+      throw new Error(`str${str} must larger than 14 values`);
+    }
+    if (this.HuisPihu(result)) {
+      let shouStr = result.sort().join("");
+      let isDa = false;
+      //只要判断是否有上面的三种即可！
+      let [xiaoReg0, xiaoReg1, xiaoReg2] = [
+        new RegExp("zhzhzh"),
+        new RegExp("fafafa"),
+        new RegExp("dididi")
+      ];
+      if (
+        xiaoReg0.test(shouStr) &&
+        xiaoReg1.test(shouStr) &&
+        xiaoReg2.test(shouStr)
+      ) {
+        isDa = true;
+      }
+      return isDa;
+    }
+    //屁胡都不是，自然也不是大三元了
+    return false;
+  }
   static HuisGangShangKai(str, na_pai) {}
   static HuisGangShangPao(str, na_pai) {}
 
@@ -392,13 +463,13 @@ export class Majiang {
     if (this.HuisQidui) {
       huArr.push(config.HuisQidui);
     }
-    return huArr
+    return huArr;
   }
-  static HuPaiNames(str){
-    let output = []
-    this.WhatKindOfHu(str).forEach(item=>{
-      output.push(config.HuPaiSheet[item].name)
-    })
+  static HuPaiNames(str) {
+    let output = [];
+    this.WhatKindOfHu(str).forEach(item => {
+      output.push(config.HuPaiSheet[item].name);
+    });
     return output;
   }
 }
