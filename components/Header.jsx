@@ -10,6 +10,7 @@ export default class Header extends React.Component {
         	              <ul className="nav navbar-nav">
         	                <li className="active"><a href="#">玩牌</a></li>
                             <li> <a href="#/mjwhich">看胡</a></li>
+                            <li> <a href="#/rules">规则</a></li>
                             <li> <a href="#/about">关于</a></li>
         	              </ul>
         	            </div>

@@ -162,113 +162,113 @@ test("is4ABC 12张牌", function(t) {
 // 屁胡
 test("普通屁胡", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh zh";
-  t.is(Majiang.isPihu(str), true);
+  t.is(Majiang.HuisPihu(str), true);
 });
 test("多个同花色规则屁胡", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 t4 t5 t5 t5 t6 fa fa fa";
-  t.is(Majiang.isPihu(str), true);
+  t.is(Majiang.HuisPihu(str), true);
 });
 test("带杠屁胡", function(t) {
   let str = "t1 t2 t3 t4 t5 t6 b4 b5 b6 fa fa fa fa zh zh";
-  t.is(Majiang.isPihu(str), true);
+  t.is(Majiang.HuisPihu(str), true);
 });
 test("双杠屁胡", function(t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 b2 t1 t2 t2 t3 t3 t4 t5 t5";
-  t.is(Majiang.isPihu(str), true);
+  t.is(Majiang.HuisPihu(str), true);
 });
 test("屁胡清一色", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b5 b6 b7 b7";
-  t.is(Majiang.isPihu(str), true);
+  t.is(Majiang.HuisPihu(str), true);
 });
 test("少张屁胡", function(t) {
   let str = "b1 b1 b1 b2 b3 b7 b7 b7 b7 b8 b9";
-  t.is(Majiang.isPihu(str), true);
+  t.is(Majiang.HuisPihu(str), true);
 });
 test("非屁胡 should behave...", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 t4 t5 t6 fa fa fa zh t9";
-  t.is(Majiang.isPihu(str), false);
+  t.is(Majiang.HuisPihu(str), false);
 });
 test("非屁胡 将都没有", function(t) {
   let str = "b1b2b3";
-  t.is(Majiang.isPihu(str), false);
+  t.is(Majiang.HuisPihu(str), false);
 });
 
 // 特殊胡
 test("七对及龙七对", function(t) {
   let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 t9";
-  t.is(Majiang.isQidui(str), true);
-  t.is(Majiang.isNongQiDui(str), true);
+  t.is(Majiang.HuisQidui(str), true);
+  t.is(Majiang.HuisNongQiDui(str), true);
 });
 test("清一色", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7 b7";
-  t.is(Majiang.isYise(str), true);
+  t.is(Majiang.HuisYise(str), true);
 });
 test("碰碰胡将在后", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 t3 t3 t3 fa fa fa di di";
-  t.is(Majiang.isPengpeng(str), true);
+  t.is(Majiang.HuisPengpeng(str), true);
 });
 test("碰碰胡将在前", function(t) {
   let str = "di di b1 b1 b1 b2 b2 b2 t3 t3 t3 fa fa fa";
-  t.is(Majiang.isPengpeng(str), true);
+  t.is(Majiang.HuisPengpeng(str), true);
 });
 test("碰碰糊带1杠", function(t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 t3 t3 t3 fa fa fa t5 t5";
-  t.is(Majiang.isPengpeng(str), true);
+  t.is(Majiang.HuisPengpeng(str), true);
 });
 test("碰碰糊带2杠", function(t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 fa fa fa t5 t5";
-  t.is(Majiang.isPengpeng(str), true);
+  t.is(Majiang.HuisPengpeng(str), true);
 });
 test("碰碰糊带3杠", function(t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 b2 t3 t3 t3 t3 fa fa fa t5 t5";
-  t.is(Majiang.isPengpeng(str), true);
+  t.is(Majiang.HuisPengpeng(str), true);
 });
 test("碰碰糊带3杠少将", function(t) {
   let str = "b2 fa fa fa fa t1 t1 t1 t1 zh zh zh zh";
   let na_pai = "b2";
-  t.is(Majiang.isPengpeng(str + na_pai), true);
+  t.is(Majiang.HuisPengpeng(str + na_pai), true);
 });
 test("卡五星", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
   let na_pai = "b5";
-  t.is(Majiang.isKaWuXinG(str, na_pai), true);
+  t.is(Majiang.HuisKaWuXing(str, na_pai), true);
 });
 test("三杠卡五星", function(t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 b2 b4 b6 t3 t3 t3 t3 t5 t5";
   let na_pai = "b5";
-  t.is(Majiang.isKaWuXinG(str, na_pai), true);
+  t.is(Majiang.HuisKaWuXing(str, na_pai), true);
 });
 test("清一色卡五星", function(t) {
   let str = "b1 b1 b1 b2 b3 b4 b6 b7 b7 b7 b7 b8 b9";
   let na_pai = "b5";
-  t.is(Majiang.isKaWuXinG(str, na_pai), true);
-  t.is(Majiang.isYise(str + na_pai), true);
+  t.is(Majiang.HuisKaWuXing(str, na_pai), true);
+  t.is(Majiang.HuisYise(str + na_pai), true);
 });
 
 //false'
 test("非七对", function(t) {
   let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 t8";
-  t.is(Majiang.isQidui(str), false);
+  t.is(Majiang.HuisQidui(str), false);
 });
 test("不是清一色", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7 fa";
-  t.is(Majiang.isYise(str), false);
+  t.is(Majiang.HuisYise(str), false);
 });
 test("不是碰碰胡", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 t3 t4 t5 fa fa fa di di";
-  t.is(Majiang.isPengpeng(str), false);
+  t.is(Majiang.HuisPengpeng(str), false);
 });
 test("可胡但不是卡五星", function(t) {
   let str = "t1 t2 t3 t4 t5 t6 b6 b7 b7 b7 b7 b8 b9";
   var na_pai = "b5";
-  t.is(Majiang.isKaWuXinG(str, na_pai), false);
-  t.is(Majiang.isPihu(str + na_pai), true);
+  t.is(Majiang.HuisKaWuXing(str, na_pai), false);
+  t.is(Majiang.HuisPihu(str + na_pai), true);
 });
 test("胡五条但不是卡", function(t) {
   let str = "fa fa fa t2 t2 t3 t4 t6 t7 t8 zh zh zh";
   var na_pai = "t5";
-  t.is(Majiang.isKaWuXinG(str, na_pai), false);
-  t.is(Majiang.isPihu(str + na_pai), true);
+  t.is(Majiang.HuisKaWuXing(str, na_pai), false);
+  t.is(Majiang.HuisPihu(str + na_pai), true);
 });
 
 // '胡啥牌'

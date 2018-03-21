@@ -130,6 +130,12 @@ export class Room {
       //看其它玩家能否碰！
       let oplayers = this.other_players(player);
       for (let p of oplayers) {
+        //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
+        let willHuShoupai = _.clone(p.shou_pai).concat(pai)
+        if (Majiang.HuisPihu(willHuShoupai)) {
+          
+        }
+
         let gangpengOuput = "";
         //其实只有一个玩家可以碰！
         if (Majiang.canPeng(p.shou_pai, pai)) {
@@ -159,6 +165,7 @@ export class Room {
             //等待10秒钟，待玩家反应，超时的话就继续发牌！否则就会改变发牌的顺序！
           }
         }
+
       }
       //不能碰就发牌给下一个玩家
       if (canNormalFaPai) {

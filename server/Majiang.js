@@ -1,6 +1,7 @@
 //麻将判胡算法主程序
 
 import _ from "lodash";
+import * as config from "./../config";
 // 全局常量，所有的牌
 var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
@@ -212,7 +213,7 @@ export class Majiang {
 ["b2b2", "b3b3", "b4b4", "b5b5", "b7b7"]
 */
 
-  static isPihu(str) {
+  static HuisPihu(str) {
     let result = checkValidAndReturnArr(str);
     let allJiang = getAllJiangArr(result);
     let bool_hu = false;
@@ -273,7 +274,7 @@ export class Majiang {
     }
   }
 
-  static isQidui(str) {
+  static HuisQidui(str) {
     //判断是否是七对
     let result = checkValidAndReturnArr(str);
     if (result.length != 14) {
@@ -289,12 +290,12 @@ export class Majiang {
     }
     return true;
   }
-  static isNongQiDui(str) {
+  static HuisNongQiDui(str) {
     let result = checkValidAndReturnArr(str);
     if (result.length != 14) {
       throw new Error(`str:${str} must have 14 values`);
     }
-    if (this.isQidui(str)) {
+    if (this.HuisQidui(str)) {
       let uniq = new Set(result);
       return uniq.size < 7;
     } else {
@@ -302,7 +303,7 @@ export class Majiang {
     }
   }
   //是否是清一色，
-  static isYise(str) {
+  static HuisYise(str) {
     let result = checkValidAndReturnArr(str);
     if (result.length < 14) {
       throw new Error(`str:${str}  must larger than 14 values`);
@@ -311,7 +312,7 @@ export class Majiang {
     let isUniq = new Set(first).size;
     return isUniq == 1;
   }
-  static isPengpeng(str) {
+  static HuisPengpeng(str) {
     let result = checkValidAndReturnArr(str);
     if (result.length < 13) {
       throw new Error(`str:${str} must larger than 13 values`);
@@ -341,7 +342,7 @@ export class Majiang {
         continue;
         // console.log(newstr.match(/(..)\1\1\1\1/g))
         // throw new Error('irregular Pai, record in database, maybe Hacker.')
-      } else if (this.isPihu(newstr) || this.isPengpeng(newstr)) {
+      } else if (this.HuisPihu(newstr) || this.HuisPengpeng(newstr)) {
         hupai_zhang.push(single_pai);
       }
     }
@@ -353,14 +354,14 @@ export class Majiang {
     }
   }
 
-  static isKaWuXinG(str, na_pai) {
+  static HuisKaWuXing(str, na_pai) {
     let yi_shou_pai = str + na_pai;
     let result = checkValidAndReturnArr(yi_shou_pai);
     if (result.length < 14) {
       throw new Error(`str${str} must larger than 14 values`);
     }
     //胡牌但是并不是碰胡也不是将牌，就是卡五星,或者胡牌并且两边有4，5，也是卡五星，如果是45556的情况？
-    if (this.isPihu(yi_shou_pai)) {
+    if (this.HuisPihu(yi_shou_pai)) {
       if (na_pai[1] == 5) {
         let four = na_pai[0] + "4";
         let six = na_pai[0] + "6";
@@ -371,10 +372,33 @@ export class Majiang {
             .remove(na_pai)
             .remove(four)
             .remove(six);
-          return this.isPihu(after_delete_kawa);
+          return this.HuisPihu(after_delete_kawa);
         }
       }
     }
     return false;
+  }
+
+  static HuisXiaoShanYuan(str, na_pai) {}
+  static HuisDaShanYuan(str, na_pai) {}
+  static HuisGangShangKai(str, na_pai) {}
+  static HuisGangShangPao(str, na_pai) {}
+
+  static WhatKindOfHu(str) {
+    let huArr = [];
+    if (this.HuisNongQiDui) {
+      huArr.push(config.HuisNongQiDui);
+    }
+    if (this.HuisQidui) {
+      huArr.push(config.HuisQidui);
+    }
+    return huArr
+  }
+  static HuPaiNames(str){
+    let output = []
+    this.WhatKindOfHu(str).forEach(item=>{
+      output.push(config.HuPaiSheet[item].name)
+    })
+    return output;
   }
 }
