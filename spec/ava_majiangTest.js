@@ -388,4 +388,7 @@ test("不能碰di", function(t) {
   t.is(Majiang.canPeng(str, "b1"), false);
 });
 
+//哪种胡类型
+
+
 // });

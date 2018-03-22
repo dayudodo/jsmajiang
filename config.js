@@ -35,17 +35,28 @@ export const HuPaiSheet = [
   { type: "HuisPengpeng", name: "碰碰胡", score: 1 },
   { type: "HuisXiaoShanYuan", name: "小三元", score: 1 },
   { type: "HuisDaShanYuan", name: "大三元", score: 1 },
-  { type: "HuisGangShangKai", name: "杠上开花", score: 2 },
+  { type: "HuisGangShangKai", name: "杠上开花", score: 1 },
   { type: "HuisGangShangPao", name: "杠上炮", score: 1 },
   { type: "HuisPihu", name: "屁胡", score: 1 }
 ];
 
-// var output = ''
-// var HuPaiStr = HuPaiSheet.forEach((item,index)=>{
-//   var template = `export const ${item.type} = ${index}\n`
+// var output = "";
+// HuPaiSheet.forEach((item, index) => {
+//   var template = `export const ${item.type} = ${index}\n`;
+//   output = output + template;
+// });
+// console.log(output);
+
+//生成WhatKindOfHu里面的if体，不容易出错，以后再有新的胡办法，直接生成即可
+// output = ""
+// HuPaiSheet.forEach(item => {
+//   var template = 
+// ` if(this.${item.type}(str,na_pai)){
+//     _huArr.push(config.${item.type});
+//   }\n`;
 //   output = output + template
-// })
-// console.log(output)
+// });
+// console.log(output);
 //start自动生成代码, 运行上面的代码
 export const HuisYise = 0;
 export const HuisKaWuXing = 1;
