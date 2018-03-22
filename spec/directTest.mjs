@@ -13,3 +13,7 @@ console.log(Majiang.HuPaiNames(str, na_pai));
 str = "b1 b1 b1 b2 b2 b2 b3 b3 b3 b4 b4 b4 b5 ";
 na_pai = "b5";
 console.log(Majiang.HuPaiNames(str, na_pai));
+
+str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b6 b6 b7 ";
+na_pai = "b7";
+console.log(Majiang.HuPaiNames(str, na_pai));
