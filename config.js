@@ -35,7 +35,7 @@ export const HuPaiSheet = [
   { type: "HuisPengpeng", name: "碰碰胡", score: 1 },
   { type: "HuisXiaoShanYuan", name: "小三元", score: 1 },
   { type: "HuisDaShanYuan", name: "大三元", score: 1 },
-  { type: "HuisGangShangKai", name: "杠上开花", score: 1 },
+  { type: "HuisGangShangKai", name: "杠上开花", score: 2 },
   { type: "HuisGangShangPao", name: "杠上炮", score: 1 },
   { type: "HuisPihu", name: "屁胡", score: 1 }
 ];

@@ -214,8 +214,8 @@ export class Majiang {
 ["b2b2", "b3b3", "b4b4", "b5b5", "b7b7"]
 */
 
-  static HuisPihu(str) {
-    let result = checkValidAndReturnArr(str);
+  static HuisPihu(str, na_pai) {
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
     let allJiang = getAllJiangArr(result);
     let bool_hu = false;
     let reg_four = /(..)\1\1\1/g;
@@ -275,9 +275,9 @@ export class Majiang {
     }
   }
 
-  static HuisQidui(str) {
+  static HuisQidui(str, na_pai) {
     //判断是否是七对
-    let result = checkValidAndReturnArr(str);
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort();
     if (result.length != 14) {
       throw new Error(`str${str} must have 14 values`);
     }
@@ -291,12 +291,12 @@ export class Majiang {
     }
     return true;
   }
-  static HuisNongQiDui(str) {
-    let result = checkValidAndReturnArr(str);
+  static HuisNongQiDui(str,na_pai) {
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
     if (result.length != 14) {
       throw new Error(`str:${str} must have 14 values`);
     }
-    if (this.HuisQidui(str)) {
+    if (this.HuisQidui(str, na_pai)) {
       let uniq = new Set(result);
       return uniq.size < 7;
     } else {
@@ -304,8 +304,8 @@ export class Majiang {
     }
   }
   //是否是清一色，
-  static HuisYise(str) {
-    let result = checkValidAndReturnArr(str);
+  static HuisYise(str,na_pai) {
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
     if (result.length < 14) {
       throw new Error(`str:${str}  must larger than 14 values`);
     }
@@ -313,10 +313,10 @@ export class Majiang {
     let isUniq = new Set(first).size;
     return isUniq == 1;
   }
-  static HuisPengpeng(str) {
-    let result = checkValidAndReturnArr(str);
-    if (result.length < 13) {
-      throw new Error(`str:${str} must larger than 13 values`);
+  static HuisPengpeng(str,na_pai) {
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
+    if (result.length < 14) {
+      throw new Error(`str:${str} must larger than 14 values`);
     }
     //把所有三个或四个相同的干掉，看最后剩下的是否是将
     let reg = /(..)\1\1\1?/g;
@@ -356,7 +356,7 @@ export class Majiang {
   }
 
   static HuisKaWuXing(str, na_pai) {
-    let result = checkValidAndReturnArr(str).concat(na_pai);
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
     if (result.length < 14) {
       throw new Error(`str${str} must larger than 14 values`);
     }
@@ -393,7 +393,7 @@ export class Majiang {
 
   static HuisXiaoShanYuan(str, na_pai) {
     //小三元是zh, fa, di中有一对将，其它为刻子，比如zh zh, fa fa fa, di di di。。。就是小三元了
-    let result = checkValidAndReturnArr(str).concat(na_pai);
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
     if (result.length < 14) {
       throw new Error(`str${str} must larger than 14 values`);
     }
@@ -404,7 +404,7 @@ export class Majiang {
         ["fa", "zhzhzh", "dididi"],
         ["di", "zhzhzh", "fafafa"]
       ];
-      let shouStr = result.sort().join("");
+      let shouStr = result.join("");
       let isXiao = false;
       xiaoSheet.forEach(s => {
         //只要判断是否有上面的三种即可！
@@ -427,12 +427,12 @@ export class Majiang {
   //只判断三个即可，这也包括了四个的情况！
   static HuisDaShanYuan(str, na_pai) {
     //大三元其实最好判断了，三个一样的zh,fa,di检测即可！
-    let result = checkValidAndReturnArr(str).concat(na_pai);
+    let result = checkValidAndReturnArr(str).concat(na_pai).sort()
     if (result.length < 14) {
       throw new Error(`str${str} must larger than 14 values`);
     }
     if (this.HuisPihu(result)) {
-      let shouStr = result.sort().join("");
+      let shouStr = result.join("");
       let isDa = false;
       //只要判断是否有上面的三种即可！
       let [xiaoReg0, xiaoReg1, xiaoReg2] = [
@@ -452,10 +452,18 @@ export class Majiang {
     //屁胡都不是，自然也不是大三元了
     return false;
   }
-  static HuisGangShangKai(str, na_pai) {}
+  //杠上开花，杠了个牌，然后胡了,要与玩家杠之后联系上。
+  static HuisGangShangKai(shou_pai, na_pai, isGang) {
+    //杠了之后才会去检测是否胡
+    if (isGang) {
+      //还得知道是哪种胡！但肯定不会是七对类型的。返回的其实就应该是整个胡牌的情况，杠上开会在胡牌的基础上多算番
+      return this.WhatKindOfHu(shou_pai,na_pai)
+    }
+    return false
+  }
   static HuisGangShangPao(str, na_pai) {}
 
-  static WhatKindOfHu(str) {
+  static WhatKindOfHu(str, na_pai) {
     let huArr = [];
     if (this.HuisNongQiDui) {
       huArr.push(config.HuisNongQiDui);
