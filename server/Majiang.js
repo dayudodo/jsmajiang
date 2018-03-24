@@ -219,7 +219,7 @@ export class Majiang {
       .concat(na_pai)
       .sort();
     let allJiang = getAllJiangArr(result);
-    let bool_hu = false;
+    let is_hu = false;
     let reg_four = /(..)\1\1\1/g;
     let reg_three = /(..)\1\1/g;
     // console.log(allJiang)
@@ -237,7 +237,7 @@ export class Majiang {
           if (newstr.length == 0) {
             console.log(`检查${origin}, 可能不是一手牌`);
             // 有可能遇到全是杠的情况
-            bool_hu = true;
+            is_hu = true;
             break;
           } else {
             let last_result = checkValidAndReturnArr(newstr);
@@ -245,32 +245,32 @@ export class Majiang {
             switch (last_result.length) {
               case 3:
                 if (this.isABCorAAA(last_result)) {
-                  bool_hu = true;
+                  is_hu = true;
                 }
                 break;
               case 6:
                 if (this.is2ABC(last_result)) {
-                  bool_hu = true;
+                  is_hu = true;
                 }
                 break;
               case 9:
                 if (this.is3ABC(last_result)) {
-                  bool_hu = true;
+                  is_hu = true;
                 }
                 break;
               case 12:
                 if (this.is4ABC(last_result)) {
-                  bool_hu = true;
+                  is_hu = true;
                 }
                 break;
             }
-            if (false == bool_hu) {
+            if (false == is_hu) {
               newstr = origin.replace(reg_three, "");
             }
           }
         }
       });
-      return bool_hu;
+      return is_hu;
     } else {
       //连将都没有，自然不是屁胡
       return false;
@@ -282,8 +282,8 @@ export class Majiang {
     let result = checkValidAndReturnArr(str)
       .concat(na_pai)
       .sort();
-    if (result.length != 14) {
-      throw new Error(`str${str} must have 14 values`);
+    if (result.length < 13) {
+      throw new Error(`str${str} must have 13 values`);
     }
     // console.log(result)
     for (var i = 0; i < result.length; i += 2) {
@@ -299,8 +299,8 @@ export class Majiang {
     let result = checkValidAndReturnArr(str)
       .concat(na_pai)
       .sort();
-    if (result.length != 14) {
-      throw new Error(`str:${str} must have 14 values`);
+    if (result.length < 13) {
+      throw new Error(`str:${str} must have 13 values`);
     }
     if (this.HuisQidui(str, na_pai)) {
       let uniq = new Set(result);
@@ -337,7 +337,8 @@ export class Majiang {
     return this.isAA(jiang);
   }
 
-  static whoIsHu(str) {
+  //胡什么牌，以前的名称是WhoIsHu
+  static HuWhatPai(str) {
     let result = checkValidAndReturnArr(str);
     let hupai_zhang = [];
 
@@ -353,7 +354,12 @@ export class Majiang {
         continue;
         // console.log(newstr.match(/(..)\1\1\1\1/g))
         // throw new Error('irregular Pai, record in database, maybe Hacker.')
-      } else if (this.HuisPihu(newstr) || this.HuisPengpeng(newstr)) {
+        //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
+      } else if (
+        this.HuisPihu(newstr) ||
+        this.HuisPengpeng(newstr) ||
+        this.HuisQidui(newstr)
+      ) {
         hupai_zhang.push(single_pai);
       }
     }
@@ -473,20 +479,20 @@ export class Majiang {
     //杠了之后才会去检测是否胡，还得检测是哪种胡！
     if (isSelfGang) {
       //还得知道是哪种胡！但肯定不会是七对类型的。返回的其实就应该是整个胡牌的情况，杠上开会在胡牌的基础上多算番
-      return this.HupaiTypeCode(shou_pai, na_pai);
+      return this.HupaiTypeCodeArr(shou_pai, na_pai);
     }
     return false;
   }
   //杠上炮，别人打的杠牌，你可以胡, other_pai看是否是别人打的。
   static HuisGangShangPao(shou_pai, na_pai, isOtherDaGangpai) {
     if (isOtherDaGangpai) {
-      return this.HupaiTypeCode(shou_pai, na_pai);
+      return this.HupaiTypeCodeArr(shou_pai, na_pai);
     }
     return false;
   }
 
   //哪种基本的胡牌，象杠上开花是多算番的胡，并不是基本的胡牌
-  static HupaiTypeCode(str, na_pai) {
+  static HupaiTypeCodeArr(str, na_pai) {
     let _huArr = [];
     if (this.HuisYise(str, na_pai)) {
       _huArr.push(config.HuisYise);
@@ -522,7 +528,7 @@ export class Majiang {
   }
   static HuPaiNames(str, na_pai) {
     let _output = [];
-    this.HupaiTypeCode(str, na_pai).forEach(item => {
+    this.HupaiTypeCodeArr(str, na_pai).forEach(item => {
       _output.push(config.HuPaiSheet[item].name);
     });
     return _output;

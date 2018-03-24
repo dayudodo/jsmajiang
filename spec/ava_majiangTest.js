@@ -202,10 +202,14 @@ test("非屁胡 将都没有", function(t) {
 });
 
 // 特殊胡
-test("七对及龙七对", function(t) {
-  let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 ";
+test("七对", function(t) {
+  let str = "b1 b1 b2 b2 b3 b3 fa fa  t1 t1 t4 t4 t9 ";
   let na_pai = "t9";
   t.is(Majiang.HuisQidui(str, na_pai), true);
+});
+test("龙七对", function(t) {
+  let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 ";
+  let na_pai = "t9";
   t.is(Majiang.HuisNongQiDui(str, na_pai), true);
 });
 test("清一色", function(t) {
@@ -260,7 +264,8 @@ test("清一色卡五星", function(t) {
   t.is(Majiang.HuisYise(str, na_pai), true);
 });
 
-//此方法其实是专门为小三元服务的，因为要判断是否只重复了二次，不能有三次的情况！
+//repeatTwiceOnly是专门为小三元服务的，因为要判断是否只重复了二次，不能有三次的情况！
+//正则的话还没有找到限制重复次数的用法
 test("should repeatTwiceOnly", t => {
   let str = "t1t2b1b1b1";
   t.is(Majiang.isRepeatTwiceOnly(str, "b1"), false);
@@ -291,7 +296,7 @@ test("should not 大小三元", t => {
   t.is(Majiang.HuisDaShanYuan(str, na_pai), false);
 });
 
-//false'
+//胡牌false'
 test("非七对", function(t) {
   let str = "b1 b1 b2 b2 fa fa fa t1 t1 t4 t4 t9 t8";
   let na_pai = "fa";
@@ -323,24 +328,48 @@ test("胡五条但不是卡", function(t) {
 // '胡啥牌'
 test("清一色听牌", function(t) {
   let str = "b1 b2 b2 b3 b3 b4 b4 b5 b5 b5 b6 b7 b7";
-  t.deepEqual(Majiang.whoIsHu(str), ["b5", "b7"]);
+  t.deepEqual(Majiang.HuWhatPai(str), ["b5", "b7"]);
 });
 test("清一色听7张", function(t) {
   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 b9 b9 b9";
-  t.deepEqual(Majiang.whoIsHu(str), ["b1", "b3", "b4", "b6", "b7", "b8", "b9"]);
+  t.deepEqual(Majiang.HuWhatPai(str), [
+    "b1",
+    "b3",
+    "b4",
+    "b6",
+    "b7",
+    "b8",
+    "b9"
+  ]);
 });
 
 test("双将倒", function(t) {
   let str = "zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa";
-  t.deepEqual(Majiang.whoIsHu(str), ["di", "zh"]);
+  t.deepEqual(Majiang.HuWhatPai(str), ["di", "zh"]);
 });
 test("单钓将", function(t) {
   let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b7 b7 b8";
-  t.deepEqual(Majiang.whoIsHu(str), ["b3", "b6", "b8", "b9"]);
+  t.deepEqual(Majiang.HuWhatPai(str), ["b3", "b6", "b8", "b9"]);
 });
 test("清一色听牌false", function(t) {
   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 t1 t3 t5";
-  t.is(Majiang.whoIsHu(str), false);
+  t.is(Majiang.HuWhatPai(str), false);
+});
+test("清一色听牌false", function(t) {
+  let str = "b1 b2 b3 b4 b5 b6 b7 b8 b8 b8 t1 t3 t5";
+  t.is(Majiang.HuWhatPai(str), false);
+});
+test("碰碰胡听牌", function(t) {
+  let str = "b1 b1 b1 b2 b2 b2 b3 b3 b3 t1 t1 t1 t2";
+  t.deepEqual(Majiang.HuWhatPai(str), ["t2","t3"]);
+});
+test("碰碰胡带杠听牌", function(t) {
+  let str = "b1 b1 b1 b1 b2 b2 b2 b3 b3 b3 t1 t1 t1 t2";
+  t.deepEqual(Majiang.HuWhatPai(str), ["t2", "t3"]);
+});
+test("龙七对听牌", function(t) {
+  let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9";
+  t.deepEqual(Majiang.HuWhatPai(str), ["t9"]);
 });
 
 //能否杠
@@ -400,12 +429,12 @@ test("清一色", t => {
 test("清一色碰碰", t => {
   let str = "b1 b1 b1 b2 b2 b2 b3 b3 b3 b4 b4 b4 b5 ";
   let na_pai = "b5";
-  t.deepEqual(Majiang.HuPaiNames(str, na_pai), ["清一色", "碰碰胡","屁胡"]);
+  t.deepEqual(Majiang.HuPaiNames(str, na_pai), ["清一色", "碰碰胡", "屁胡"]);
 });
 test("清一色七对", t => {
   let str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b6 b6 b7 ";
   let na_pai = "b7";
-  t.deepEqual(Majiang.HuPaiNames(str, na_pai), ["清一色", "七对","屁胡"]);
+  t.deepEqual(Majiang.HuPaiNames(str, na_pai), ["清一色", "七对", "屁胡"]);
 });
 
 // });

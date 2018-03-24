@@ -81,8 +81,21 @@ export class Room {
     console.log("服务器发牌 %s 给：%s", pai, player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
     player.socket.emit("server_table_fapai", pai);
+    //发牌之后还要看玩家能否胡以及胡什么！
+    this.processHupai(player, pai, isZiMo);
     return pai;
   }
+  //自摸，杠牌其实都需要有个标志。
+  processHupai(player, pai, isZiMo) {
+    let _hupaitypes = Majiang.HupaiTypeCodeArr(player.shou_pai, pai);
+    if (!_.isEmpty(_hupaitypes)) {
+      isZiMo? _hupaitypes.push(config.HuisZiMo) : null
+      player.hupai_types= _hupaitypes
+      player.socket.emit("hupai", _hupaitypes);
+      player.socket.to(this.id).emit("hupai", _hupaitypes);
+    }
+  }
+
   gang_fa_pai(player) {
     //杠发牌，是从最后切一个出来，不影响前面的顺序，所以单独写成个发牌的方法
     let pai = this.clone_pai.splice(this.clone_pai.length - 1, 1);
@@ -127,12 +140,15 @@ export class Room {
       // 牌要重新发了
       this.restart_game();
     } else {
+      
       //看其它玩家能否碰！
       let oplayers = this.other_players(player);
       for (let p of oplayers) {
         //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
-        let willHuShoupai = _.clone(p.shou_pai).concat(pai)
-        if (Majiang.HuisPihu(willHuShoupai)) {
+        //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
+        let willHuShoupai = _.clone(p.shou_pai)
+        let _hupaitypes = Majiang.HupaiTypeCodeArr(willHuShoupai, pai)
+        if (!_.isEmpty(_hupaitypes)) {
           
         }
 
@@ -167,6 +183,7 @@ export class Room {
         }
 
       }
+      //todo: 打牌玩家能否亮牌？
       //不能碰就发牌给下一个玩家
       if (canNormalFaPai) {
         this.fa_pai(this.next_player);

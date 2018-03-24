@@ -37,7 +37,8 @@ export const HuPaiSheet = [
   { type: "HuisDaShanYuan", name: "大三元", score: 1 },
   { type: "HuisGangShangKai", name: "杠上开花", score: 1 },
   { type: "HuisGangShangPao", name: "杠上炮", score: 1 },
-  { type: "HuisPihu", name: "屁胡", score: 1 }
+  { type: "HuisPihu", name: "屁胡", score: 1 },
+  { type: "HuisZiMo", name: "自摸", score: 1 }
 ];
 
 // var output = "";
@@ -50,7 +51,7 @@ export const HuPaiSheet = [
 //生成WhatKindOfHu里面的if体，不容易出错，以后再有新的胡办法，直接生成即可
 // output = ""
 // HuPaiSheet.forEach(item => {
-//   var template = 
+//   var template =
 // ` if(this.${item.type}(str,na_pai)){
 //     _huArr.push(config.${item.type});
 //   }\n`;
@@ -68,4 +69,5 @@ export const HuisDaShanYuan = 6;
 export const HuisGangShangKai = 7;
 export const HuisGangShangPao = 8;
 export const HuisPihu = 9;
+export const HuisZiMo = 10;
 //end自动生成代码
