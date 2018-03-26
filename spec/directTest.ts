@@ -16,6 +16,11 @@ str = "b1 b1 b1 b2 b2 b2 b3 b3 b3 b4 b4 b4 b5 ";
 na_pai = "b5";
 console.log(Majiang.HuPaiNames(str, na_pai));
 
+//[ '七对', '屁胡' ]
+str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b6 b6 t7 ";
+na_pai = "t7";
+console.log(Majiang.HuPaiNames(str, na_pai));
+
 //[ '清一色', '七对', '屁胡' ]
 str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b6 b6 b7 ";
 na_pai = "b7";

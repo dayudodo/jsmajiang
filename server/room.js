@@ -119,15 +119,15 @@ export class Room {
     return this.players.find(item => item.socket == socket);
   }
   //玩家所在socket打牌pai
-  da_pai(io, socket, pai) {
+  da_pai(io, socket, pai_name) {
     let room_name = this.id;
     //首先向房间内的所有玩家显示出当前玩家打的牌
     // socket.emit("dapai", pai);
     // socket.to(room_name).emit("dapai", pai);
-    io.to(room_name).emit("server_dapai", pai);
+    io.to(room_name).emit("server_dapai", pai_name);
     let player = this.find_player_by_socket(socket);
     //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
-    player.da_pai(pai);
+    player.da_pai(pai_name);
     //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
 
     let isRoomPaiEmpty = this.clone_pai.length == 0;
@@ -143,37 +143,46 @@ export class Room {
       
       //看其它玩家能否碰！
       let oplayers = this.other_players(player);
-      for (let p of oplayers) {
+      for (let item_player of oplayers) {
         //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
         //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
-        let willHuShoupai = _.clone(p.shou_pai)
-        let _hupaitypes = Majiang.HupaiTypeCodeArr(willHuShoupai, pai)
-        if (!_.isEmpty(_hupaitypes)) {
-          
+        let _willHuShoupai = _.clone(item_player.shou_pai)
+        let _hupai_types = Majiang.HupaiTypeCodeArr(_willHuShoupai, pai_name)
+        let _haveHu = !_.isEmpty(_hupai_types)
+        if (_haveHu) {
+          //如果有胡且亮牌，就可以胡，不然的话还不能胡，除非是大胡！
+          if (item_player.liang_pai) {
+            item_player.hupai_zhang= pai_name
+            item_player.socket.emit('canHu', _hupai_types)
+          }else{
+            if (Majiang.HuisDaHu(_willHuShoupai, pai_name)) {
+              
+            }
+          }
         }
 
-        let gangpengOuput = "";
+        let gangpengOuput = ""; 
         //其实只有一个玩家可以碰！
-        if (Majiang.canPeng(p.shou_pai, pai)) {
-          if (Majiang.canGang(p.shou_pai, pai)) {
-            canNormalFaPai = this.processGang(canNormalFaPai, p, pai);
+        if (Majiang.canPeng(item_player.shou_pai, pai_name)) {
+          if (Majiang.canGang(item_player.shou_pai, pai_name)) {
+            canNormalFaPai = this.processGang(canNormalFaPai, item_player, pai_name);
             //只能碰，就用碰的办法处理！
           } else {
             //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
             canNormalFaPai = false;
-            console.log(`房间${this.id}内发现玩家${p.username}可以碰牌${pai}`);
-            console.dir(`玩家${p.username}的手牌为:${p.shou_pai.join(" ")}`);
-            p.socket.emit("server_canPeng", pai, answer => {
+            console.log(`房间${this.id}内发现玩家${item_player.username}可以碰牌${pai_name}`);
+            console.dir(`玩家${item_player.username}的手牌为:${item_player.shou_pai.join(" ")}`);
+            item_player.socket.emit("server_canPeng", pai_name, answer => {
               let client_decide_peng = answer == true;
               if (client_decide_peng) {
-                console.log(`玩家${p.username}决定碰牌:${pai}`);
-                p.receive_pai(pai); //碰之后此牌就属于本玩家了,前后台都需要添加!
+                console.log(`玩家${item_player.username}决定碰牌:${pai_name}`);
+                item_player.receive_pai(pai_name); //碰之后此牌就属于本玩家了,前后台都需要添加!
                 //当前玩家顺序改变
-                this.current_player = p;
+                this.current_player = item_player;
                 //再打牌后就能够正常发牌了
                 canNormalFaPai = true;
               } else {
-                console.log(`玩家${p.username}放弃碰牌:${pai}`);
+                console.log(`玩家${item_player.username}放弃碰牌:${pai_name}`);
                 canNormalFaPai = true; //正常发牌
                 this.fa_pai(this.next_player);
               }
@@ -183,7 +192,8 @@ export class Room {
         }
 
       }
-      //todo: 打牌玩家能否亮牌？
+      //todo: 打牌玩家能否亮牌？是否听胡，能听就能亮，选择在玩家！
+
       //不能碰就发牌给下一个玩家
       if (canNormalFaPai) {
         this.fa_pai(this.next_player);

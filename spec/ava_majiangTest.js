@@ -217,6 +217,11 @@ test("清一色", function(t) {
   let na_pai = "b6";
   t.is(Majiang.HuisYise(str, na_pai), true);
 });
+test("清一色false", function(t) {
+  let str = "b1 b1 b1 b2 b2 b4 b4 b5 b5 b8  b7 b7 b7";
+  let na_pai = "b6";
+  t.is(Majiang.HuisYise(str, na_pai), false);
+});
 test("碰碰胡将在后", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 t3 t3 t3 fa fa fa di ";
   let na_pai = "di";
@@ -361,7 +366,7 @@ test("清一色听牌false", function(t) {
 });
 test("碰碰胡听牌", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 b3 b3 b3 t1 t1 t1 t2";
-  t.deepEqual(Majiang.HuWhatPai(str), ["t2","t3"]);
+  t.deepEqual(Majiang.HuWhatPai(str), ["t2", "t3"]);
 });
 test("碰碰胡带杠听牌", function(t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 b3 b3 b3 t1 t1 t1 t2";

@@ -319,7 +319,8 @@ export class Majiang {
     }
     let first = result.map(item => item[0]);
     let isUniq = new Set(first).size;
-    return isUniq == 1;
+    //不仅要是一色而且还得满足平胡
+    return (isUniq == 1) && this.HuisPihu(str,na_pai)
   }
   static HuisPengpeng(str, na_pai) {
     let result = checkValidAndReturnArr(str)
@@ -338,27 +339,27 @@ export class Majiang {
   }
 
   //胡什么牌，以前的名称是WhoIsHu
-  static HuWhatPai(str) {
-    let result = checkValidAndReturnArr(str);
+  static HuWhatPai(shou_pai) {
+    let result = checkValidAndReturnArr(shou_pai);
     let hupai_zhang = [];
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
-      let newstr = result
+      let newShouPaiStr = result
         .concat(single_pai)
         .sort()
         .join("");
       // console.log(newstr)
-      let isFiveRepeat = /(..)\1\1\1\1/g.test(newstr);
+      let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
       if (isFiveRepeat) {
         continue;
         // console.log(newstr.match(/(..)\1\1\1\1/g))
         // throw new Error('irregular Pai, record in database, maybe Hacker.')
         //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
       } else if (
-        this.HuisPihu(newstr) ||
-        this.HuisPengpeng(newstr) ||
-        this.HuisQidui(newstr)
+        this.HuisPihu(newShouPaiStr) ||
+        this.HuisPengpeng(newShouPaiStr) ||
+        this.HuisQidui(newShouPaiStr)
       ) {
         hupai_zhang.push(single_pai);
       }
