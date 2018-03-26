@@ -3,8 +3,7 @@ import chalk from "chalk";
 import { Majiang } from "./Majiang";
 import * as config from "./../config";
 
-// let clone_pai = _.clone(table_random_pai).splice(0,45) // 全局变量，开发时记得重启，开发时使用45张牌
-// let clone_pai =
+
 
 let room_valid_names = ["ange", "jack", "rose"];
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
@@ -18,7 +17,9 @@ export class Room {
     this.current_player = null;
     this.current_player_dapai = null; //当前玩家打的牌
     this.player_index = null; //哪个玩家在打牌，以便确定下一家
+    this.timer = null;
   }
+
   //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
   static make() {
     //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
