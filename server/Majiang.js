@@ -320,7 +320,7 @@ export class Majiang {
     let first = result.map(item => item[0]);
     let isUniq = new Set(first).size;
     //不仅要是一色而且还得满足平胡
-    return (isUniq == 1) && this.HuisPihu(str,na_pai)
+    return isUniq == 1 && this.HuisPihu(str, na_pai);
   }
   static HuisPengpeng(str, na_pai) {
     let result = checkValidAndReturnArr(str)
@@ -533,5 +533,28 @@ export class Majiang {
       _output.push(config.HuPaiSheet[item].name);
     });
     return _output;
+  }
+  static HuPaiNamesFromArr(hupaicodeArr) {
+    return hupaicodeArr.map(item => {
+      return config.HuPaiSheet[item].name;
+    });
+  }
+  //是否是大胡，通过胡的类型码数组来进行判断
+  static isDaHu(hupaicodeArr) {
+    if (!_.isArray(hupaicodeArr)) {
+      throw new Error(`hupaicodeArr必须是个数组，但：${hupaicodeArr}`);
+    }
+    if (
+      hupaicodeArr.includes(config.HuisYise) ||
+      hupaicodeArr.includes(config.HuisKaWuXing) ||
+      hupaicodeArr.includes(config.HuisQidui) ||
+      hupaicodeArr.includes(config.HuisNongQiDui) ||
+      hupaicodeArr.includes(config.HuisPengpeng) ||
+      hupaicodeArr.includes(config.HuisXiaoShanYuan) ||
+      hupaicodeArr.includes(config.HuisDaShanYuan)
+    ) {
+      return true;
+    }
+    return false;
   }
 }

@@ -6,6 +6,7 @@ import Images from "./Images";
 import PlayerImages from "./PlayerImages";
 import * as config from "./../config";
 import _ from "lodash";
+import { Majiang } from "../server/Majiang";
 
 // var can_da_pai = false //客户端能否打牌，是由服务器发牌所改变
 
@@ -179,7 +180,11 @@ var Play = React.createClass({
     this.client.on("server_canGang", (pai, callback) => {
       let userClickedGangPengPai = false; //记录用户有没有点击杠碰牌按钮;
       //服务器发送能杠，则就能够杠及碰
-      this.setState({ show_peng: true, show_gang: true, waitText: config.MaxWaitTime });
+      this.setState({
+        show_peng: true,
+        show_gang: true,
+        waitText: config.MaxWaitTime
+      });
       //有可能以前的读秒器还没有删除
       if (this.interv) {
         clearInterval(this.interv);
@@ -260,7 +265,7 @@ var Play = React.createClass({
         }
       }, config.CountDownInterval);
       //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。
-      setTimeout(() => {
+      let _timeout = setTimeout(() => {
         clearInterval(this.interv);
         if (!userClickedPengPai) {
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
@@ -268,6 +273,7 @@ var Play = React.createClass({
           console.log(`client${this.state.username}碰牌${pai}放弃`);
           callback(false);
         }
+        clearTimeout(_timeout);
       }, config.MaxWaitTime * 1000);
     });
     this.client.on("server_table_fapai", pai => {
@@ -276,6 +282,9 @@ var Play = React.createClass({
       let results = this.state.results.concat(pai);
       this.setState({ results: results, can_da_pai: true });
     });
+    this.client.on("canHu", hupai_names=>{
+      console.dir(hupai_names)
+    })
     this.client.on("game over", () => {
       this.setState({
         ready: false,

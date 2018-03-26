@@ -87,12 +87,12 @@ export class Room {
   }
   //自摸，杠牌其实都需要有个标志。
   processHupai(player, pai, isZiMo) {
-    let _hupaitypes = Majiang.HupaiTypeCodeArr(player.shou_pai, pai);
-    if (!_.isEmpty(_hupaitypes)) {
-      isZiMo? _hupaitypes.push(config.HuisZiMo) : null
-      player.hupai_types= _hupaitypes
-      player.socket.emit("hupai", _hupaitypes);
-      player.socket.to(this.id).emit("hupai", _hupaitypes);
+    let _hupai_types = Majiang.HupaiTypeCodeArr(player.shou_pai, pai);
+    if (!_.isEmpty(_hupai_types)) {
+      isZiMo ? _hupai_types.push(config.HuisZiMo) : null;
+      player.hupai_types = _hupai_types;
+      player.socket.emit("hupai", _hupai_types);
+      player.socket.to(this.id).emit("hupai", _hupai_types);
     }
   }
 
@@ -130,7 +130,7 @@ export class Room {
     player.da_pai(pai_name);
     //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
 
-    let isRoomPaiEmpty = this.clone_pai.length == 0;
+    let isRoomPaiEmpty = 0 === this.clone_pai.length;
     let canNormalFaPai = true; //能否正常给下一家发牌
     if (isRoomPaiEmpty) {
       // socket.emit("game over");
@@ -140,38 +140,57 @@ export class Room {
       // 牌要重新发了
       this.restart_game();
     } else {
-      
       //看其它玩家能否碰！
       let oplayers = this.other_players(player);
       for (let item_player of oplayers) {
         //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
         //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
-        let _willHuShoupai = _.clone(item_player.shou_pai)
-        let _hupai_types = Majiang.HupaiTypeCodeArr(_willHuShoupai, pai_name)
-        let _haveHu = !_.isEmpty(_hupai_types)
+        let _willHuShoupai = _.clone(item_player.shou_pai);
+        let _hupai_types = Majiang.HupaiTypeCodeArr(_willHuShoupai, pai_name);
+        let _haveHu = !_.isEmpty(_hupai_types);
         if (_haveHu) {
-          //如果有胡且亮牌，就可以胡，不然的话还不能胡，除非是大胡！
-          if (item_player.liang_pai) {
-            item_player.hupai_zhang= pai_name
-            item_player.socket.emit('canHu', _hupai_types)
-          }else{
-            if (Majiang.HuisDaHu(_willHuShoupai, pai_name)) {
-              
-            }
+          //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
+          if (item_player.liang_pai || Majiang.isDaHu(_hupai_types)) {
+            item_player.hupai_zhang = pai_name;
+            item_player.socket.emit(
+              "canHu",
+              Majiang.HuPaiNamesFromArr(_hupai_types),
+              answer => {
+                let client_decide_hu = true === answer;
+                if (client_decide_hu) {
+                  io.to(room_name).emit("server_hule", item_player.username);
+                } else {
+                  //用户跳过，给下一家发牌！
+                }
+              }
+            );
+            //todo: 等待20秒，过时发牌
           }
         }
 
-        let gangpengOuput = ""; 
+        let gangpengOuput = "";
         //其实只有一个玩家可以碰！
         if (Majiang.canPeng(item_player.shou_pai, pai_name)) {
           if (Majiang.canGang(item_player.shou_pai, pai_name)) {
-            canNormalFaPai = this.processGang(canNormalFaPai, item_player, pai_name);
+            canNormalFaPai = this.processGang(
+              canNormalFaPai,
+              item_player,
+              pai_name
+            );
             //只能碰，就用碰的办法处理！
           } else {
             //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
             canNormalFaPai = false;
-            console.log(`房间${this.id}内发现玩家${item_player.username}可以碰牌${pai_name}`);
-            console.dir(`玩家${item_player.username}的手牌为:${item_player.shou_pai.join(" ")}`);
+            console.log(
+              `房间${this.id}内发现玩家${
+                item_player.username
+              }可以碰牌${pai_name}`
+            );
+            console.dir(
+              `玩家${item_player.username}的手牌为:${item_player.shou_pai.join(
+                " "
+              )}`
+            );
             item_player.socket.emit("server_canPeng", pai_name, answer => {
               let client_decide_peng = answer == true;
               if (client_decide_peng) {
@@ -190,7 +209,6 @@ export class Room {
             //等待10秒钟，待玩家反应，超时的话就继续发牌！否则就会改变发牌的顺序！
           }
         }
-
       }
       //todo: 打牌玩家能否亮牌？是否听胡，能听就能亮，选择在玩家！
 
