@@ -23,8 +23,8 @@ export const FIRST_SHOUPAI_COUNT = 13;
 export const LIMIT_IN_ROOM = 3;
 export const MaxWaitTime = 10; //碰、杠牌时等待用户多少秒
 export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔
-export const WantPeng = 1;
-export const WantGang = 2;
+export const WANT_PENG = 1;
+export const WANT_GANG = 2;
 
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 export const HuPaiSheet = [

@@ -206,7 +206,7 @@ var Play = React.createClass({
             show_gang: false,
             can_da_pai: true
           });
-          callback(config.WantPeng);
+          callback(config.WANT_PENG);
         } else if (this.wantToGangPai) {
           this.wantToGangPai = false; //设置为false以免每秒都会执行，其实只需要执行一次！
           userClickedGangPengPai = true; //多个布尔值用来控制10秒结束后是否显示碰牌放弃
@@ -218,7 +218,7 @@ var Play = React.createClass({
             show_peng: false,
             show_gang: false
           });
-          callback(config.WantGang);
+          callback(config.WANT_GANG);
         }
       }, 1000);
       //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。

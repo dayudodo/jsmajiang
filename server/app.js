@@ -233,14 +233,44 @@ io.sockets.on("connection", function(socket) {
 
   //玩家打了一张牌
   socket.on("dapai", function(pai) {
-    let player = g_lobby.find_player_by_socket(socket)
-    console.log(`用户${player.username}打牌:${pai}`)
+    let player = g_lobby.find_player_by_socket(socket);
+    console.log(`用户${player.username}打牌:${pai}`);
     let room = g_lobby.find_room_by_socket(socket);
     //告诉房间，哪个socket打了啥牌
-    room.da_pai(io,socket, pai)
+    room.da_pai(io, socket, pai);
   });
 
-  socket.on("server_chat_cast", function(info) {
-    socket.to("room").emit("chat_cast", clone_pai);
+  socket.on("confirm_hu", function(pai_name) {
+    let { room_name, player, room } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}确定胡牌:${pai_name}`);
+    room.confirm_hu(io, socket, pai_name);
+  });
+  socket.on("confirm_peng", function(pai_name) {
+    let { room_name, player, room } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}确定碰牌:${pai_name}`);
+    room.confirm_peng(io, socket, pai_name);
+  });
+  socket.on("confirm_gang", function(pai_name) {
+    let { room_name, player, room } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}确定杠牌:${pai_name}`);
+    room.confirm_gang(io, socket, pai_name);
+  });
+  //玩家选择了过，不碰也不胡，需要做一些取消操作，并且都是发给房间来做处理
+  socket.on("confirm_guo", function(pai) {
+    let { room_name, player, room } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}决定放弃:${pai}`);
+    room.confirm_guo(io, socket);
+  });
+
+  socket.on("chat_cast", function(info) {
+    let room = g_lobby.find_room_by_socket(socket);
+    let room_name = room.id;
+    socket.to(room_name).emit("chat_cast", info);
   });
 });
+function confirmInit(socket) {
+  let player = g_lobby.find_player_by_socket(socket);
+  let room = g_lobby.find_room_by_socket(socket);
+  let room_name = room.id;
+  return { room_name, player, room };
+}
