@@ -22,7 +22,7 @@ export var PORT = 3333;
 export const FIRST_SHOUPAI_COUNT = 13;
 export const LIMIT_IN_ROOM = 3;
 export const MaxWaitTime = 10; //碰、杠牌时等待用户多少秒
-export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔
+export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔,单位：毫秒
 export const WANT_PENG = 1;
 export const WANT_GANG = 2;
 

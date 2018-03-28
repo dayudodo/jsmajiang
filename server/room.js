@@ -18,6 +18,9 @@ export class Room {
 
     //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
     this.can_receive_confirm = false;
+
+    //当前桌子上的那张牌，发给玩家的那张，或者是用户打出来的会被人碰的。
+    this.table_pai = null;
   }
 
   //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
@@ -70,14 +73,35 @@ export class Room {
     // console.log(o_players.map(p => p.username));
     return o_players;
   }
-  //玩家选择过牌，或者是超时自动跳过！
+
+  //玩家选择碰牌，或者是超时自动跳过！
   confirm_peng(io, socket) {
-    let player = this.find_player_by_socket(socket)
-    console.log(`玩家${item_player.username}决定碰牌:${pai_name}`);
+    let player = this.find_player_by_socket(socket);
+    //碰之后此牌就属于本玩家了,前后台都需要添加!
+    player.receive_pai(this.table_pai);
+    //当前玩家顺序改变
+    this.current_player = player;
   }
+  //玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。
+  confirm_gang(io, socket) {
+    this.confirm_peng(io, socket);
+    //todo: 计算收益，杠牌是有钱的！
+  }
+  //玩家选择胡牌
+  confirm_hu(io, socket){
+    let player = this.find_player_by_socket(socket);
+
+  }
+  //玩家选择放弃，给下一家发牌
+  confirm_guo(io, socket) {
+    this.fa_pai(this.next_player);
+  }
+  
   //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
   fa_pai(player) {
     let pai = this.clone_pai.splice(0, 1);
+    //发牌的时候，桌面牌变化。
+    this.table_pai = pai
     if (_.isEmpty(pai)) {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
     }
@@ -127,6 +151,8 @@ export class Room {
 
   //玩家所在socket打牌pai
   da_pai(io, socket, pai_name) {
+    //玩家打牌的时候，桌面牌变化
+    this.table_pai = pai_name
     let room_name = this.id;
     //首先向房间内的所有玩家显示出当前玩家打的牌
     // socket.emit("dapai", pai);
@@ -175,10 +201,10 @@ export class Room {
 
           if (Majiang.canGang(item_player.shou_pai, pai_name)) {
             console.log(
-              `房间${this.id}内发现玩家${player.username}可以杠牌${pai_name}`
+              `房间${this.id}内发现玩家${item_player.username}可以杠牌${pai_name}`
             );
             //告诉玩家你可以杠牌了
-            player.socket.emit("server_canGang", pai_name);
+            item_player.socket.emit("server_canGang", pai_name);
 
             //只能碰，就用碰的办法处理！
           } else {
@@ -193,22 +219,6 @@ export class Room {
               )}`
             );
             item_player.socket.emit("server_canPeng", pai_name);
-            // , answer => {
-            //   let client_decide_peng = answer == true;
-            //   if (client_decide_peng) {
-            //     console.log(`玩家${item_player.username}决定碰牌:${pai_name}`);
-            //     item_player.receive_pai(pai_name); //碰之后此牌就属于本玩家了,前后台都需要添加!
-            //     //当前玩家顺序改变
-            //     this.current_player = item_player;
-            //     //再打牌后就能够正常发牌了
-            //     canNormalFaPai = true;
-            //   } else {
-            //     console.log(`玩家${item_player.username}放弃碰牌:${pai_name}`);
-            //     canNormalFaPai = true; //正常发牌
-            //     this.fa_pai(this.next_player);
-            //   }
-            // });
-            //等待10秒钟，待玩家反应，超时的话就继续发牌！否则就会改变发牌的顺序！
           }
         }
       }

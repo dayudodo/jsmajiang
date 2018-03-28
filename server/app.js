@@ -240,25 +240,25 @@ io.sockets.on("connection", function(socket) {
     room.da_pai(io, socket, pai);
   });
 
-  socket.on("confirm_hu", function(pai_name) {
-    let { room_name, player, room } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}确定胡牌:${pai_name}`);
-    room.confirm_hu(io, socket, pai_name);
+  socket.on("confirm_hu", function() {
+    let { room_name, player, room, table_pai } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}选择胡牌:${table_pai}`);
+    room.confirm_hu(io, socket);
   });
-  socket.on("confirm_peng", function(pai_name) {
-    let { room_name, player, room } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}确定碰牌:${pai_name}`);
-    room.confirm_peng(io, socket, pai_name);
+  socket.on("confirm_peng", function() {
+    let { room_name, player, room, table_pai } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}选择碰牌:${table_pai}`);
+    room.confirm_peng(io, socket);
   });
-  socket.on("confirm_gang", function(pai_name) {
-    let { room_name, player, room } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}确定杠牌:${pai_name}`);
-    room.confirm_gang(io, socket, pai_name);
+  socket.on("confirm_gang", function() {
+    let { room_name, player, room, table_pai } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}选择杠牌:${table_pai}`);
+    room.confirm_gang(io, socket);
   });
   //玩家选择了过，不碰也不胡，需要做一些取消操作，并且都是发给房间来做处理
-  socket.on("confirm_guo", function(pai) {
-    let { room_name, player, room } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}决定放弃:${pai}`);
+  socket.on("confirm_guo", function() {
+    let { room_name, player, room, table_pai } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}选择过牌:${table_pai}`);
     room.confirm_guo(io, socket);
   });
 
@@ -272,5 +272,6 @@ function confirmInit(socket) {
   let player = g_lobby.find_player_by_socket(socket);
   let room = g_lobby.find_room_by_socket(socket);
   let room_name = room.id;
-  return { room_name, player, room };
+  let table_pai = room.table_pai;
+  return { room_name, player, room, table_pai };
 }
