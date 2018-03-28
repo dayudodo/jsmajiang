@@ -18,13 +18,11 @@ export const all_pai = BING.repeat(4)
   .concat(TIAO.repeat(4))
   .concat(ZHIPAI.repeat(4));
 
-export var PORT = 3333;
+export var PORT = 3333;  //服务器端口号，供服务器和客户端使用！
 export const FIRST_SHOUPAI_COUNT = 13;
-export const LIMIT_IN_ROOM = 3;
+export const LIMIT_IN_ROOM = 3; //房间玩家人数上限
 export const MaxWaitTime = 10; //碰、杠牌时等待用户多少秒
 export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔,单位：毫秒
-export const WANT_PENG = 1;
-export const WANT_GANG = 2;
 
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 export const HuPaiSheet = [

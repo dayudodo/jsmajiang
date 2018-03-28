@@ -10,15 +10,14 @@ export class Room {
     // this.allowed_users_count
     //应该是唯一的，用户需要根据这个id进入房间
     this.id = null;
+    //房间内的所有玩家，人数有上限，定义在config.
     this.players = [];
+    //房间内的牌
     this.clone_pai = [];
+    //当前玩家，哪个打牌哪个就是当前玩家
     this.current_player = null;
-    this.current_player_dapai = null; //当前玩家打的牌
-    this.player_index = null; //哪个玩家在打牌，以便确定下一家
-
     //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
     this.can_receive_confirm = false;
-
     //当前桌子上的那张牌，发给玩家的那张，或者是用户打出来的会被人碰的。
     this.table_pai = null;
   }
@@ -35,6 +34,7 @@ export class Room {
     this.players.push(person);
     // tellOtherPeopleIamIn();
   }
+  //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   exit_room(socket) {
     _.remove(this.players, function(item) {
       return item.socket.id == socket.id;
@@ -43,6 +43,7 @@ export class Room {
   find_player_by_socket(socket) {
     return this.players.find(item => item.socket == socket);
   }
+  //玩家们是否都已经准备好开始游戏
   get all_ready() {
     let player_ready_count = this.players.filter(item => item.ready).length;
     console.log(`房间:${this.id}内玩家准备开始计数：${player_ready_count}`);
@@ -64,7 +65,9 @@ export class Room {
     let next_index =
       (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
     //最后通过座位号来找到玩家,而不是数组序号,更不容易出错
-    return this.players.find(p => p.seat_index == next_index);
+    //直接使用数组索引即可
+    // return this.players.find(p => p.seat_index == next_index);
+    return this.players[next_index]
   }
   //除了person外的其它玩家们
   other_players(person) {
