@@ -32,6 +32,8 @@ var Play = React.createClass({
       show_gang: false,
       show_btn_hu: false,
       show_btn_guo: false,
+      show_btn_ting: false,
+      show_btn_liang: false,
       waitText: config.MaxWaitTime
     };
   },
@@ -151,21 +153,44 @@ var Play = React.createClass({
     });
     this.client.emit("confirm_gang");
   },
+  confirm_ting(){
+    //决定听牌
+    this.wantToTing = true;
+    clearInterval(this.intervalOneSecond);
+    clearTimeout(this.timeout);
+    console.log(`${this.state.username} 选择听牌`);
+    this.setState({
+      show_btn_guo: false,
+      show_btn_hu: false,
+      can_da_pai: false
+    });
+    this.client.emit("confirm_ting");
+  },
   confirm_hu() {
     //决定胡牌
     this.wantToHu = true;
+    clearInterval(this.intervalOneSecond);
+    clearTimeout(this.timeout);
+    console.log(`${this.state.username}选择胡牌${this.state.tablePai[0]}`);
+    this.setState({
+      show_peng: false,
+      show_gang: false,
+      show_btn_guo: false,
+      show_btn_hu: false,
+      can_da_pai: false
+    });
     this.client.emit("confirm_hu");
   },
   confirm_guo() {
     clearInterval(this.intervalOneSecond);
     clearTimeout(this.timeout);
-    console.log(`${this.state.username}选择过牌${this.state.tablePai[0]}`)
+    console.log(`${this.state.username}选择过牌${this.state.tablePai[0]}`);
     //所有的选择按钮关掉
     this.setState({
       show_peng: false,
       show_gang: false,
       show_btn_hu: false,
-      show_btn_guo: false,
+      show_btn_guo: false
     });
     this.client.emit("confirm_guo");
   },
@@ -232,7 +257,56 @@ var Play = React.createClass({
     this.client.on("server_dapai", pai_name => {
       this.setState({ tablePai: [pai_name] });
     });
-    this.client.on("server_canGang", (pai) => {
+
+    this.client.on("server_winner",(username, hupaiNames)=>{
+      console.log("%s 胡牌，胡牌计算: ", username, hupaiNames)
+    })
+
+    //玩家可以听牌，那还可以亮牌
+    this.client.on("server_canTing",()=>{
+      console.log('本人可以听牌了，运气不错')
+      this.setState({
+        show_btn_ting: true,
+        show_btn_liang: true,
+        show_btn_guo: true
+      })
+      this.intervalOneSecond && clearInterval(this.intervalOneSecond);
+      this.intervalOneSecond = setInterval(() => {
+        this.setState({ waitText: this.state.waitText - 1 });
+      }, config.CountDownInterval);
+      this.timeout = setTimeout(() => {
+        clearInterval(this.intervalOneSecond);
+        if (!this.wantToTing) {
+          //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
+          this.setState({ show_btn_guo: false, show_btn_liang: false });
+          console.log(`client${this.state.username}听牌${pai}放弃`);
+        }
+      }, config.MaxWaitTime * 1000);
+    })
+
+    this.client.on("server_canHu", () => {
+      this.setState({
+        show_btn_guo: true,
+        show_btn_hu: true,
+        waitText: config.MaxWaitTime
+      });
+      this.intervalOneSecond && clearInterval(this.intervalOneSecond);
+      this.intervalOneSecond = setInterval(() => {
+        this.setState({ waitText: this.state.waitText - 1 });
+      }, config.CountDownInterval);
+      //等待10秒用户反应，其实服务器也应该等待10秒钟，如果超时就不会再等了。
+      this.timeout = setTimeout(() => {
+        clearInterval(this.intervalOneSecond);
+        if (!this.wantToHu) {
+          //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
+          this.setState({ show_btn_guo: false, show_btn_hu: false });
+          console.log(`client${this.state.username}胡牌${pai}放弃`);
+          this.client.emit("confirm_guo");
+        }
+      }, config.MaxWaitTime * 1000);
+    });
+
+    this.client.on("server_canGang", pai => {
       this.setState({
         show_peng: true,
         show_gang: true,
@@ -286,9 +360,7 @@ var Play = React.createClass({
       let results = this.state.results.concat(pai);
       this.setState({ results: results, can_da_pai: true });
     });
-    this.client.on("canHu", hupai_names => {
-      console.dir(hupai_names);
-    });
+
     this.client.on("game over", () => {
       this.setState({
         ready: false,
@@ -349,6 +421,16 @@ var Play = React.createClass({
                 {this.state.show_peng ? (
                   <button onClick={this.confirm_peng}>
                     碰{this.state.waitText}
+                  </button>
+                ) : null}
+                {this.state.show_btn_ting ? (
+                  <button onClick={this.confirm_ting}>
+                    听{this.state.waitText}
+                  </button>
+                ) : null}
+                {this.state.show_btn_liang ? (
+                  <button onClick={this.confirm_liang}>
+                    亮{this.state.waitText}
                   </button>
                 ) : null}
                 {this.state.show_btn_hu ? (

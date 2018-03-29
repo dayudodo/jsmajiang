@@ -338,10 +338,10 @@ export class Majiang {
     return this.isAA(jiang);
   }
 
-  //胡什么牌，以前的名称是WhoIsHu
+  //胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！
   static HuWhatPai(shou_pai) {
     let result = checkValidAndReturnArr(shou_pai);
-    let hupai_zhang = [];
+    let hupai_data = [];
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
@@ -356,20 +356,27 @@ export class Majiang {
         // console.log(newstr.match(/(..)\1\1\1\1/g))
         // throw new Error('irregular Pai, record in database, maybe Hacker.')
         //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
-      } else if (
-        this.HuisPihu(newShouPaiStr) ||
-        this.HuisPengpeng(newShouPaiStr) ||
-        this.HuisQidui(newShouPaiStr)
-      ) {
-        hupai_zhang.push(single_pai);
+      } else {
+        let hupai_types = this.HupaiTypeCodeArr(result, single_pai);
+        if (!_.isEmpty(hupai_types)) {
+          hupai_data.push({
+            hupai_zhang: single_pai,
+            hupai_types: hupai_types
+          });
+        }
       }
     }
-    if (hupai_zhang.length == 0) {
+    if (_.isEmpty(hupai_data)) {
       //如果没有找到，就返回false,便于判断
       return false;
     } else {
-      return hupai_zhang.sort();
+      return _.sortBy(hupai_data, item=>item.hupai_zhang)
     }
+  }
+
+  static isDaHuTing(shou_pai){
+    let hupai_data = this.HuWhatPai(shou_pai)
+    return _.some(hupai_data, item=>this.isDaHu(item.hupai_types))
   }
 
   static HuisKaWuXing(str, na_pai) {

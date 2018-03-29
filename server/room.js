@@ -20,6 +20,11 @@ export class Room {
     this.can_receive_confirm = false;
     //当前桌子上的那张牌，发给玩家的那张，或者是用户打出来的会被人碰的。
     this.table_pai = null;
+
+    //胡牌相关信息首先保存在房间之中，胡之后再保存到用户信息中！并在结束游戏的时候写入相关数据库！
+    //下面两项与player中的属性是一样的！
+    this.hupai_types = [];
+    this.hupai_zhang = null;
   }
 
   //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
@@ -67,7 +72,7 @@ export class Room {
     //最后通过座位号来找到玩家,而不是数组序号,更不容易出错
     //直接使用数组索引即可
     // return this.players.find(p => p.seat_index == next_index);
-    return this.players[next_index]
+    return this.players[next_index];
   }
   //除了person外的其它玩家们
   other_players(person) {
@@ -91,20 +96,35 @@ export class Room {
     //todo: 计算收益，杠牌是有钱的！
   }
   //玩家选择胡牌
-  confirm_hu(io, socket){
+  confirm_hu(io, socket) {
     let player = this.find_player_by_socket(socket);
-
+    let room_name = this.id;
+    //保存胡牌信息到玩家类中
+    player.hupai_types = this.hupai_types;
+    player.hupai_zhang = this.hupai_zhang;
+    let hupaiNames = Majiang.HuPaiNamesFromArr(this.hupai_types)
+    //告诉所有人哪个胡了
+    io
+      .to(room_name)
+      .emit(
+        "server_winner",
+        player.username,
+        hupaiNames
+      );
+    console.dir(player)
   }
   //玩家选择放弃，给下一家发牌
   confirm_guo(io, socket) {
+    //如果用户是可以胡牌的时候选择过，那么需要删除这些胡牌的信息，或者保存在room中，胡了哪些东西！
+
     this.fa_pai(this.next_player);
   }
-  
+
   //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
   fa_pai(player) {
     let pai = this.clone_pai.splice(0, 1);
     //发牌的时候，桌面牌变化。
-    this.table_pai = pai
+    this.table_pai = pai;
     if (_.isEmpty(pai)) {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
     }
@@ -132,7 +152,23 @@ export class Room {
     }
   }
 
-  gang_fa_pai(player) {
+  judge_ting(player){
+    let hupai_types = Majiang.HuWhatPai(player.shou_pai)
+    //亮牌是只要能胡就可以亮
+    if (hupai_types) {
+      player.socket.emit('server_canLiang')
+    }
+    //只有在可以大胡的时候才能够听牌
+    if (hupai_types && Majiang.isDaHu(hupai_types)) {
+      //todo: 服务器应该在这儿等一会儿，等人家选择好，不然在决定听的时候有人已经打牌了，听牌玩家不要骂娘！
+      //不过呢，nodejs对于时间函数貌似开销比较大，怎么办？第一手不让胡是不可能的。
+      // this.room_should_wait(config.MaxWaitTime)
+      player.socket.emit('server_canTing')
+    }
+  }
+
+  //用户杠了之后需要摸一张牌
+  gang_mo_pai(player) {
     //杠发牌，是从最后切一个出来，不影响前面的顺序，所以单独写成个发牌的方法
     let pai = this.clone_pai.splice(this.clone_pai.length - 1, 1);
     if (_.isEmpty(pai)) {
@@ -154,8 +190,6 @@ export class Room {
 
   //玩家所在socket打牌pai
   da_pai(io, socket, pai_name) {
-    //玩家打牌的时候，桌面牌变化
-    this.table_pai = pai_name
     let room_name = this.id;
     //首先向房间内的所有玩家显示出当前玩家打的牌
     // socket.emit("dapai", pai);
@@ -164,6 +198,8 @@ export class Room {
     let player = this.find_player_by_socket(socket);
     //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
     player.da_pai(pai_name);
+    //玩家打牌的时候，桌面牌变化
+    this.table_pai = pai_name;
     //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
 
     let isRoomPaiEmpty = 0 === this.clone_pai.length;
@@ -176,7 +212,9 @@ export class Room {
       // 牌要重新发了
       this.restart_game();
     } else {
-      //看其它玩家能否碰！
+      //todo: 看自己能否听牌！
+
+      //看其它玩家能否碰、杠、胡或者听
       let oplayers = this.other_players(player);
       for (let item_player of oplayers) {
         //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
@@ -187,11 +225,9 @@ export class Room {
         if (canHu) {
           //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
           if (item_player.liang_pai || Majiang.isDaHu(hupai_types)) {
-            item_player.hupai_zhang = pai_name; //万一用户过了，不胡这张牌呢？
-            item_player.socket.emit(
-              "canHu",
-              Majiang.HuPaiNamesFromArr(hupai_types)
-            );
+            this.hupai_zhang = pai_name; //一开始是想保存在玩家类中，后来发现保存在房间里面会更方便！毕竟还要通知
+            this.hupai_types = hupai_types;
+            item_player.socket.emit("server_canHu");
             //todo: 等待20秒，过时发牌
           }
         }
@@ -204,7 +240,9 @@ export class Room {
 
           if (Majiang.canGang(item_player.shou_pai, pai_name)) {
             console.log(
-              `房间${this.id}内发现玩家${item_player.username}可以杠牌${pai_name}`
+              `房间${this.id}内发现玩家${
+                item_player.username
+              }可以杠牌${pai_name}`
             );
             //告诉玩家你可以杠牌了
             item_player.socket.emit("server_canGang", pai_name);
@@ -250,15 +288,19 @@ export class Room {
       if (p == dongJia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         p.socket.emit("server_game_start", p.shou_pai);
-        let fa_pai = this.fa_pai(p); //然后再发一张牌给东家
-        // this.player_index = p.seat_index;
+        //然后再发一张牌给东家, fa_pai中有胡牌的检测，这儿就不用检测了
+        let fa_pai = this.fa_pai(p);
+        
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         p.socket.emit("server_table_fa_pai", fa_pai);
       } else {
         //非东家，接收到牌即可
         p.socket.emit("server_game_start", p.shou_pai);
+        //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
+        this.judge_ting(p)
       }
+      
     });
   }
   //游戏结束后重新开始游戏！
@@ -272,9 +314,4 @@ export class Room {
     this.start_game();
   }
 
-  end_game() {}
-  //有用户掉线就需要暂停游戏，但是时间不能太长，
-  pause_game() {}
-  //继续游戏，哪个掉线后需要发送其掉线前的数据
-  resume_game() {}
 }
