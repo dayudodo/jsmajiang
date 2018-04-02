@@ -153,7 +153,7 @@ var Play = React.createClass({
     });
     this.client.emit("confirm_gang");
   },
-  confirm_ting(){
+  confirm_ting() {
     //决定听牌
     this.wantToTing = true;
     clearInterval(this.intervalOneSecond);
@@ -165,6 +165,19 @@ var Play = React.createClass({
       can_da_pai: false
     });
     this.client.emit("confirm_ting");
+  },
+  //决定亮牌
+  confirm_liang() {
+    this.wantToLiang = true;
+    clearInterval(this.intervalOneSecond);
+    clearTimeout(this.timeout);
+    console.log(`${this.state.username} 选择亮牌`);
+    this.setState({
+      show_btn_guo: false,
+      show_btn_hu: false,
+      show_btn_liang: false
+    });
+    this.client.emit("confirm_liang");
   },
   confirm_hu() {
     //决定胡牌
@@ -258,18 +271,39 @@ var Play = React.createClass({
       this.setState({ tablePai: [pai_name] });
     });
 
-    this.client.on("server_winner",(username, hupaiNames)=>{
-      console.log("%s 胡牌，胡牌计算: ", username, hupaiNames)
-    })
+    this.client.on("server_winner", (username, hupaiNames) => {
+      console.log("%s 胡牌，胡牌计算: ", username, hupaiNames);
+    });
 
-    //玩家可以听牌，那还可以亮牌
-    this.client.on("server_canTing",()=>{
-      console.log('本人可以听牌了，运气不错')
+    //todo: 可以亮牌，如果检测出来是大胡，还会有个听牌的监听，会有重复！
+    this.client.on("server_canLiang", () => {
+      console.log("可以亮牌！");
+      this.setState({
+        show_btn_liang: true,
+        show_btn_guo: true
+      });
+      this.intervalOneSecond && clearInterval(this.intervalOneSecond);
+      this.intervalOneSecond = setInterval(() => {
+        this.setState({ waitText: this.state.waitText - 1 });
+      }, config.CountDownInterval);
+      this.timeout = setTimeout(() => {
+        clearInterval(this.intervalOneSecond);
+        if (!this.wantToLiang) {
+          //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
+          this.setState({ show_btn_guo: false, show_btn_liang: false });
+          console.log(`client${this.state.username}亮牌${pai}放弃`);
+        }
+      }, config.MaxWaitTime * 1000);
+    });
+
+    //玩家可以听牌，那还可以亮牌，能听就能亮，一起的。
+    this.client.on("server_canTing", () => {
+      console.log("本人可以听牌了，运气不错");
       this.setState({
         show_btn_ting: true,
         show_btn_liang: true,
         show_btn_guo: true
-      })
+      });
       this.intervalOneSecond && clearInterval(this.intervalOneSecond);
       this.intervalOneSecond = setInterval(() => {
         this.setState({ waitText: this.state.waitText - 1 });
@@ -278,11 +312,15 @@ var Play = React.createClass({
         clearInterval(this.intervalOneSecond);
         if (!this.wantToTing) {
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
-          this.setState({ show_btn_guo: false, show_btn_liang: false });
+          this.setState({
+            show_btn_ting: false,
+            show_btn_liang: false,
+            show_btn_guo: false,
+          });
           console.log(`client${this.state.username}听牌${pai}放弃`);
         }
       }, config.MaxWaitTime * 1000);
-    })
+    });
 
     this.client.on("server_canHu", () => {
       this.setState({

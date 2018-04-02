@@ -95,6 +95,12 @@ export class Room {
     this.confirm_peng(io, socket);
     //todo: 计算收益，杠牌是有钱的！
   }
+  confirm_liang(io,socket){
+    let player = this.find_player_by_socket(socket);
+  }
+  confirm_ting(io,socket){
+    let player = this.find_player_by_socket(socket);
+  }
   //玩家选择胡牌
   confirm_hu(io, socket) {
     let player = this.find_player_by_socket(socket);
@@ -154,7 +160,7 @@ export class Room {
 
   judge_ting(player){
     let hupai_types = Majiang.HuWhatPai(player.shou_pai)
-    //亮牌是只要能胡就可以亮
+    //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
     if (hupai_types) {
       player.socket.emit('server_canLiang')
     }

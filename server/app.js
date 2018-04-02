@@ -240,10 +240,16 @@ io.sockets.on("connection", function(socket) {
     room.da_pai(io, socket, pai);
   });
 
-  socket.on("confirm_hu", function() {
+
+  socket.on("confirm_liang", function() {
     let { room_name, player, room, table_pai } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}选择胡牌:${table_pai}`);
-    room.confirm_hu(io, socket);
+    console.log(`房间:${room_name}用户${player.username}选择亮牌:${table_pai}`);
+    room.confirm_liang(io, socket);
+  });
+  socket.on("confirm_ting", function() {
+    let { room_name, player, room, table_pai } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}选择听牌:${table_pai}`);
+    room.confirm_ting(io, socket);
   });
   socket.on("confirm_peng", function() {
     let { room_name, player, room, table_pai } = confirmInit(socket);
@@ -255,12 +261,18 @@ io.sockets.on("connection", function(socket) {
     console.log(`房间:${room_name}用户${player.username}选择杠牌:${table_pai}`);
     room.confirm_gang(io, socket);
   });
+  socket.on("confirm_hu", function() {
+    let { room_name, player, room, table_pai } = confirmInit(socket);
+    console.log(`房间:${room_name}用户${player.username}选择胡牌:${table_pai}`);
+    room.confirm_hu(io, socket);
+  });
   //玩家选择了过，不碰也不胡，需要做一些取消操作，并且都是发给房间来做处理
   socket.on("confirm_guo", function() {
     let { room_name, player, room, table_pai } = confirmInit(socket);
     console.log(`房间:${room_name}用户${player.username}选择过牌:${table_pai}`);
     room.confirm_guo(io, socket);
   });
+
 
   socket.on("chat_cast", function(info) {
     let room = g_lobby.find_room_by_socket(socket);
