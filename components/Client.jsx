@@ -277,7 +277,7 @@ var Play = React.createClass({
 
     //todo: 可以亮牌，如果检测出来是大胡，还会有个听牌的监听，会有重复！
     this.client.on("server_canLiang", () => {
-      console.log("可以亮牌！");
+      // console.log("可以亮牌！");
       this.setState({
         show_btn_liang: true,
         show_btn_guo: true

@@ -95,9 +95,11 @@ export class Room {
     this.confirm_peng(io, socket);
     //todo: 计算收益，杠牌是有钱的！
   }
+  //亮牌其实是为了算账
   confirm_liang(io,socket){
     let player = this.find_player_by_socket(socket);
   }
+  //听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。
   confirm_ting(io,socket){
     let player = this.find_player_by_socket(socket);
   }
