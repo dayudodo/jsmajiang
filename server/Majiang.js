@@ -366,17 +366,42 @@ export class Majiang {
         }
       }
     }
-    if (_.isEmpty(hupai_data)) {
-      //如果没有找到，就返回false,便于判断
-      return false;
-    } else {
-      return _.sortBy(hupai_data, item=>item.hupai_zhang)
-    }
+    let all_hupai_zhang = _.map(hupai_data, item => item.hupai_zhang);
+    let arr1 = [];
+    hupai_data.forEach(item => {
+      item.hupai_types.forEach(h_type => {
+        arr1.push(h_type);
+      });
+    });
+    let all_hupai_types = _.uniq(arr1);
+    //如果hupai_data为空，sortBy也会返回空
+    // return _.sortBy(hupai_data, item => item.hupai_zhang);
+    return {
+      all_hupai_zhang: all_hupai_zhang,
+      all_hupai_types: all_hupai_types
+    };
   }
 
-  static isDaHuTing(shou_pai){
-    let hupai_data = this.HuWhatPai(shou_pai)
-    return _.some(hupai_data, item=>this.isDaHu(item.hupai_types))
+  // static all_hupai_zhang(shou_pai) {
+  //   let hupai_data = this.HuWhatPai(shou_pai);
+  //   return _.map(hupai_data, item => item.hupai_zhang);
+  // }
+
+  // static all_hupai_types(shou_pai) {
+  //   let hupai_data = this.HuWhatPai(shou_pai);
+  //   let arr1 = [];
+  //   hupai_data.forEach(item => {
+  //     item.hupai_types.forEach(h_type => {
+  //       arr1.push(h_type);
+  //     });
+  //   });
+  //   return _.uniq(arr1);
+  // }
+
+  static isDaHuTing(shou_pai) {
+    let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_types;
+    // return _.some(hupai_data, item => this.isDaHu(item));
+    return this.isDaHu(all_hupai_types)
   }
 
   static HuisKaWuXing(str, na_pai) {

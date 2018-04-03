@@ -34,6 +34,7 @@ var Play = React.createClass({
       show_btn_guo: false,
       show_btn_ting: false,
       show_btn_liang: false,
+      is_ting: true,
       waitText: config.MaxWaitTime
     };
   },
@@ -154,12 +155,14 @@ var Play = React.createClass({
     this.client.emit("confirm_gang");
   },
   confirm_ting() {
-    //决定听牌
+    //决定听牌，能听就一定能亮
     this.wantToTing = true;
     clearInterval(this.intervalOneSecond);
     clearTimeout(this.timeout);
     console.log(`${this.state.username} 选择听牌`);
+    //选择听之后，听按钮并不消失，表明用户在听的状态中， 不应该再能打牌了，直到胡或者别人胡！
     this.setState({
+      show_btn_liang: false,
       show_btn_guo: false,
       show_btn_hu: false,
       can_da_pai: false
@@ -291,7 +294,8 @@ var Play = React.createClass({
         if (!this.wantToLiang) {
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
           this.setState({ show_btn_guo: false, show_btn_liang: false });
-          console.log(`client${this.state.username}亮牌${pai}放弃`);
+          console.log(`client${this.state.username}亮牌放弃`);
+          this.client.emit("confirm_guo");
         }
       }, config.MaxWaitTime * 1000);
     });
@@ -315,9 +319,10 @@ var Play = React.createClass({
           this.setState({
             show_btn_ting: false,
             show_btn_liang: false,
-            show_btn_guo: false,
+            show_btn_guo: false
           });
-          console.log(`client${this.state.username}听牌${pai}放弃`);
+          console.log(`client${this.state.username}听牌放弃`);
+          this.client.emit("confirm_guo");
         }
       }, config.MaxWaitTime * 1000);
     });
@@ -338,7 +343,7 @@ var Play = React.createClass({
         if (!this.wantToHu) {
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
           this.setState({ show_btn_guo: false, show_btn_hu: false });
-          console.log(`client${this.state.username}胡牌${pai}放弃`);
+          console.log(`client${this.state.username}胡牌放弃`);
           this.client.emit("confirm_guo");
         }
       }, config.MaxWaitTime * 1000);
@@ -392,6 +397,7 @@ var Play = React.createClass({
         }
       }, config.MaxWaitTime * 1000);
     });
+
     this.client.on("server_table_fapai", pai => {
       // 服务器发牌后添加到手牌最后, 客户端设置个能否打牌的标识
       console.log("接收到服务器发牌%s", pai[0]);

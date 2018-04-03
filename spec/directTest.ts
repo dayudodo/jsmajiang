@@ -62,13 +62,16 @@ console.dir(Majiang.HuWhatPai(str))
 //是大胡听牌
 str = "fa b1 b1 b1 b2 b3 di di di zh zh zh fa ";
 console.dir(Majiang.isDaHuTing(str))
+console.dir(Majiang.HuWhatPai(str).all_hupai_types)
+console.dir(Majiang.HuWhatPai(str).all_hupai_zhang)
 
 //不是大胡听牌，只是个屁胡
 str = "b1 b2 b3 b4 b5 b6 t4 t5 t6 fa fa fa zh ";
 console.dir(Majiang.HuWhatPai(str))
+console.dir(Majiang.HuWhatPai(str).all_hupai_types)
 console.log("是否是大胡听牌：",Majiang.isDaHuTing(str))
 
 //啥也不是，连屁胡都不是！
 str = "b1 b2 b3 b4 b7 b8 t4 t5 t8 fa fa fa zh ";
-console.dir(Majiang.HuWhatPai(str))
+console.dir(Majiang.HuWhatPai(str).all_hupai_types)
 console.log("是否是大胡听牌：",Majiang.isDaHuTing(str))

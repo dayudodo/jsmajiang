@@ -159,7 +159,7 @@ io.sockets.on("connection", function(socket) {
         // process.exit(1500);
         return;
       }
-      conn.player.east = true; //创建房间者即为东家，初始化时会多一张牉！
+      owner_room.dong_jia = conn.player; //创建房间者即为东家，初始化时会多一张牉！
       conn.player.seat_index = 0; //玩家座位号从0开始
       owner_room.join_player(conn.player); //新建的房间要加入本玩家
       conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
@@ -240,15 +240,14 @@ io.sockets.on("connection", function(socket) {
     room.da_pai(io, socket, pai);
   });
 
-
   socket.on("confirm_liang", function() {
     let { room_name, player, room, table_pai } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}选择亮牌:${table_pai}`);
+    console.log(`房间:${room_name}用户${player.username}选择亮牌`);
     room.confirm_liang(io, socket);
   });
   socket.on("confirm_ting", function() {
     let { room_name, player, room, table_pai } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}选择听牌:${table_pai}`);
+    console.log(`房间:${room_name}用户${player.username}选择听牌`);
     room.confirm_ting(io, socket);
   });
   socket.on("confirm_peng", function() {
@@ -272,7 +271,6 @@ io.sockets.on("connection", function(socket) {
     console.log(`房间:${room_name}用户${player.username}选择过牌:${table_pai}`);
     room.confirm_guo(io, socket);
   });
-
 
   socket.on("chat_cast", function(info) {
     let room = g_lobby.find_room_by_socket(socket);
