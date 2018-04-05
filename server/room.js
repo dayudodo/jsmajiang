@@ -96,15 +96,18 @@ export class Room {
     //todo: 计算收益，杠牌是有钱的！
   }
   //亮牌其实是为了算账
-  confirm_liang(io,socket){
+  confirm_liang(io, socket) {
     let player = this.find_player_by_socket(socket);
-    player.is_liang = true
-    player.is_ting = true  //如果亮牌，肯定就是听了
+    player.is_liang = true;
+    player.is_ting = true; //如果亮牌，肯定就是听了
+    //确认亮牌之后，就需要准备好胡牌张，不需要再重复计算了！玩家只需要判断拿的牌是否在其中即可判断胡！
+    player.hupai_zhang = player.temp_hupai_zhang
   }
   //听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。
-  confirm_ting(io,socket){
+  confirm_ting(io, socket) {
     let player = this.find_player_by_socket(socket);
     player.is_ting = true;
+    player.hupai_zhang = player.temp_hupai_zhang
   }
   //玩家选择胡牌
   confirm_hu(io, socket) {
@@ -112,21 +115,16 @@ export class Room {
     let room_name = this.id;
     //保存胡牌信息到玩家类中
     player.hupai_types = this.hupai_types;
-    player.hupai_zhang = this.hupai_zhang;
-    let hupaiNames = Majiang.HuPaiNamesFromArr(this.hupai_types)
+    let hupaiNames = Majiang.HuPaiNamesFromArr(this.hupai_types);
     //告诉所有人哪个胡了
-    io
-      .to(room_name)
-      .emit(
-        "server_winner",
-        player.username,
-        hupaiNames
-      );
-    console.dir(player)
+    io.to(room_name).emit("server_winner", player.username, hupaiNames);
+    console.dir(player);
   }
   //玩家选择放弃，给下一家发牌
   confirm_guo(io, socket) {
-    //如果用户是可以胡牌的时候选择过，那么需要删除这些胡牌的信息，或者保存在room中，胡了哪些东西！
+    //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
+    let player = this.find_player_by_socket(socket);
+    player.temp_hupai_zhang = [];
 
     this.fa_pai(this.next_player);
   }
@@ -141,7 +139,7 @@ export class Room {
     }
     //看用户的状态，如果快要胡牌了，发牌还不太一样！不需要用户再操作了！
     if (player.is_liang || player.is_ting) {
-      console.log(`${player.username}已经听或者亮牌，服务器直接发牌，或者胡`)
+      console.log(`${player.username}已经听或者亮牌，服务器直接发牌，或者胡`);
     }
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
@@ -156,23 +154,25 @@ export class Room {
     return pai;
   }
 
-
-  judge_ting(player){
-    let will_hupai_types = Majiang.all_hupai_types(player.shou_pai)
+  judge_ting(player) {
+    let { all_hupai_zhang, all_hupai_types } = Majiang.HuWhatPai(
+      player.shou_pai
+    );
     //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
-    if (will_hupai_types) {
-      console.log(`${player.username}可以亮牌`)
-      player.socket.emit('server_canLiang')
+    if (all_hupai_types) {
+      console.log(`${player.username}可以亮牌`);
+      player.temp_hupai_zhang = all_hupai_zhang
+      player.socket.emit("server_canLiang");
     }
-    console.dir(will_hupai_types)
-    console.log(`${player.shou_pai.join(',')}是大胡？| ${Majiang.isDaHu(will_hupai_types)}`)
+    console.dir(all_hupai_types);
     //只有在可以大胡的时候才能够听牌
-    if (will_hupai_types && Majiang.isDaHu(will_hupai_types)) {
+    if (all_hupai_types && Majiang.isDaHu(all_hupai_types)) {
       //todo: 服务器应该在这儿等一会儿，等人家选择好，不然在决定听的时候有人已经打牌了，听牌玩家不要骂娘！
       //不过呢，nodejs对于时间函数貌似开销比较大，怎么办？第一手不让胡是不可能的。
       // this.room_should_wait(config.MaxWaitTime)
-      console.log(`${player.username}可以听牌`)
-      player.socket.emit('server_canTing')
+      console.log(`${player.username}可以听牌`);
+      player.temp_hupai_zhang = all_hupai_zhang
+      player.socket.emit("server_canTing");
     }
   }
 
@@ -281,15 +281,16 @@ export class Room {
     }
   }
 
-  get dong_jia(){ //获取东家
+  get dong_jia() {
+    //获取东家
     return _.find(this.players, { east: true });
   }
-  set dong_jia(player){ //只能有一个东家, 不使用other_players计算麻烦
-    this.players.forEach(p=>{
-      p.east= false
-    })
-    player.east = true
-
+  set dong_jia(player) {
+    //只能有一个东家, 不使用other_players计算麻烦
+    this.players.forEach(p => {
+      p.east = false;
+    });
+    player.east = true;
   }
 
   start_game() {
@@ -309,7 +310,7 @@ export class Room {
         p.socket.emit("server_game_start", p.shou_pai);
         //然后再发一张牌给东家, fa_pai中有胡牌的检测，这儿就不用检测了
         let fa_pai = this.fa_pai(p);
-        
+
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         p.socket.emit("server_table_fa_pai", fa_pai);
@@ -317,9 +318,8 @@ export class Room {
         //非东家，接收到牌即可
         p.socket.emit("server_game_start", p.shou_pai);
         //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
-        this.judge_ting(p)
+        this.judge_ting(p);
       }
-      
     });
   }
   //游戏结束后重新开始游戏！
@@ -332,5 +332,4 @@ export class Room {
     });
     this.start_game();
   }
-
 }

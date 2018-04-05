@@ -376,9 +376,12 @@ export class Majiang {
     let all_hupai_types = _.uniq(arr1);
     //如果hupai_data为空，sortBy也会返回空
     // return _.sortBy(hupai_data, item => item.hupai_zhang);
+    if (_.isEmpty(all_hupai_zhang)) {
+      return {}
+    }
     return {
-      all_hupai_zhang: all_hupai_zhang,
-      all_hupai_types: all_hupai_types
+      all_hupai_zhang: all_hupai_zhang.sort(),
+      all_hupai_types: all_hupai_types.sort()
     };
   }
 
