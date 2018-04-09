@@ -204,6 +204,8 @@ var Play = React.createClass({
     //所有的选择按钮关掉
     this.setState({
       show_peng: false,
+      show_btn_ting:false,
+      show_btn_liang:false,
       show_gang: false,
       show_btn_hu: false,
       show_btn_guo: false

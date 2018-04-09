@@ -33,6 +33,8 @@ export class Player {
     this.is_liang = false;
     //玩家是否选择听牌，只有大胡的时候才能听牌！
     this.is_ting = false;
+    //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
+    this.is_thinking_tingliang = false;
   }
   //玩家收到服务器发来的一张牌，保存到自己的手牌中！
   receive_pai(pai) {
