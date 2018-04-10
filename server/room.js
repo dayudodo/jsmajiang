@@ -28,6 +28,9 @@ export class Room {
     //下面两项与player中的属性是一样的！
     this.hupai_types = [];
     this.hupai_zhang = null;
+    
+    //计时器
+    this.room_clock = null;
   }
 
   //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
@@ -136,7 +139,7 @@ export class Room {
     //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
     //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
     //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
-    let isPlayerNormalDapai = this.fapai_to_who === this.dapai_player
+    let isPlayerNormalDapai = this.fapai_to_who === this.dapai_player;
     if (isPlayerNormalDapai) {
       this.fa_pai(this.next_player);
     }
@@ -155,7 +158,7 @@ export class Room {
       console.log(`${player.username}已经听或者亮牌，服务器直接发牌，或者胡`);
     }
     //房间记录发牌给谁，以便分析哪个玩家拿牌了但是没有打，说明在等待其它玩家！
-    this.fapai_to_who = player
+    this.fapai_to_who = player;
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
     player.receive_pai(pai[0]);
@@ -170,12 +173,14 @@ export class Room {
   }
 
   judge_ting(player) {
+    let statusCode = -1;  //状态返回码，是听还是亮！
     let { all_hupai_zhang, all_hupai_types } = Majiang.HuWhatPai(
       player.shou_pai
     );
     //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
     if (all_hupai_types) {
       console.log(`${player.username}可以亮牌`);
+      statusCode = config.IS_LIANG;
       //胡牌张保存到临时的胡牌张中，等待玩家确认！
       player.temp_hupai_zhang = all_hupai_zhang;
       //服务器记录玩家在想
@@ -189,10 +194,12 @@ export class Room {
       //不过呢，nodejs对于时间函数貌似开销比较大，怎么办？第一手不让胡是不可能的。
       // this.room_should_wait(config.MaxWaitTime)
       console.log(`${player.username}可以听牌`);
+      statusCode = config.IS_TING;
       player.temp_hupai_zhang = all_hupai_zhang;
       player.is_thinking_tingliang = true;
       player.socket.emit("server_canTing");
     }
+    return statusCode;
   }
 
   //用户杠了之后需要摸一张牌
@@ -220,7 +227,7 @@ export class Room {
   da_pai(io, socket, pai_name) {
     let player = this.find_player_by_socket(socket);
     //记录下哪个在打牌
-    this.dapai_player = player
+    this.dapai_player = player;
     let noSomeoneThinkingTingLiang = this.players.every(
       p => p.is_thinking_tingliang === false
     );
@@ -248,11 +255,12 @@ export class Room {
       } else {
         //todo: 看自己能否听牌！
 
-        //看其它玩家能否碰、杠、胡或者听
+        //打牌之后自己也可以听、或者亮的！当然喽，不能胡自己打的牌。所以还是有可能出现三家都在听的情况！
         let oplayers = this.other_players(player);
         for (let item_player of oplayers) {
           //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
           //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
+          //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
           let cloneShouPai = _.clone(item_player.shou_pai);
           let hupai_types = Majiang.HupaiTypeCodeArr(cloneShouPai, pai_name);
           let canHu = !_.isEmpty(hupai_types);
@@ -338,20 +346,21 @@ export class Room {
     this.players.forEach((p, index) => {
       //玩家收到的牌保存好，以便服务器进行分析，每次都需要排序下，便于分析和查看
       p.shou_pai = this.clone_pai.splice(0, 13).sort();
+      //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
+      //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
+     
       if (p == this.dong_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         p.socket.emit("server_game_start", p.shou_pai);
-        //然后再发一张牌给东家, fa_pai中有胡牌的检测，这儿就不用检测了
+        //todo: 开始游戏不考虑东家会听牌的情况，
         let fa_pai = this.fa_pai(p);
-
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         p.socket.emit("server_table_fa_pai", fa_pai);
       } else {
         //非东家，接收到牌即可
         p.socket.emit("server_game_start", p.shou_pai);
-        //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
-        this.judge_ting(p);
+        let ting_liangCode =  this.judge_ting(p);
       }
     });
   }

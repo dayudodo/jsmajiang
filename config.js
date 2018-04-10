@@ -24,6 +24,9 @@ export const LIMIT_IN_ROOM = 3; //房间玩家人数上限
 export const MaxWaitTime = 10; //碰、杠牌时等待用户多少秒
 export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔,单位：毫秒
 
+export const IS_TING = 1;
+export const IS_LIANG = 2;
+
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 export const HuPaiSheet = [
   { type: "HuisYise", name: "清一色", score: 1 },

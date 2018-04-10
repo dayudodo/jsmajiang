@@ -266,9 +266,13 @@ io.sockets.on("connection", function(socket) {
     room.confirm_hu(io, socket);
   });
   //玩家选择了过，不碰也不胡，需要做一些取消操作，并且都是发给房间来做处理
-  socket.on("confirm_guo", function() {
+  socket.on("confirm_guo", function(reason) {
     let { room_name, player, room, table_pai } = confirmInit(socket);
-    console.log(`房间:${room_name}用户${player.username}选择过牌:${table_pai}`);
+    console.log(
+      `房间:${room_name}用户${
+        player.username
+      }选择过牌:${table_pai}, 原因：${reason}`
+    );
     room.confirm_guo(io, socket);
   });
 

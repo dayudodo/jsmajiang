@@ -2,15 +2,22 @@ import * as config from "./../config";
 
 class Timer {
   constructor() {
-    this.allTimers = [];
+    this.allTimers = {};
   }
+  //计时过后运行fn
   run(fn, maxWaitTime = 2) {
     if (typeof fn !== "function") {
       throw new Error("fn必须是个函数");
     }
-    setTimeout(() => {
+    let timeout = setTimeout(() => {
       fn();
     }, maxWaitTime * 1000);
+    this.allTimers[fn] =  timeout
+  }
+  //取消某个函数引起的计时
+  cancel(fn){
+    console.log(this.allTimers[fn])
+    clearTimeout(this.allTimers[fn])
   }
 }
 
@@ -24,3 +31,4 @@ var another = () => {
 t.run(mylog);
 
 t.run(another, 4);
+t.cancel(another)
