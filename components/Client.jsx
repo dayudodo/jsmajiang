@@ -168,6 +168,11 @@ var Play = React.createClass({
       can_da_pai: false
     });
     this.client.emit("confirm_ting");
+    //听之后就不能再点击了，把自己给删除掉！有个问题就是用户已经听牌了，不用再重复发送你可以听了！
+    this.confirm_ting = () => {
+      //todo: 删除server_canTing的事件注册，不再接收服务器发的这个消息！
+      return;
+    };
   },
   //决定亮牌
   confirm_liang() {
@@ -204,8 +209,8 @@ var Play = React.createClass({
     //所有的选择按钮关掉
     this.setState({
       show_peng: false,
-      show_btn_ting:false,
-      show_btn_liang:false,
+      show_btn_ting: false,
+      show_btn_liang: false,
       show_gang: false,
       show_btn_hu: false,
       show_btn_guo: false
@@ -293,11 +298,11 @@ var Play = React.createClass({
       }, config.CountDownInterval);
       this.timeout = setTimeout(() => {
         clearInterval(this.intervalOneSecond);
-        if (!this.wantToLiang  && !this.wantToTing) {
+        if (!this.wantToLiang && !this.wantToTing) {
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
           this.setState({ show_btn_guo: false, show_btn_liang: false });
           console.log(`client${this.state.username}亮牌放弃`);
-          let reason = "亮牌"
+          let reason = "亮牌";
           this.client.emit("confirm_guo", reason);
         }
       }, config.MaxWaitTime * 1000);
@@ -325,7 +330,7 @@ var Play = React.createClass({
             show_btn_guo: false
           });
           console.log(`client${this.state.username}听牌放弃`);
-          let reason  = "听牌"
+          let reason = "听牌";
           this.client.emit("confirm_guo", reason);
         }
       }, config.MaxWaitTime * 1000);
@@ -348,7 +353,7 @@ var Play = React.createClass({
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
           this.setState({ show_btn_guo: false, show_btn_hu: false });
           console.log(`client${this.state.username}胡牌放弃`);
-          let reason = "胡牌"
+          let reason = "胡牌";
           this.client.emit("confirm_guo", reason);
         }
       }, config.MaxWaitTime * 1000);
@@ -374,8 +379,8 @@ var Play = React.createClass({
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
           this.setState({ show_peng: false, show_gang: false });
           console.log(`client${this.state.username}杠牌${pai}放弃`);
-          let reason = "杠牌"
-          this.client.emit("confirm_guo",reason);
+          let reason = "杠牌";
+          this.client.emit("confirm_guo", reason);
         }
       }, config.MaxWaitTime * 1000);
     });
@@ -399,7 +404,7 @@ var Play = React.createClass({
           //10秒之后，玩家也没有点击想碰牌,就当一切没发生过,服务器继续给下一个玩家发牌!
           this.setState({ show_peng: false });
           console.log(`client${this.state.username}碰牌${pai}放弃`);
-          let reason = "碰牌"
+          let reason = "碰牌";
           this.client.emit("confirm_guo", reason);
         }
       }, config.MaxWaitTime * 1000);

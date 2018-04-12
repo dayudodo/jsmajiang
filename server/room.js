@@ -28,7 +28,7 @@ export class Room {
     //下面两项与player中的属性是一样的！
     this.hupai_types = [];
     this.hupai_zhang = null;
-    
+
     //计时器
     this.room_clock = null;
   }
@@ -173,7 +173,7 @@ export class Room {
   }
 
   judge_ting(player) {
-    let statusCode = -1;  //状态返回码，是听还是亮！
+    let statusCode = -1; //状态返回码，是听还是亮！
     let { all_hupai_zhang, all_hupai_types } = Majiang.HuWhatPai(
       player.shou_pai
     );
@@ -185,7 +185,9 @@ export class Room {
       player.temp_hupai_zhang = all_hupai_zhang;
       //服务器记录玩家在想
       player.is_thinking_tingliang = true;
-      player.socket.emit("server_canLiang");
+      //如果用户没亮牌，才会发送你可以亮牌了！
+      if(!player.is_liang){
+      player.socket.emit("server_canLiang");}
     }
     console.dir(all_hupai_types);
     //只有在可以大胡的时候才能够听牌
@@ -197,7 +199,10 @@ export class Room {
       statusCode = config.IS_TING;
       player.temp_hupai_zhang = all_hupai_zhang;
       player.is_thinking_tingliang = true;
-      player.socket.emit("server_canTing");
+      //如果用户没有听牌，才会发送这个消息，不然啥也不做！
+      if (!player.is_ting) {
+        player.socket.emit("server_canTing");
+      }
     }
     return statusCode;
   }
@@ -348,7 +353,7 @@ export class Room {
       p.shou_pai = this.clone_pai.splice(0, 13).sort();
       //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
       //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
-     
+
       if (p == this.dong_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         p.socket.emit("server_game_start", p.shou_pai);
@@ -360,7 +365,7 @@ export class Room {
       } else {
         //非东家，接收到牌即可
         p.socket.emit("server_game_start", p.shou_pai);
-        let ting_liangCode =  this.judge_ting(p);
+        let ting_liangCode = this.judge_ting(p);
       }
     });
   }
