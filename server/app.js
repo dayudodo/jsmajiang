@@ -15,6 +15,7 @@ import chalk from "chalk";
 
 //初始化几个可用房间，每次用完就将其删除掉，直接房间全部占完
 var g_rooms = [];
+var test_names = ["jack", "rose", "tom"];
 var g_lobby = new Connector();
 
 // console.log(_.shuffle(all_pai), all_pai.length)
@@ -112,33 +113,28 @@ io.sockets.on("connection", function(socket) {
     //显示一下所有的用户名称
     console.log("当前全部的player_names:", g_lobby.player_names);
     // quit()
-    // else {
-    //   if (ArrayPlayer.length == 3) {
-    //     console.log("人员已满，最多3人");
-    //     nameStr = ArrayPlayer.map(function(item) {
-    //       return item.username;
-    //     });
-    //     socket.emit("room_full");
-    //     console.log(nameStr);
-    //   } else {
-    //     if (ArrayPlayer.length == 0) {
-    //       player.east = true;
-    //     }
-    //     player.username = new_player.username;
-    //     socket.join(room_name, function() {
-    //       socket.to(room_name).emit("room_enter", player.username);
-    //       console.log("%s join room ", player.username);
-    //     });
-    //     ArrayPlayer.push(player);
-    //     socket.emit("login", ArrayPlayer); //给自己发个login, 表明服务器已经允许你登录
-    //     socket.broadcast.emit("joined", ArrayPlayer); // 给其它人发joined, 表明自己已经加入游戏中
-    //     nameStr = ArrayPlayer.map(item => item.username);
-    //     console.log(
-    //       player.username + ":joined! Broadcast to %s player",
-    //       nameStr
-    //     );
-    //   }
-    // }
+  });
+
+  //仅仅用于测试登录，用户名称只会有三个
+  socket.on("testlogin", function(new_player) {
+    let conn = g_lobby.find_conn_by(socket);
+    let shift_name = test_names.shift()
+    if (!shift_name) {
+      throw new Error('没有空余的测试用户名了！')
+    }
+    let s_player = new Player({
+      socket: socket,
+      username: shift_name
+    });
+    //一开始连接的时候还没有用户信息，在用户登录之后再行保存到连接信息中，方便查询
+    conn.player = s_player;
+    console.log(`玩家: ${s_player.username}已经登录`);
+    //服务器给本玩家发送登录成功的消息
+    socket.emit("login");
+
+    //显示一下所有的用户名称
+    console.log("当前全部的player_names:", g_lobby.player_names);
+    // quit()
   });
 
   //玩家创建房间，玩家先前应已登录
