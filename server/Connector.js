@@ -6,6 +6,10 @@ import _ from "lodash";
 export class Connector {
   constructor() {
     this.conn_array = [];
+    this._id_seed = 0
+  }
+  generate_socket_id(){
+    return ++this._id_seed
   }
   new_connect(socket) {
     this.conn_array.push({
