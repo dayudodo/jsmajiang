@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":14,
-    "selecteID":18,
+    "selectedBox":42,
+    "selecteID":6,
     "props":{"text":"ID:3213124","sceneWidth":1920,"sceneHeight":1080,"sceneColor":"#000000","sceneBg":"laya/views/test/Main.jpg"},
     "nodeParent":-1,
     "label":"View",
@@ -440,7 +440,7 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":0,"width":531,"var":"createBtn","skin":"ui/home/btn_create.png","label":"label","height":595},
+                            "props":{"y":0,"x":0,"width":531,"var":"createBtn","skin":"ui/home/btn_create.png","height":595},
                             "nodeParent":42,
                             "label":"Button(createBtn)",
                             "isOpen":true,
@@ -461,7 +461,7 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":554.0000000000002,"width":531,"var":"joinBtn","skin":"ui/home/btn_join.png","label":"label","height":595},
+                            "props":{"y":0,"x":554.0000000000002,"width":531,"var":"joinBtn","skin":"ui/home/btn_join.png","height":595},
                             "nodeParent":42,
                             "label":"Button(joinBtn)",
                             "isDirectory":false,
