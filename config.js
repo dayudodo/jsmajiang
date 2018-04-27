@@ -9,6 +9,11 @@ Array.prototype.repeat = function(times) {
   return result;
 };
 
+var WebSocket = require("ws")
+WebSocket.prototype.sendmsg = function(msg){
+  this.send(JSON.stringify(msg))
+}
+
 const BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 const TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌

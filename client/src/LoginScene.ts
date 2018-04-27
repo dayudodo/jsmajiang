@@ -17,17 +17,11 @@ module mj.scene {
 
         loginClicked(): void {
             //todo: 使用自动的用户名称，简化测试或者其它操作！
-            let msg = { type: events.testlogin }
+            let msg = { type: events.client_testlogin }
             var socket = Laya.client.socket
             if (socket) {
-                socket.send(JSON.stringify(msg))
+                socket.sendmsg(msg)
             }
-
-            // if (Laya.client) {
-
-            // }else{
-            //     Laya.client.socket.
-            // }
         }
 
 

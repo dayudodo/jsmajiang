@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":936,
-    "selecteID":391,
+    "selectedBox":12,
+    "selecteID":1278,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
     "label":"View(turntableDong)",
@@ -164,7 +164,7 @@
                             "props":{"y":57,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},
                             "nodeParent":49,
                             "label":"Image",
-                            "isOpen":false,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -279,7 +279,7 @@
                             "props":{"y":185,"x":-5,"width":193,"var":"goldBg3","skin":"ui/game/gold_bg.png","sizeGrid":"18,19,19,29","scaleY":0.8,"scaleX":0.8,"height":38},
                             "nodeParent":49,
                             "label":"Image(goldBg3)",
-                            "isOpen":false,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1210,7 +1210,7 @@
             "props":{"y":0,"x":0,"width":1920,"var":"gameSprite","height":1080},
             "nodeParent":1,
             "label":"Sprite(gameSprite)",
-            "isOpen":false,
+            "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
@@ -1224,11 +1224,12 @@
             "compId":8,
             "child":[
                 {
+                    "x":30,
                     "type":"Image",
                     "props":{"y":344,"x":861,"width":130,"var":"turntable","scaleY":2,"scaleX":2,"height":130},
                     "nodeParent":8,
                     "label":"Image(turntable)",
-                    "isOpen":true,
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
@@ -1401,9 +1402,9 @@
                         },
                         {
                             "type":"Sprite",
-                            "props":{"y":112,"x":-49,"scaleY":0.75,"scaleX":0.75},
+                            "props":{"y":112,"x":-49,"var":"leftPaiCountSprite","scaleY":0.75,"scaleX":0.75},
                             "nodeParent":3,
-                            "label":"Sprite",
+                            "label":"Sprite(leftPaiCountSprite)",
                             "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1453,7 +1454,8 @@
                                         }],
                                     "compId":1153,
                                     "child":[
-                                        ]
+                                        ],
+                                    "$HIDDEN":false
                                 },
                                 {
                                     "type":"Text",
@@ -1474,32 +1476,13 @@
                                     "compId":1154,
                                     "child":[
                                         ]
-                                },
-                                {
-                                    "type":"Text",
-                                    "props":{"y":64,"x":71.5,"width":180,"var":"bianType","text":"变化类型","fontSize":"32","color":"#45d482","align":"center"},
-                                    "nodeParent":1272,
-                                    "label":"Text(bianType)",
-                                    "isOpen":true,
-                                    "isDirectory":false,
-                                    "isAniNode":true,
-                                    "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":130,"x":-25,"width":180,"var":"juName","text":"东风东局","height":35,"fontSize":28,"color":"#45d482","align":"center"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
-                                    "compId":1290,
-                                    "child":[
-                                        ]
                                 }]
                         }],
                     "$LOCKED":false,
                     "$HIDDEN":false
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":93,"x":192,"width":104,"var":"shouPai0","scaleY":0.65,"scaleX":0.65,"height":1102},
                     "nodeParent":8,
@@ -2094,6 +2077,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":0,"x":618,"width":1227,"var":"shouPai1","scaleY":0.8,"scaleX":0.8,"height":194},
                     "nodeParent":8,
@@ -2664,6 +2648,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":100,"x":1721,"width":104,"var":"shouPai2","scaleY":0.65,"scaleX":-0.65,"height":1102},
                     "nodeParent":8,
@@ -3222,6 +3207,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":287,"x":260,"width":177,"var":"out0","height":477},
                     "nodeParent":8,
@@ -4203,6 +4189,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":650,"x":607.5,"width":705,"var":"out3","height":185},
                     "nodeParent":8,
@@ -5224,6 +5211,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":262,"x":1653,"width":176,"var":"out2","scaleX":-1,"height":477},
                     "nodeParent":8,
@@ -6205,6 +6193,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":176,"x":607.55,"width":704.9,"var":"out1","height":189.6},
                     "nodeParent":8,
@@ -7176,6 +7165,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":839,"x":54.99999999999999,"width":1227,"var":"shouPai3","scaleY":1.4,"scaleX":1.4,"height":172},
                     "nodeParent":8,
@@ -7836,6 +7826,7 @@
                         }]
                 },
                 {
+                    "x":30,
                     "type":"Sprite",
                     "props":{"y":939.9999999999999,"x":39.00000000000005,"var":"tingPaiSprite"},
                     "nodeParent":8,
@@ -7971,7 +7962,7 @@
                         }]
                 }],
             "$LOCKED":true,
-            "$HIDDEN":true
+            "$HIDDEN":false
         },
         {
             "x":15,
@@ -7979,7 +7970,7 @@
             "props":{"y":3,"x":0,"width":1920,"var":"waitSprite","height":1080},
             "nodeParent":1,
             "label":"Sprite(waitSprite)",
-            "isOpen":false,
+            "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
@@ -7993,6 +7984,7 @@
             "compId":12,
             "child":[
                 {
+                    "x":30,
                     "type":"Button",
                     "props":{"y":512,"x":984,"width":393,"var":"inviteBtn","skin":"base/btn_normal.png","labelSize":60,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","label":"邀请好友","height":133},
                     "nodeParent":12,
@@ -8013,6 +8005,7 @@
                         ]
                 },
                 {
+                    "x":30,
                     "type":"Button",
                     "props":{"y":511,"x":508,"width":403,"var":"delRoomBtn","skin":"base/btn_danger.png","labelSize":60,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","label":"解散房间","height":133},
                     "nodeParent":12,
@@ -8032,6 +8025,7 @@
                         ]
                 },
                 {
+                    "x":30,
                     "type":"CheckBox",
                     "props":{"y":712,"x":726,"width":390,"var":"isAutoStart","skin":"base/checkbox.png","selected":true,"scaleY":1.2,"scaleX":1.2,"labelSize":52,"labelColors":"#cd5216","label":"人满自动开始","height":70},
                     "nodeParent":12,
@@ -8051,7 +8045,7 @@
                         ]
                 }],
             "$LOCKED":true,
-            "$HIDDEN":true
+            "$HIDDEN":false
         },
         {
             "x":15,

@@ -1,7 +1,8 @@
+var config = require("../config");
 import _ from "lodash";
 import chalk from "chalk";
 import { Majiang } from "./Majiang";
-import * as config from "./../config";
+// import * as config from "../config";
 import * as g_events from "../events";
 
 let room_valid_names = ["ange", "jack", "rose"];
@@ -48,13 +49,26 @@ export class Room {
   }
   player_enter_room(socket) {
     let player = this.find_player_by_socket(socket);
+    player.socket.sendmsg({
+      type: g_events.server_player_enter_room,
+      room_id: this.id
+    });
+    this.other_players(player).forEach(p => {
+      p.socket.sendmsg({
+        type: g_events.server_other_player_enter_room,
+        username: player.username,
+        user_id: player.user_id
+      });
+    });
+  }
+  server_receive_ready(socket) {
+    //向房间内所有人通知我已经准备好
+    let player = this.find_player_by_socket(socket);
     this.players.forEach(p => {
-      p.socket.send(
-        JSON.stringify({
-          type: g_events.server_player_enter_room,
-          username: player.username
-        })
-      );
+      p.socket.sendmsg({
+        type: g_events.server_receive_ready,
+        username: player.username
+      });
     });
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
@@ -369,16 +383,25 @@ export class Room {
 
       if (p == this.dong_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
-        p.socket.emit("server_game_start", p.shou_pai);
+        p.socket.sendmsg({
+          type: g_events.server_game_start,
+          data: p.shou_pai
+        });
         //todo: 开始游戏不考虑东家会听牌的情况，
         let fa_pai = this.fa_pai(p);
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
-        p.socket.emit("server_table_fa_pai", fa_pai);
+        p.socket.sendmsg({
+          type: g_events.server_table_fa_pai,
+          data: fa_pai
+        });
       } else {
         //非东家，接收到牌即可
-        p.socket.emit("server_game_start", p.shou_pai);
-        let ting_liangCode = this.judge_ting(p);
+        p.socket.sendmsg({
+          type: g_events.server_game_start,
+          data: p.shou_pai
+        });
+        // let ting_liangCode = this.judge_ting(p);
       }
     });
   }

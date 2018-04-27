@@ -7,7 +7,7 @@ export class Player {
   //初始化第一手牌，肯定是有13张
 
   //连接之后，用户就会有一个socket_id，一个socket其实就是一个连接了
-  constructor({ shou_pai = [], socket, username }) {
+  constructor({ shou_pai = [], socket, username, user_id }) {
     // this.room = null
     this.socket = socket;
     //用户是否连接？有可能掉线！
@@ -18,7 +18,8 @@ export class Player {
     this.east = false;
     //用户名称，以后可以显示微信名称
     this.username = username;
-    //todo: this.user_id = null; 用户应该有一个唯一的id, 这样断线后再登录才知道你在哪个服务器
+    this.user_id = user_id; //todo:用户应该有一个唯一的id, 这样断线后再登录才知道你在哪个服务器
+    
     this.shou_pai = shou_pai; //玩家当前拥有的牌
     this.used_pai = []; //打过的牌有哪些，断线后可以重新发送此数据
     this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用

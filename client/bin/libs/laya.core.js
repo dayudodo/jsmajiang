@@ -13757,7 +13757,13 @@ var Socket=(function(_super){
 	__proto.send=function(data){
 		this._socket.send(data);
 	}
-
+	/**
+	 * 发送消息对象msg到服务器
+	 * @param msg 消息对象
+	 */
+	__proto.sendmsg=function(msg){
+		this._socket.send(JSON.stringify(msg))
+	}
 	/**
 	*发送缓冲区中的数据到服务器。
 	*/

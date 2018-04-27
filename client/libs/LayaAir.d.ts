@@ -20390,6 +20390,11 @@ declare module laya.net {
          */
         send(data: any): void;
         /**
+         * 发送消息对象msg到服务器
+         * @param msg 消息对象
+         */
+        sendmsg(msg: any): void;
+        /**
          * 发送缓冲区中的数据到服务器。
          */
         flush(): void;
@@ -25124,7 +25129,7 @@ declare module laya.ui {
         protected _max: number;
         protected _min: number;
         protected _tick: number;
- 
+
         protected _skin: string;
         protected _bg: Image;
         protected _progress: Image;
@@ -30313,18 +30318,18 @@ declare module laya.wx.mini {
 declare module laya.wx.mini {
     import Handler = laya.utils.Handler;
 
-    
+
     class MiniAdpter {
-         
+
 
 
         /**是否自动缓存下载的图片跟声音文件，默认为true**/
-        public static  autoCacheFile:Boolean;
-		/**50M缓存容量满时每次清理容量值,默认每次清理5M**/
-		public static  minClearSize:Number; 
-		/**本地资源列表**/
-		public static  nativefiles:Object;
-         
+        public static autoCacheFile: Boolean;
+        /**50M缓存容量满时每次清理容量值,默认每次清理5M**/
+        public static minClearSize: Number;
+        /**本地资源列表**/
+        public static nativefiles: Object;
+
 
         /**
          * 初始化回调
@@ -30333,24 +30338,24 @@ declare module laya.wx.mini {
          * @param isCacheFile 是否缓存下载的图片跟声音文件，默认true缓存
          */
         static init(isPosMsg?: boolean, isSon?: boolean, isCacheFile?: boolean): void;
-      
-      /**
-       * 判断文件是否在4M包
-       * @param url 文件路径
-       * @return 
-       */
-      
-        static hasNativeFile(fileUrl:String):Boolean;
-        
-       
+
+        /**
+         * 判断文件是否在4M包
+         * @param url 文件路径
+         * @return 
+         */
+
+        static hasNativeFile(fileUrl: String): Boolean;
+
+
 
         /**
        * 通过url地址获取文件编码(编码的设置只有在直接调用本地读取4M包非图片文件的时候才需要指定，50M空间文件加载无需设置文件编码) 
        * @param url 文件路径(绝对地址)
        * @param type 文件类型
        * @return 
-       */		
-        static getUrlEncode(url:String,type:String):String;
+       */
+        static getUrlEncode(url: String, type: String): String;
 
         /**
          * 下载文件
@@ -30361,28 +30366,28 @@ declare module laya.wx.mini {
 
          */
         static downLoadFile(fileUrl: string, fileType?: string, callBack?: Handler, encoding?: string): void;
-        
-       /**
-        * 删除指定缓存文件
-        * @param fileUrl文件路径(绝对地址)
-        * @param callBack 删除回调函数
-        */
 
-        static remove(fileUrl?:String,callBack?:Handler): void;
-        
+        /**
+         * 删除指定缓存文件
+         * @param fileUrl文件路径(绝对地址)
+         * @param callBack 删除回调函数
+         */
+
+        static remove(fileUrl?: String, callBack?: Handler): void;
+
         /**
          * 
          * 获取文件信息
          * @param fileUrl
          * @return
          */
-        static getFileInfo(fileUrl: string):Object;
-        
+        static getFileInfo(fileUrl: string): Object;
+
         /**
          * 获取文件列表
          */
-        static getFileList():Object;
-     
+        static getFileList(): Object;
+
     }
 }
 declare module laya.wx.mini {
@@ -31674,7 +31679,7 @@ declare module Laya {
     }
     class Path extends laya.webgl.canvas.Path {
     }
-    
+
     class GraphicsGL extends laya.webgl.display.GraphicsGL {
     }
     interface IMergeAtlasBitmap extends laya.webgl.resource.IMergeAtlasBitmap {
@@ -31744,15 +31749,15 @@ declare module Laya {
     }
     interface ISubmit extends laya.webgl.submit.ISubmit {
     }
-    
+
     class SubmitCMD extends laya.webgl.submit.SubmitCMD {
     }
     class SubmitCMDScope extends laya.webgl.submit.SubmitCMDScope {
     }
-    
+
     class CharSegment extends laya.webgl.text.CharSegment {
     }
-    
+
     class FontInContext extends laya.webgl.text.FontInContext {
     }
     interface ICharSegment extends laya.webgl.text.ICharSegment {
@@ -31771,10 +31776,10 @@ declare module Laya {
     }
     class Mesh2D extends laya.webgl.utils.Mesh2D {
     }
-   
+
     class RenderSprite3D extends laya.webgl.utils.RenderSprite3D {
     }
-   
+
     class ShaderCompile extends laya.webgl.utils.ShaderCompile {
     }
     class VertexBuffer2D extends laya.webgl.utils.VertexBuffer2D {
@@ -31785,11 +31790,11 @@ declare module Laya {
     }
     class MiniAccelerator extends laya.wx.mini.MiniAccelerator {
     }
- 
+
     // class Node extends PathFinding.core.Node {
     // }
-    
-    
+
+
     class DebugPanel extends laya.debug.DebugPanel {
     }
     class DebugTool extends laya.debug.DebugTool {
@@ -31803,7 +31808,7 @@ declare class Laya3D {
      * @param    width  3D画布宽度。
      * @param    height 3D画布高度。
      */
-    static  init(width:number, height:number, antialias?:boolean, alpha?:boolean, premultipliedAlpha?:boolean):void 
+    static init(width: number, height: number, antialias?: boolean, alpha?: boolean, premultipliedAlpha?: boolean): void
 }
 /**
  * <code>Laya</code> 是全局对象的引用入口集。
@@ -31841,8 +31846,8 @@ declare class Laya {
      * 表示是否捕获全局错误并弹出提示。
      */
     static alertGlobalError: boolean;
-        
-    static class(functionRef:Function, fullQulifiedName:String, superClass:Function, miniName:String):void;
+
+    static class(functionRef: Function, fullQulifiedName: String, superClass: Function, miniName: String): void;
 
     /**
      * JS中为目标定义getter/setter。
@@ -31858,7 +31863,7 @@ declare class Laya {
      * @param getter 
      * @param setter 
      */
-    static getset(isStatic:Boolean, target:any, name:String, getter:Function, setter:Function):void;
+    static getset(isStatic: Boolean, target: any, name: String, getter: Function, setter: Function): void;
 
     /**
      * JS中实现接口。如： 使Myclass实现接口a.interface: Laya.imps(Myclass.prototype, { a.interface: true});
@@ -31866,74 +31871,74 @@ declare class Laya {
      * @param prototypeChain 
      * @param superInterfaces 
      */
-    static imps(prototypeChain:any, superInterfaces:Object):void;
+    static imps(prototypeChain: any, superInterfaces: Object): void;
 
     /**
      * JS中定义接口。如 Laya.interface("a.b.myinterface", null); Laya.interface("a.b.myInterface2", BaseInterface);
      * @param name 
      * @param superClass 
      */
-    static interface(name:String, superClass:Function):void;
+    static interface(name: String, superClass: Function): void;
 
-    static superSet(clas:any,o:any,prop:any,value:any);
+    static superSet(clas: any, o: any, prop: any, value: any);
 
-    static superGet(clas:any,o:any,prop:any);
+    static superGet(clas: any, o: any, prop: any);
 }
 /**全局配置*/
 declare class UIConfig {
-  /**是否开启触摸滚动（针对滚动条）*/
-        public static   touchScrollEnable:boolean;
-        /**是否开启滑轮滚动（针对滚动条）*/
-        public static   mouseWheelEnable:boolean ;
-        /**是否显示滚动条按钮*/
-        public static   showButtons:boolean;
-        /**弹出框背景颜色*/
-        public static   popupBgColor:string;
-        /**弹出框背景透明度*/
-        public static   popupBgAlpha:number;
-        /**模式窗口点击边缘，是否关闭窗口，默认是关闭的*/
-        public static   closeDialogOnSide:boolean;
+    /**是否开启触摸滚动（针对滚动条）*/
+    public static touchScrollEnable: boolean;
+    /**是否开启滑轮滚动（针对滚动条）*/
+    public static mouseWheelEnable: boolean;
+    /**是否显示滚动条按钮*/
+    public static showButtons: boolean;
+    /**弹出框背景颜色*/
+    public static popupBgColor: string;
+    /**弹出框背景透明度*/
+    public static popupBgAlpha: number;
+    /**模式窗口点击边缘，是否关闭窗口，默认是关闭的*/
+    public static closeDialogOnSide: boolean;
 }
 /**
  *  Config 用于配置一些全局参数。
  */
 declare class Config {
-        /**
-         * WebGL模式下文本缓存最大数量。
-         */
-        public static  WebGLTextCacheCount:number;
-        /**
-         * 表示是否使用了大图合集功能。
-         */
-        public static  atlasEnable:boolean;
-        /**
-         * 是否显示画布图边框，用于调试。
-         */
-        public static  showCanvasMark:boolean;
-        /**
-         * 动画 Animation 的默认播放时间间隔，单位为毫秒。
-         */
-        public static  animationInterval:number;
-        /**
-         * 设置是否抗锯齿，只对2D(WebGL)、3D有效。
-         */
-        public static  isAntialias:boolean;
-        /**
-         * 设置画布是否透明，只对2D(WebGL)、3D有效。
-         */
-        public static  isAlpha:boolean;
-        /**
-         * 设置画布是否预乘，只对2D(WebGL)、3D有效。
-         */
-        public static  premultipliedAlpha:boolean;
-        /**
-         * 设置画布的模板缓冲，只对2D(WebGL)、3D有效。
-         */
-        public static  isStencil:boolean;
-        /**
-         * 是否强制WebGL同步刷新。
-         */
-        public static  preserveDrawingBuffer:boolean;
+    /**
+     * WebGL模式下文本缓存最大数量。
+     */
+    public static WebGLTextCacheCount: number;
+    /**
+     * 表示是否使用了大图合集功能。
+     */
+    public static atlasEnable: boolean;
+    /**
+     * 是否显示画布图边框，用于调试。
+     */
+    public static showCanvasMark: boolean;
+    /**
+     * 动画 Animation 的默认播放时间间隔，单位为毫秒。
+     */
+    public static animationInterval: number;
+    /**
+     * 设置是否抗锯齿，只对2D(WebGL)、3D有效。
+     */
+    public static isAntialias: boolean;
+    /**
+     * 设置画布是否透明，只对2D(WebGL)、3D有效。
+     */
+    public static isAlpha: boolean;
+    /**
+     * 设置画布是否预乘，只对2D(WebGL)、3D有效。
+     */
+    public static premultipliedAlpha: boolean;
+    /**
+     * 设置画布的模板缓冲，只对2D(WebGL)、3D有效。
+     */
+    public static isStencil: boolean;
+    /**
+     * 是否强制WebGL同步刷新。
+     */
+    public static preserveDrawingBuffer: boolean;
 }
 declare module laya.debug {
     /**
@@ -31947,15 +31952,15 @@ declare module laya.debug {
         static init(cacheAnalyseEnable?: boolean, loaderAnalyseEnable?: boolean, createAnalyseEnable?: boolean, renderAnalyseEnable?: boolean): void;
     }
 }
-declare module laya.debug{
-    class DebugPanel{
+declare module laya.debug {
+    class DebugPanel {
         /**
          * 初始化调试面板 
          * @param underGame 是否在游戏下方显示，true:将改变原游戏的大小,false:直接覆盖在游戏上方
          * @param bgColor 调试面板背景颜色
          * 
-         */     
-         static init(underGame?:boolean,bgColor?:string):void;
+         */
+        static init(underGame?: boolean, bgColor?: string): void;
     }
 }
 

@@ -7,7 +7,7 @@ import { Connector } from "./Connector";
 import { Player } from "./player";
 import { Room } from "./room";
 import chalk from "chalk";
-import * as g_events from "../events";
+import * as g_events from "../events"; //events呢容易产生同名，所以加个前缀
 const app = express();
 
 //initialize a simple http server
@@ -15,6 +15,12 @@ const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
 const g_lobby = new Connector();
 var test_names = ["jack", "rose", "tom", "jerry", "michael", "adam", "bruce"];
+var eventsHandler = [
+  [g_events.client_testlogin, client_testlogin],
+  [g_events.client_create_room, client_create_room],
+  [g_events.client_join_room, client_join_room],
+  [g_events.client_player_ready, client_player_ready]
+];
 
 wsserver.on("connection", socket => {
   socket.id = g_lobby.generate_socket_id();
@@ -22,6 +28,10 @@ wsserver.on("connection", socket => {
   console.log(
     `有新的连接：${socket.id} | 服务器连接数: ${g_lobby.clients_count}`
   );
+  socket.sendmsg({
+    type: g_events.server_welcome,
+    welcome: "欢迎来到安哥世界"
+  });
   const onClose = () => {
     let disconnect_client = g_lobby.dis_connect(socket);
     // console.dir(disconnect_client);
@@ -49,59 +59,14 @@ wsserver.on("connection", socket => {
   socket.on("message", message => {
     //log the received message and send it back to the client
     let client_message = JSON.parse(message);
-
-    switch (client_message.type) {
-      //测试登录
-      case g_events.testlogin:
-        testlogin(socket);
-        break;
-      case g_events.create_room:
-        let conn = g_lobby.find_conn_by(socket);
-        if (!conn.player) {
-          socket = null;
-          console.log(
-            `用户${conn.username}未登录执行了创建房间：${conn.socket.id}`
-          );
-          return;
-        } else {
-          let owner_room = new Room();
-          let room_name = Room.make();
-          if (room_name) {
-            owner_room.id = room_name;
-          } else {
-            console.log("服务器无可用房间了");
-            socket.send(
-              JSON.stringify({
-                type: g_events.server_no_room
-              })
-            );
-            return;
-          }
-          owner_room.dong_jia = conn.player; //创建房间者即为东家，初始化时会多一张牉！
-          conn.player.seat_index = 0; //玩家座位号从0开始
-          owner_room.join_player(conn.player); //新建的房间要加入本玩家
-          conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
-          console.log(`${conn.player.username}创建了房间${owner_room.id}`);
-          // console.dir(conn)
-          //成功创建房间后要给前端发送成功的消息
-          socket.send(
-            JSON.stringify({
-              type: g_events.server_join_room_ok,
-              room_name: owner_room.id
-            })
-          );
-        }
-        break;
-      case g_events.join_room:
-        join_room(client_message, socket);
-        break;
-      default:
-        console.log(`客户端发来未知消息${message}`);
-        socket.send(
-          JSON.stringify({ type: g_events.unknown, info: `未知消息${message}` })
-        );
-        break;
+    for (let index = 0; index < eventsHandler.length; index++) {
+      const element = eventsHandler[index];
+      if (client_message.type == element[0]) {
+        element[1].call(this, client_message, socket);
+        return;
+      }
     }
+    console.log("未知消息:", client_message);
   });
 });
 
@@ -109,7 +74,7 @@ wsserver.on("connection", socket => {
 server.listen(process.env.PORT || config.PORT, () => {
   console.log(`服务器已经启动，端口号： ${server.address().port} :)`);
 });
-function join_room(client_message, socket) {
+function client_join_room(client_message, socket) {
   let { room_id } = client_message;
   let room = g_lobby.find_room_by_id(room_id);
   // console.dir(room);
@@ -140,8 +105,39 @@ function join_room(client_message, socket) {
     socket.send(JSON.stringify({ type: g_events.server_no_such_room }));
   }
 }
+function client_create_room(client_message, socket) {
+  let conn = g_lobby.find_conn_by(socket);
+  if (!conn.player) {
+    socket = null;
+    console.log(`用户${conn.username}未登录执行了创建房间：${conn.socket.id}`);
+    return;
+  } else {
+    let owner_room = new Room();
+    let room_name = Room.make();
+    if (room_name) {
+      owner_room.id = room_name;
+    } else {
+      console.log("服务器无可用房间了");
+      socket.sendmsg({
+        type: g_events.server_no_room
+      });
+      return;
+    }
+    owner_room.dong_jia = conn.player; //创建房间者即为东家，初始化时会多一张牉！
+    conn.player.seat_index = 0; //玩家座位号从0开始
+    owner_room.join_player(conn.player); //新建的房间要加入本玩家
+    conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
+    console.log(`${conn.player.username}创建了房间${owner_room.id}`);
+    // console.dir(conn)
+    //成功创建房间后要给前端发送成功的消息
+    socket.sendmsg({
+      type: g_events.server_create_room_ok,
+      room_id: owner_room.id
+    });
+  }
+}
 
-function testlogin(socket) {
+function client_testlogin(client_message, socket) {
   let shift_name = test_names.shift();
   if (!shift_name) {
     throw new Error("没有空余的测试用户名了！");
@@ -149,15 +145,37 @@ function testlogin(socket) {
   let conn = g_lobby.find_conn_by(socket);
   let s_player = new Player({
     socket: socket,
-    username: shift_name
+    username: shift_name,
+    user_id: g_lobby.generate_user_id()
   });
-  console.log(`${s_player.username}登录成功，socket_id: ${socket.id}`);
-  conn.player = s_player;
-  socket.send(
-    JSON.stringify({
-      type: g_events.server_login,
-      user_id: socket.id,
-      username: s_player.username
-    })
+  console.log(
+    `${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${
+      socket.id
+    }`
   );
+  conn.player = s_player;
+  socket.sendmsg({
+    type: g_events.server_login,
+    user_id: s_player.user_id,
+    username: s_player.username
+  });
+}
+
+function client_player_ready(client_message, socket) {
+  let player = g_lobby.find_player_by_socket(socket);
+  let room = g_lobby.find_room_by_socket(socket);
+  player.ready = true;
+
+  //向房间内的所有人广播说我已经开始了
+  room.server_receive_ready(socket);
+  // socket.to(room_name).emit("server_receive_ready", player.username);
+  console.log(`房间：${room.id}内用户：${player.username}准备开始游戏 。。。`);
+  // 如果所有的人都准备好了，就开始游戏！
+  if (room.all_ready) {
+    console.log(
+      chalk.green(`===>房间${room.id}全部玩家准备完毕，可以游戏啦！`)
+    );
+    //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
+    room.start_game();
+  }
 }

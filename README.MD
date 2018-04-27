@@ -1,5 +1,6 @@
 # js版本卡五星麻将服务器程序
-- 仅包括服务器端(使用ws包进行WebSocket支持，以前的使用的是socket.io，用于layabox会出各种奇怪问题！)
+- 服务器端(js语言，使用ws包进行WebSocket支持)
+- 客户端使用Layabox（ts语言）
 - 仅用于教学
 
 # 开发模式

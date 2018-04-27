@@ -38,7 +38,7 @@ var mj;
                 var god_player = Laya.god_player;
                 //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
                 var msg = {
-                    type: events.join_room,
+                    type: events.client_join_room,
                     username: god_player.username,
                     user_id: god_player.user_id,
                     room_id: '001'
@@ -47,7 +47,7 @@ var mj;
             };
             MainScene.prototype.ClickCreate = function () {
                 //创建房间
-                var msg = { type: events.create_room };
+                var msg = { type: events.client_create_room };
                 this.socket.send(JSON.stringify(msg));
             };
             MainScene.prototype.ClickSetting = function () {
@@ -62,17 +62,6 @@ var mj;
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            };
-            MainScene.prototype.loginClicked = function () {
-                //todo: 使用自动的用户名称，简化测试或者其它操作！
-                var msg = { testlogin: true, username: 'jack' };
-                if (this.socket) {
-                    this.socket.send(JSON.stringify(msg));
-                }
-                // if (Laya.client) {
-                // }else{
-                //     Laya.client.socket.
-                // }
             };
             return MainScene;
         }(ui.test.MainUI));

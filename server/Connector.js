@@ -7,9 +7,14 @@ export class Connector {
   constructor() {
     this.conn_array = [];
     this._id_seed = 0
+    this._user_id_seed = 100
   }
   generate_socket_id(){
     return ++this._id_seed
+  }
+  //其实这个方法应该放在Player中的，不过为了方便还是用大厅来制造唯一，道理也能说通，大厅是第一道关口
+  generate_user_id(){
+    return ++ this._user_id_seed
   }
   new_connect(socket) {
     this.conn_array.push({

@@ -24,15 +24,11 @@ var mj;
             }
             LoginScene.prototype.loginClicked = function () {
                 //todo: 使用自动的用户名称，简化测试或者其它操作！
-                var msg = { type: events.testlogin };
+                var msg = { type: events.client_testlogin };
                 var socket = Laya.client.socket;
                 if (socket) {
-                    socket.send(JSON.stringify(msg));
+                    socket.sendmsg(msg);
                 }
-                // if (Laya.client) {
-                // }else{
-                //     Laya.client.socket.
-                // }
             };
             return LoginScene;
         }(ui.test.LoginUI));

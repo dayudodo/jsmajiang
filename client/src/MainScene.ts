@@ -29,7 +29,7 @@ module mj.scene {
             let {god_player} = Laya
             //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
             let msg = {
-                type: events.join_room,
+                type: events.client_join_room,
                 username: god_player.username,
                 user_id: god_player.user_id,
                 room_id: '001'
@@ -40,7 +40,7 @@ module mj.scene {
         ClickCreate(): void {
             //创建房间
 
-            let msg = { type: events.create_room }
+            let msg = { type: events.client_create_room }
             this.socket.send(JSON.stringify(msg))
         }
         ClickSetting(): void {
@@ -55,21 +55,6 @@ module mj.scene {
             })
             dialog.popup()
             Laya.stage.addChild(dialog)
-        }
-
-        loginClicked(): void {
-            //todo: 使用自动的用户名称，简化测试或者其它操作！
-            let msg = { testlogin: true, username: 'jack' }
-
-            if (this.socket) {
-                this.socket.send(JSON.stringify(msg))
-            }
-
-            // if (Laya.client) {
-
-            // }else{
-            //     Laya.client.socket.
-            // }
         }
 
 
