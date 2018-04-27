@@ -19,7 +19,6 @@
     "express": "^4.16.2",
     "react": "^15.2.0",
     "react-dom": "^15.2.0",
-    "react-route": "^1.0.3",
     "react-router": "^2.5.2",
     "socket.io": "^1.7.4",
     "ws": "^5.1.1"
