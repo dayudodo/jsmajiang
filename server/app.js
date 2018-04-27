@@ -7,6 +7,7 @@ import { Connector } from "./Connector";
 import { Player } from "./player";
 import { Room } from "./room";
 import chalk from "chalk";
+import * as g_events from "../events";
 const app = express();
 
 //initialize a simple http server
@@ -49,73 +50,114 @@ wsserver.on("connection", socket => {
     //log the received message and send it back to the client
     let client_message = JSON.parse(message);
 
-    //测试登录
-    if (client_message.testlogin) {
-      let shift_name = test_names.shift();
-      if (!shift_name) {
-        throw new Error("没有空余的测试用户名了！");
-      }
-      let conn = g_lobby.find_conn_by(socket);
-      let s_player = new Player({
-        socket: socket,
-        username: shift_name
-      });
-      console.log(`${s_player.username}登录成功，socket_id: ${socket.id}`);
-      conn.player = s_player;
-      socket.send(
-        JSON.stringify({
-          server_login: "success",
-          userId: socket.id,
-          username: s_player.username
-        })
-      );
-    //创建房间
-    } else if (client_message.create_room) {
-      let conn = g_lobby.find_conn_by(socket);
-      if (!conn.player) {
-        socket = null;
-        console.log(
-          `用户${conn.username}未登录执行了创建房间：${conn.socket.id}`
-        );
-        return;
-      } else {
-        let owner_room = new Room();
-        let room_name = Room.make();
-        if (room_name) {
-          owner_room.id = room_name;
-        } else {
-          console.log("服务器无可用房间了");
-          socket.send(
-            JSON.stringify({
-              server_no_room: "server_no_room"
-            })
+    switch (client_message.type) {
+      //测试登录
+      case g_events.testlogin:
+        testlogin(socket);
+        break;
+      case g_events.create_room:
+        let conn = g_lobby.find_conn_by(socket);
+        if (!conn.player) {
+          socket = null;
+          console.log(
+            `用户${conn.username}未登录执行了创建房间：${conn.socket.id}`
           );
           return;
+        } else {
+          let owner_room = new Room();
+          let room_name = Room.make();
+          if (room_name) {
+            owner_room.id = room_name;
+          } else {
+            console.log("服务器无可用房间了");
+            socket.send(
+              JSON.stringify({
+                type: g_events.server_no_room
+              })
+            );
+            return;
+          }
+          owner_room.dong_jia = conn.player; //创建房间者即为东家，初始化时会多一张牉！
+          conn.player.seat_index = 0; //玩家座位号从0开始
+          owner_room.join_player(conn.player); //新建的房间要加入本玩家
+          conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
+          console.log(`${conn.player.username}创建了房间${owner_room.id}`);
+          // console.dir(conn)
+          //成功创建房间后要给前端发送成功的消息
+          socket.send(
+            JSON.stringify({
+              type: g_events.server_join_room_ok,
+              room_name: owner_room.id
+            })
+          );
         }
-        owner_room.dong_jia = conn.player; //创建房间者即为东家，初始化时会多一张牉！
-        conn.player.seat_index = 0; //玩家座位号从0开始
-        owner_room.join_player(conn.player); //新建的房间要加入本玩家
-        conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
-        console.log(`${conn.player.username}创建了房间${owner_room.id}`);
-        // console.dir(conn)
-        //成功创建房间后要给前端发送成功的消息
+        break;
+      case g_events.join_room:
+        join_room(client_message, socket);
+        break;
+      default:
+        console.log(`客户端发来未知消息${message}`);
         socket.send(
-          JSON.stringify({
-            server_join_room_ok: "server_join_room_ok",
-            room_name: owner_room.id
-          })
+          JSON.stringify({ type: g_events.unknown, info: `未知消息${message}` })
         );
-      }
-    } else {
-      socket.send(JSON.stringify({ info: `未知消息${message}` }));
+        break;
     }
   });
-
-  //send immediatly a feedback to the incoming connection
-  socket.send(JSON.stringify({ welcome: "欢迎来到安哥的游戏世界" }));
 });
 
 //start our server
 server.listen(process.env.PORT || config.PORT, () => {
   console.log(`服务器已经启动，端口号： ${server.address().port} :)`);
 });
+function join_room(client_message, socket) {
+  let { room_id } = client_message;
+  let room = g_lobby.find_room_by_id(room_id);
+  // console.dir(room);
+  let _me = g_lobby.find_player_by_socket(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
+  let conn = g_lobby.find_conn_by(socket);
+  //找到房间后，还要把当前连接的room保存到其连接信息中，而在登录时conn中已经保存有用户信息了
+  conn.room = room;
+  console.log(`用户${_me.username}想要加入房间${room_id}`);
+  // console.log('本玩家连接信息')
+  // console.dir(conn);
+  if (room) {
+    //todo: 检查房间玩家数量，超过3人就不能再添加了
+    console.log(`${room_id}房间内全部玩家：${room.all_player_names}`);
+    if (room.players_count == config.LIMIT_IN_ROOM) {
+      console.log(`房间${room_name}已满，玩家有：${room.all_player_names}`);
+      socket.send(JSON.stringify({ type: g_events.server_room_full }));
+    } else {
+      console.log(`用户${_me.username}成功加入房间${room_id}`);
+      //设置其座位号
+      _me.seat_index = room.last_join_player.seat_index + 1;
+      room.join_player(_me);
+      // console.dir(room)
+      //通知他人应该是房间的事情！
+      room.player_enter_room(socket);
+    }
+  } else {
+    console.log(`服务器无此房间：${room_id}`);
+    socket.send(JSON.stringify({ type: g_events.server_no_such_room }));
+  }
+}
+
+function testlogin(socket) {
+  let shift_name = test_names.shift();
+  if (!shift_name) {
+    throw new Error("没有空余的测试用户名了！");
+  }
+  let conn = g_lobby.find_conn_by(socket);
+  let s_player = new Player({
+    socket: socket,
+    username: shift_name
+  });
+  console.log(`${s_player.username}登录成功，socket_id: ${socket.id}`);
+  conn.player = s_player;
+  socket.send(
+    JSON.stringify({
+      type: g_events.server_login,
+      user_id: socket.id,
+      username: s_player.username
+    })
+  );
+}

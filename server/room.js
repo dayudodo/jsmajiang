@@ -2,6 +2,7 @@ import _ from "lodash";
 import chalk from "chalk";
 import { Majiang } from "./Majiang";
 import * as config from "./../config";
+import * as g_events from "../events";
 
 let room_valid_names = ["ange", "jack", "rose"];
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
@@ -38,12 +39,23 @@ export class Room {
     //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
     //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
     //return room_valid_names.pop();
-    return "rose";
+    return "001";
   }
   //用户加入房间，还需要告诉其它的用户我已经加入了
   join_player(person) {
     this.players.push(person);
     // tellOtherPeopleIamIn();
+  }
+  player_enter_room(socket) {
+    let player = this.find_player_by_socket(socket);
+    this.players.forEach(p => {
+      p.socket.send(
+        JSON.stringify({
+          type: g_events.server_player_enter_room,
+          username: player.username
+        })
+      );
+    });
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   exit_room(socket) {
@@ -186,8 +198,9 @@ export class Room {
       //服务器记录玩家在想
       player.is_thinking_tingliang = true;
       //如果用户没亮牌，才会发送你可以亮牌了！
-      if(!player.is_liang){
-      player.socket.emit("server_canLiang");}
+      if (!player.is_liang) {
+        player.socket.emit("server_canLiang");
+      }
     }
     console.dir(all_hupai_types);
     //只有在可以大胡的时候才能够听牌
