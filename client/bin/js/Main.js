@@ -38,8 +38,8 @@ var GameMain = /** @class */ (function () {
         console.log("loader complete");
         // console.log(window.client);
         Laya.stage.removeChild(this.testloading);
-        var res = Laya.loader.getRes("res/atlas/base.json");
-        res = Laya.loader.getRes("res/atlas/ui/home.json");
+        // var res: any = Laya.loader.getRes("res/atlas/base.json");
+        // res = Laya.loader.getRes("res/atlas/ui/home.json")
         this.testLogin = new LoginScene();
         // this.testui = new test.MainUI()
         Laya.stage.addChild(this.testLogin);

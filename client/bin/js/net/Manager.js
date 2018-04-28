@@ -19,7 +19,8 @@ var mj;
                 //这里我们采用小端
                 this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
                 //建立连接
-                this.socket.connectByUrl("ws://192.168.2.200:3333");
+                // this.socket.connectByUrl("ws://192.168.2.200:3333");
+                this.socket.connectByUrl("ws://localhost:3333");
                 this.socket.on(Laya.Event.OPEN, this, this.openHandler);
                 this.socket.on(Laya.Event.MESSAGE, this, this.receiveHandler);
                 this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);

@@ -21,7 +21,7 @@
             "rotated": false,
             "trimed": false
         },
-        "shou_25.png": {
+        "zheng_0.png": {
             "frame": {
                 "x": 87,
                 "y": 0,
@@ -42,7 +42,7 @@
             "rotated": false,
             "trimed": false
         },
-        "shou_26.png": {
+        "zheng_1.png": {
             "frame": {
                 "x": 0,
                 "y": 127,
@@ -63,7 +63,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_hun.png": {
+        "zheng_10.png": {
             "frame": {
                 "x": 84,
                 "y": 130,
@@ -84,7 +84,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_bg.png": {
+        "zheng_11.png": {
             "frame": {
                 "x": 0,
                 "y": 257,
@@ -105,7 +105,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_an.png": {
+        "zheng_12.png": {
             "frame": {
                 "x": 168,
                 "y": 130,
@@ -126,7 +126,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_9.png": {
+        "zheng_13.png": {
             "frame": {
                 "x": 171,
                 "y": 0,
@@ -147,7 +147,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_8.png": {
+        "zheng_14.png": {
             "frame": {
                 "x": 252,
                 "y": 130,
@@ -168,7 +168,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_7.png": {
+        "zheng_15.png": {
             "frame": {
                 "x": 255,
                 "y": 0,
@@ -189,7 +189,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_6.png": {
+        "zheng_16.png": {
             "frame": {
                 "x": 336,
                 "y": 130,
@@ -210,7 +210,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_5.png": {
+        "zheng_18.png": {
             "frame": {
                 "x": 339,
                 "y": 0,
@@ -231,7 +231,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_4.png": {
+        "zheng_19.png": {
             "frame": {
                 "x": 420,
                 "y": 130,
@@ -252,7 +252,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_33.png": {
+        "zheng_2.png": {
             "frame": {
                 "x": 423,
                 "y": 0,
@@ -273,7 +273,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_32.png": {
+        "zheng_20.png": {
             "frame": {
                 "x": 504,
                 "y": 130,
@@ -294,7 +294,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_31.png": {
+        "zheng_21.png": {
             "frame": {
                 "x": 507,
                 "y": 0,
@@ -315,7 +315,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_30.png": {
+        "shou_25.png": {
             "frame": {
                 "x": 588,
                 "y": 130,
@@ -336,7 +336,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_3.png": {
+        "zheng_22.png": {
             "frame": {
                 "x": 591,
                 "y": 0,
@@ -357,7 +357,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_29.png": {
+        "zheng_23.png": {
             "frame": {
                 "x": 672,
                 "y": 130,
@@ -378,7 +378,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_28.png": {
+        "zheng_24.png": {
             "frame": {
                 "x": 675,
                 "y": 0,
@@ -399,7 +399,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_27.png": {
+        "zheng_25.png": {
             "frame": {
                 "x": 756,
                 "y": 130,
@@ -441,7 +441,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_25.png": {
+        "zheng_27.png": {
             "frame": {
                 "x": 840,
                 "y": 130,
@@ -462,7 +462,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_24.png": {
+        "zheng_28.png": {
             "frame": {
                 "x": 843,
                 "y": 0,
@@ -483,7 +483,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_23.png": {
+        "zheng_29.png": {
             "frame": {
                 "x": 924,
                 "y": 130,
@@ -504,7 +504,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_22.png": {
+        "zheng_30.png": {
             "frame": {
                 "x": 927,
                 "y": 0,
@@ -525,7 +525,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_21.png": {
+        "zheng_31.png": {
             "frame": {
                 "x": 1008,
                 "y": 130,
@@ -546,7 +546,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_20.png": {
+        "zheng_32.png": {
             "frame": {
                 "x": 1011,
                 "y": 0,
@@ -567,7 +567,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_2.png": {
+        "zheng_33.png": {
             "frame": {
                 "x": 84,
                 "y": 260,
@@ -588,7 +588,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_19.png": {
+        "zheng_4.png": {
             "frame": {
                 "x": 0,
                 "y": 387,
@@ -609,7 +609,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_18.png": {
+        "zheng_5.png": {
             "frame": {
                 "x": 168,
                 "y": 260,
@@ -630,7 +630,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_17.png": {
+        "zheng_6.png": {
             "frame": {
                 "x": 252,
                 "y": 260,
@@ -651,7 +651,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_16.png": {
+        "zheng_7.png": {
             "frame": {
                 "x": 336,
                 "y": 260,
@@ -672,7 +672,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_15.png": {
+        "zheng_8.png": {
             "frame": {
                 "x": 420,
                 "y": 260,
@@ -693,7 +693,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_14.png": {
+        "zheng_9.png": {
             "frame": {
                 "x": 504,
                 "y": 260,
@@ -714,7 +714,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_13.png": {
+        "zheng_an.png": {
             "frame": {
                 "x": 588,
                 "y": 260,
@@ -735,7 +735,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_12.png": {
+        "zheng_bg.png": {
             "frame": {
                 "x": 672,
                 "y": 260,
@@ -756,7 +756,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_11.png": {
+        "zheng_hun.png": {
             "frame": {
                 "x": 756,
                 "y": 260,
@@ -777,7 +777,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_10.png": {
+        "zheng_3.png": {
             "frame": {
                 "x": 840,
                 "y": 260,
@@ -1176,7 +1176,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_1.png": {
+        "zheng_17.png": {
             "frame": {
                 "x": 252,
                 "y": 520,
@@ -1197,7 +1197,7 @@
             "rotated": false,
             "trimed": false
         },
-        "zheng_0.png": {
+        "shou_26.png": {
             "frame": {
                 "x": 336,
                 "y": 520,
@@ -1554,7 +1554,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_10.png": {
+        "ce_0.png": {
             "frame": {
                 "x": 672,
                 "y": 650,
@@ -1596,51 +1596,9 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_0.png": {
+        "ce_10.png": {
             "frame": {
                 "x": 778,
-                "y": 650,
-                "w": 104,
-                "h": 92,
-                "idx": 0
-            },
-            "spriteSourceSize": {
-                "x": 0,
-                "y": 0,
-                "w": 104,
-                "h": 92
-            },
-            "sourceSize": {
-                "w": 104,
-                "h": 92
-            },
-            "rotated": false,
-            "trimed": false
-        },
-        "ce_hun.png": {
-            "frame": {
-                "x": 778,
-                "y": 744,
-                "w": 104,
-                "h": 92,
-                "idx": 0
-            },
-            "spriteSourceSize": {
-                "x": 0,
-                "y": 0,
-                "w": 104,
-                "h": 92
-            },
-            "sourceSize": {
-                "w": 104,
-                "h": 92
-            },
-            "rotated": false,
-            "trimed": false
-        },
-        "ce_bg.png": {
-            "frame": {
-                "x": 884,
                 "y": 650,
                 "w": 104,
                 "h": 92,
@@ -1661,6 +1619,48 @@
         },
         "ce_11.png": {
             "frame": {
+                "x": 778,
+                "y": 744,
+                "w": 104,
+                "h": 92,
+                "idx": 0
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 104,
+                "h": 92
+            },
+            "sourceSize": {
+                "w": 104,
+                "h": 92
+            },
+            "rotated": false,
+            "trimed": false
+        },
+        "ce_12.png": {
+            "frame": {
+                "x": 884,
+                "y": 650,
+                "w": 104,
+                "h": 92,
+                "idx": 0
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0,
+                "w": 104,
+                "h": 92
+            },
+            "sourceSize": {
+                "w": 104,
+                "h": 92
+            },
+            "rotated": false,
+            "trimed": false
+        },
+        "ce_13.png": {
+            "frame": {
                 "x": 884,
                 "y": 744,
                 "w": 104,
@@ -1680,7 +1680,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_9.png": {
+        "ce_14.png": {
             "frame": {
                 "x": 990,
                 "y": 650,
@@ -1701,7 +1701,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_8.png": {
+        "ce_15.png": {
             "frame": {
                 "x": 990,
                 "y": 744,
@@ -1722,7 +1722,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_7.png": {
+        "ce_16.png": {
             "frame": {
                 "x": 84,
                 "y": 780,
@@ -1743,7 +1743,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_6.png": {
+        "ce_17.png": {
             "frame": {
                 "x": 190,
                 "y": 780,
@@ -1764,7 +1764,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_5.png": {
+        "ce_18.png": {
             "frame": {
                 "x": 296,
                 "y": 780,
@@ -1785,7 +1785,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_4.png": {
+        "ce_19.png": {
             "frame": {
                 "x": 402,
                 "y": 780,
@@ -1806,7 +1806,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_33.png": {
+        "ce_2.png": {
             "frame": {
                 "x": 508,
                 "y": 780,
@@ -1827,7 +1827,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_32.png": {
+        "ce_20.png": {
             "frame": {
                 "x": 614,
                 "y": 838,
@@ -1848,7 +1848,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_31.png": {
+        "ce_22.png": {
             "frame": {
                 "x": 720,
                 "y": 838,
@@ -1869,7 +1869,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_30.png": {
+        "ce_23.png": {
             "frame": {
                 "x": 826,
                 "y": 838,
@@ -1890,7 +1890,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_3.png": {
+        "ce_24.png": {
             "frame": {
                 "x": 932,
                 "y": 838,
@@ -1911,7 +1911,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_29.png": {
+        "ce_25.png": {
             "frame": {
                 "x": 84,
                 "y": 874,
@@ -1932,7 +1932,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_28.png": {
+        "ce_26.png": {
             "frame": {
                 "x": 190,
                 "y": 874,
@@ -1974,7 +1974,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_26.png": {
+        "ce_28.png": {
             "frame": {
                 "x": 402,
                 "y": 874,
@@ -1995,7 +1995,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_25.png": {
+        "ce_29.png": {
             "frame": {
                 "x": 508,
                 "y": 874,
@@ -2016,7 +2016,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_24.png": {
+        "ce_3.png": {
             "frame": {
                 "x": 614,
                 "y": 932,
@@ -2037,7 +2037,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_23.png": {
+        "ce_30.png": {
             "frame": {
                 "x": 720,
                 "y": 932,
@@ -2058,7 +2058,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_22.png": {
+        "ce_31.png": {
             "frame": {
                 "x": 826,
                 "y": 932,
@@ -2079,7 +2079,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_21.png": {
+        "ce_32.png": {
             "frame": {
                 "x": 932,
                 "y": 932,
@@ -2100,7 +2100,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_20.png": {
+        "ce_33.png": {
             "frame": {
                 "x": 0,
                 "y": 968,
@@ -2121,7 +2121,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_2.png": {
+        "ce_4.png": {
             "frame": {
                 "x": 106,
                 "y": 968,
@@ -2142,7 +2142,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_19.png": {
+        "ce_5.png": {
             "frame": {
                 "x": 212,
                 "y": 968,
@@ -2163,7 +2163,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_18.png": {
+        "ce_6.png": {
             "frame": {
                 "x": 318,
                 "y": 968,
@@ -2184,7 +2184,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_17.png": {
+        "ce_7.png": {
             "frame": {
                 "x": 424,
                 "y": 968,
@@ -2205,7 +2205,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_16.png": {
+        "ce_8.png": {
             "frame": {
                 "x": 530,
                 "y": 1026,
@@ -2226,7 +2226,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_15.png": {
+        "ce_9.png": {
             "frame": {
                 "x": 636,
                 "y": 1026,
@@ -2247,7 +2247,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_14.png": {
+        "ce_bg.png": {
             "frame": {
                 "x": 742,
                 "y": 1026,
@@ -2268,7 +2268,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_13.png": {
+        "ce_hun.png": {
             "frame": {
                 "x": 848,
                 "y": 1026,
@@ -2289,7 +2289,7 @@
             "rotated": false,
             "trimed": false
         },
-        "ce_12.png": {
+        "ce_21.png": {
             "frame": {
                 "x": 954,
                 "y": 1026,

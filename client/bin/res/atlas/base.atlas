@@ -21,7 +21,7 @@
             "rotated": false,
             "trimed": false
         },
-        "tab_normal.png": {
+        "btn_basic.png": {
             "frame": {
                 "x": 252,
                 "y": 0,
@@ -42,7 +42,7 @@
             "rotated": false,
             "trimed": false
         },
-        "btn_basic.png": {
+        "tab_normal.png": {
             "frame": {
                 "x": 486,
                 "y": 0,
@@ -147,7 +147,7 @@
             "rotated": false,
             "trimed": false
         },
-        "tongzhi.png": {
+        "history.png": {
             "frame": {
                 "x": 95,
                 "y": 401,
@@ -168,7 +168,7 @@
             "rotated": false,
             "trimed": false
         },
-        "history.png": {
+        "quit.png": {
             "frame": {
                 "x": 217,
                 "y": 421,
@@ -210,7 +210,7 @@
             "rotated": false,
             "trimed": false
         },
-        "quit.png": {
+        "tongzhi.png": {
             "frame": {
                 "x": 461,
                 "y": 421,
@@ -252,7 +252,7 @@
             "rotated": false,
             "trimed": false
         },
-        "radio.png": {
+        "checkbox.png": {
             "frame": {
                 "x": 660,
                 "y": 206,
@@ -273,7 +273,7 @@
             "rotated": false,
             "trimed": false
         },
-        "checkbox.png": {
+        "radio.png": {
             "frame": {
                 "x": 660,
                 "y": 388,
@@ -294,7 +294,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait2.png": {
+        "wait1.png": {
             "frame": {
                 "x": 296,
                 "y": 545,
@@ -315,7 +315,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait1.png": {
+        "wait2.png": {
             "frame": {
                 "x": 398,
                 "y": 545,
@@ -336,7 +336,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait8.png": {
+        "wait3.png": {
             "frame": {
                 "x": 500,
                 "y": 545,
@@ -357,7 +357,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait7.png": {
+        "wait4.png": {
             "frame": {
                 "x": 602,
                 "y": 570,
@@ -378,7 +378,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait4.png": {
+        "wait5.png": {
             "frame": {
                 "x": 0,
                 "y": 594,
@@ -399,7 +399,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait3.png": {
+        "wait6.png": {
             "frame": {
                 "x": 102,
                 "y": 594,
@@ -420,7 +420,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait5.png": {
+        "wait7.png": {
             "frame": {
                 "x": 204,
                 "y": 647,
@@ -441,7 +441,7 @@
             "rotated": false,
             "trimed": false
         },
-        "wait6.png": {
+        "wait8.png": {
             "frame": {
                 "x": 306,
                 "y": 647,

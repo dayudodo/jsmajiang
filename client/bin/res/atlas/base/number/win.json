@@ -42,7 +42,7 @@
             "rotated": false,
             "trimed": false
         },
-        "9.png": {
+        "3.png": {
             "frame": {
                 "x": 0,
                 "y": 184,
@@ -63,7 +63,7 @@
             "rotated": false,
             "trimed": false
         },
-        "3.png": {
+        "6.png": {
             "frame": {
                 "x": 60,
                 "y": 184,
@@ -84,7 +84,7 @@
             "rotated": false,
             "trimed": false
         },
-        "8.png": {
+        "7.png": {
             "frame": {
                 "x": 62,
                 "y": 92,
@@ -105,7 +105,7 @@
             "rotated": false,
             "trimed": false
         },
-        "7.png": {
+        "8.png": {
             "frame": {
                 "x": 120,
                 "y": 184,
@@ -126,7 +126,7 @@
             "rotated": false,
             "trimed": false
         },
-        "6.png": {
+        "9.png": {
             "frame": {
                 "x": 64,
                 "y": 0,
