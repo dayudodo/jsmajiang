@@ -6,12 +6,11 @@ var mj;
         var PaiConverter = mj.utils.PaiConvertor;
         var LayaUtils = mj.utils.LayaUtils;
         var DialogScene = mj.scene.DialogScene;
-        var Manager = /** @class */ (function () {
-            function Manager() {
-                this.gameTable = new GameTableScene();
+        class Manager {
+            constructor() {
                 this.connect();
             }
-            Manager.prototype.connect = function () {
+            connect() {
                 this.byte = new Laya.Byte();
                 //这里我们采用小端
                 this.byte.endian = Laya.Byte.LITTLE_ENDIAN;
@@ -38,19 +37,19 @@ var mj;
                     [events.server_game_start, this.server_game_start],
                     [events.server_table_fa_pai, this.server_table_fa_pai]
                 ];
-            };
-            Manager.prototype.server_table_fa_pai = function (server_message) {
+            }
+            server_table_fa_pai(server_message) {
                 console.log(server_message.data);
-            };
-            Manager.prototype.server_game_start = function (server_message) {
+            }
+            server_game_start(server_message) {
                 //游戏开始了
                 //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
-                var all_pais = server_message.data;
-                var all_pai_urls = PaiConverter.ToShouArray(all_pais);
+                let all_pais = server_message.data;
+                let all_pai_urls = PaiConverter.ToShouArray(all_pais);
                 console.log(all_pai_urls);
-                var gameTable = this.gameTable;
-                var width = gameTable.shou3.width;
-                var posiX = gameTable.shou3.x;
+                let { gameTable } = this;
+                let width = gameTable.shou3.width;
+                let posiX = gameTable.shou3.x;
                 gameTable.shouPai3.visible = true; //可能要先显示这个，因为其是父容器！
                 //隐藏里面的牌，需要的时候才会显示出来
                 gameTable.chi3.visible = false;
@@ -60,59 +59,60 @@ var mj;
                 gameTable.fa3.visible = false;
                 gameTable.shou3.visible = false;
                 // gameTable.shou3.visible = true
-                for (var index = 0; index < all_pai_urls.length; index++) {
-                    var url = all_pai_urls[index];
-                    gameTable.skin_shoupai3.skin = "ui/majiang/" + url;
+                for (let index = 0; index < all_pai_urls.length; index++) {
+                    const url = all_pai_urls[index];
+                    gameTable.skin_shoupai3.skin = `ui/majiang/${url}`;
                     gameTable.shou3.x = posiX;
-                    var newPai = LayaUtils.clone(gameTable.shou3);
+                    let newPai = LayaUtils.clone(gameTable.shou3);
                     newPai.visible = true;
                     gameTable.shouPai3.addChild(newPai);
                     posiX = posiX - width;
                 }
-            };
-            Manager.prototype.openHandler = function (event) {
-                if (event === void 0) { event = null; }
+            }
+            openHandler(event = null) {
                 //正确建立连接；
-            };
+            }
             //看来这儿会成为新的调度口了，根据发过来的消息进行各种处理，暂时感觉这样也OK，不过那种socketio的on办法也实在是方便啊。
-            Manager.prototype.receiveHandler = function (msg) {
-                if (msg === void 0) { msg = null; }
+            receiveHandler(msg = null) {
                 ///接收到数据触发函数
-                var server_message = JSON.parse(msg);
-                for (var index = 0; index < this.eventsHandler.length; index++) {
-                    var element = this.eventsHandler[index];
-                    if (server_message.type == element[0]) {
-                        element[1].call(this, server_message);
-                        return;
-                    }
+                let server_message = JSON.parse(msg);
+                let right_element = this.eventsHandler.find(item => server_message.type == item[0]);
+                if (right_element) {
+                    right_element[1].call(this, server_message);
+                    return;
                 }
                 console.log("未知消息:", server_message);
-            };
-            Manager.prototype.server_receive_ready = function (server_message) {
-                console.log(server_message.username + "\u73A9\u5BB6\u5DF2\u7ECF\u51C6\u5907\u597D\u6E38\u620F");
-            };
-            Manager.prototype.server_welcome = function (server_message) {
+            }
+            server_receive_ready(server_message) {
+                console.log(`${server_message.username}玩家已经准备好游戏`);
+            }
+            server_welcome(server_message) {
                 console.log("welcome:", server_message.welcome);
-            };
-            Manager.prototype.server_login = function (server_message) {
-                var username = server_message.username, user_id = server_message.user_id;
+            }
+            server_login(server_message) {
+                let { username, user_id } = server_message;
                 console.log("登录成功, 用户名：%s, 用户id: %s", username, user_id);
                 Laya.god_player.username = username;
                 Laya.god_player.user_id = user_id;
                 //进入主界面！
-                var home = new mj.scene.MainScene(username, user_id);
+                let home = new mj.scene.MainScene(username, user_id);
                 Laya.stage.destroyChildren();
                 Laya.stage.addChild(home);
-            };
-            Manager.prototype.server_create_room_ok = function (server_message) {
-                console.log("\u6210\u529F\u521B\u5EFA\u623F\u95F4:" + server_message.room_id);
+            }
+            server_create_room_ok(server_message) {
+                console.log(`成功创建房间:${server_message.room_id}`);
                 this.open_room(server_message);
-            };
-            Manager.prototype.open_room = function (server_message) {
+            }
+            open_room(server_message) {
                 Laya.stage.destroyChildren();
-                var god_player = Laya.god_player;
-                var gameTable = this.gameTable;
-                var res = Laya.loader.getRes("res/atlas/ui/majiang.json");
+                let { god_player } = Laya;
+                //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
+                this.gameTable = new GameTableScene();
+                let { gameTable } = this;
+                // var res: any = Laya.loader.getRes("res/atlas/ui/majiang.json");
+                //让按钮有点儿点击的效果！
+                LayaUtils.handlerButton(gameTable.settingBtn);
+                LayaUtils.handlerButton(gameTable.gameInfoBtn);
                 gameTable.roomCheckId.text = "房间号：" + server_message.room_id;
                 gameTable.leftGameNums.text = "剩余：" + 99 + "盘"; //todo: 本局剩下盘数
                 //一开始其它人头像不显示
@@ -175,56 +175,53 @@ var mj;
                 // newPai.visible = true
                 // gameTable.shouPai3.addChild(newPai)
                 Laya.stage.addChild(gameTable);
-            };
-            Manager.prototype.server_other_player_enter_room = function (server_message) {
-                var username = server_message.username, user_id = server_message.user_id;
-                console.log("\u5176\u5B83\u73A9\u5BB6" + username + "\u52A0\u5165\u623F\u95F4, id:" + user_id);
+            }
+            server_other_player_enter_room(server_message) {
+                let { username, user_id } = server_message;
+                console.log(`其它玩家${username}加入房间, id:${user_id}`);
                 //添加其它玩家的信息，还得看顺序如何！根据顺序来显示玩家的牌面，服务器里面保存的位置信息，可惜与layabox里面正好是反的！
-            };
-            Manager.prototype.server_player_enter_room = function (server_message) {
-                console.log("\u672C\u73A9\u5BB6\u8FDB\u5165\u623F\u95F4\uFF01");
+            }
+            server_player_enter_room(server_message) {
+                console.log(`本玩家进入房间！`);
                 this.open_room(server_message);
-            };
-            Manager.prototype.server_no_such_room = function () {
+            }
+            server_no_such_room() {
                 console.log("无此房间号");
-                var dialog = new DialogScene("无此房间号", function () {
+                let dialog = new DialogScene("无此房间号", () => {
                     dialog.close();
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            };
-            Manager.prototype.server_room_full = function () {
-                var dialog = new DialogScene("服务器房间已满！", function () {
+            }
+            server_room_full() {
+                let dialog = new DialogScene("服务器房间已满！", () => {
                     dialog.close();
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            };
-            Manager.prototype.server_no_room = function () {
-                var dialog = new DialogScene("服务器无可用房间！", function () {
+            }
+            server_no_room() {
+                let dialog = new DialogScene("服务器无可用房间！", () => {
                     dialog.close();
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            };
-            Manager.prototype.closeHandler = function (e) {
-                if (e === void 0) { e = null; }
+            }
+            closeHandler(e = null) {
                 //关闭事件
                 // console.log('服务器已经关闭，请查看官网说明');
                 this.socket.cleanSocket();
-                var closeDialogue = new DialogScene("服务器已经关闭，请查看官网说明");
+                let closeDialogue = new DialogScene("服务器已经关闭，请查看官网说明");
                 closeDialogue.popup();
                 Laya.stage.addChild(closeDialogue);
-            };
-            Manager.prototype.errorHandler = function (e) {
-                if (e === void 0) { e = null; }
+            }
+            errorHandler(e = null) {
                 //连接出错
-                var dialog = new DialogScene("\u8FDE\u63A5\u51FA\u9519\uFF01" + e);
+                let dialog = new DialogScene(`连接出错！${e}`);
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            };
-            return Manager;
-        }());
+            }
+        }
         net.Manager = Manager;
     })(net = mj.net || (mj.net = {}));
 })(mj || (mj = {}));

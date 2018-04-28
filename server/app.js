@@ -59,12 +59,10 @@ wsserver.on("connection", socket => {
   socket.on("message", message => {
     //log the received message and send it back to the client
     let client_message = JSON.parse(message);
-    for (let index = 0; index < eventsHandler.length; index++) {
-      const element = eventsHandler[index];
-      if (client_message.type == element[0]) {
-        element[1].call(this, client_message, socket);
-        return;
-      }
+    let right_element = eventsHandler.find(item => client_message.type == item[0])
+    if (right_element) {
+      right_element[1].call(this, client_message, socket)
+      return
     }
     console.log("未知消息:", client_message);
   });
@@ -150,7 +148,7 @@ function client_testlogin(client_message, socket) {
   });
   console.log(
     `${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${
-      socket.id
+    socket.id
     }`
   );
   conn.player = s_player;

@@ -61,8 +61,10 @@
 
 
             Laya.stage.removeChild(this.testloading)
-            // var res: any = Laya.loader.getRes("res/atlas/base.json");
-            // res = Laya.loader.getRes("res/atlas/ui/home.json")
+            // var res: any = Laya.loader.getRes("res/atlas/base.atlas");
+            // res = Laya.loader.getRes("res/atlas/ui/home.atlas")
+            // res = Laya.loader.getRes("res/atlas/ui/game.atlas")
+            // res = Laya.loader.getRes("res/atlas/ui/majiang.atlas")
             this.testLogin = new LoginScene()
             // this.testui = new test.MainUI()
             Laya.stage.addChild(this.testLogin)
@@ -75,39 +77,39 @@
         makeAssets(): Array<any> {
             var assets: any = [];
             assets.push({
-                url: "res/atlas/base.json",
+                url: "res/atlas/base.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/ui/home.json",
+                url: "res/atlas/ui/home.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/ui/game.json",
+                url: "res/atlas/ui/game.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/base/number/lost.json",
+                url: "res/atlas/base/number/lost.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/base/number/time.json",
+                url: "res/atlas/base/number/time.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/base/number/win.json",
+                url: "res/atlas/base/number/win.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/movie/shazi.json",
+                url: "res/atlas/movie/shazi.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/ui/majiang.json",
+                url: "res/atlas/ui/majiang.atlas",
                 type: Loader.ATLAS
             });
             assets.push({
-                url: "res/atlas/movie/wait.json",
+                url: "res/atlas/movie/wait.atlas",
                 type: Loader.ATLAS
             });
             return assets

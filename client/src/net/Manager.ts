@@ -1,6 +1,6 @@
 
 
-namespace mj.net {
+module mj.net {
     import GameTableScene = mj.scene.GameTableScene;
     import PaiConverter = mj.utils.PaiConvertor
     import LayaUtils = mj.utils.LayaUtils
@@ -11,7 +11,7 @@ namespace mj.net {
         public socket: Laya.Socket;
         public byte: Laya.Byte;
         public eventsHandler: Array<any>
-        public gameTable = new GameTableScene();
+        public gameTable: GameTableScene
 
         constructor() {
             this.connect();
@@ -89,12 +89,10 @@ namespace mj.net {
         public receiveHandler(msg: any = null): void {
             ///接收到数据触发函数
             let server_message = JSON.parse(msg);
-            for (let index = 0; index < this.eventsHandler.length; index++) {
-                const element = this.eventsHandler[index];
-                if (server_message.type == element[0]) {
-                    element[1].call(this, server_message)
-                    return;
-                }
+            let right_element = this.eventsHandler.find(item=>server_message.type == item[0])
+            if (right_element) {
+                right_element[1].call(this, server_message)
+                return;
             }
             console.log("未知消息:", server_message);
 
@@ -125,8 +123,14 @@ namespace mj.net {
         private open_room(server_message: any) {
             Laya.stage.destroyChildren();
             let { god_player } = Laya;
+            //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
+            this.gameTable= new GameTableScene();
             let { gameTable } = this
-            var res: any = Laya.loader.getRes("res/atlas/ui/majiang.json");
+            // var res: any = Laya.loader.getRes("res/atlas/ui/majiang.json");
+
+            //让按钮有点儿点击的效果！
+            LayaUtils.handlerButton(gameTable.settingBtn)
+            LayaUtils.handlerButton(gameTable.gameInfoBtn)
 
             gameTable.roomCheckId.text = "房间号：" + server_message.room_id;
             gameTable.leftGameNums.text = "剩余：" + 99 + "盘"; //todo: 本局剩下盘数

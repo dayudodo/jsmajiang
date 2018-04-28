@@ -10,12 +10,10 @@ var mj;
         var N_BING = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         var N_TIAO = [10, 11, 12, 13, 14, 15, 16, 17, 18];
         var N_ZHIPAI = [31, 32, 33];
-        var PaiConvertor = /** @class */ (function () {
-            function PaiConvertor() {
-            }
+        class PaiConvertor {
             //转换b1到11， t1到22，
-            PaiConvertor.ToNumber = function (str) {
-                var index = BING.indexOf(str);
+            static ToNumber(str) {
+                let index = BING.indexOf(str);
                 if (index > -1) {
                     return N_BING[index];
                 }
@@ -28,36 +26,33 @@ var mj;
                     return N_ZHIPAI[index];
                 }
                 if (index == -1) {
-                    throw new Error("\u9519\u8BEF\u7684\u53C2\u6570" + str);
+                    throw new Error(`错误的参数${str}`);
                 }
-            };
-            PaiConvertor.ToShou = function (str) {
-                return "shou_" + this.ToNumber(str) + ".png";
-            };
-            PaiConvertor.ToZheng = function (str) {
-                return "zheng_" + this.ToNumber(str) + ".png";
-            };
-            PaiConvertor.ToCe = function (str) {
-                return "ce_" + this.ToNumber(str) + ".png";
-            };
+            }
+            static ToShou(str) {
+                return `shou_${this.ToNumber(str)}.png`;
+            }
+            static ToZheng(str) {
+                return `zheng_${this.ToNumber(str)}.png`;
+            }
+            static ToCe(str) {
+                return `ce_${this.ToNumber(str)}.png`;
+            }
             /**
              * 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串
              * @param all_pais 所有服务器发过来的牌
              */
-            PaiConvertor.ToShouArray = function (all_pais) {
-                var _this = this;
-                return all_pais.map(function (item) {
-                    return _this.ToShou(item);
+            static ToShouArray(all_pais) {
+                return all_pais.map(item => {
+                    return this.ToShou(item);
                 });
-            };
-            PaiConvertor.ToZhengArray = function (all_pais) {
-                var _this = this;
-                return all_pais.map(function (item) {
-                    return _this.ToZheng(item);
+            }
+            static ToZhengArray(all_pais) {
+                return all_pais.map(item => {
+                    return this.ToZheng(item);
                 });
-            };
-            return PaiConvertor;
-        }());
+            }
+        }
         utils.PaiConvertor = PaiConvertor;
     })(utils = mj.utils || (mj.utils = {}));
 })(mj || (mj = {}));

@@ -2,11 +2,10 @@ var mj;
 (function (mj) {
     var model;
     (function (model) {
-        var Player = /** @class */ (function () {
-            function Player() {
+        class Player {
+            constructor() {
             }
-            return Player;
-        }());
+        }
         model.Player = Player;
     })(model = mj.model || (mj.model = {}));
 })(mj || (mj = {}));

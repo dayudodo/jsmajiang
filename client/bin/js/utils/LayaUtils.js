@@ -8,10 +8,10 @@ var mj;
         /**
          * @author dayudodo@gmail.com 2018/4/28.
          */
-        var LayaUtils = /** @class */ (function () {
-            function LayaUtils() {
+        class LayaUtils {
+            constructor() {
             }
-            LayaUtils.clone = function (node) {
+            static clone(node) {
                 var i;
                 if (node instanceof Image) {
                     // var image:Image = new Image(node);
@@ -20,8 +20,8 @@ var mj;
                     this.copyAttri(distImage, image);
                     distImage.skin = image.skin;
                     distImage.sizeGrid = image.sizeGrid;
-                    for (var i_1 = 0; i_1 < image.numChildren; i_1++) {
-                        distImage.addChild(this.clone(image.getChildAt(i_1)));
+                    for (let i = 0; i < image.numChildren; i++) {
+                        distImage.addChild(this.clone(image.getChildAt(i)));
                     }
                     return distImage;
                 }
@@ -29,23 +29,23 @@ var mj;
                     var sprite = node;
                     var distSprite = new Sprite();
                     this.copyAttri(distSprite, sprite);
-                    for (var i_2 = 0; i_2 < node.numChildren; i_2++) {
-                        distSprite.addChild(this.clone(node.getChildAt(i_2)));
+                    for (let i = 0; i < node.numChildren; i++) {
+                        distSprite.addChild(this.clone(node.getChildAt(i)));
                     }
                     return distSprite;
                 }
                 else {
                     throw new Error("不支持的类型:" + typeof node);
                 }
-            };
-            LayaUtils.copyAttri = function (dist, sprite) {
+            }
+            static copyAttri(dist, sprite) {
                 dist.pos(sprite.x, sprite.y);
                 dist.size(sprite.width, sprite.height);
                 dist.scale(sprite.scaleX, sprite.scaleY);
                 dist.pivot(sprite.pivotX, sprite.pivotY);
                 dist.skew(sprite.skewX, sprite.skewY);
-            };
-            LayaUtils.handlerButton = function (btn) {
+            }
+            static handlerButton(btn) {
                 btn.pivot(btn.width / 2, btn.height / 2);
                 btn.pos(btn.x + btn.width / 2, btn.y + btn.height / 2);
                 btn.on(Event.MOUSE_DOWN, btn, function () {
@@ -57,12 +57,11 @@ var mj;
                 btn.on(Event.MOUSE_OUT, btn, function () {
                     btn.scale(1, 1);
                 });
-            };
-            LayaUtils.random = function (max) {
+            }
+            static random(max) {
                 return Math.floor(Math.random() * max);
-            };
-            return LayaUtils;
-        }());
+            }
+        }
         utils.LayaUtils = LayaUtils;
     })(utils = mj.utils || (mj.utils = {}));
 })(mj || (mj = {}));

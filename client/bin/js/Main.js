@@ -10,8 +10,8 @@ var LoadingUI = ui.test.LoadingUI;
 var LoginUI = ui.test.LoginUI;
 var MainUI = ui.test.MainUI;
 var test = ui.test;
-var GameMain = /** @class */ (function () {
-    function GameMain() {
+class GameMain {
+    constructor() {
         Laya.init(1920, 1080);
         Laya.stage.scaleMode = Stage.SCALE_SHOWALL;
         Laya.stage.alignH = Stage.ALIGN_CENTER;
@@ -29,66 +29,67 @@ var GameMain = /** @class */ (function () {
         this.testloading = new LoadingUI();
         Laya.stage.addChild(this.testloading);
     }
-    GameMain.prototype.onProgress = function (value) {
+    onProgress(value) {
         // console.log("progress:", value);
         this.testloading.progressBar.value = value;
         this.testloading.progressBarLabel.text = "载入中 " + Math.ceil(value * 100) + "%";
-    };
-    GameMain.prototype.onLoaderComplete = function () {
-        console.log("loader complete");
+    }
+    onLoaderComplete() {
+        console.log(`loader complete`);
         // console.log(window.client);
         Laya.stage.removeChild(this.testloading);
-        // var res: any = Laya.loader.getRes("res/atlas/base.json");
-        // res = Laya.loader.getRes("res/atlas/ui/home.json")
+        // var res: any = Laya.loader.getRes("res/atlas/base.atlas");
+        // res = Laya.loader.getRes("res/atlas/ui/home.atlas")
+        // res = Laya.loader.getRes("res/atlas/ui/game.atlas")
+        // res = Laya.loader.getRes("res/atlas/ui/majiang.atlas")
         this.testLogin = new LoginScene();
         // this.testui = new test.MainUI()
         Laya.stage.addChild(this.testLogin);
-    };
-    GameMain.prototype.onloaded = function (obj) {
+    }
+    onloaded(obj) {
         // Laya.stage.addChild(obj)
-    };
-    GameMain.prototype.makeAssets = function () {
+    }
+    makeAssets() {
         var assets = [];
         assets.push({
-            url: "res/atlas/base.json",
+            url: "res/atlas/base.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/ui/home.json",
+            url: "res/atlas/ui/home.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/ui/game.json",
+            url: "res/atlas/ui/game.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/base/number/lost.json",
+            url: "res/atlas/base/number/lost.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/base/number/time.json",
+            url: "res/atlas/base/number/time.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/base/number/win.json",
+            url: "res/atlas/base/number/win.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/movie/shazi.json",
+            url: "res/atlas/movie/shazi.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/ui/majiang.json",
+            url: "res/atlas/ui/majiang.atlas",
             type: Loader.ATLAS
         });
         assets.push({
-            url: "res/atlas/movie/wait.json",
+            url: "res/atlas/movie/wait.atlas",
             type: Loader.ATLAS
         });
         return assets;
-    };
-    return GameMain;
-}());
+    }
+}
 //最后还需要新建一个对象才能跑起来。
 new GameMain();
 //# sourceMappingURL=Main.js.map
