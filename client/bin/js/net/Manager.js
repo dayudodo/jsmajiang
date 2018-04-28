@@ -1,10 +1,14 @@
-var GameTableScene = mj.scene.GameTableScene;
 var mj;
 (function (mj) {
     var net;
     (function (net) {
+        var GameTableScene = mj.scene.GameTableScene;
+        var PaiConverter = mj.utils.PaiConvertor;
+        var LayaUtils = mj.utils.LayaUtils;
+        var DialogScene = mj.scene.DialogScene;
         var Manager = /** @class */ (function () {
             function Manager() {
+                this.gameTable = new GameTableScene();
                 this.connect();
             }
             Manager.prototype.connect = function () {
@@ -38,7 +42,32 @@ var mj;
                 console.log(server_message.data);
             };
             Manager.prototype.server_game_start = function (server_message) {
-                console.log(server_message.data);
+                //游戏开始了
+                //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
+                var all_pais = server_message.data;
+                var all_pai_urls = PaiConverter.ToShouArray(all_pais);
+                console.log(all_pai_urls);
+                var gameTable = this.gameTable;
+                var width = gameTable.shou3.width;
+                var posiX = gameTable.shou3.x;
+                gameTable.shouPai3.visible = true; //可能要先显示这个，因为其是父容器！
+                //隐藏里面的牌，需要的时候才会显示出来
+                gameTable.chi3.visible = false;
+                gameTable.anGangHide3.visible = false;
+                gameTable.mingGang3.visible = false;
+                gameTable.anGang3.visible = false;
+                gameTable.fa3.visible = false;
+                gameTable.shou3.visible = false;
+                // gameTable.shou3.visible = true
+                for (var index = 0; index < all_pai_urls.length; index++) {
+                    var url = all_pai_urls[index];
+                    gameTable.skin_shoupai3.skin = "ui/majiang/" + url;
+                    gameTable.shou3.x = posiX;
+                    var newPai = LayaUtils.clone(gameTable.shou3);
+                    newPai.visible = true;
+                    gameTable.shouPai3.addChild(newPai);
+                    posiX = posiX - width;
+                }
             };
             Manager.prototype.openHandler = function (event) {
                 if (event === void 0) { event = null; }
@@ -81,7 +110,8 @@ var mj;
             Manager.prototype.open_room = function (server_message) {
                 Laya.stage.destroyChildren();
                 var god_player = Laya.god_player;
-                var gameTable = new GameTableScene();
+                var gameTable = this.gameTable;
+                var res = Laya.loader.getRes("res/atlas/ui/majiang.json");
                 gameTable.roomCheckId.text = "房间号：" + server_message.room_id;
                 gameTable.leftGameNums.text = "剩余：" + 99 + "盘"; //todo: 本局剩下盘数
                 //一开始其它人头像不显示
@@ -116,6 +146,33 @@ var mj;
                     // console.log('本玩家准备好游戏了。。。');
                     this.socket.sendmsg({ type: events.client_player_ready });
                 }
+                //测试一下复制shou3的效果怎么样，
+                // gameTable.shouPai3.visible = true //可能要先显示这个，因为其是父容器！
+                // //隐藏里面的牌，需要的时候才会显示出来
+                // gameTable.chi3.visible = false
+                // gameTable.anGangHide3.visible = false
+                // gameTable.mingGang3.visible = false
+                // gameTable.anGang3.visible = false
+                // gameTable.fa3.visible = false
+                // gameTable.shou3.visible = false
+                // // gameTable.shou3.visible = true
+                // const url = 'shou_10.png';
+                // let newPai: Sprite;
+                // gameTable.skin_shoupai3.skin = `ui/majiang/shou_11.png`
+                // newPai = LayaUtils.clone(gameTable.shou3) as Sprite
+                // newPai.visible = true
+                // gameTable.shouPai3.addChild(newPai)
+                // // console.log(newPai);
+                // gameTable.skin_shoupai3.skin = `ui/majiang/shou_11.png`
+                // gameTable.shou3.x = newPai.x - 87
+                // newPai = LayaUtils.clone(gameTable.shou3) as Sprite
+                // newPai.visible = true
+                // gameTable.shouPai3.addChild(newPai)
+                // gameTable.skin_shoupai3.skin = `ui/majiang/shou_12.png`
+                // gameTable.shou3.x = 10
+                // newPai = LayaUtils.clone(gameTable.shou3) as Sprite
+                // newPai.visible = true
+                // gameTable.shouPai3.addChild(newPai)
                 Laya.stage.addChild(gameTable);
             };
             Manager.prototype.server_other_player_enter_room = function (server_message) {

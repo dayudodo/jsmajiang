@@ -31815,7 +31815,7 @@ declare class Laya3D {
  */
 declare class Laya {
     /** 本玩家 */
-    static god_player: mj.model.Player
+    static god_player: mj.model.Player;
     /** 全局变量，唯一的socket管理器*/
     static client: mj.net.Manager;
     /** 舞台对象的引用。*/

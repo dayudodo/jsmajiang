@@ -1,24 +1,27 @@
-import LoadingUI = ui.test.LoadingUI
-import LoginUI = ui.test.LoginUI
-import MainUI = ui.test.MainUI
-import test = ui.test
-import LoginScene = mj.scene.LoginScene
-import DialogScene = mj.scene.DialogScene
-import scene = mj.scene
-import Client = mj.net.Manager
-import Player = mj.model.Player
 
-module laya {
+
+
+
     import laText = Laya.Text
     import Stage = Laya.Stage
     import Loader = Laya.Loader
+    import LoginScene = mj.scene.LoginScene
+    import DialogScene = mj.scene.DialogScene
+    import scene = mj.scene
+    import Client = mj.net.Manager
+    import Player = mj.model.Player
 
-    export class GameMain {
+    import LoadingUI = ui.test.LoadingUI
+    import LoginUI = ui.test.LoginUI
+    import MainUI = ui.test.MainUI
+    import test = ui.test
+
+     class GameMain {
         public testloading: LoadingUI
         public testLogin: LoginUI
         public testMain: MainUI
         public testui: test.MainUI
-        public all_players :  Array<Player>
+        public all_players: Array<Player>
 
         constructor() {
             Laya.init(1920, 1080);
@@ -28,8 +31,8 @@ module laya {
             Laya.stage.screenMode = Stage.SCREEN_NONE
 
             Laya.client = new Client()
-            this.all_players =new Array<Player>()
-            Laya.god_player= new Player()
+            this.all_players = new Array<Player>()
+            Laya.god_player = new Player()
 
             this.all_players.push(Laya.god_player)
             // var mm:Laya.Sprite = new Laya.Sprite();
@@ -55,7 +58,7 @@ module laya {
         onLoaderComplete(): void {
             console.log(`loader complete`);
             // console.log(window.client);
-            
+
 
             Laya.stage.removeChild(this.testloading)
             var res: any = Laya.loader.getRes("res/atlas/base.json");
@@ -110,7 +113,6 @@ module laya {
             return assets
         }
     }
-}
 
 //最后还需要新建一个对象才能跑起来。
-new laya.GameMain()
+new GameMain()

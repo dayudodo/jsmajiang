@@ -1,7 +1,7 @@
-import SettingScene = ui.test.SettingDialogUI
 
 module mj.scene {
-
+    import SettingScene = ui.test.SettingDialogUI
+    
     export class MainScene extends ui.test.MainUI {
         public socket = Laya.client.socket
 

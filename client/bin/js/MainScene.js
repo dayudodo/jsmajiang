@@ -8,11 +8,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SettingScene = ui.test.SettingDialogUI;
 var mj;
 (function (mj) {
     var scene;
     (function (scene) {
+        var SettingScene = ui.test.SettingDialogUI;
         var MainScene = /** @class */ (function (_super) {
             __extends(MainScene, _super);
             function MainScene(username, user_id) {

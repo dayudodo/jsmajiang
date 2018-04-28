@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":12,
-    "selecteID":1278,
+    "selectedBox":105,
+    "selecteID":106,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
     "label":"View(turntableDong)",
@@ -7170,7 +7170,7 @@
                     "props":{"y":839,"x":54.99999999999999,"width":1227,"var":"shouPai3","scaleY":1.4,"scaleX":1.4,"height":172},
                     "nodeParent":8,
                     "label":"Sprite(shouPai3)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
@@ -7184,6 +7184,7 @@
                     "compId":82,
                     "child":[
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":0,"width":250,"var":"chi3","height":128},
                             "nodeParent":82,
@@ -7317,6 +7318,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":508,"width":250,"var":"anGangHide3","height":128},
                             "nodeParent":82,
@@ -7412,6 +7414,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":760,"width":248,"var":"mingGang3","height":128},
                             "nodeParent":82,
@@ -7591,6 +7594,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":254,"width":250,"var":"anGang3","height":128},
                             "nodeParent":82,
@@ -7707,11 +7711,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":1031,"width":82,"var":"shou3","pivotY":-26,"height":128},
                             "nodeParent":82,
                             "label":"Sprite(shou3)",
-                            "isOpen":false,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -7725,13 +7730,12 @@
                             "compId":935,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
                                     "nodeParent":935,
                                     "label":"Image",
-                                    "isOpen":{
-
-                                    },
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -7745,10 +7749,11 @@
                                     "compId":105,
                                     "child":[
                                         {
+                                            "x":75,
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/shou_32.png"},
+                                            "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png"},
                                             "nodeParent":105,
-                                            "label":"Image",
+                                            "label":"Image(skin_shoupai3)",
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
@@ -7766,11 +7771,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":1144,"width":82,"var":"fa3","pivotY":-26,"height":128},
                             "nodeParent":82,
                             "label":"Sprite(fa3)",
-                            "isOpen":true,
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
