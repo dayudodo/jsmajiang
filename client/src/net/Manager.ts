@@ -55,7 +55,8 @@ module mj.net {
             //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
             let all_pais: Array<string> = server_message.data
             let all_pai_urls = PaiConverter.ToShouArray(all_pais)
-            console.log(all_pai_urls);
+            // console.log(all_pai_urls);
+            console.log(server_message);
             let { gameTable } = this
             let width = gameTable.shou3.width
             let posiX = gameTable.shou3.x
@@ -86,6 +87,7 @@ module mj.net {
             //正确建立连接；
         }
         //看来这儿会成为新的调度口了，根据发过来的消息进行各种处理，暂时感觉这样也OK，不过那种socketio的on办法也实在是方便啊。
+        // 其实就算是socketio也能使用查表的办法来写，代码还更具有通用性！
         public receiveHandler(msg: any = null): void {
             ///接收到数据触发函数
             let server_message = JSON.parse(msg);

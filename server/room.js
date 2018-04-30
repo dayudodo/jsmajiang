@@ -73,7 +73,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -98,7 +98,8 @@ export class Room {
   get last_join_player() {
     return _.last(this.players);
   }
-  get next_player() {
+
+  get next_player() { //下一家
     let next_index =
       (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
     //最后通过座位号来找到玩家,而不是数组序号,更不容易出错
@@ -113,7 +114,16 @@ export class Room {
     // console.log(o_players.map(p => p.username));
     return o_players;
   }
-
+  left_player(person) { //左手玩家
+    let index = person.seat_index - 1
+    index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index
+    return this.players[index]
+  }
+  right_player(person) { //右手玩家
+    let index = person.seat_index + 1
+    index = index == config.LIMIT_IN_ROOM ? 0 : index
+    return this.players[index]
+  }
   //玩家选择碰牌，或者是超时自动跳过！
   confirm_peng(io, socket) {
     let player = this.find_player_by_socket(socket);
@@ -315,7 +325,7 @@ export class Room {
             if (Majiang.canGang(item_player.shou_pai, pai_name)) {
               console.log(
                 `房间${this.id}内发现玩家${
-                  item_player.username
+                item_player.username
                 }可以杠牌${pai_name}`
               );
               //告诉玩家你可以杠牌了
@@ -325,12 +335,12 @@ export class Room {
             } else {
               console.log(
                 `房间${this.id}内发现玩家${
-                  item_player.username
+                item_player.username
                 }可以碰牌${pai_name}`
               );
               console.dir(
                 `玩家${
-                  item_player.username
+                item_player.username
                 }的手牌为:${item_player.shou_pai.join(" ")}`
               );
               item_player.socket.emit("server_canPeng", pai_name);
@@ -375,35 +385,48 @@ export class Room {
     if (!this.dong_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));
     }
+    //先把所有玩家的牌准备好！
     this.players.forEach((p, index) => {
       //玩家收到的牌保存好，以便服务器进行分析，每次都需要排序下，便于分析和查看
       p.shou_pai = this.clone_pai.splice(0, 13).sort();
+    })
+    // 再进行相关的消息发送！
+    this.players.forEach((p, index) => {
       //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
       //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
-
       if (p == this.dong_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
+
         p.socket.sendmsg({
           type: g_events.server_game_start,
-          data: p.shou_pai
+          data: p.shou_pai,
+          left_player: this.left_player(p).shou_pai,
+          right_player: this.right_player(p).shou_pai
         });
         //todo: 开始游戏不考虑东家会听牌的情况，
         let fa_pai = this.fa_pai(p);
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
+        //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
+      // 只需要再补充一下其它两家的牌即可，真正的消息是会过滤的。
         p.socket.sendmsg({
           type: g_events.server_table_fa_pai,
           data: fa_pai
-        });
+        })
+
       } else {
         //非东家，接收到牌即可
         p.socket.sendmsg({
           type: g_events.server_game_start,
-          data: p.shou_pai
+          data: p.shou_pai,
+          left_player: this.left_player(p).shou_pai,
+          right_player: this.right_player(p).shou_pai
         });
         // let ting_liangCode = this.judge_ting(p);
       }
     });
+
+
   }
   //游戏结束后重新开始游戏！
   restart_game() {
