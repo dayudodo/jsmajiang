@@ -44,6 +44,7 @@ var mj;
                 dist.scale(sprite.scaleX, sprite.scaleY);
                 dist.pivot(sprite.pivotX, sprite.pivotY);
                 dist.skew(sprite.skewX, sprite.skewY);
+                dist.name = sprite.name;
             }
             static handlerButton(btn) {
                 btn.pivot(btn.width / 2, btn.height / 2);

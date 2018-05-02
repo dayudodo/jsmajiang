@@ -7,7 +7,7 @@ module mj.net {
     import Sprite = laya.display.Sprite;
     import DialogScene = mj.scene.DialogScene
     import GameSoundObserver = mj.manager.GameSoundObserver
-
+    import Image = Laya.Image
 
 
     export class Manager {
@@ -15,6 +15,7 @@ module mj.net {
         public byte: Laya.Byte;
         public eventsHandler: Array<any>
         public gameTable: GameTableScene
+        private paiArray: Sprite[] = []
 
         private offsetY = 20;
         private offsetX = 10;
@@ -83,7 +84,7 @@ module mj.net {
             let {socket} = this
             // let all_pais: Array<string> = shou_pai
             let all_pai_urls = PaiConverter.ToShouArray(shou_pai)
-            let width = gameTable.shou3.width;
+            let one_shou_pai_width = gameTable.shou3.width;
             let posiX = gameTable.shou3.x;
             gameTable.shouPai3.visible = true; //可能要先显示这个，因为其是父容器！
             //隐藏里面的牌，需要的时候才会显示出来
@@ -106,15 +107,27 @@ module mj.net {
                     if (this.prevSelectedPai === newPaiSprite) {
                         let daPai =  shou_pai[index]
                         console.log(`用户选择打牌${daPai}`);
-                                                //打出去之后ui做相应的处理，玩家当前的手牌要去掉这张牌，重新显示！
                         socket.sendmsg({
                             type: events.client_da_pai,
                             pai: daPai
                         });
                         Laya.god_player.da_pai(daPai)
-                        console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
+                        // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
+                        //这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的函数？
                         
-
+                        //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
+                        newPaiSprite.y += this.offsetY
+                        all_pai_urls = PaiConverter.ToShouArray(Laya.god_player.shou_pai)
+                        this.paiArray.forEach((item, index)=>{
+                            let changePaiSprite = item as Sprite
+                            changePaiSprite.destroy(true)
+                            //真正的牌面是个Image,而且是二级子！
+                            // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
+                            // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
+                        })
+                        gameTable.shou3.x = this.paiArray[0].x //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                        this.paiArray = []
+                        this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai)
                     }
                     else {
                         //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
@@ -125,8 +138,9 @@ module mj.net {
                         newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
                     }
                 });
+                this.paiArray.push(newPaiSprite) //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
                 gameTable.shouPai3.addChild(newPaiSprite);
-                posiX = posiX - width;
+                posiX  += one_shou_pai_width;
             }
         }
 

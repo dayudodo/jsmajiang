@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":82,
-    "selecteID":1228,
+    "selectedBox":105,
+    "selecteID":106,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
     "label":"View(turntableDong)",
@@ -788,14 +788,13 @@
                     "props":{"y":344,"x":861,"width":130,"var":"turntable","scaleY":2,"scaleX":2,"height":130},
                     "nodeParent":8,
                     "label":"Image(turntable)",
-                    "isOpen":true,
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":3,
                     "child":[
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":0,"width":130,"var":"turntableCenter","height":130},
                             "nodeParent":3,
@@ -873,7 +872,6 @@
                             "$HIDDEN":false
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":47,"x":36,"width":30,"var":"turntableNum1","skin":"ui/game/0.png","height":40},
                             "nodeParent":3,
@@ -887,7 +885,6 @@
                             "$HIDDEN":false
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":47,"x":64,"var":"turntableNum0","skin":"ui/game/0.png"},
                             "nodeParent":3,
@@ -900,7 +897,6 @@
                                 ]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":112,"x":-49,"var":"leftPaiCountSprite","scaleY":0.75,"scaleX":0.75},
                             "nodeParent":3,
@@ -4600,7 +4596,7 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":839,"x":54.99999999999999,"width":1227,"var":"shouPai3","scaleY":1.4,"scaleX":1.4,"height":172},
+                    "props":{"y":839,"x":99,"width":1324,"var":"shouPai3","scaleY":1.3,"scaleX":1.3,"height":172},
                     "nodeParent":8,
                     "label":"Sprite(shouPai3)",
                     "isOpen":true,
@@ -4950,7 +4946,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":1031,"width":82,"var":"shou3","pivotY":-26,"height":128},
+                            "props":{"y":0,"x":0,"width":82,"var":"shou3","pivotY":-26,"name":"shou3pai","height":128},
                             "nodeParent":82,
                             "label":"Sprite(shou3)",
                             "isOpen":true,
@@ -4974,7 +4970,7 @@
                                         {
                                             "x":75,
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png"},
+                                            "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png","name":"skin_pai"},
                                             "nodeParent":105,
                                             "label":"Image(skin_shoupai3)",
                                             "isDirectory":false,
@@ -4982,14 +4978,15 @@
                                             "hasChild":false,
                                             "compId":106,
                                             "child":[
-                                                ]
+                                                ],
+                                            "$HIDDEN":false
                                         }]
                                 }]
                         },
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":1144,"width":82,"var":"fa3","pivotY":-26,"height":128},
+                            "props":{"y":0,"x":1200,"width":82,"var":"fa3","pivotY":-26,"height":128},
                             "nodeParent":82,
                             "label":"Sprite(fa3)",
                             "isOpen":true,
