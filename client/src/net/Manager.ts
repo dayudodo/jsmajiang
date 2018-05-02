@@ -6,12 +6,19 @@ module mj.net {
     import LayaUtils = mj.utils.LayaUtils
     import Sprite = laya.display.Sprite;
     import DialogScene = mj.scene.DialogScene
+    import GameSoundObserver = mj.manager.GameSoundObserver
+
+
 
     export class Manager {
         public socket: Laya.Socket;
         public byte: Laya.Byte;
         public eventsHandler: Array<any>
         public gameTable: GameTableScene
+
+        private offsetY = 20;
+        private offsetX = 10;
+        private prevSelectedPai: Sprite = null;
 
         constructor() {
             this.connect();
@@ -46,91 +53,128 @@ module mj.net {
 
         }
         private server_table_fa_pai(server_message) {
-            console.log(server_message.data);
-
+            //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
+            // console.log(server_message.pai);
+            let pai: string = server_message.pai
+            let {gameTable } = this
+            //显示服务器发过来的牌
+            gameTable.fa3Image.skin = `ui/majiang/${PaiConverter.ToShou(pai)}`
+            gameTable.fa3.visible = true
         }
 
         private server_game_start(server_message) {
             //游戏开始了
             //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
-            let all_pais: Array<string> = server_message.data
-            let all_pai_urls = PaiConverter.ToShouArray(all_pais)
-            // console.log(all_pai_urls);
-            console.log(server_message);
+            
+            //客户端也需要保存好当前的牌，以便下一步处理
+            Laya.god_player.shou_pai = server_message.shou_pai 
+
+            
+            // console.log(server_message);
             let { gameTable } = this
-            let width = gameTable.shou3.width
-            let posiX = gameTable.shou3.x
-            gameTable.shouPai3.visible = true //可能要先显示这个，因为其是父容器！
+            this.show_god_player_shoupai(gameTable,  Laya.god_player.shou_pai);
+            //test: 显示上一玩家所有的牌
+            this.show_left_player_shoupai(gameTable, server_message);
+            //显示下一玩家所有牌
+            this.show_right_player_shoupai(gameTable, server_message);
 
+        }
+        private show_god_player_shoupai(gameTable: GameTableScene,  shou_pai: string[]) {
+            let {socket} = this
+            // let all_pais: Array<string> = shou_pai
+            let all_pai_urls = PaiConverter.ToShouArray(shou_pai)
+            let width = gameTable.shou3.width;
+            let posiX = gameTable.shou3.x;
+            gameTable.shouPai3.visible = true; //可能要先显示这个，因为其是父容器！
             //隐藏里面的牌，需要的时候才会显示出来
-            gameTable.chi3.visible = false
-            gameTable.anGangHide3.visible = false
-            gameTable.mingGang3.visible = false
-            gameTable.anGang3.visible = false
-            gameTable.fa3.visible = false
-            gameTable.shou3.visible = false
-
+            gameTable.chi3.visible = false;
+            gameTable.anGangHide3.visible = false;
+            gameTable.mingGang3.visible = false;
+            gameTable.anGang3.visible = false;
+            gameTable.fa3.visible = false;
+            gameTable.shou3.visible = false;
             // gameTable.shou3.visible = true
             for (let index = 0; index < all_pai_urls.length; index++) {
                 const url = all_pai_urls[index];
-                gameTable.skin_shoupai3.skin = `ui/majiang/${url}`
-                gameTable.shou3.x = posiX
-                let newPai = LayaUtils.clone(gameTable.shou3) as Sprite
+                gameTable.skin_shoupai3.skin = `ui/majiang/${url}`;
+                gameTable.shou3.x = posiX;
+                let newPaiSprite = LayaUtils.clone(gameTable.shou3) as Sprite;
+                newPaiSprite.visible = true;
+                //为新建的牌sprite创建点击处理函数
+                newPaiSprite.on(Laya.Event.CLICK, this, () => {
+                    // 如果两次点击同一张牌，应该打出去
+                    if (this.prevSelectedPai === newPaiSprite) {
+                        let daPai =  shou_pai[index]
+                        console.log(`用户选择打牌${daPai}`);
+                                                //打出去之后ui做相应的处理，玩家当前的手牌要去掉这张牌，重新显示！
+                        socket.sendmsg({
+                            type: events.client_da_pai,
+                            pai: daPai
+                        });
+                        Laya.god_player.da_pai(daPai)
+                        console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
+                        
 
-                newPai.visible = true
-                gameTable.shouPai3.addChild(newPai)
-
-                posiX = posiX - width
+                    }
+                    else {
+                        //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
+                        if (this.prevSelectedPai) {
+                            this.prevSelectedPai.y = this.prevSelectedPai.y + this.offsetY;
+                        }
+                        this.prevSelectedPai = newPaiSprite;
+                        newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
+                    }
+                });
+                gameTable.shouPai3.addChild(newPaiSprite);
+                posiX = posiX - width;
             }
-            //test: 显示上一玩家所有的牌
-            gameTable.shouPai0.visible = true 
-            gameTable.chi0.visible = false
-            gameTable.anGangHide0.visible = false
-            gameTable.mingGang0.visible = false
-            gameTable.anGang0.visible = false
-            gameTable.fa0.visible = false
-            gameTable.shou0.visible = false
+        }
 
-            let left_pai_y = gameTable.test_shoupai0.y
-            let left_pai_height = 60 //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
-            // let left_data: Array<string> = 
-            let all_left_urls = PaiConverter.ToCeArray( server_message.left_player )
-            for (let index = 0; index < all_left_urls.length; index++) {
-                const url = all_left_urls[index];
-                gameTable.test_shoupai0_image.skin = `ui/majiang/${url}`
-                gameTable.test_shoupai0.y = left_pai_y
-                let newPai = LayaUtils.clone(gameTable.test_shoupai0) as Sprite
-
-                newPai.visible = true
-                gameTable.shouPai0.addChild(newPai)
-
-                left_pai_y = left_pai_y + left_pai_height
-            }
-            //显示下一玩家所有牌
-            gameTable.shouPai2.visible = true 
-            gameTable.chi2.visible = false
-            gameTable.anGangHide2.visible = false
-            gameTable.mingGang2.visible = false
-            gameTable.anGang2.visible = false
-            gameTable.fa2.visible = false
-            gameTable.shou2.visible = false
-
-            let right_pai_y = gameTable.test_shoupai2.y
-            let right_pai_height = 60 //gameTable.test_shoupai2_image.height
-            let all_right_urls = PaiConverter.ToCeArray(server_message.right_player)
+        private show_right_player_shoupai(gameTable: GameTableScene, server_message: any) {
+            gameTable.shouPai2.visible = true;
+            gameTable.chi2.visible = false;
+            gameTable.anGangHide2.visible = false;
+            gameTable.mingGang2.visible = false;
+            gameTable.anGang2.visible = false;
+            gameTable.fa2.visible = false;
+            gameTable.shou2.visible = false;
+            let right_pai_y = gameTable.test_shoupai2.y;
+            let right_pai_height = 60; //gameTable.test_shoupai2_image.height
+            let all_right_urls = PaiConverter.ToCeArray(server_message.right_player);
             for (let index = 0; index < all_right_urls.length; index++) {
                 const url = all_right_urls[index];
-                gameTable.test_shoupai2_image.skin = `ui/majiang/${url}`
-                gameTable.test_shoupai2.y = right_pai_y
-                let newPai = LayaUtils.clone(gameTable.test_shoupai2) as Sprite
-
-                newPai.visible = true
-                gameTable.shouPai2.addChild(newPai)
-
-                right_pai_y = right_pai_y + right_pai_height
+                gameTable.test_shoupai2_image.skin = `ui/majiang/${url}`;
+                gameTable.test_shoupai2.y = right_pai_y;
+                let newPai = LayaUtils.clone(gameTable.test_shoupai2) as Sprite;
+                newPai.visible = true;
+                gameTable.shouPai2.addChild(newPai);
+                right_pai_y = right_pai_y + right_pai_height;
             }
-
         }
+
+        private show_left_player_shoupai(gameTable: GameTableScene, server_message: any) {
+            gameTable.shouPai0.visible = true;
+            gameTable.chi0.visible = false;
+            gameTable.anGangHide0.visible = false;
+            gameTable.mingGang0.visible = false;
+            gameTable.anGang0.visible = false;
+            gameTable.fa0.visible = false;
+            gameTable.shou0.visible = false;
+            let left_pai_y = gameTable.test_shoupai0.y;
+            let left_pai_height = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
+            // let left_data: Array<string> = 
+            let all_left_urls = PaiConverter.ToCeArray(server_message.left_player);
+            for (let index = 0; index < all_left_urls.length; index++) {
+                const url = all_left_urls[index];
+                gameTable.test_shoupai0_image.skin = `ui/majiang/${url}`;
+                gameTable.test_shoupai0.y = left_pai_y;
+                let newPai = LayaUtils.clone(gameTable.test_shoupai0) as Sprite;
+                newPai.visible = true;
+                gameTable.shouPai0.addChild(newPai);
+                left_pai_y = left_pai_y + left_pai_height;
+            }
+        }
+
         public openHandler(event: any = null): void {
             //正确建立连接；
         }

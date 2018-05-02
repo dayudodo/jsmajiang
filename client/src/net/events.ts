@@ -1,12 +1,12 @@
 namespace events {
 
 
-
   export const client_testlogin = "client_testlogin";
   export const client_create_room = "client_create_room"
   export const client_join_room = "client_join_room"
   export const client_player_ready = "client_player_ready"
   export const client_unknown = "client_unknown"
+  export const client_da_pai = "client_da_pai"
 
   export const server_login = "server_login";
   export const server_welcome = "server_welcome";
@@ -19,7 +19,6 @@ namespace events {
   export const server_receive_ready = "server_receive_ready";
   export const server_game_start = "server_game_start";
   export const server_table_fa_pai = "server_table_fa_pai";
-
 
 
 

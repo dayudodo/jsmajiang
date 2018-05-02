@@ -5,6 +5,7 @@ var events;
     events.client_join_room = "client_join_room";
     events.client_player_ready = "client_player_ready";
     events.client_unknown = "client_unknown";
+    events.client_da_pai = "client_da_pai";
     events.server_login = "server_login";
     events.server_welcome = "server_welcome";
     events.server_no_room = "server_no_room";

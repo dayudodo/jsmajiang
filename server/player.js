@@ -20,6 +20,7 @@ export class Player {
     this.username = username;
     this.user_id = user_id; //todo:用户应该有一个唯一的id, 这样断线后再登录才知道你在哪个服务器
     
+    this.table_pai = null; //用户还没有选择打的时候，服务器发给的牌
     this.shou_pai = shou_pai; //玩家当前拥有的牌
     this.used_pai = []; //打过的牌有哪些，断线后可以重新发送此数据
     this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
@@ -37,7 +38,7 @@ export class Player {
     //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
     this.is_thinking_tingliang = false;
   }
-  //玩家收到服务器发来的一张牌，保存到自己的手牌中！
+  //玩家收到服务器发来的一张牌，收到并且打完牌之后才会把此牌变成自己的
   receive_pai(pai) {
     if (!_.isString(pai)) {
       throw new Error(chalk.red(`pai应该是个字符串:${pai}`));
@@ -47,6 +48,7 @@ export class Player {
   }
   //玩家打了一张牌，不能用_.remove，因为会把所有适合的都删除掉，而游戏中自然是只应该删除一个
   da_pai(pai) {
+    this.shou_pai.push(pai) //打牌的时候才会把牌保存到手牌中统一处理！
     let firstIndex = this.shou_pai.indexOf(pai);
     if (firstIndex > -1) {
       this.shou_pai.splice(firstIndex, 1);

@@ -185,7 +185,7 @@ export class Room {
   fa_pai(player) {
     let pai = this.clone_pai.splice(0, 1);
     //发牌的时候，桌面牌变化。
-    this.table_pai = pai;
+    this.table_pai = pai[0];
     if (_.isEmpty(pai)) {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
     }
@@ -197,14 +197,19 @@ export class Room {
     this.fapai_to_who = player;
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
-    player.receive_pai(pai[0]);
+    player.table_pai = pai[0] //先保存到玩家的桌面牌中，打出之后才会合并到shou_pai之中
     // let c_player = _.clone(player);
     // c_player.socket = "hidden, 属于clone(player)";
     // console.dir(c_player);
-    console.log("服务器发牌 %s 给：%s", pai, player.username);
+    console.log("服务器发牌 %s 给：%s", pai[0], player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
-    player.socket.emit("server_table_fapai", pai);
+    // player.socket.emit("server_table_fapai", pai);
+    player.socket.sendmsg({
+      type: g_events.server_table_fa_pai,
+      pai: pai[0]
+    })
     //发牌之后还要看玩家能否胡以及胡什么！
+    //todo: 应该返回牌字符串，而非一个元素的数组！使用ts的静态类型不容易出bug
     return pai;
   }
 
@@ -399,26 +404,21 @@ export class Room {
 
         p.socket.sendmsg({
           type: g_events.server_game_start,
-          data: p.shou_pai,
+          shou_pai: p.shou_pai,
           left_player: this.left_player(p).shou_pai,
           right_player: this.right_player(p).shou_pai
         });
         //todo: 开始游戏不考虑东家会听牌的情况，
-        let fa_pai = this.fa_pai(p);
+        this.fa_pai(p);
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
-      // 只需要再补充一下其它两家的牌即可，真正的消息是会过滤的。
-        p.socket.sendmsg({
-          type: g_events.server_table_fa_pai,
-          data: fa_pai
-        })
 
       } else {
         //非东家，接收到牌即可
         p.socket.sendmsg({
           type: g_events.server_game_start,
-          data: p.shou_pai,
+          shou_pai: p.shou_pai,
           left_player: this.left_player(p).shou_pai,
           right_player: this.right_player(p).shou_pai
         });

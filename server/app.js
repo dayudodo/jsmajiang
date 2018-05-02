@@ -20,7 +20,8 @@ var eventsHandler = [
   [g_events.client_testlogin, client_testlogin],
   [g_events.client_create_room, client_create_room],
   [g_events.client_join_room, client_join_room],
-  [g_events.client_player_ready, client_player_ready]
+  [g_events.client_player_ready, client_player_ready],
+  [g_events.client_da_pai, client_da_pai],
 ];
 
 wsserver.on("connection", socket => {
@@ -70,6 +71,15 @@ wsserver.on("connection", socket => {
     console.log("未知消息:", client_message);
   });
 });
+
+function  client_da_pai(client_message, socket){
+  let player = g_lobby.find_player_by_socket(socket);
+  let room = g_lobby.find_room_by_socket(socket);
+  let pai = client_message.pai
+  console.log(`用户${player.username}打牌:${pai}`);
+  //告诉房间，哪个socket打了啥牌
+  // room.da_pai(socket, pai);
+}
 
 function client_join_room(client_message, socket) {
   let { room_id } = client_message;

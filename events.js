@@ -4,6 +4,7 @@
   export const client_join_room = "client_join_room"
   export const client_player_ready = "client_player_ready"
   export const client_unknown = "client_unknown"
+  export const client_da_pai = "client_da_pai"
 
   export const server_login = "server_login";
   export const server_welcome = "server_welcome";
