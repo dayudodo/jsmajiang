@@ -52,6 +52,11 @@ export class PaiConvertor {
       return this.ToZheng(item);
     });
   }
+  static ToCeArray(all_pais: Array<string>): Array<string> {
+    return all_pais.map(item => {
+      return this.ToCe(item);
+    });
+  }
 }
 
 console.log(PaiConvertor.ToShouArray(["zh", "fa", "di"]));

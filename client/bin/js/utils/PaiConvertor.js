@@ -35,6 +35,10 @@ var mj;
             static ToZheng(str) {
                 return `zheng_${this.ToNumber(str)}.png`;
             }
+            /**
+             * 转化成左右风格的牌面（牌是横着的），以ce开头的图片
+             * @param str
+             */
             static ToCe(str) {
                 return `ce_${this.ToNumber(str)}.png`;
             }
@@ -50,6 +54,15 @@ var mj;
             static ToZhengArray(all_pais) {
                 return all_pais.map(item => {
                     return this.ToZheng(item);
+                });
+            }
+            /**
+             * 转换成以ce开头的横牌url数组，比如fa,zh变成ce_31.png, ce_32.png
+             * @param all_pais
+             */
+            static ToCeArray(all_pais) {
+                return all_pais.map(item => {
+                    return this.ToCe(item);
                 });
             }
         }

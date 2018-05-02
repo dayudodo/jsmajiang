@@ -69,6 +69,47 @@ var mj;
                     gameTable.shouPai3.addChild(newPai);
                     posiX = posiX - width;
                 }
+                //test: 显示上一玩家所有的牌
+                gameTable.shouPai0.visible = true;
+                gameTable.chi0.visible = false;
+                gameTable.anGangHide0.visible = false;
+                gameTable.mingGang0.visible = false;
+                gameTable.anGang0.visible = false;
+                gameTable.fa0.visible = false;
+                gameTable.shou0.visible = false;
+                let left_pai_y = gameTable.test_shoupai0.y;
+                let left_pai_height = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
+                // let left_data: Array<string> = 
+                let all_left_urls = PaiConverter.ToCeArray(server_message.left_player);
+                for (let index = 0; index < all_left_urls.length; index++) {
+                    const url = all_left_urls[index];
+                    gameTable.test_shoupai0_image.skin = `ui/majiang/${url}`;
+                    gameTable.test_shoupai0.y = left_pai_y;
+                    let newPai = LayaUtils.clone(gameTable.test_shoupai0);
+                    newPai.visible = true;
+                    gameTable.shouPai0.addChild(newPai);
+                    left_pai_y = left_pai_y + left_pai_height;
+                }
+                //显示下一玩家所有牌
+                gameTable.shouPai2.visible = true;
+                gameTable.chi2.visible = false;
+                gameTable.anGangHide2.visible = false;
+                gameTable.mingGang2.visible = false;
+                gameTable.anGang2.visible = false;
+                gameTable.fa2.visible = false;
+                gameTable.shou2.visible = false;
+                let right_pai_y = gameTable.test_shoupai2.y;
+                let right_pai_height = 60; //gameTable.test_shoupai2_image.height
+                let all_right_urls = PaiConverter.ToCeArray(server_message.right_player);
+                for (let index = 0; index < all_right_urls.length; index++) {
+                    const url = all_right_urls[index];
+                    gameTable.test_shoupai2_image.skin = `ui/majiang/${url}`;
+                    gameTable.test_shoupai2.y = right_pai_y;
+                    let newPai = LayaUtils.clone(gameTable.test_shoupai2);
+                    newPai.visible = true;
+                    gameTable.shouPai2.addChild(newPai);
+                    right_pai_y = right_pai_y + right_pai_height;
+                }
             }
             openHandler(event = null) {
                 //正确建立连接；

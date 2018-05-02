@@ -1,6 +1,7 @@
 var express = require("express"),
   http = require("http"),
   WebSocket = require("ws"),
+  ip = require("ip"),
   config = require("./../config");
 import _ from "lodash";
 import { Connector } from "./Connector";
@@ -26,7 +27,7 @@ wsserver.on("connection", socket => {
   socket.id = g_lobby.generate_socket_id();
   g_lobby.new_connect(socket);
   console.log(
-    `有新的连接：${socket.id} | 服务器连接数: ${g_lobby.clients_count}`
+    `有新的连接, id:${socket.id} | 服务器连接数: ${g_lobby.clients_count}`
   );
   socket.sendmsg({
     type: g_events.server_welcome,
@@ -59,19 +60,17 @@ wsserver.on("connection", socket => {
   socket.on("message", message => {
     //log the received message and send it back to the client
     let client_message = JSON.parse(message);
-    let right_element = eventsHandler.find(item => client_message.type == item[0])
+    let right_element = eventsHandler.find(
+      item => client_message.type == item[0]
+    );
     if (right_element) {
-      right_element[1].call(this, client_message, socket)
-      return
+      right_element[1].call(this, client_message, socket);
+      return;
     }
     console.log("未知消息:", client_message);
   });
 });
 
-//start our server
-server.listen(process.env.PORT || config.PORT, () => {
-  console.log(`服务器已经启动，端口号： ${server.address().port} :)`);
-});
 function client_join_room(client_message, socket) {
   let { room_id } = client_message;
   let room = g_lobby.find_room_by_id(room_id);
@@ -148,7 +147,7 @@ function client_testlogin(client_message, socket) {
   });
   console.log(
     `${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${
-    socket.id
+      socket.id
     }`
   );
   conn.player = s_player;
@@ -177,3 +176,13 @@ function client_player_ready(client_message, socket) {
     room.start_game();
   }
 }
+
+//start our server
+server.listen(process.env.PORT || config.PORT, () => {
+  var ifs = require("os").networkInterfaces();
+  var address = Object.keys(ifs)
+    .map(x => ifs[x].filter(x => x.family === "IPv4" && !x.internal)[0])
+    .filter(x => x)[0].address;
+  let { port } = server.address();
+  console.log(`服务器已经启动，物理地址：${address}:${port}`);
+});

@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":8,
-    "selecteID":1039,
+    "selectedBox":1305,
+    "selecteID":1306,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
     "label":"View(turntableDong)",
@@ -955,20 +955,47 @@
                     "props":{"y":93,"x":192,"width":104,"var":"shouPai0","scaleY":0.65,"scaleX":0.65,"height":1102},
                     "nodeParent":8,
                     "label":"Sprite(shouPai0)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":229,
                     "child":[
                         {
+                            "x":45,
+                            "type":"Image",
+                            "props":{"y":-3,"x":0,"visible":false,"var":"test_shoupai0","skin":"ui/majiang/ce_bg.png"},
+                            "nodeParent":229,
+                            "label":"Image(test_shoupai0)",
+                            "isOpen":true,
+                            "isDirectory":true,
+                            "isAniNode":true,
+                            "hasChild":true,
+                            "compId":1303,
+                            "child":[
+                                {
+                                    "x":60,
+                                    "type":"Image",
+                                    "props":{"y":7.105427357601002e-14,"x":0,"var":"test_shoupai0_image","skin":"ui/majiang/ce_18.png"},
+                                    "nodeParent":1303,
+                                    "label":"Image(test_shoupai0_image)",
+                                    "isDirectory":false,
+                                    "isAniNode":true,
+                                    "hasChild":false,
+                                    "compId":1304,
+                                    "child":[
+                                        ],
+                                    "$HIDDEN":true
+                                }],
+                            "$HIDDEN":false
+                        },
+                        {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":0,"width":104,"var":"chi0","height":212.00000000000006},
                             "nodeParent":229,
                             "label":"Sprite(chi0)",
-                            "isOpen":{
-
-                            },
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -979,9 +1006,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":230,
                                     "label":"Image",
-                                    "isOpen":{
-
-                                    },
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1005,9 +1030,7 @@
                                     "props":{"y":60,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":230,
                                     "label":"Image",
-                                    "isOpen":{
-
-                                    },
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1054,13 +1077,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":412,"x":0,"width":104,"var":"anGangHide0","height":207},
                             "nodeParent":229,
                             "label":"Sprite(anGangHide0)",
-                            "isOpen":{
-
-                            },
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1116,13 +1138,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":208,"x":0,"width":104,"var":"anGang0","height":207},
                             "nodeParent":229,
                             "label":"Sprite(anGang0)",
-                            "isOpen":{
-
-                            },
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1192,13 +1213,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":616,"x":0,"width":104,"var":"mingGang0","height":212},
                             "nodeParent":229,
                             "label":"Sprite(mingGang0)",
-                            "isOpen":{
-
-                            },
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1310,6 +1330,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":828,"x":0,"width":53,"var":"shou0","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":229,
@@ -1322,6 +1343,7 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":970,"x":0,"width":53,"var":"fa0","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":229,
@@ -1701,17 +1723,45 @@
                     "props":{"y":100,"x":1721,"width":104,"var":"shouPai2","scaleY":0.65,"scaleX":-0.65,"height":1102},
                     "nodeParent":8,
                     "label":"Sprite(shouPai2)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1187,
                     "child":[
                         {
+                            "x":45,
+                            "type":"Image",
+                            "props":{"y":0,"x":0,"var":"test_shoupai2","skin":"ui/majiang/ce_bg.png"},
+                            "nodeParent":1187,
+                            "label":"Image(test_shoupai2)",
+                            "isOpen":true,
+                            "isDirectory":true,
+                            "isAniNode":true,
+                            "hasChild":true,
+                            "compId":1305,
+                            "child":[
+                                {
+                                    "x":60,
+                                    "type":"Image",
+                                    "props":{"y":7.105427357601002e-14,"x":0,"var":"test_shoupai2_image","skin":"ui/majiang/ce_18.png"},
+                                    "nodeParent":1305,
+                                    "label":"Image(test_shoupai2_image)",
+                                    "isDirectory":false,
+                                    "isAniNode":true,
+                                    "hasChild":false,
+                                    "compId":1306,
+                                    "child":[
+                                        ]
+                                }]
+                        },
+                        {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":0,"width":104,"var":"chi2","height":212},
                             "nodeParent":1187,
                             "label":"Sprite(chi2)",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1722,6 +1772,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1188,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1745,6 +1796,7 @@
                                     "props":{"y":60,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1188,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1768,6 +1820,7 @@
                                     "props":{"y":120,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1188,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1785,13 +1838,16 @@
                                             "child":[
                                                 ]
                                         }]
-                                }]
+                                }],
+                            "$HIDDEN":true
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":412,"x":0,"width":104,"var":"anGangHide2","height":207},
                             "nodeParent":1187,
                             "label":"Sprite(anGangHide2)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1847,10 +1903,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":208,"x":0,"width":104,"var":"anGang2","height":207},
                             "nodeParent":1187,
                             "label":"Sprite(anGang2)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1917,10 +1975,12 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":616,"x":0,"width":104,"var":"mingGang2","height":212},
                             "nodeParent":1187,
                             "label":"Sprite(mingGang2)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -2020,6 +2080,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":828,"x":0,"width":53,"var":"shou2","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":1187,
@@ -2032,6 +2093,7 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":970,"x":0,"width":53,"var":"fa2","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":1187,
@@ -2042,7 +2104,8 @@
                             "compId":1216,
                             "child":[
                                 ]
-                        }]
+                        }],
+                    "$HIDDEN":false
                 },
                 {
                     "x":30,
@@ -4552,14 +4615,13 @@
                     "props":{"y":839,"x":54.99999999999999,"width":1227,"var":"shouPai3","scaleY":1.4,"scaleX":1.4,"height":172},
                     "nodeParent":8,
                     "label":"Sprite(shouPai3)",
-                    "isOpen":true,
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":82,
                     "child":[
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":0,"width":250,"var":"chi3","height":128},
                             "nodeParent":82,
@@ -4644,7 +4706,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":508,"width":250,"var":"anGangHide3","height":128},
                             "nodeParent":82,
@@ -4705,7 +4766,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":760,"width":248,"var":"mingGang3","height":128},
                             "nodeParent":82,
@@ -4822,7 +4882,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":254,"width":250,"var":"anGang3","height":128},
                             "nodeParent":82,
@@ -4897,7 +4956,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":1031,"width":82,"var":"shou3","pivotY":-26,"height":128},
                             "nodeParent":82,
@@ -4909,7 +4967,6 @@
                             "compId":935,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
                                     "nodeParent":935,
@@ -4921,7 +4978,6 @@
                                     "compId":105,
                                     "child":[
                                         {
-                                            "x":75,
                                             "type":"Image",
                                             "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png"},
                                             "nodeParent":105,
@@ -4936,7 +4992,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":1144,"width":82,"var":"fa3","pivotY":-26,"height":128},
                             "nodeParent":82,
