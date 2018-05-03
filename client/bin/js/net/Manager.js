@@ -46,6 +46,7 @@ var mj;
                 //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
                 // console.log(server_message.pai);
                 let pai = server_message.pai;
+                Laya.god_player.table_pai = pai;
                 let { gameTable } = this;
                 //显示服务器发过来的牌
                 gameTable.fa3Image.skin = `ui/majiang/${PaiConverter.ToShou(pai)}`;
@@ -95,7 +96,7 @@ var mj;
                                 type: events.client_da_pai,
                                 pai: daPai
                             });
-                            Laya.god_player.da_pai(daPai);
+                            Laya.god_player.da_pai(index);
                             // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
                             //这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的函数？
                             //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！

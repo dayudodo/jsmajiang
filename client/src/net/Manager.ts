@@ -57,6 +57,7 @@ module mj.net {
             //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
             // console.log(server_message.pai);
             let pai: string = server_message.pai
+            Laya.god_player.table_pai = pai
             let {gameTable } = this
             //显示服务器发过来的牌
             gameTable.fa3Image.skin = `ui/majiang/${PaiConverter.ToShou(pai)}`
@@ -66,21 +67,21 @@ module mj.net {
         private server_game_start(server_message) {
             //游戏开始了
             //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
-            
-            //客户端也需要保存好当前的牌，以便下一步处理
-            Laya.god_player.shou_pai = server_message.shou_pai 
 
-            
+            //客户端也需要保存好当前的牌，以便下一步处理
+            Laya.god_player.shou_pai = server_message.shou_pai
+
+
             // console.log(server_message);
             let { gameTable } = this
-            this.show_god_player_shoupai(gameTable,  Laya.god_player.shou_pai);
+            this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai);
             //test: 显示上一玩家所有的牌
             this.show_left_player_shoupai(gameTable, server_message);
             //显示下一玩家所有牌
             this.show_right_player_shoupai(gameTable, server_message);
 
         }
-        private show_god_player_shoupai(gameTable: GameTableScene,  shou_pai: string[]) {
+        private show_god_player_shoupai(gameTable: GameTableScene, shou_pai: string[]) {
             let {socket} = this
             // let all_pais: Array<string> = shou_pai
             let all_pai_urls = PaiConverter.ToShouArray(shou_pai)
@@ -105,20 +106,20 @@ module mj.net {
                 newPaiSprite.on(Laya.Event.CLICK, this, () => {
                     // 如果两次点击同一张牌，应该打出去
                     if (this.prevSelectedPai === newPaiSprite) {
-                        let daPai =  shou_pai[index]
+                        let daPai = shou_pai[index]
                         console.log(`用户选择打牌${daPai}`);
                         socket.sendmsg({
                             type: events.client_da_pai,
                             pai: daPai
                         });
-                        Laya.god_player.da_pai(daPai)
+                        Laya.god_player.da_pai(index)
                         // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
                         //这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的函数？
-                        
+
                         //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                         newPaiSprite.y += this.offsetY
                         all_pai_urls = PaiConverter.ToShouArray(Laya.god_player.shou_pai)
-                        this.paiArray.forEach((item, index)=>{
+                        this.paiArray.forEach((item, index) => {
                             let changePaiSprite = item as Sprite
                             changePaiSprite.destroy(true)
                             //真正的牌面是个Image,而且是二级子！
@@ -140,7 +141,7 @@ module mj.net {
                 });
                 this.paiArray.push(newPaiSprite) //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
                 gameTable.shouPai3.addChild(newPaiSprite);
-                posiX  += one_shou_pai_width;
+                posiX += one_shou_pai_width;
             }
         }
 
