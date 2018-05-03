@@ -49,13 +49,13 @@ var mj;
             static handlerButton(btn) {
                 btn.pivot(btn.width / 2, btn.height / 2);
                 btn.pos(btn.x + btn.width / 2, btn.y + btn.height / 2);
-                btn.on(Event.MOUSE_DOWN, btn, function () {
+                btn.on(Event.MOUSE_DOWN, btn, () => {
                     btn.scale(0.85, 0.85);
                 });
-                btn.on(Event.MOUSE_UP, btn, function () {
+                btn.on(Event.MOUSE_UP, btn, () => {
                     btn.scale(1, 1);
                 });
-                btn.on(Event.MOUSE_OUT, btn, function () {
+                btn.on(Event.MOUSE_OUT, btn, () => {
                     btn.scale(1, 1);
                 });
             }

@@ -6,6 +6,7 @@ var DialogScene = mj.scene.DialogScene;
 var scene = mj.scene;
 var Client = mj.net.Manager;
 var Player = mj.model.Player;
+var Room = mj.model.Room;
 var LoadingUI = ui.test.LoadingUI;
 var LoginUI = ui.test.LoginUI;
 var MainUI = ui.test.MainUI;
@@ -18,9 +19,9 @@ class GameMain {
         Laya.stage.alignV = Stage.ALIGN_MIDDLE;
         Laya.stage.screenMode = Stage.SCREEN_NONE;
         Laya.client = new Client();
-        this.all_players = new Array();
+        Laya.room = new Room();
         Laya.god_player = new Player();
-        this.all_players.push(Laya.god_player);
+        Laya.room.players.push(Laya.god_player);
         // var mm:Laya.Sprite = new Laya.Sprite();
         // mm.loadImage("images/mm.png",0,0,0,0, Laya.Handler.create(this, this.onloaded,[mm]))
         //只是加载进内存而已，还没有开始使用！

@@ -21,7 +21,7 @@ var eventsHandler = [
   [g_events.client_create_room, client_create_room],
   [g_events.client_join_room, client_join_room],
   [g_events.client_player_ready, client_player_ready],
-  [g_events.client_da_pai, client_da_pai],
+  [g_events.client_da_pai, client_da_pai]
 ];
 
 wsserver.on("connection", socket => {
@@ -72,10 +72,10 @@ wsserver.on("connection", socket => {
   });
 });
 
-function  client_da_pai(client_message, socket){
+function client_da_pai(client_message, socket) {
   let player = g_lobby.find_player_by_socket(socket);
   let room = g_lobby.find_room_by_socket(socket);
-  let pai = client_message.pai
+  let pai = client_message.pai;
   console.log(`用户${player.username}打牌:${pai}`);
   //告诉房间，哪个socket打了啥牌
   // room.da_pai(socket, pai);
@@ -97,7 +97,7 @@ function client_join_room(client_message, socket) {
     console.log(`${room_id}房间内全部玩家：${room.all_player_names}`);
     if (room.players_count == config.LIMIT_IN_ROOM) {
       console.log(`房间${room_name}已满，玩家有：${room.all_player_names}`);
-      socket.send(JSON.stringify({ type: g_events.server_room_full }));
+      socket.sendmsg({ type: g_events.server_room_full });
     } else {
       console.log(`用户${_me.username}成功加入房间${room_id}`);
       //设置其座位号
@@ -130,17 +130,24 @@ function client_create_room(client_message, socket) {
       });
       return;
     }
-    owner_room.dong_jia = conn.player; //创建房间者即为东家，初始化时会多一张牉！
+    owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
     conn.player.seat_index = 0; //玩家座位号从0开始
     owner_room.join_player(conn.player); //新建的房间要加入本玩家
     conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
-    console.log(`${conn.player.username}创建了房间${owner_room.id}`);
+    console.log(
+      `${conn.player.username}创建了房间${owner_room.id}, seat_index: ${
+        conn.player.seat_index
+      }`
+    );
     // console.dir(conn)
     //成功创建房间后要给前端发送成功的消息
-    socket.sendmsg({
-      type: g_events.server_create_room_ok,
-      room_id: owner_room.id
-    });
+    // socket.sendmsg({
+    //   type: g_events.server_create_room_ok,
+    //   room_id: owner_room.id,
+    //   seat_index: conn.player.seat_index,
+    //   east: conn.player.east
+    // });
+    conn.room.player_enter_room(socket)
   }
 }
 
@@ -180,10 +187,13 @@ function client_player_ready(client_message, socket) {
   // 如果所有的人都准备好了，就开始游戏！
   if (room.all_ready) {
     console.log(
-      chalk.green(`===>房间${room.id}全部玩家准备完毕，可以游戏啦！`)
+      chalk.green(
+        `===>房间${room.id}全部玩家准备完毕，可以游戏啦！同步所有玩家信息`
+      )
     );
+    // room.send_all_players_message();
     //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
-    room.start_game();
+    // room.start_game();
   }
 }
 

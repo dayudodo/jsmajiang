@@ -11,11 +11,13 @@ var events;
     events.server_no_room = "server_no_room";
     events.server_room_full = "server_room_full";
     events.server_no_such_room = "server_no_such_room";
-    events.server_create_room_ok = "server_create_room_ok";
+    // export const server_create_room_ok = "server_create_room_ok";
     events.server_player_enter_room = "server_player_enter_room";
     events.server_other_player_enter_room = "server_other_player_enter_room";
     events.server_receive_ready = "server_receive_ready";
     events.server_game_start = "server_game_start";
     events.server_table_fa_pai = "server_table_fa_pai";
+    events.server_dapai = "server_dapai";
+    events.server_dapai_other = "server_dapai_other";
 })(events || (events = {}));
 //# sourceMappingURL=events.js.map

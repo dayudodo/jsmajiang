@@ -49,16 +49,39 @@ export class Room {
   }
   player_enter_room(socket) {
     let player = this.find_player_by_socket(socket);
-    player.socket.sendmsg({
-      type: g_events.server_player_enter_room,
-      room_id: this.id
-    });
+    // player.socket.sendmsg({
+    //   type: g_events.server_player_enter_room,
+    //   room_id: this.id,
+    //   seat_index: player.seat_index
+    // });
+    //告诉其它人player进入房间！
     this.other_players(player).forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_other_player_enter_room,
         username: player.username,
-        user_id: player.user_id
+        user_id: player.user_id,
+        seat_index: player.seat_index
       });
+    });
+    //用户加入房间，肯定是2，3玩家，需要服务器发送时添加其它玩家的数据
+    //庄家创建房间时只有一个人，所以不需要另行通知。
+    let other_players_info = this.other_players(player).map(item => {
+      return {
+        username: item.username,
+        user_id: item.user_id,
+        seat_index: item.seat_index,
+        east: item.east
+      };
+    });
+    //最后一个进入房间的其实应该得到其它两个玩家的数据
+    player.socket.sendmsg({
+      type: g_events.server_player_enter_room,
+      room_id: this.id,
+      username: player.username,
+      user_id: player.user_id,
+      seat_index: player.seat_index,
+      east: player.east,
+      other_players_info: other_players_info
     });
   }
   server_receive_ready(socket) {
@@ -73,7 +96,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   exit_room(socket) {
-    _.remove(this.players, function (item) {
+    _.remove(this.players, function(item) {
       return item.socket.id == socket.id;
     });
   }
@@ -99,7 +122,8 @@ export class Room {
     return _.last(this.players);
   }
 
-  get next_player() { //下一家
+  get next_player() {
+    //下一家
     let next_index =
       (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
     //最后通过座位号来找到玩家,而不是数组序号,更不容易出错
@@ -114,21 +138,23 @@ export class Room {
     // console.log(o_players.map(p => p.username));
     return o_players;
   }
-  left_player(person) { //左手玩家
-    let index = person.seat_index - 1
-    index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index
-    return this.players[index]
+  left_player(person) {
+    //左手玩家
+    let index = person.seat_index - 1;
+    index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index;
+    return this.players[index];
   }
-  right_player(person) { //右手玩家
-    let index = person.seat_index + 1
-    index = index == config.LIMIT_IN_ROOM ? 0 : index
-    return this.players[index]
+  right_player(person) {
+    //右手玩家
+    let index = person.seat_index + 1;
+    index = index == config.LIMIT_IN_ROOM ? 0 : index;
+    return this.players[index];
   }
   //玩家选择碰牌，或者是超时自动跳过！
   confirm_peng(io, socket) {
     let player = this.find_player_by_socket(socket);
     //碰之后此牌就属于本玩家了,前后台都需要添加!
-    player.receive_pai(this.table_pai);
+    player.table_pai = this.table_pai;
     //当前玩家顺序改变
     this.current_player = player;
   }
@@ -197,7 +223,7 @@ export class Room {
     this.fapai_to_who = player;
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
-    player.table_pai = pai[0] //先保存到玩家的桌面牌中，打出之后才会合并到shou_pai之中
+    player.table_pai = pai[0]; //先保存到玩家的桌面牌中，打出之后才会合并到shou_pai之中
     // let c_player = _.clone(player);
     // c_player.socket = "hidden, 属于clone(player)";
     // console.dir(c_player);
@@ -207,7 +233,7 @@ export class Room {
     player.socket.sendmsg({
       type: g_events.server_table_fa_pai,
       pai: pai[0]
-    })
+    });
     //发牌之后还要看玩家能否胡以及胡什么！
     //todo: 应该返回牌字符串，而非一个元素的数组！使用ts的静态类型不容易出bug
     return pai;
@@ -258,7 +284,7 @@ export class Room {
     }
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
-    player.receive_pai(pai[0]);
+    player.table_pai = pai[0];
     // let c_player = _.clone(player);
     // c_player.socket = "hidden, 属于clone(player)";
     // console.dir(c_player);
@@ -271,7 +297,7 @@ export class Room {
   }
 
   //玩家所在socket打牌pai
-  da_pai(io, socket, pai_name) {
+  da_pai(socket, pai_name) {
     let player = this.find_player_by_socket(socket);
     //记录下哪个在打牌
     this.dapai_player = player;
@@ -280,16 +306,26 @@ export class Room {
     );
     if (noSomeoneThinkingTingLiang) {
       let room_name = this.id;
-      //首先向房间内的所有玩家显示出当前玩家打的牌
-      // socket.emit("dapai", pai);
-      // socket.to(room_name).emit("dapai", pai);
-      io.to(room_name).emit("server_dapai", pai_name);
       //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
       player.da_pai(pai_name);
-      //玩家打牌的时候，桌面牌变化
+
+      //房间记录下用户打的牌
       this.table_pai = pai_name;
       //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
-
+      //向房间内的所有玩家显示出当前玩家打的牌
+      player.socket.sendmsg({
+        type: g_events.server_dapai,
+        user_id: p.user_id,
+        pai_name: pai_name
+      });
+      //告诉其它玩家哪个打牌了, 其它信息用户在加入房间的时候已经发送过了。
+      this.other_players(player).forEach(p => {
+        p.socket.sendmsg({
+          type: g_events.server_dapai_other,
+          username: player.username,
+          user_id: player.user_id
+        });
+      });
       let isRoomPaiEmpty = 0 === this.clone_pai.length;
       let canNormalFaPai = true; //能否正常给下一家发牌
       if (isRoomPaiEmpty) {
@@ -330,7 +366,7 @@ export class Room {
             if (Majiang.canGang(item_player.shou_pai, pai_name)) {
               console.log(
                 `房间${this.id}内发现玩家${
-                item_player.username
+                  item_player.username
                 }可以杠牌${pai_name}`
               );
               //告诉玩家你可以杠牌了
@@ -340,12 +376,12 @@ export class Room {
             } else {
               console.log(
                 `房间${this.id}内发现玩家${
-                item_player.username
+                  item_player.username
                 }可以碰牌${pai_name}`
               );
               console.dir(
                 `玩家${
-                item_player.username
+                  item_player.username
                 }的手牌为:${item_player.shou_pai.join(" ")}`
               );
               item_player.socket.emit("server_canPeng", pai_name);
@@ -373,7 +409,7 @@ export class Room {
     //获取东家
     return _.find(this.players, { east: true });
   }
-  set dong_jia(player) {
+  set_dong_jia(player) {
     //只能有一个东家, 不使用other_players计算麻烦
     this.players.forEach(p => {
       p.east = false;
@@ -394,7 +430,7 @@ export class Room {
     this.players.forEach((p, index) => {
       //玩家收到的牌保存好，以便服务器进行分析，每次都需要排序下，便于分析和查看
       p.shou_pai = this.clone_pai.splice(0, 13).sort();
-    })
+    });
     // 再进行相关的消息发送！
     this.players.forEach((p, index) => {
       //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
@@ -413,7 +449,6 @@ export class Room {
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
-
       } else {
         //非东家，接收到牌即可
         p.socket.sendmsg({
@@ -425,8 +460,6 @@ export class Room {
         // let ting_liangCode = this.judge_ting(p);
       }
     });
-
-
   }
   //游戏结束后重新开始游戏！
   restart_game() {

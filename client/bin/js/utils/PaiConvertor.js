@@ -8,7 +8,7 @@ var mj;
         var ZHIPAI = ["zh", "fa", "di"];
         //数字麻将表，加速版本
         var N_BING = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-        var N_TIAO = [10, 11, 12, 13, 14, 15, 16, 17, 18];
+        var N_TIAO = [9, 10, 11, 12, 13, 14, 15, 16, 17];
         var N_ZHIPAI = [31, 32, 33];
         class PaiConvertor {
             //转换b1到11， t1到22，
@@ -31,6 +31,13 @@ var mj;
             }
             static ToShou(str) {
                 return `shou_${this.ToNumber(str)}.png`;
+            }
+            /**
+             * 返回类似于ui/majiang/shou_??.png的字符串，用于替换麻将牌的显示
+             * @param str
+             */
+            static skinOfShou(str) {
+                return `ui/majiang/${this.ToShou(str)}`;
             }
             static ToZheng(str) {
                 return `zheng_${this.ToNumber(str)}.png`;

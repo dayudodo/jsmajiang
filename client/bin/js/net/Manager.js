@@ -9,7 +9,7 @@ var mj;
         class Manager {
             constructor() {
                 this.paiArray = [];
-                this.offsetY = 20;
+                this.offsetY = 40;
                 this.offsetX = 10;
                 this.prevSelectedPai = null;
                 this.connect();
@@ -36,11 +36,17 @@ var mj;
                     [events.server_other_player_enter_room, this.server_other_player_enter_room],
                     [events.server_player_enter_room, this.server_player_enter_room],
                     [events.server_room_full, this.server_room_full],
-                    [events.server_create_room_ok, this.server_create_room_ok],
+                    // [events.server_create_room_ok, this.server_create_room_ok],
                     [events.server_receive_ready, this.server_receive_ready],
                     [events.server_game_start, this.server_game_start],
-                    [events.server_table_fa_pai, this.server_table_fa_pai]
+                    [events.server_table_fa_pai, this.server_table_fa_pai],
+                    [events.server_dapai, this.server_dapai],
+                    [events.server_dapai_other, this.server_dapai_other],
                 ];
+            }
+            server_dapai_other(server_message) {
+            }
+            server_dapai(server_message) {
             }
             server_table_fa_pai(server_message) {
                 //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
@@ -49,7 +55,7 @@ var mj;
                 Laya.god_player.table_pai = pai;
                 let { gameTable } = this;
                 //显示服务器发过来的牌
-                gameTable.fa3Image.skin = `ui/majiang/${PaiConverter.ToShou(pai)}`;
+                gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai);
                 gameTable.fa3.visible = true;
             }
             server_game_start(server_message) {
@@ -88,43 +94,49 @@ var mj;
                     newPaiSprite.visible = true;
                     //为新建的牌sprite创建点击处理函数
                     newPaiSprite.on(Laya.Event.CLICK, this, () => {
-                        // 如果两次点击同一张牌，应该打出去
-                        if (this.prevSelectedPai === newPaiSprite) {
-                            let daPai = shou_pai[index];
-                            console.log(`用户选择打牌${daPai}`);
-                            socket.sendmsg({
-                                type: events.client_da_pai,
-                                pai: daPai
-                            });
-                            Laya.god_player.da_pai(index);
-                            // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
-                            //这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的函数？
-                            //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
-                            newPaiSprite.y += this.offsetY;
-                            all_pai_urls = PaiConverter.ToShouArray(Laya.god_player.shou_pai);
-                            this.paiArray.forEach((item, index) => {
-                                let changePaiSprite = item;
-                                changePaiSprite.destroy(true);
-                                //真正的牌面是个Image,而且是二级子！
-                                // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
-                                // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
-                            });
-                            gameTable.shou3.x = this.paiArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
-                            this.paiArray = [];
-                            this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai);
-                        }
-                        else {
-                            //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
-                            if (this.prevSelectedPai) {
-                                this.prevSelectedPai.y = this.prevSelectedPai.y + this.offsetY;
-                            }
-                            this.prevSelectedPai = newPaiSprite;
-                            newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
+                        // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
+                        if (Laya.god_player.table_pai) {
+                            // 如果两次点击同一张牌，应该打出去
+                            this.handlePaiSpriteClick(newPaiSprite, shou_pai, index, socket, gameTable);
                         }
                     });
                     this.paiArray.push(newPaiSprite); //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
                     gameTable.shouPai3.addChild(newPaiSprite);
                     posiX += one_shou_pai_width;
+                }
+            }
+            handlePaiSpriteClick(newPaiSprite, shou_pai, index, socket, gameTable) {
+                // 如果两次点击同一张牌，应该打出去
+                if (this.prevSelectedPai === newPaiSprite) {
+                    let daPai = shou_pai[index];
+                    console.log(`用户选择打牌${daPai}`);
+                    socket.sendmsg({
+                        type: events.client_da_pai,
+                        pai: daPai
+                    });
+                    Laya.god_player.da_pai(daPai);
+                    // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
+                    //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的函数？
+                    //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
+                    newPaiSprite.y += this.offsetY;
+                    this.paiArray.forEach((item, index) => {
+                        let changePaiSprite = item;
+                        changePaiSprite.destroy(true);
+                        //真正的牌面是个Image,而且是二级子！
+                        // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
+                        // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
+                    });
+                    gameTable.shou3.x = this.paiArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                    this.paiArray = [];
+                    this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai);
+                }
+                else {
+                    //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
+                    if (this.prevSelectedPai) {
+                        this.prevSelectedPai.y = this.prevSelectedPai.y + this.offsetY;
+                    }
+                    this.prevSelectedPai = newPaiSprite;
+                    newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
                 }
             }
             show_right_player_shoupai(gameTable, server_message) {
@@ -201,16 +213,37 @@ var mj;
                 Laya.stage.destroyChildren();
                 Laya.stage.addChild(home);
             }
-            server_create_room_ok(server_message) {
-                console.log(`成功创建房间:${server_message.room_id}`);
-                this.open_room(server_message);
+            // private server_create_room_ok(server_message: any) {
+            //     let {room_id, seat_index, east} = server_message
+            //     let { god_player } = Laya;
+            //     god_player.seat_index = seat_index
+            //     god_player.east = east
+            //     console.log(`成功创建房间:${room_id}, seat_index: ${god_player.seat_index}`);
+            //     this.open_room(server_message);
+            // }
+            hidePlayer(index) {
+                let { gameTable } = this;
+                gameTable["userHead" + index].visible = false;
+                gameTable["shouPai" + index].visible = false;
+                gameTable["out" + index].visible = false;
+                gameTable["userHeadOffline" + index].visible = false;
             }
             open_room(server_message) {
                 Laya.stage.destroyChildren();
-                let { god_player } = Laya;
+                // let { seat_index, east} = server_message
                 //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
                 this.gameTable = new GameTableScene();
                 let { gameTable } = this;
+                //其它的username, user_id在用户加入房间的时候就已经有了。
+                this.hidePlayer(0);
+                this.hidePlayer(1);
+                this.hidePlayer(2);
+                this.hidePlayer(3); //自己的也要先隐藏起来，再显示出需要显示的
+                gameTable.userName3.text = Laya.god_player.username;
+                gameTable.userId3.text = Laya.god_player.user_id;
+                gameTable.zhuang3.visible = true; //todo: 应该有一个扔骰子选庄的过程，测试阶段创建房间人就是庄
+                gameTable.gold3.text = "888"; //todo: 用户的积分需要数据库配合
+                gameTable.userHead3.visible = true;
                 // var res: any = Laya.loader.getRes("res/atlas/ui/majiang.json");
                 //让按钮有点儿点击的效果！
                 LayaUtils.handlerButton(gameTable.settingBtn);
@@ -218,19 +251,19 @@ var mj;
                 gameTable.roomCheckId.text = "房间号：" + server_message.room_id;
                 gameTable.leftGameNums.text = "剩余：" + 99 + "盘"; //todo: 本局剩下盘数
                 //一开始其它人头像不显示
-                gameTable.userHead0.visible = false;
-                gameTable.userHead1.visible = false;
-                gameTable.userHead2.visible = false;
-                //所有人的手牌是不显示的，其它人还没有加入进来！要等所有人开始游戏才行！
-                gameTable.shouPai0.visible = false;
-                gameTable.shouPai1.visible = false;
-                gameTable.shouPai2.visible = false;
-                gameTable.shouPai3.visible = false;
-                //打出的牌不显示
-                gameTable.out0.visible = false;
-                gameTable.out1.visible = false;
-                gameTable.out2.visible = false;
-                gameTable.out3.visible = false;
+                // gameTable.userHead0.visible = false;
+                // gameTable.userHead1.visible = false;
+                // gameTable.userHead2.visible = false;
+                // //所有人的手牌是不显示的，其它人还没有加入进来！要等所有人开始游戏才行！
+                // gameTable.shouPai0.visible = false;
+                // gameTable.shouPai1.visible = false;
+                // gameTable.shouPai2.visible = false;
+                // gameTable.shouPai3.visible = false;
+                // //打出的牌不显示
+                // gameTable.out0.visible = false;
+                // gameTable.out1.visible = false;
+                // gameTable.out2.visible = false;
+                // gameTable.out3.visible = false;
                 //剩余张数不显示
                 gameTable.leftPaiCountSprite.visible = false;
                 //解散房间不显示
@@ -240,51 +273,58 @@ var mj;
                 //听牌不显示
                 gameTable.tingPaiSprite.visible = false;
                 gameTable.userHeadOffline3.visible = false;
-                gameTable.userName3.text = god_player.username;
-                gameTable.userId3.text = god_player.user_id;
-                gameTable.zhuang3.visible = true; //todo: 应该有一个扔骰子选庄的过程，测试阶段创建房间人就是庄
-                gameTable.gold3.text = "888"; //todo: 用户的积分需要数据库配合
                 //设置为自动开始
                 if (gameTable.isAutoStart.selected) {
                     // console.log('本玩家准备好游戏了。。。');
                     this.socket.sendmsg({ type: events.client_player_ready });
                 }
-                //测试一下复制shou3的效果怎么样，
-                // gameTable.shouPai3.visible = true //可能要先显示这个，因为其是父容器！
-                // //隐藏里面的牌，需要的时候才会显示出来
-                // gameTable.chi3.visible = false
-                // gameTable.anGangHide3.visible = false
-                // gameTable.mingGang3.visible = false
-                // gameTable.anGang3.visible = false
-                // gameTable.fa3.visible = false
-                // gameTable.shou3.visible = false
-                // // gameTable.shou3.visible = true
-                // const url = 'shou_10.png';
-                // let newPai: Sprite;
-                // gameTable.skin_shoupai3.skin = `ui/majiang/shou_11.png`
-                // newPai = LayaUtils.clone(gameTable.shou3) as Sprite
-                // newPai.visible = true
-                // gameTable.shouPai3.addChild(newPai)
-                // // console.log(newPai);
-                // gameTable.skin_shoupai3.skin = `ui/majiang/shou_11.png`
-                // gameTable.shou3.x = newPai.x - 87
-                // newPai = LayaUtils.clone(gameTable.shou3) as Sprite
-                // newPai.visible = true
-                // gameTable.shouPai3.addChild(newPai)
-                // gameTable.skin_shoupai3.skin = `ui/majiang/shou_12.png`
-                // gameTable.shou3.x = 10
-                // newPai = LayaUtils.clone(gameTable.shou3) as Sprite
-                // newPai.visible = true
-                // gameTable.shouPai3.addChild(newPai)
                 Laya.stage.addChild(gameTable);
             }
             server_other_player_enter_room(server_message) {
-                let { username, user_id } = server_message;
-                console.log(`其它玩家${username}加入房间, id:${user_id}`);
+                let { username, user_id, seat_index } = server_message;
                 //添加其它玩家的信息，还得看顺序如何！根据顺序来显示玩家的牌面，服务器里面保存的位置信息，可惜与layabox里面正好是反的！
+                //先看这个玩家是否已经进入过，如果进入过，说明是断线的。
+                //不可能有一个玩家进入两次房间，除非是掉线。
+                console.log(`其它玩家${username}加入房间, id:${user_id}, seat_index:${seat_index}`);
+                let player = new Player();
+                player.username = username;
+                player.user_id = user_id;
+                player.seat_index = seat_index;
+                Laya.room.players.push(player);
+                let { gameTable } = this;
+                //如果本玩家位置比别人的小1，说明我是别人的上一家
+                if (Laya.god_player.seat_index - seat_index == -1) {
+                    //显示右玩家的信息
+                    gameTable.userName2.text = username;
+                    gameTable.userId2.text = user_id;
+                    gameTable.zhuang2.visible = false;
+                    gameTable.gold2.text = "888"; //todo: 用户的积分需要数据库配合
+                }
+                //如果比别人的大1，说明是我是别人的下一家
+                if (Laya.god_player.seat_index - seat_index == -2) {
+                    //显示右玩家的信息
+                    gameTable.userName0.text = username;
+                    gameTable.userId0.text = user_id;
+                    gameTable.zhuang0.visible = false;
+                    gameTable.gold0.text = "888"; //todo: 用户的积分需要数据库配合
+                }
+                //
             }
+            //玩家成功加入房间
             server_player_enter_room(server_message) {
-                console.log(`本玩家进入房间！`);
+                let { room_id, username, user_id, east, seat_index, other_players_info } = server_message;
+                console.log(`${username}玩家进入房间${room_id}！seat_index:${seat_index}`);
+                //其实这时候就可以使用room来保存玩家信息了，以后只需要用户来个id以及数据就能够更新显示了。
+                Laya.god_player.seat_index = seat_index;
+                Laya.god_player.east = east;
+                other_players_info.forEach(element => {
+                    let player = new Player();
+                    player.username = element.username;
+                    player.user_id = element.user_id;
+                    player.seat_index = element.seat_index;
+                    player.east = element.east;
+                    Laya.room.players.push(player);
+                });
                 this.open_room(server_message);
             }
             server_no_such_room() {

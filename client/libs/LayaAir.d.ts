@@ -31814,6 +31814,8 @@ declare class Laya3D {
  * <code>Laya</code> 是全局对象的引用入口集。
  */
 declare class Laya {
+    /**玩家所在房间 */
+    static room: mj.model.Room
     /** 本玩家 */
     static god_player: mj.model.Player;
     /** 全局变量，唯一的socket管理器*/

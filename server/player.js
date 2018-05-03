@@ -19,8 +19,8 @@ export class Player {
     //用户名称，以后可以显示微信名称
     this.username = username;
     this.user_id = user_id; //todo:用户应该有一个唯一的id, 这样断线后再登录才知道你在哪个服务器
-    
-    this.table_pai = null; //用户还没有选择打的时候，服务器发给的牌
+
+    this._table_pai = null; //用户还没有选择打的时候，服务器发给的牌
     this.shou_pai = shou_pai; //玩家当前拥有的牌
     this.used_pai = []; //打过的牌有哪些，断线后可以重新发送此数据
     this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
@@ -30,7 +30,7 @@ export class Player {
     //还得知道是谁打的这张牌，自摸还是他人放炮？还是杠了之后的牌？
     this.hupai_zhang = [];
     //临时保存的胡牌张，供用户选择，如果听或者亮，则成为正式的胡牌张
-    this.temp_hupai_zhang = []
+    this.temp_hupai_zhang = [];
     //玩家是否亮牌，只在可以听胡的时候才能亮牌，这个还是需要服务器做出判断，在玩家打完牌之后进行听胡的判断。
     this.is_liang = false;
     //玩家是否选择听牌，只有大胡的时候才能听牌！
@@ -38,26 +38,33 @@ export class Player {
     //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
     this.is_thinking_tingliang = false;
   }
-  //玩家收到服务器发来的一张牌，收到并且打完牌之后才会把此牌变成自己的
-  receive_pai(pai) {
+  /**
+   * 加入参数pai到玩家手牌之中
+   */
+  set table_pai(pai) {
     if (!_.isString(pai)) {
       throw new Error(chalk.red(`pai应该是个字符串:${pai}`));
     }
+    this._table_pai = pai;
     this.shou_pai.push(pai);
-    this.shou_pai.sort();
   }
-  //玩家打了一张牌，不能用_.remove，因为会把所有适合的都删除掉，而游戏中自然是只应该删除一个
+  get table_pai() {
+    return this._table_pai;
+  }
+  /**
+   * 删除玩家手牌index处的牌
+   * @param index
+   */
   da_pai(pai) {
-    this.shou_pai.push(pai) //打牌的时候才会把牌保存到手牌中统一处理！
     let firstIndex = this.shou_pai.indexOf(pai);
     if (firstIndex > -1) {
       this.shou_pai.splice(firstIndex, 1);
+      this.shou_pai.sort(); //删除元素之后排序
       this.used_pai.push(pai);
     } else {
-      throw new Error(
-        chalk.red(`玩家${this.username}居然打了张不存在的牌？${pai}`)
-      );
+      throw new Error(`${this.username}居然打了张不存在的牌？${pai}`);
     }
+    this._table_pai = null; //打牌之后说明桌面牌是真的没有了
   }
 }
 

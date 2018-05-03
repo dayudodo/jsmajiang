@@ -6,35 +6,41 @@ module mj.model {
         public used_pai: string[] = []
         public room_name: string
         public hupai_zhang: string
-        private _table_pai: string 
+        private _table_pai: string
+        /**
+         * 是否是庄家
+         */
+        public east = false;
+        /**
+         * 玩家的席位！
+         */
+        public seat_index = null;
 
         constructor() {
         }
         /**
          * 加入参数pai到玩家手牌之中
          */
-        set table_pai(pai){
+        set table_pai(pai) {
             this._table_pai = pai
             this.shou_pai.push(pai)
         }
-        get table_pai(){
+        get table_pai() {
             return this._table_pai
         }
         /**
          * 删除玩家手牌index处的牌
          * @param index 
          */
-        da_pai(index: number) {
+        da_pai(pai) {
 
-            let firstIndex = this.shou_pai.indexOf(this.shou_pai[index]);
+            let firstIndex = this.shou_pai.indexOf(pai);
             if (firstIndex > -1) {
                 this.shou_pai.splice(firstIndex, 1)
                 this.shou_pai.sort() //删除元素之后排序
-                this.used_pai.push(this.shou_pai[index])
+                this.used_pai.push(pai)
             } else {
-                throw new Error(
-                    `我居然打了张不存在的牌？index: ${index}`
-                );
+                throw new Error(`${this.username}居然打了张不存在的牌？${pai}`);
             }
             this._table_pai = null //打牌之后说明桌面牌是真的没有了
         }
