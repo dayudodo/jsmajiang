@@ -215,9 +215,13 @@ var mj;
             }
             hidePlayer(index) {
                 let { gameTable } = this;
+                // 头像不显示
                 gameTable["userHead" + index].visible = false;
+                // 手牌是不显示的
                 gameTable["shouPai" + index].visible = false;
+                //打过的牌暂不显示
                 gameTable["out" + index].visible = false;
+                // 用户离线状态不显示
                 gameTable["userHeadOffline" + index].visible = false;
             }
             open_room(server_message) {
@@ -234,7 +238,7 @@ var mj;
                 this.hidePlayer(3); //自己的也要先隐藏起来，再显示出需要显示的
                 gameTable.userName3.text = Laya.god_player.username;
                 gameTable.userId3.text = Laya.god_player.user_id;
-                gameTable.zhuang3.visible = true; //todo: 应该有一个扔骰子选庄的过程，测试阶段创建房间人就是庄
+                gameTable.zhuang3.visible = Laya.god_player.east; //todo: 应该有一个扔骰子选庄的过程，测试阶段创建房间人就是庄
                 gameTable.gold3.text = "888"; //todo: 用户的积分需要数据库配合
                 gameTable.userHead3.visible = true;
                 // var res: any = Laya.loader.getRes("res/atlas/ui/majiang.json");
@@ -243,20 +247,6 @@ var mj;
                 LayaUtils.handlerButton(gameTable.gameInfoBtn);
                 gameTable.roomCheckId.text = "房间号：" + server_message.room_id;
                 gameTable.leftGameNums.text = "剩余：" + 99 + "盘"; //todo: 本局剩下盘数
-                //一开始其它人头像不显示
-                // gameTable.userHead0.visible = false;
-                // gameTable.userHead1.visible = false;
-                // gameTable.userHead2.visible = false;
-                // //所有人的手牌是不显示的，其它人还没有加入进来！要等所有人开始游戏才行！
-                // gameTable.shouPai0.visible = false;
-                // gameTable.shouPai1.visible = false;
-                // gameTable.shouPai2.visible = false;
-                // gameTable.shouPai3.visible = false;
-                // //打出的牌不显示
-                // gameTable.out0.visible = false;
-                // gameTable.out1.visible = false;
-                // gameTable.out2.visible = false;
-                // gameTable.out3.visible = false;
                 //剩余张数不显示
                 gameTable.leftPaiCountSprite.visible = false;
                 //解散房间不显示
@@ -271,6 +261,18 @@ var mj;
                     // console.log('本玩家准备好游戏了。。。');
                     this.socket.sendmsg({ type: events.client_player_ready });
                 }
+                let leftPlayer = Laya.room.left_player(Laya.god_player);
+                // console.log('leftPlayer:', leftPlayer);
+                if (leftPlayer) {
+                    //显示左玩家的信息
+                    this.showHead(gameTable, leftPlayer, 0);
+                }
+                let rightPlayer = Laya.room.right_player(Laya.god_player);
+                // console.log('rightPlayer:', rightPlayer);
+                if (rightPlayer) {
+                    //显示右玩家的信息
+                    this.showHead(gameTable, rightPlayer, 2);
+                }
                 Laya.stage.addChild(gameTable);
             }
             server_other_player_enter_room(server_message) {
@@ -284,19 +286,19 @@ var mj;
                 player.user_id = user_id;
                 player.seat_index = seat_index;
                 Laya.room.players.push(player);
-                // push之后还需要排序，不然获取到的不正确！左手和右边玩家就错位了！
-                Laya.room.players.sort(item => item.seat_index);
                 let { gameTable } = this;
                 //只需要更新其它两个玩家的头像信息，自己的已经显示好了。
                 // let otherPlayers = Laya.room.other_players(Laya.god_player)
                 // console.log(otherPlayers);
                 //todo: 没效率，粗暴的刷新用户头像数据
                 let leftPlayer = Laya.room.left_player(Laya.god_player);
+                console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
                     this.showHead(gameTable, leftPlayer, 0);
                 }
                 let rightPlayer = Laya.room.right_player(Laya.god_player);
+                console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
@@ -330,7 +332,6 @@ var mj;
                     player.east = element.east;
                     Laya.room.players.push(player);
                 });
-                Laya.room.players.sort(item => item.seat_index);
                 this.open_room(server_message);
                 //更新玩家的显示，排除自己！
             }
