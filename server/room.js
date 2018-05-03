@@ -134,7 +134,7 @@ export class Room {
   //除了person外的其它玩家们
   other_players(person) {
     // console.log("查找本玩家%s的其它玩家", person.username);
-    let o_players = this.players.filter(p => p != person);
+    let o_players = this.players.filter(p => p.user_id != person.user_id);
     // console.log(o_players.map(p => p.username));
     return o_players;
   }

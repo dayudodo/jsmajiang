@@ -31814,6 +31814,8 @@ declare class Laya3D {
  * <code>Laya</code> 是全局对象的引用入口集。
  */
 declare class Laya {
+    /**全局唯一的牌桌 */
+    static gameTable: mj.scene.GameTableScene
     /**玩家所在房间 */
     static room: mj.model.Room
     /** 本玩家 */

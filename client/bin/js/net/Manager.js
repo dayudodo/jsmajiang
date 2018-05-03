@@ -213,14 +213,6 @@ var mj;
                 Laya.stage.destroyChildren();
                 Laya.stage.addChild(home);
             }
-            // private server_create_room_ok(server_message: any) {
-            //     let {room_id, seat_index, east} = server_message
-            //     let { god_player } = Laya;
-            //     god_player.seat_index = seat_index
-            //     god_player.east = east
-            //     console.log(`成功创建房间:${room_id}, seat_index: ${god_player.seat_index}`);
-            //     this.open_room(server_message);
-            // }
             hidePlayer(index) {
                 let { gameTable } = this;
                 gameTable["userHead" + index].visible = false;
@@ -234,6 +226,7 @@ var mj;
                 //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
                 this.gameTable = new GameTableScene();
                 let { gameTable } = this;
+                Laya.gameTable = gameTable; //给出一个访问的地方，便于调试
                 //其它的username, user_id在用户加入房间的时候就已经有了。
                 this.hidePlayer(0);
                 this.hidePlayer(1);
@@ -291,24 +284,36 @@ var mj;
                 player.user_id = user_id;
                 player.seat_index = seat_index;
                 Laya.room.players.push(player);
+                // push之后还需要排序，不然获取到的不正确！左手和右边玩家就错位了！
+                Laya.room.players.sort(item => item.seat_index);
                 let { gameTable } = this;
-                //如果本玩家位置比别人的小1，说明我是别人的上一家
-                if (Laya.god_player.seat_index - seat_index == -1) {
-                    //显示右玩家的信息
-                    gameTable.userName2.text = username;
-                    gameTable.userId2.text = user_id;
-                    gameTable.zhuang2.visible = false;
-                    gameTable.gold2.text = "888"; //todo: 用户的积分需要数据库配合
+                //只需要更新其它两个玩家的头像信息，自己的已经显示好了。
+                // let otherPlayers = Laya.room.other_players(Laya.god_player)
+                // console.log(otherPlayers);
+                //todo: 没效率，粗暴的刷新用户头像数据
+                let leftPlayer = Laya.room.left_player(Laya.god_player);
+                if (leftPlayer) {
+                    //显示左玩家的信息
+                    this.showHead(gameTable, leftPlayer, 0);
                 }
-                //如果比别人的大1，说明是我是别人的下一家
-                if (Laya.god_player.seat_index - seat_index == -2) {
+                let rightPlayer = Laya.room.right_player(Laya.god_player);
+                if (rightPlayer) {
                     //显示右玩家的信息
-                    gameTable.userName0.text = username;
-                    gameTable.userId0.text = user_id;
-                    gameTable.zhuang0.visible = false;
-                    gameTable.gold0.text = "888"; //todo: 用户的积分需要数据库配合
+                    this.showHead(gameTable, rightPlayer, 2);
                 }
-                //
+            }
+            /**
+             *
+             * @param gameTable
+             * @param p
+             * @param index 桌面中用户的序列号，右边的是2，左边的是0，上面的是1（卡五星不用）
+             */
+            showHead(gameTable, p, index) {
+                gameTable["userName" + index].text = p.username;
+                gameTable["userId" + index].text = p.user_id;
+                gameTable["zhuang" + index].visible = p.east;
+                gameTable["gold" + index].text = "888"; //todo: 用户的积分需要数据库配合
+                gameTable["userHead" + index].visible = true;
             }
             //玩家成功加入房间
             server_player_enter_room(server_message) {
@@ -325,7 +330,9 @@ var mj;
                     player.east = element.east;
                     Laya.room.players.push(player);
                 });
+                Laya.room.players.sort(item => item.seat_index);
                 this.open_room(server_message);
+                //更新玩家的显示，排除自己！
             }
             server_no_such_room() {
                 console.log("无此房间号");
