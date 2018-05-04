@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
 const g_lobby = new Connector();
-var test_names = ["jack", "rose", "tom", "jerry", "michael", "adam", "bruce"];
+var test_names = ["jack1", "rose2", "tom3", "jerry4", "michael5", "adam6", "bruce7","adam8","david9"];
 var eventsHandler = [
   [g_events.client_testlogin, client_testlogin],
   [g_events.client_create_room, client_create_room],
@@ -32,7 +32,7 @@ wsserver.on("connection", socket => {
   );
   socket.sendmsg({
     type: g_events.server_welcome,
-    welcome: "欢迎来到安哥世界"
+    welcome: "与服务器建立连接，欢迎来到安哥世界"
   });
   const onClose = () => {
     let disconnect_client = g_lobby.dis_connect(socket);

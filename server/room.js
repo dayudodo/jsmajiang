@@ -123,15 +123,14 @@ export class Room {
   get last_join_player() {
     return _.last(this.players);
   }
-
+/** 服务器中的下一个玩家 */
   get next_player() {
     //下一家
     let next_index =
       (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
-    //最后通过座位号来找到玩家,而不是数组序号,更不容易出错
-    //直接使用数组索引即可
-    // return this.players.find(p => p.seat_index == next_index);
-    return this.players[next_index];
+    //最后通过座位号来找到玩家,而不是数组序号,更不容易出错，哪怕是players数组乱序也不要紧
+    return this.players.find(p => p.seat_index == next_index);
+    // return this.players[next_index];
   }
   //除了person外的其它玩家们
   other_players(person) {
@@ -328,6 +327,7 @@ export class Room {
           pai_name: pai_name
         });
       });
+      this.fa_pai(this.next_player)
       return;
       let isRoomPaiEmpty = 0 === this.clone_pai.length;
       let canNormalFaPai = true; //能否正常给下一家发牌

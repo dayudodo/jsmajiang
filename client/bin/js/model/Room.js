@@ -8,18 +8,19 @@ var mj;
             }
             Room.prototype.left_player = function (person) {
                 var index = person.seat_index - 1;
-                index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index;
+                index = (index == -1 ? config.LIMIT_IN_ROOM - 1 : index);
                 var player = this.players.find(function (p) { return p.seat_index == index; });
                 if (player) {
-                    player.ui_index = 0;
+                    player.ui_index = config.UI_LEFT_INDEX;
                 }
                 return player;
             };
             Room.prototype.right_player = function (person) {
                 var index = person.seat_index + 1;
+                index = (index == config.LIMIT_IN_ROOM ? 0 : index);
                 var player = this.players.find(function (p) { return p.seat_index == index; });
                 if (player) {
-                    player.ui_index = 2;
+                    player.ui_index = config.UI_RIGHT_INDEX;
                 }
                 return player;
             };

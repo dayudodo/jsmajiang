@@ -32,8 +32,8 @@ module mj.net {
             //这里我们采用小端
             this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
             //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
-            this.socket.connectByUrl("ws://192.168.2.200:3333");
-            // this.socket.connectByUrl("ws://localhost:3333");
+            // this.socket.connectByUrl("ws://192.168.2.200:3333");
+            this.socket.connectByUrl("ws://localhost:3333");
             this.socket.on(Laya.Event.OPEN, this, this.openHandler);
             this.socket.on(Laya.Event.MESSAGE, this, this.receiveHandler);
             this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);
@@ -420,7 +420,7 @@ module mj.net {
         //玩家成功加入房间
         private server_player_enter_room(server_message: any) {
             let { room_id, username, user_id, east, seat_index, other_players_info } = server_message;
-            console.log(`${username}玩家进入房间${room_id}！seat_index:${seat_index}`)
+            console.log(`${username}玩家进入房间${room_id}, seat_index:${seat_index}`)
             //其实这时候就可以使用room来保存玩家信息了，以后只需要用户来个id以及数据就能够更新显示了。
             Laya.god_player.seat_index = seat_index
             Laya.god_player.east = east
