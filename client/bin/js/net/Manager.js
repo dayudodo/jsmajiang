@@ -168,14 +168,15 @@ var mj;
                     for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
                         var onePai = oneLine.getChildAt(l_index);
                         let paiImgSprite = onePai.getChildAt(0);
-                        console.log(paiImgSprite);
+                        // console.log(paiImgSprite);
                         //如果是一万的图形, 就换成打牌的图形
-                        if ("ui/majiang/zheng_18.png" == paiImgSprite.skin) {
+                        if ((table_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
                             onePai.visible = true;
                             lastValidSprite = paiImgSprite;
                             lastValidSprite.skin = PaiConverter.skinOfZheng(dapai);
                             break;
                         }
+                        //如果是其它玩家的牌，就显示成横牌
                         if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
                             onePai.visible = true;
                             lastValidSprite = paiImgSprite;
@@ -323,57 +324,6 @@ var mj;
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
-                this.show_out('b1');
-                this.show_out('b2');
-                this.show_out('b3');
-                this.show_out('b4');
-                this.show_out('b5');
-                this.show_out('b6');
-                this.show_out('t1');
-                this.show_out('t2');
-                this.show_out('t3');
-                this.show_out('t4');
-                this.show_out('t5');
-                this.show_out('t6');
-                this.show_out('t7');
-                this.show_out('t8');
-                this.show_out('t9');
-                this.show_out('b1');
-                this.show_out('b2');
-                this.show_out('zh', 0);
-                this.show_out('fa', 0);
-                this.show_out('di', 0);
-                this.show_out('b6', 0);
-                this.show_out('t1', 0);
-                this.show_out('t2', 0);
-                this.show_out('t3', 0);
-                this.show_out('t4', 0);
-                this.show_out('t5', 0);
-                this.show_out('t6', 0);
-                this.show_out('t7', 0);
-                this.show_out('t8', 0);
-                this.show_out('t9', 0);
-                this.show_out('b1', 0);
-                this.show_out('b2', 0);
-                this.show_out('b2', 0);
-                this.show_out('b2', 0);
-                this.show_out('zh', 2);
-                this.show_out('fa', 2);
-                this.show_out('di', 2);
-                this.show_out('b6', 2);
-                this.show_out('t1', 2);
-                this.show_out('t2', 2);
-                this.show_out('t3', 2);
-                this.show_out('t4', 2);
-                this.show_out('t5', 2);
-                this.show_out('t6', 2);
-                this.show_out('t7', 2);
-                this.show_out('t8', 2);
-                this.show_out('t9', 2);
-                this.show_out('b1', 2);
-                this.show_out('b2', 2);
-                this.show_out('b2', 2);
-                this.show_out('b2', 2);
                 Laya.stage.addChild(gameTable);
             }
             server_other_player_enter_room(server_message) {

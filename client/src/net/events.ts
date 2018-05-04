@@ -21,6 +21,7 @@ namespace events {
   export const server_table_fa_pai = "server_table_fa_pai";
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
+  export const server_gameover = "server_gameover";
 
 
 

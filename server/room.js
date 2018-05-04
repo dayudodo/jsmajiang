@@ -144,13 +144,13 @@ export class Room {
     //左手玩家
     let index = person.seat_index - 1;
     index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index;
-    return this.players.find(p=>p.seat_index == index)
+    return this.players.find(p => p.seat_index == index);
   }
   right_player(person) {
     //右手玩家
     let index = person.seat_index + 1;
     index = index == config.LIMIT_IN_ROOM ? 0 : index;
-    return this.players.find(p=>p.seat_index == index)
+    return this.players.find(p => p.seat_index == index);
   }
   //玩家选择碰牌，或者是超时自动跳过！
   confirm_peng(io, socket) {
@@ -331,9 +331,12 @@ export class Room {
       let isRoomPaiEmpty = 0 === this.clone_pai.length;
       let canNormalFaPai = true; //能否正常给下一家发牌
       if (isRoomPaiEmpty) {
-        // socket.emit("game over");
-        // socket.to(room_name).emit("game over");
-        io.to(room_name).emit("game over");
+        //告诉所有人游戏结束了
+        this.players.forEach(p => {
+          p.socket.sendmsg({
+            type: g_events.server_gameover
+          });
+        });
         //todo:告诉其它人哪个是赢家或者是平局
         // 牌要重新发了
         this.restart_game();
