@@ -12,6 +12,11 @@ var mj;
                 this.offsetY = 40;
                 this.offsetX = 10;
                 this.prevSelectedPai = null;
+                // 是否隐藏了打牌所在区域sprite
+                this.isFirstHideOut0 = true;
+                this.isFirstHideOut1 = true;
+                this.isFirstHideOut2 = true;
+                this.isFirstHideOut3 = true;
                 this.connect();
             }
             connect() {
@@ -115,8 +120,9 @@ var mj;
                         pai: daPai
                     });
                     Laya.god_player.da_pai(daPai);
+                    this.show_out(daPai);
                     // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
-                    //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的函数？
+                    //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                     //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                     newPaiSprite.y += this.offsetY;
                     this.paiArray.forEach((item, index) => {
@@ -137,6 +143,49 @@ var mj;
                     }
                     this.prevSelectedPai = newPaiSprite;
                     newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
+                }
+            }
+            /** 将打牌显示在ui中的out3 sprite之中 */
+            show_out(dapai, table_index = 3) {
+                let outSprite = this.gameTable["out" + table_index];
+                if (this["isFirstHideOut" + table_index]) {
+                    //先隐藏所有内部的图
+                    for (let index = 0; index < outSprite.numChildren; index++) {
+                        const oneLine = outSprite.getChildAt(index);
+                        for (var l_index = 0; l_index < oneLine.numChildren; l_index++) {
+                            var onePai = oneLine.getChildAt(l_index);
+                            onePai.visible = false;
+                        }
+                    }
+                    //只需要隐藏一次，下一次就不需要了，不然以前显示的打牌就被隐藏了
+                    this["isFirstHideOut" + table_index] = false;
+                }
+                outSprite.visible = true;
+                //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
+                let lastValidSprite = null;
+                for (let index = 0; index < outSprite.numChildren; index++) {
+                    const oneLine = outSprite.getChildAt(index);
+                    for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
+                        var onePai = oneLine.getChildAt(l_index);
+                        let paiImgSprite = onePai.getChildAt(0);
+                        console.log(paiImgSprite);
+                        //如果是一万的图形, 就换成打牌的图形
+                        if ("ui/majiang/zheng_18.png" == paiImgSprite.skin) {
+                            onePai.visible = true;
+                            lastValidSprite = paiImgSprite;
+                            lastValidSprite.skin = PaiConverter.skinOfZheng(dapai);
+                            break;
+                        }
+                        if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
+                            onePai.visible = true;
+                            lastValidSprite = paiImgSprite;
+                            lastValidSprite.skin = PaiConverter.skinOfCe(dapai);
+                            break;
+                        }
+                    }
+                    if (lastValidSprite) {
+                        break;
+                    }
                 }
             }
             show_right_player_shoupai(gameTable, server_message) {
@@ -204,10 +253,11 @@ var mj;
                 console.log("welcome:", server_message.welcome);
             }
             server_login(server_message) {
-                let { username, user_id } = server_message;
-                console.log("登录成功, 用户名：%s, 用户id: %s", username, user_id);
+                let { username, user_id, score } = server_message;
+                console.log("登录成功, 用户名：%s, 用户id: %s, 积分：%s", username, user_id, score);
                 Laya.god_player.username = username;
                 Laya.god_player.user_id = user_id;
+                Laya.god_player.score = score;
                 //进入主界面！
                 let home = new mj.scene.MainScene(username, user_id);
                 Laya.stage.destroyChildren();
@@ -239,7 +289,7 @@ var mj;
                 gameTable.userName3.text = Laya.god_player.username;
                 gameTable.userId3.text = Laya.god_player.user_id;
                 gameTable.zhuang3.visible = Laya.god_player.east; //todo: 应该有一个扔骰子选庄的过程，测试阶段创建房间人就是庄
-                gameTable.gold3.text = "888"; //todo: 用户的积分需要数据库配合
+                gameTable.score3.text = Laya.god_player.score.toString(); //todo: 用户的积分需要数据库配合
                 gameTable.userHead3.visible = true;
                 // var res: any = Laya.loader.getRes("res/atlas/ui/majiang.json");
                 //让按钮有点儿点击的效果！
@@ -273,10 +323,61 @@ var mj;
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
+                this.show_out('b1');
+                this.show_out('b2');
+                this.show_out('b3');
+                this.show_out('b4');
+                this.show_out('b5');
+                this.show_out('b6');
+                this.show_out('t1');
+                this.show_out('t2');
+                this.show_out('t3');
+                this.show_out('t4');
+                this.show_out('t5');
+                this.show_out('t6');
+                this.show_out('t7');
+                this.show_out('t8');
+                this.show_out('t9');
+                this.show_out('b1');
+                this.show_out('b2');
+                this.show_out('zh', 0);
+                this.show_out('fa', 0);
+                this.show_out('di', 0);
+                this.show_out('b6', 0);
+                this.show_out('t1', 0);
+                this.show_out('t2', 0);
+                this.show_out('t3', 0);
+                this.show_out('t4', 0);
+                this.show_out('t5', 0);
+                this.show_out('t6', 0);
+                this.show_out('t7', 0);
+                this.show_out('t8', 0);
+                this.show_out('t9', 0);
+                this.show_out('b1', 0);
+                this.show_out('b2', 0);
+                this.show_out('b2', 0);
+                this.show_out('b2', 0);
+                this.show_out('zh', 2);
+                this.show_out('fa', 2);
+                this.show_out('di', 2);
+                this.show_out('b6', 2);
+                this.show_out('t1', 2);
+                this.show_out('t2', 2);
+                this.show_out('t3', 2);
+                this.show_out('t4', 2);
+                this.show_out('t5', 2);
+                this.show_out('t6', 2);
+                this.show_out('t7', 2);
+                this.show_out('t8', 2);
+                this.show_out('t9', 2);
+                this.show_out('b1', 2);
+                this.show_out('b2', 2);
+                this.show_out('b2', 2);
+                this.show_out('b2', 2);
                 Laya.stage.addChild(gameTable);
             }
             server_other_player_enter_room(server_message) {
-                let { username, user_id, seat_index } = server_message;
+                let { username, user_id, seat_index, score } = server_message;
                 //添加其它玩家的信息，还得看顺序如何！根据顺序来显示玩家的牌面，服务器里面保存的位置信息，可惜与layabox里面正好是反的！
                 //先看这个玩家是否已经进入过，如果进入过，说明是断线的。
                 //不可能有一个玩家进入两次房间，除非是掉线。
@@ -285,6 +386,7 @@ var mj;
                 player.username = username;
                 player.user_id = user_id;
                 player.seat_index = seat_index;
+                player.score = score;
                 Laya.room.players.push(player);
                 let { gameTable } = this;
                 //只需要更新其它两个玩家的头像信息，自己的已经显示好了。
@@ -314,7 +416,7 @@ var mj;
                 gameTable["userName" + index].text = p.username;
                 gameTable["userId" + index].text = p.user_id;
                 gameTable["zhuang" + index].visible = p.east;
-                gameTable["gold" + index].text = "888"; //todo: 用户的积分需要数据库配合
+                gameTable["score" + index].text = p.score.toString(); //todo: 用户的积分需要数据库配合
                 gameTable["userHead" + index].visible = true;
             }
             //玩家成功加入房间
@@ -330,6 +432,7 @@ var mj;
                     player.user_id = element.user_id;
                     player.seat_index = element.seat_index;
                     player.east = element.east;
+                    player.score = element.score;
                     Laya.room.players.push(player);
                 });
                 this.open_room(server_message);

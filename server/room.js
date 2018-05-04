@@ -54,13 +54,14 @@ export class Room {
     //   room_id: this.id,
     //   seat_index: player.seat_index
     // });
-    //告诉其它人player进入房间！
+    //首先告诉其它人player进入房间！客户端会添加此玩家
     this.other_players(player).forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_other_player_enter_room,
         username: player.username,
         user_id: player.user_id,
-        seat_index: player.seat_index
+        seat_index: player.seat_index,
+        score: player.score
       });
     });
     //用户加入房间，肯定是2，3玩家，需要服务器发送时添加其它玩家的数据
@@ -70,10 +71,11 @@ export class Room {
         username: item.username,
         user_id: item.user_id,
         seat_index: item.seat_index,
-        east: item.east
+        east: item.east,
+        score: item.score
       };
     });
-    //最后一个进入房间的其实应该得到其它两个玩家的数据
+    //给自己发消息时携带其它玩家的信息
     player.socket.sendmsg({
       type: g_events.server_player_enter_room,
       room_id: this.id,

@@ -37,6 +37,8 @@ export class Player {
     this.is_ting = false;
     //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
     this.is_thinking_tingliang = false;
+    /**玩家的积分 */
+    this.score = 0;
   }
   /**
    * 加入参数pai到玩家手牌之中

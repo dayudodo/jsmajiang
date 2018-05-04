@@ -6,14 +6,12 @@ var mj;
             constructor() {
                 this.shou_pai = [];
                 this.used_pai = [];
-                /**
-                 * 是否是庄家
-                 */
+                /**         是否是庄家         */
                 this.east = false;
-                /**
-                 * 玩家的席位！
-                 */
+                /**         玩家的席位！         */
                 this.seat_index = null;
+                /**玩家的积分 */
+                this.score = 0;
             }
             /**
              * 加入参数pai到玩家手牌之中
@@ -26,8 +24,8 @@ var mj;
                 return this._table_pai;
             }
             /**
-             * 删除玩家手牌index处的牌
-             * @param index
+             * 从玩家手牌中删除pai
+             * @param pai
              */
             da_pai(pai) {
                 let firstIndex = this.shou_pai.indexOf(pai);

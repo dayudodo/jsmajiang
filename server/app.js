@@ -139,14 +139,6 @@ function client_create_room(client_message, socket) {
         conn.player.seat_index
       }`
     );
-    // console.dir(conn)
-    //成功创建房间后要给前端发送成功的消息
-    // socket.sendmsg({
-    //   type: g_events.server_create_room_ok,
-    //   room_id: owner_room.id,
-    //   seat_index: conn.player.seat_index,
-    //   east: conn.player.east
-    // });
     conn.room.player_enter_room(socket)
   }
 }
@@ -162,6 +154,8 @@ function client_testlogin(client_message, socket) {
     username: shift_name,
     user_id: g_lobby.generate_user_id()
   });
+  //todo: 模拟用户的积分，暂时定为其id增长1万。
+  s_player.score = s_player.user_id + 10000
   console.log(
     `${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${
       socket.id
@@ -171,7 +165,8 @@ function client_testlogin(client_message, socket) {
   socket.sendmsg({
     type: g_events.server_login,
     user_id: s_player.user_id,
-    username: s_player.username
+    username: s_player.username,
+    score: s_player.score
   });
 }
 
@@ -188,12 +183,12 @@ function client_player_ready(client_message, socket) {
   if (room.all_ready) {
     console.log(
       chalk.green(
-        `===>房间${room.id}全部玩家准备完毕，可以游戏啦！同步所有玩家信息`
+        `===>房间${room.id}全部玩家准备完毕，可以游戏啦！`
       )
     );
     // room.send_all_players_message();
     //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
-    // room.start_game();
+    room.start_game();
   }
 }
 

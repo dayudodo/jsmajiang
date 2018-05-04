@@ -7,14 +7,12 @@ module mj.model {
         public room_name: string
         public hupai_zhang: string
         private _table_pai: string
-        /**
-         * 是否是庄家
-         */
+        /**         是否是庄家         */
         public east = false;
-        /**
-         * 玩家的席位！
-         */
+        /**         玩家的席位！         */
         public seat_index = null;
+        /**玩家的积分 */
+        public score = 0;
 
         constructor() {
         }
@@ -29,8 +27,8 @@ module mj.model {
             return this._table_pai
         }
         /**
-         * 删除玩家手牌index处的牌
-         * @param index 
+         * 从玩家手牌中删除pai
+         * @param pai 
          */
         da_pai(pai) {
 

@@ -39,6 +39,14 @@ var mj;
             static skinOfShou(str) {
                 return `ui/majiang/${this.ToShou(str)}`;
             }
+            /** 打出牌的样子，以zheng开头的图形 */
+            static skinOfZheng(str) {
+                return `ui/majiang/${this.ToZheng(str)}`;
+            }
+            /** 别家打出牌的样子，以ce开头的图形 */
+            static skinOfCe(str) {
+                return `ui/majiang/${this.ToCe(str)}`;
+            }
             static ToZheng(str) {
                 return `zheng_${this.ToNumber(str)}.png`;
             }

@@ -20390,7 +20390,7 @@ declare module laya.net {
          */
         send(data: any): void;
         /**
-         * 发送消息对象msg到服务器
+         * 发送消息对象msg到服务器，代码写在Laya.core.js中
          * @param msg 消息对象
          */
         sendmsg(msg: any): void;
