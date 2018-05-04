@@ -19,5 +19,6 @@ var events;
     events.server_table_fa_pai = "server_table_fa_pai";
     events.server_dapai = "server_dapai";
     events.server_dapai_other = "server_dapai_other";
+    events.server_gameover = "server_gameover";
 })(events || (events = {}));
 //# sourceMappingURL=events.js.map

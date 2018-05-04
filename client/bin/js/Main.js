@@ -11,8 +11,8 @@ var LoadingUI = ui.test.LoadingUI;
 var LoginUI = ui.test.LoginUI;
 var MainUI = ui.test.MainUI;
 var test = ui.test;
-class GameMain {
-    constructor() {
+var GameMain = /** @class */ (function () {
+    function GameMain() {
         Laya.init(1920, 1080);
         Laya.stage.scaleMode = Stage.SCALE_SHOWALL;
         Laya.stage.alignH = Stage.ALIGN_CENTER;
@@ -30,13 +30,13 @@ class GameMain {
         this.testloading = new LoadingUI();
         Laya.stage.addChild(this.testloading);
     }
-    onProgress(value) {
+    GameMain.prototype.onProgress = function (value) {
         // console.log("progress:", value);
         this.testloading.progressBar.value = value;
         this.testloading.progressBarLabel.text = "载入中 " + Math.ceil(value * 100) + "%";
-    }
-    onLoaderComplete() {
-        console.log(`loader complete`);
+    };
+    GameMain.prototype.onLoaderComplete = function () {
+        console.log("loader complete");
         // console.log(window.client);
         Laya.stage.removeChild(this.testloading);
         // var res: any = Laya.loader.getRes("res/atlas/base.atlas");
@@ -46,11 +46,11 @@ class GameMain {
         this.testLogin = new LoginScene();
         // this.testui = new test.MainUI()
         Laya.stage.addChild(this.testLogin);
-    }
-    onloaded(obj) {
+    };
+    GameMain.prototype.onloaded = function (obj) {
         // Laya.stage.addChild(obj)
-    }
-    makeAssets() {
+    };
+    GameMain.prototype.makeAssets = function () {
         var assets = [];
         assets.push({
             url: "res/atlas/base.atlas",
@@ -89,8 +89,9 @@ class GameMain {
             type: Loader.ATLAS
         });
         return assets;
-    }
-}
+    };
+    return GameMain;
+}());
 //最后还需要新建一个对象才能跑起来。
 new GameMain();
 //# sourceMappingURL=Main.js.map

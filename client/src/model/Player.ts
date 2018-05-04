@@ -13,12 +13,12 @@ module mj.model {
         public seat_index = null;
         /**玩家的积分 */
         public score = 0;
+        /** 在界面中的序号，左玩家是0，右玩家是2 */
+        public ui_index: number = null;
 
         constructor() {
         }
-        /**
-         * 加入参数pai到玩家手牌之中
-         */
+        /**         加入参数pai到玩家手牌之中         */
         set table_pai(pai) {
             this._table_pai = pai
             this.shou_pai.push(pai)
@@ -26,10 +26,7 @@ module mj.model {
         get table_pai() {
             return this._table_pai
         }
-        /**
-         * 从玩家手牌中删除pai
-         * @param pai 
-         */
+        /**         从玩家手牌中删除pai         */
         da_pai(pai) {
 
             let firstIndex = this.shou_pai.indexOf(pai);
@@ -40,7 +37,7 @@ module mj.model {
             } else {
                 throw new Error(`${this.username}居然打了张不存在的牌？${pai}`);
             }
-            this._table_pai = null //打牌之后说明桌面牌是真的没有了
+            this._table_pai = null //打牌之后说明玩家的桌面牌是真的没有了
         }
     }
 }

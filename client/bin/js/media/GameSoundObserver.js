@@ -3,39 +3,41 @@ var mj;
     var manager;
     (function (manager) {
         var AudioManager = mj.manager.AudioManager;
-        class GameSoundObserver {
-            constructor() { }
-            onPaiOut(sex, pai) {
+        var GameSoundObserver = /** @class */ (function () {
+            function GameSoundObserver() {
+            }
+            GameSoundObserver.prototype.onPaiOut = function (sex, pai) {
                 AudioManager.paiOut(sex, pai);
-            }
-            onPaiClick(pai) {
+            };
+            GameSoundObserver.prototype.onPaiClick = function (pai) {
                 AudioManager.paiClick();
-            }
-            onGang(sex) {
+            };
+            GameSoundObserver.prototype.onGang = function (sex) {
                 AudioManager.gang(sex);
-            }
-            onPeng(sex) {
+            };
+            GameSoundObserver.prototype.onPeng = function (sex) {
                 AudioManager.peng(sex);
-            }
-            onChi(sex) {
+            };
+            GameSoundObserver.prototype.onChi = function (sex) {
                 AudioManager.chi(sex);
-            }
-            onDealCard() {
+            };
+            GameSoundObserver.prototype.onDealCard = function () {
                 AudioManager.dealCard();
-            }
-            onButtonClick() {
+            };
+            GameSoundObserver.prototype.onButtonClick = function () {
                 AudioManager.buttonClick();
-            }
-            onTimeupAlarm() {
+            };
+            GameSoundObserver.prototype.onTimeupAlarm = function () {
                 AudioManager.timeupAlarm();
-            }
-            onStopTimeupAlarm() {
+            };
+            GameSoundObserver.prototype.onStopTimeupAlarm = function () {
                 AudioManager.stopTimeupAlarm();
-            }
-            onEnter() {
+            };
+            GameSoundObserver.prototype.onEnter = function () {
                 AudioManager.enter();
-            }
-        }
+            };
+            return GameSoundObserver;
+        }());
         manager.GameSoundObserver = GameSoundObserver;
     })(manager = mj.manager || (mj.manager = {}));
 })(mj || (mj = {}));

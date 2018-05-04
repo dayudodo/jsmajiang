@@ -317,7 +317,6 @@ export class Room {
       //向房间内的所有玩家显示出当前玩家打的牌
       player.socket.sendmsg({
         type: g_events.server_dapai,
-        user_id: p.user_id,
         pai_name: pai_name
       });
       //告诉其它玩家哪个打牌了, 其它信息用户在加入房间的时候已经发送过了。
@@ -325,9 +324,11 @@ export class Room {
         p.socket.sendmsg({
           type: g_events.server_dapai_other,
           username: player.username,
-          user_id: player.user_id
+          user_id: player.user_id,
+          pai_name: pai_name
         });
       });
+      return;
       let isRoomPaiEmpty = 0 === this.clone_pai.length;
       let canNormalFaPai = true; //能否正常给下一家发牌
       if (isRoomPaiEmpty) {
@@ -357,7 +358,10 @@ export class Room {
             if (item_player.liang_pai || Majiang.isDaHu(hupai_types)) {
               this.hupai_zhang = pai_name; //一开始是想保存在玩家类中，后来发现保存在房间里面会更方便！毕竟还要通知
               this.hupai_types = hupai_types;
-              item_player.socket.emit("server_canHu");
+              // item_player.socket.emit("server_canHu");
+              item_player.socket.sendmsg({
+                type: g_events.server_canHu
+              });
               //todo: 等待20秒，过时发牌
             }
           }
@@ -375,8 +379,11 @@ export class Room {
                 }可以杠牌${pai_name}`
               );
               //告诉玩家你可以杠牌了
-              item_player.socket.emit("server_canGang", pai_name);
-
+              // item_player.socket.emit("server_canGang", pai_name);
+              item_player.socket.sendmsg({
+                type: g_events.server_canGang,
+                pai_name: pai_name
+              });
               //只能碰，就用碰的办法处理！
             } else {
               console.log(
@@ -389,7 +396,11 @@ export class Room {
                   item_player.username
                 }的手牌为:${item_player.shou_pai.join(" ")}`
               );
-              item_player.socket.emit("server_canPeng", pai_name);
+              // item_player.socket.emit("server_canPeng", pai_name);
+              item_player.socket.sendmsg({
+                type: g_events.server_canPeng,
+                pai_name: pai_name
+              });
             }
           }
         }

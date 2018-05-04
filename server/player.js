@@ -66,7 +66,7 @@ export class Player {
     } else {
       throw new Error(`${this.username}居然打了张不存在的牌？${pai}`);
     }
-    this._table_pai = null; //打牌之后说明桌面牌是真的没有了
+    this._table_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
   }
 }
 

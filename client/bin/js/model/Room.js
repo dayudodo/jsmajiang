@@ -2,25 +2,33 @@ var mj;
 (function (mj) {
     var model;
     (function (model) {
-        class Room {
-            constructor() {
+        var Room = /** @class */ (function () {
+            function Room() {
                 this.players = [];
             }
-            left_player(person) {
-                let index = person.seat_index - 1;
+            Room.prototype.left_player = function (person) {
+                var index = person.seat_index - 1;
                 index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index;
-                return this.players.find(p => p.seat_index == index);
-            }
-            right_player(person) {
-                let index = person.seat_index + 1;
-                index = index == config.LIMIT_IN_ROOM ? 0 : index;
-                return this.players.find(p => p.seat_index == index);
-            }
+                var player = this.players.find(function (p) { return p.seat_index == index; });
+                if (player) {
+                    player.ui_index = 0;
+                }
+                return player;
+            };
+            Room.prototype.right_player = function (person) {
+                var index = person.seat_index + 1;
+                var player = this.players.find(function (p) { return p.seat_index == index; });
+                if (player) {
+                    player.ui_index = 2;
+                }
+                return player;
+            };
             /** 除了person外的其它玩家们 */
-            other_players(person) {
-                return this.players.filter(p => p.user_id != person.user_id);
-            }
-        }
+            Room.prototype.other_players = function (person) {
+                return this.players.filter(function (p) { return p.user_id != person.user_id; });
+            };
+            return Room;
+        }());
         model.Room = Room;
     })(model = mj.model || (mj.model = {}));
 })(mj || (mj = {}));

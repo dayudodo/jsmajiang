@@ -31,9 +31,9 @@ module mj.net {
             this.socket = new Laya.Socket();
             //这里我们采用小端
             this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
-            //建立连接
-            // this.socket.connectByUrl("ws://192.168.2.200:3333");
-            this.socket.connectByUrl("ws://localhost:3333");
+            //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
+            this.socket.connectByUrl("ws://192.168.2.200:3333");
+            // this.socket.connectByUrl("ws://localhost:3333");
             this.socket.on(Laya.Event.OPEN, this, this.openHandler);
             this.socket.on(Laya.Event.MESSAGE, this, this.receiveHandler);
             this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);
@@ -57,15 +57,20 @@ module mj.net {
             ]
 
         }
-        private server_gameover(){
+        private server_gameover() {
             console.log('server_gameover');
-            
+
         }
         private server_dapai_other(server_message) {
+            let { username,user_id, pai_name} = server_message
+            console.log(`${username}, id: ${user_id} 打牌${pai_name}`);
+            let player = Laya.room.players.find(p=>p.user_id == user_id)
+            this.show_out(pai_name, player.ui_index)
 
         }
         private server_dapai(server_message) {
-            
+            let {pai_name} = server_message
+            console.log(`服务器确认你已打牌 ${pai_name}`);
         }
         private server_table_fa_pai(server_message) {
             //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
@@ -140,7 +145,7 @@ module mj.net {
                     type: events.client_da_pai,
                     pai: daPai
                 });
-                Laya.god_player.da_pai(daPai);
+                Laya.god_player.da_pai(daPai)
                 this.show_out(daPai)
                 // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
                 //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
@@ -198,7 +203,7 @@ module mj.net {
                     // console.log(paiImgSprite);
 
                     //如果是一万的图形, 就换成打牌的图形
-                    if ( (table_index == 3) &&  "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
+                    if ((table_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
                         onePai.visible = true
                         lastValidSprite = paiImgSprite
                         lastValidSprite.skin = PaiConverter.skinOfZheng(dapai)

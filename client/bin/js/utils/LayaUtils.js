@@ -8,10 +8,10 @@ var mj;
         /**
          * @author dayudodo@gmail.com 2018/4/28.
          */
-        class LayaUtils {
-            constructor() {
+        var LayaUtils = /** @class */ (function () {
+            function LayaUtils() {
             }
-            static clone(node) {
+            LayaUtils.clone = function (node) {
                 var i;
                 if (node instanceof Image) {
                     // var image:Image = new Image(node);
@@ -20,8 +20,8 @@ var mj;
                     this.copyAttri(distImage, image);
                     distImage.skin = image.skin;
                     distImage.sizeGrid = image.sizeGrid;
-                    for (let i = 0; i < image.numChildren; i++) {
-                        distImage.addChild(this.clone(image.getChildAt(i)));
+                    for (var i_1 = 0; i_1 < image.numChildren; i_1++) {
+                        distImage.addChild(this.clone(image.getChildAt(i_1)));
                     }
                     return distImage;
                 }
@@ -29,40 +29,41 @@ var mj;
                     var sprite = node;
                     var distSprite = new Sprite();
                     this.copyAttri(distSprite, sprite);
-                    for (let i = 0; i < node.numChildren; i++) {
-                        distSprite.addChild(this.clone(node.getChildAt(i)));
+                    for (var i_2 = 0; i_2 < node.numChildren; i_2++) {
+                        distSprite.addChild(this.clone(node.getChildAt(i_2)));
                     }
                     return distSprite;
                 }
                 else {
                     throw new Error("不支持的类型:" + typeof node);
                 }
-            }
-            static copyAttri(dist, sprite) {
+            };
+            LayaUtils.copyAttri = function (dist, sprite) {
                 dist.pos(sprite.x, sprite.y);
                 dist.size(sprite.width, sprite.height);
                 dist.scale(sprite.scaleX, sprite.scaleY);
                 dist.pivot(sprite.pivotX, sprite.pivotY);
                 dist.skew(sprite.skewX, sprite.skewY);
                 dist.name = sprite.name;
-            }
-            static handlerButton(btn) {
+            };
+            LayaUtils.handlerButton = function (btn) {
                 btn.pivot(btn.width / 2, btn.height / 2);
                 btn.pos(btn.x + btn.width / 2, btn.y + btn.height / 2);
-                btn.on(Event.MOUSE_DOWN, btn, () => {
+                btn.on(Event.MOUSE_DOWN, btn, function () {
                     btn.scale(0.85, 0.85);
                 });
-                btn.on(Event.MOUSE_UP, btn, () => {
+                btn.on(Event.MOUSE_UP, btn, function () {
                     btn.scale(1, 1);
                 });
-                btn.on(Event.MOUSE_OUT, btn, () => {
+                btn.on(Event.MOUSE_OUT, btn, function () {
                     btn.scale(1, 1);
                 });
-            }
-            static random(max) {
+            };
+            LayaUtils.random = function (max) {
                 return Math.floor(Math.random() * max);
-            }
-        }
+            };
+            return LayaUtils;
+        }());
         utils.LayaUtils = LayaUtils;
     })(utils = mj.utils || (mj.utils = {}));
 })(mj || (mj = {}));

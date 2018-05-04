@@ -10,10 +10,12 @@ var mj;
         var N_BING = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         var N_TIAO = [9, 10, 11, 12, 13, 14, 15, 16, 17];
         var N_ZHIPAI = [31, 32, 33];
-        class PaiConvertor {
+        var PaiConvertor = /** @class */ (function () {
+            function PaiConvertor() {
+            }
             //转换b1到11， t1到22，
-            static ToNumber(str) {
-                let index = BING.indexOf(str);
+            PaiConvertor.ToNumber = function (str) {
+                var index = BING.indexOf(str);
                 if (index > -1) {
                     return N_BING[index];
                 }
@@ -26,61 +28,65 @@ var mj;
                     return N_ZHIPAI[index];
                 }
                 if (index == -1) {
-                    throw new Error(`错误的参数${str}`);
+                    throw new Error("\u9519\u8BEF\u7684\u53C2\u6570" + str);
                 }
-            }
-            static ToShou(str) {
-                return `shou_${this.ToNumber(str)}.png`;
-            }
+            };
+            PaiConvertor.ToShou = function (str) {
+                return "shou_" + this.ToNumber(str) + ".png";
+            };
             /**
              * 返回类似于ui/majiang/shou_??.png的字符串，用于替换麻将牌的显示
              * @param str
              */
-            static skinOfShou(str) {
-                return `ui/majiang/${this.ToShou(str)}`;
-            }
+            PaiConvertor.skinOfShou = function (str) {
+                return "ui/majiang/" + this.ToShou(str);
+            };
             /** 打出牌的样子，以zheng开头的图形 */
-            static skinOfZheng(str) {
-                return `ui/majiang/${this.ToZheng(str)}`;
-            }
+            PaiConvertor.skinOfZheng = function (str) {
+                return "ui/majiang/" + this.ToZheng(str);
+            };
             /** 别家打出牌的样子，以ce开头的图形 */
-            static skinOfCe(str) {
-                return `ui/majiang/${this.ToCe(str)}`;
-            }
-            static ToZheng(str) {
-                return `zheng_${this.ToNumber(str)}.png`;
-            }
+            PaiConvertor.skinOfCe = function (str) {
+                return "ui/majiang/" + this.ToCe(str);
+            };
+            PaiConvertor.ToZheng = function (str) {
+                return "zheng_" + this.ToNumber(str) + ".png";
+            };
             /**
              * 转化成左右风格的牌面（牌是横着的），以ce开头的图片
              * @param str
              */
-            static ToCe(str) {
-                return `ce_${this.ToNumber(str)}.png`;
-            }
+            PaiConvertor.ToCe = function (str) {
+                return "ce_" + this.ToNumber(str) + ".png";
+            };
             /**
              * 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串
              * @param all_pais 所有服务器发过来的牌
              */
-            static ToShouArray(all_pais) {
-                return all_pais.map(item => {
-                    return this.ToShou(item);
+            PaiConvertor.ToShouArray = function (all_pais) {
+                var _this = this;
+                return all_pais.map(function (item) {
+                    return _this.ToShou(item);
                 });
-            }
-            static ToZhengArray(all_pais) {
-                return all_pais.map(item => {
-                    return this.ToZheng(item);
+            };
+            PaiConvertor.ToZhengArray = function (all_pais) {
+                var _this = this;
+                return all_pais.map(function (item) {
+                    return _this.ToZheng(item);
                 });
-            }
+            };
             /**
              * 转换成以ce开头的横牌url数组，比如fa,zh变成ce_31.png, ce_32.png
              * @param all_pais
              */
-            static ToCeArray(all_pais) {
-                return all_pais.map(item => {
-                    return this.ToCe(item);
+            PaiConvertor.ToCeArray = function (all_pais) {
+                var _this = this;
+                return all_pais.map(function (item) {
+                    return _this.ToCe(item);
                 });
-            }
-        }
+            };
+            return PaiConvertor;
+        }());
         utils.PaiConvertor = PaiConvertor;
     })(utils = mj.utils || (mj.utils = {}));
 })(mj || (mj = {}));

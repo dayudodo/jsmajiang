@@ -6,8 +6,8 @@ var mj;
         var PaiConverter = mj.utils.PaiConvertor;
         var LayaUtils = mj.utils.LayaUtils;
         var DialogScene = mj.scene.DialogScene;
-        class Manager {
-            constructor() {
+        var Manager = /** @class */ (function () {
+            function Manager() {
                 this.paiArray = [];
                 this.offsetY = 40;
                 this.offsetX = 10;
@@ -19,16 +19,16 @@ var mj;
                 this.isFirstHideOut3 = true;
                 this.connect();
             }
-            connect() {
+            Manager.prototype.connect = function () {
                 this.byte = new Laya.Byte();
                 //这里我们采用小端
                 this.byte.endian = Laya.Byte.LITTLE_ENDIAN;
                 this.socket = new Laya.Socket();
                 //这里我们采用小端
                 this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
-                //建立连接
-                // this.socket.connectByUrl("ws://192.168.2.200:3333");
-                this.socket.connectByUrl("ws://localhost:3333");
+                //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
+                this.socket.connectByUrl("ws://192.168.2.200:3333");
+                // this.socket.connectByUrl("ws://localhost:3333");
                 this.socket.on(Laya.Event.OPEN, this, this.openHandler);
                 this.socket.on(Laya.Event.MESSAGE, this, this.receiveHandler);
                 this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);
@@ -44,44 +44,55 @@ var mj;
                     // [events.server_create_room_ok, this.server_create_room_ok],
                     [events.server_receive_ready, this.server_receive_ready],
                     [events.server_game_start, this.server_game_start],
+                    [events.server_gameover, this.server_gameover],
                     [events.server_table_fa_pai, this.server_table_fa_pai],
                     [events.server_dapai, this.server_dapai],
                     [events.server_dapai_other, this.server_dapai_other],
                 ];
-            }
-            server_dapai_other(server_message) {
-            }
-            server_dapai(server_message) {
-            }
-            server_table_fa_pai(server_message) {
+            };
+            Manager.prototype.server_gameover = function () {
+                console.log('server_gameover');
+            };
+            Manager.prototype.server_dapai_other = function (server_message) {
+                var username = server_message.username, user_id = server_message.user_id, pai_name = server_message.pai_name;
+                console.log(username + ", id: " + user_id + " \u6253\u724C" + pai_name);
+                var player = Laya.room.players.find(function (p) { return p.user_id == user_id; });
+                this.show_out(pai_name, player.ui_index);
+            };
+            Manager.prototype.server_dapai = function (server_message) {
+                var pai_name = server_message.pai_name;
+                console.log("\u670D\u52A1\u5668\u786E\u8BA4\u4F60\u5DF2\u6253\u724C " + pai_name);
+            };
+            Manager.prototype.server_table_fa_pai = function (server_message) {
                 //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
                 // console.log(server_message.pai);
-                let pai = server_message.pai;
+                var pai = server_message.pai;
                 Laya.god_player.table_pai = pai;
-                let { gameTable } = this;
+                var gameTable = this.gameTable;
                 //显示服务器发过来的牌
                 gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai);
                 gameTable.fa3.visible = true;
-            }
-            server_game_start(server_message) {
+            };
+            Manager.prototype.server_game_start = function (server_message) {
                 //游戏开始了
                 //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
                 //客户端也需要保存好当前的牌，以便下一步处理
                 Laya.god_player.shou_pai = server_message.shou_pai;
                 // console.log(server_message);
-                let { gameTable } = this;
+                var gameTable = this.gameTable;
                 this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai);
                 //test: 显示上一玩家所有的牌
                 this.show_left_player_shoupai(gameTable, server_message);
                 //显示下一玩家所有牌
                 this.show_right_player_shoupai(gameTable, server_message);
-            }
-            show_god_player_shoupai(gameTable, shou_pai) {
-                let { socket } = this;
+            };
+            Manager.prototype.show_god_player_shoupai = function (gameTable, shou_pai) {
+                var _this = this;
+                var socket = this.socket;
                 // let all_pais: Array<string> = shou_pai
-                let all_pai_urls = PaiConverter.ToShouArray(shou_pai);
-                let one_shou_pai_width = gameTable.shou3.width;
-                let posiX = gameTable.shou3.x;
+                var all_pai_urls = PaiConverter.ToShouArray(shou_pai);
+                var one_shou_pai_width = gameTable.shou3.width;
+                var posiX = gameTable.shou3.x;
                 gameTable.shouPai3.visible = true; //可能要先显示这个，因为其是父容器！
                 //隐藏里面的牌，需要的时候才会显示出来
                 gameTable.chi3.visible = false;
@@ -90,31 +101,35 @@ var mj;
                 gameTable.anGang3.visible = false;
                 gameTable.fa3.visible = false;
                 gameTable.shou3.visible = false;
-                // gameTable.shou3.visible = true
-                for (let index = 0; index < all_pai_urls.length; index++) {
-                    const url = all_pai_urls[index];
-                    gameTable.skin_shoupai3.skin = `ui/majiang/${url}`;
+                var _loop_1 = function (index) {
+                    var url = all_pai_urls[index];
+                    gameTable.skin_shoupai3.skin = "ui/majiang/" + url;
                     gameTable.shou3.x = posiX;
-                    let newPaiSprite = LayaUtils.clone(gameTable.shou3);
+                    var newPaiSprite = LayaUtils.clone(gameTable.shou3);
                     newPaiSprite.visible = true;
                     //为新建的牌sprite创建点击处理函数
-                    newPaiSprite.on(Laya.Event.CLICK, this, () => {
+                    newPaiSprite.on(Laya.Event.CLICK, this_1, function () {
                         // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
                         if (Laya.god_player.table_pai) {
                             // 如果两次点击同一张牌，应该打出去
-                            this.handlePaiSpriteClick(newPaiSprite, shou_pai, index, socket, gameTable);
+                            _this.handlePaiSpriteClick(newPaiSprite, shou_pai, index, socket, gameTable);
                         }
                     });
-                    this.paiArray.push(newPaiSprite); //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
+                    this_1.paiArray.push(newPaiSprite); //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
                     gameTable.shouPai3.addChild(newPaiSprite);
                     posiX += one_shou_pai_width;
+                };
+                var this_1 = this;
+                // gameTable.shou3.visible = true
+                for (var index = 0; index < all_pai_urls.length; index++) {
+                    _loop_1(index);
                 }
-            }
-            handlePaiSpriteClick(newPaiSprite, shou_pai, index, socket, gameTable) {
+            };
+            Manager.prototype.handlePaiSpriteClick = function (newPaiSprite, shou_pai, index, socket, gameTable) {
                 // 如果两次点击同一张牌，应该打出去
                 if (this.prevSelectedPai === newPaiSprite) {
-                    let daPai = shou_pai[index];
-                    console.log(`用户选择打牌${daPai}`);
+                    var daPai = shou_pai[index];
+                    console.log("\u7528\u6237\u9009\u62E9\u6253\u724C" + daPai);
                     socket.sendmsg({
                         type: events.client_da_pai,
                         pai: daPai
@@ -125,8 +140,8 @@ var mj;
                     //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                     //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                     newPaiSprite.y += this.offsetY;
-                    this.paiArray.forEach((item, index) => {
-                        let changePaiSprite = item;
+                    this.paiArray.forEach(function (item, index) {
+                        var changePaiSprite = item;
                         changePaiSprite.destroy(true);
                         //真正的牌面是个Image,而且是二级子！
                         // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
@@ -144,14 +159,15 @@ var mj;
                     this.prevSelectedPai = newPaiSprite;
                     newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
                 }
-            }
+            };
             /** 将打牌显示在ui中的out3 sprite之中 */
-            show_out(dapai, table_index = 3) {
-                let outSprite = this.gameTable["out" + table_index];
+            Manager.prototype.show_out = function (dapai, table_index) {
+                if (table_index === void 0) { table_index = 3; }
+                var outSprite = this.gameTable["out" + table_index];
                 if (this["isFirstHideOut" + table_index]) {
                     //先隐藏所有内部的图
-                    for (let index = 0; index < outSprite.numChildren; index++) {
-                        const oneLine = outSprite.getChildAt(index);
+                    for (var index = 0; index < outSprite.numChildren; index++) {
+                        var oneLine = outSprite.getChildAt(index);
                         for (var l_index = 0; l_index < oneLine.numChildren; l_index++) {
                             var onePai = oneLine.getChildAt(l_index);
                             onePai.visible = false;
@@ -162,12 +178,12 @@ var mj;
                 }
                 outSprite.visible = true;
                 //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
-                let lastValidSprite = null;
-                for (let index = 0; index < outSprite.numChildren; index++) {
-                    const oneLine = outSprite.getChildAt(index);
-                    for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
-                        var onePai = oneLine.getChildAt(l_index);
-                        let paiImgSprite = onePai.getChildAt(0);
+                var lastValidSprite = null;
+                for (var index = 0; index < outSprite.numChildren; index++) {
+                    var oneLine = outSprite.getChildAt(index);
+                    for (var l_index_1 = 0; l_index_1 < oneLine.numChildren; l_index_1++) {
+                        var onePai = oneLine.getChildAt(l_index_1);
+                        var paiImgSprite = onePai.getChildAt(0);
                         // console.log(paiImgSprite);
                         //如果是一万的图形, 就换成打牌的图形
                         if ((table_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
@@ -188,8 +204,8 @@ var mj;
                         break;
                     }
                 }
-            }
-            show_right_player_shoupai(gameTable, server_message) {
+            };
+            Manager.prototype.show_right_player_shoupai = function (gameTable, server_message) {
                 gameTable.shouPai2.visible = true;
                 gameTable.chi2.visible = false;
                 gameTable.anGangHide2.visible = false;
@@ -197,20 +213,20 @@ var mj;
                 gameTable.anGang2.visible = false;
                 gameTable.fa2.visible = false;
                 gameTable.shou2.visible = false;
-                let right_pai_y = gameTable.test_shoupai2.y;
-                let right_pai_height = 60; //gameTable.test_shoupai2_image.height
-                let all_right_urls = PaiConverter.ToCeArray(server_message.right_player);
-                for (let index = 0; index < all_right_urls.length; index++) {
-                    const url = all_right_urls[index];
-                    gameTable.test_shoupai2_image.skin = `ui/majiang/${url}`;
+                var right_pai_y = gameTable.test_shoupai2.y;
+                var right_pai_height = 60; //gameTable.test_shoupai2_image.height
+                var all_right_urls = PaiConverter.ToCeArray(server_message.right_player);
+                for (var index = 0; index < all_right_urls.length; index++) {
+                    var url = all_right_urls[index];
+                    gameTable.test_shoupai2_image.skin = "ui/majiang/" + url;
                     gameTable.test_shoupai2.y = right_pai_y;
-                    let newPai = LayaUtils.clone(gameTable.test_shoupai2);
+                    var newPai = LayaUtils.clone(gameTable.test_shoupai2);
                     newPai.visible = true;
                     gameTable.shouPai2.addChild(newPai);
                     right_pai_y = right_pai_y + right_pai_height;
                 }
-            }
-            show_left_player_shoupai(gameTable, server_message) {
+            };
+            Manager.prototype.show_left_player_shoupai = function (gameTable, server_message) {
                 gameTable.shouPai0.visible = true;
                 gameTable.chi0.visible = false;
                 gameTable.anGangHide0.visible = false;
@@ -218,54 +234,56 @@ var mj;
                 gameTable.anGang0.visible = false;
                 gameTable.fa0.visible = false;
                 gameTable.shou0.visible = false;
-                let left_pai_y = gameTable.test_shoupai0.y;
-                let left_pai_height = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
+                var left_pai_y = gameTable.test_shoupai0.y;
+                var left_pai_height = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
                 // let left_data: Array<string> = 
-                let all_left_urls = PaiConverter.ToCeArray(server_message.left_player);
-                for (let index = 0; index < all_left_urls.length; index++) {
-                    const url = all_left_urls[index];
-                    gameTable.test_shoupai0_image.skin = `ui/majiang/${url}`;
+                var all_left_urls = PaiConverter.ToCeArray(server_message.left_player);
+                for (var index = 0; index < all_left_urls.length; index++) {
+                    var url = all_left_urls[index];
+                    gameTable.test_shoupai0_image.skin = "ui/majiang/" + url;
                     gameTable.test_shoupai0.y = left_pai_y;
-                    let newPai = LayaUtils.clone(gameTable.test_shoupai0);
+                    var newPai = LayaUtils.clone(gameTable.test_shoupai0);
                     newPai.visible = true;
                     gameTable.shouPai0.addChild(newPai);
                     left_pai_y = left_pai_y + left_pai_height;
                 }
-            }
-            openHandler(event = null) {
+            };
+            Manager.prototype.openHandler = function (event) {
+                if (event === void 0) { event = null; }
                 //正确建立连接；
-            }
+            };
             //看来这儿会成为新的调度口了，根据发过来的消息进行各种处理，暂时感觉这样也OK，不过那种socketio的on办法也实在是方便啊。
             // 其实就算是socketio也能使用查表的办法来写，代码还更具有通用性！
-            receiveHandler(msg = null) {
+            Manager.prototype.receiveHandler = function (msg) {
+                if (msg === void 0) { msg = null; }
                 ///接收到数据触发函数
-                let server_message = JSON.parse(msg);
-                let right_element = this.eventsHandler.find(item => server_message.type == item[0]);
+                var server_message = JSON.parse(msg);
+                var right_element = this.eventsHandler.find(function (item) { return server_message.type == item[0]; });
                 if (right_element) {
                     right_element[1].call(this, server_message);
                     return;
                 }
                 console.log("未知消息:", server_message);
-            }
-            server_receive_ready(server_message) {
-                console.log(`${server_message.username}玩家已经准备好游戏`);
-            }
-            server_welcome(server_message) {
+            };
+            Manager.prototype.server_receive_ready = function (server_message) {
+                console.log(server_message.username + "\u73A9\u5BB6\u5DF2\u7ECF\u51C6\u5907\u597D\u6E38\u620F");
+            };
+            Manager.prototype.server_welcome = function (server_message) {
                 console.log("welcome:", server_message.welcome);
-            }
-            server_login(server_message) {
-                let { username, user_id, score } = server_message;
+            };
+            Manager.prototype.server_login = function (server_message) {
+                var username = server_message.username, user_id = server_message.user_id, score = server_message.score;
                 console.log("登录成功, 用户名：%s, 用户id: %s, 积分：%s", username, user_id, score);
                 Laya.god_player.username = username;
                 Laya.god_player.user_id = user_id;
                 Laya.god_player.score = score;
                 //进入主界面！
-                let home = new mj.scene.MainScene(username, user_id);
+                var home = new mj.scene.MainScene(username, user_id);
                 Laya.stage.destroyChildren();
                 Laya.stage.addChild(home);
-            }
-            hidePlayer(index) {
-                let { gameTable } = this;
+            };
+            Manager.prototype.hidePlayer = function (index) {
+                var gameTable = this.gameTable;
                 // 头像不显示
                 gameTable["userHead" + index].visible = false;
                 // 手牌是不显示的
@@ -274,13 +292,13 @@ var mj;
                 gameTable["out" + index].visible = false;
                 // 用户离线状态不显示
                 gameTable["userHeadOffline" + index].visible = false;
-            }
-            open_room(server_message) {
+            };
+            Manager.prototype.open_room = function (server_message) {
                 Laya.stage.destroyChildren();
                 // let { seat_index, east} = server_message
                 //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
                 this.gameTable = new GameTableScene();
-                let { gameTable } = this;
+                var gameTable = this.gameTable;
                 Laya.gameTable = gameTable; //给出一个访问的地方，便于调试
                 //其它的username, user_id在用户加入房间的时候就已经有了。
                 this.hidePlayer(0);
@@ -312,72 +330,72 @@ var mj;
                     // console.log('本玩家准备好游戏了。。。');
                     this.socket.sendmsg({ type: events.client_player_ready });
                 }
-                let leftPlayer = Laya.room.left_player(Laya.god_player);
+                var leftPlayer = Laya.room.left_player(Laya.god_player);
                 // console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
                     this.showHead(gameTable, leftPlayer, 0);
                 }
-                let rightPlayer = Laya.room.right_player(Laya.god_player);
+                var rightPlayer = Laya.room.right_player(Laya.god_player);
                 // console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
                 Laya.stage.addChild(gameTable);
-            }
-            server_other_player_enter_room(server_message) {
-                let { username, user_id, seat_index, score } = server_message;
+            };
+            Manager.prototype.server_other_player_enter_room = function (server_message) {
+                var username = server_message.username, user_id = server_message.user_id, seat_index = server_message.seat_index, score = server_message.score;
                 //添加其它玩家的信息，还得看顺序如何！根据顺序来显示玩家的牌面，服务器里面保存的位置信息，可惜与layabox里面正好是反的！
                 //先看这个玩家是否已经进入过，如果进入过，说明是断线的。
                 //不可能有一个玩家进入两次房间，除非是掉线。
-                console.log(`其它玩家${username}加入房间, id:${user_id}, seat_index:${seat_index}`);
-                let player = new Player();
+                console.log("\u5176\u5B83\u73A9\u5BB6" + username + "\u52A0\u5165\u623F\u95F4, id:" + user_id + ", seat_index:" + seat_index);
+                var player = new Player();
                 player.username = username;
                 player.user_id = user_id;
                 player.seat_index = seat_index;
                 player.score = score;
                 Laya.room.players.push(player);
-                let { gameTable } = this;
+                var gameTable = this.gameTable;
                 //只需要更新其它两个玩家的头像信息，自己的已经显示好了。
                 // let otherPlayers = Laya.room.other_players(Laya.god_player)
                 // console.log(otherPlayers);
                 //todo: 没效率，粗暴的刷新用户头像数据
-                let leftPlayer = Laya.room.left_player(Laya.god_player);
+                var leftPlayer = Laya.room.left_player(Laya.god_player);
                 console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
                     this.showHead(gameTable, leftPlayer, 0);
                 }
-                let rightPlayer = Laya.room.right_player(Laya.god_player);
+                var rightPlayer = Laya.room.right_player(Laya.god_player);
                 console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
-            }
+            };
             /**
              *
              * @param gameTable
              * @param p
              * @param index 桌面中用户的序列号，右边的是2，左边的是0，上面的是1（卡五星不用）
              */
-            showHead(gameTable, p, index) {
+            Manager.prototype.showHead = function (gameTable, p, index) {
                 gameTable["userName" + index].text = p.username;
                 gameTable["userId" + index].text = p.user_id;
                 gameTable["zhuang" + index].visible = p.east;
                 gameTable["score" + index].text = p.score.toString(); //todo: 用户的积分需要数据库配合
                 gameTable["userHead" + index].visible = true;
-            }
+            };
             //玩家成功加入房间
-            server_player_enter_room(server_message) {
-                let { room_id, username, user_id, east, seat_index, other_players_info } = server_message;
-                console.log(`${username}玩家进入房间${room_id}！seat_index:${seat_index}`);
+            Manager.prototype.server_player_enter_room = function (server_message) {
+                var room_id = server_message.room_id, username = server_message.username, user_id = server_message.user_id, east = server_message.east, seat_index = server_message.seat_index, other_players_info = server_message.other_players_info;
+                console.log(username + "\u73A9\u5BB6\u8FDB\u5165\u623F\u95F4" + room_id + "\uFF01seat_index:" + seat_index);
                 //其实这时候就可以使用room来保存玩家信息了，以后只需要用户来个id以及数据就能够更新显示了。
                 Laya.god_player.seat_index = seat_index;
                 Laya.god_player.east = east;
-                other_players_info.forEach(element => {
-                    let player = new Player();
+                other_players_info.forEach(function (element) {
+                    var player = new Player();
                     player.username = element.username;
                     player.user_id = element.user_id;
                     player.seat_index = element.seat_index;
@@ -387,44 +405,47 @@ var mj;
                 });
                 this.open_room(server_message);
                 //更新玩家的显示，排除自己！
-            }
-            server_no_such_room() {
+            };
+            Manager.prototype.server_no_such_room = function () {
                 console.log("无此房间号");
-                let dialog = new DialogScene("无此房间号", () => {
+                var dialog = new DialogScene("无此房间号", function () {
                     dialog.close();
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            }
-            server_room_full() {
-                let dialog = new DialogScene("服务器房间已满！", () => {
+            };
+            Manager.prototype.server_room_full = function () {
+                var dialog = new DialogScene("服务器房间已满！", function () {
                     dialog.close();
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            }
-            server_no_room() {
-                let dialog = new DialogScene("服务器无可用房间！", () => {
+            };
+            Manager.prototype.server_no_room = function () {
+                var dialog = new DialogScene("服务器无可用房间！", function () {
                     dialog.close();
                 });
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            }
-            closeHandler(e = null) {
+            };
+            Manager.prototype.closeHandler = function (e) {
+                if (e === void 0) { e = null; }
                 //关闭事件
                 // console.log('服务器已经关闭，请查看官网说明');
                 this.socket.cleanSocket();
-                let closeDialogue = new DialogScene("服务器已经关闭，请查看官网说明");
+                var closeDialogue = new DialogScene("服务器已经关闭，请查看官网说明");
                 closeDialogue.popup();
                 Laya.stage.addChild(closeDialogue);
-            }
-            errorHandler(e = null) {
+            };
+            Manager.prototype.errorHandler = function (e) {
+                if (e === void 0) { e = null; }
                 //连接出错
-                let dialog = new DialogScene(`连接出错！${e}`);
+                var dialog = new DialogScene("\u8FDE\u63A5\u51FA\u9519\uFF01" + e);
                 dialog.popup();
                 Laya.stage.addChild(dialog);
-            }
-        }
+            };
+            return Manager;
+        }());
         net.Manager = Manager;
     })(net = mj.net || (mj.net = {}));
 })(mj || (mj = {}));

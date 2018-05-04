@@ -5,78 +5,80 @@ var mj;
         var Handler = laya.utils.Handler;
         var SoundManager = laya.media.SoundManager;
         var LayaUtils = mj.utils.LayaUtils;
-        class AudioManager {
-            AudioManager() {
+        var AudioManager = /** @class */ (function () {
+            function AudioManager() {
             }
-            playStartBgm() {
-                let { bgmSoundChannel } = this;
+            AudioManager.prototype.AudioManager = function () {
+            };
+            AudioManager.prototype.playStartBgm = function () {
+                var bgmSoundChannel = this.bgmSoundChannel;
                 if (bgmSoundChannel) {
                     bgmSoundChannel.stop();
                 }
                 bgmSoundChannel = SoundManager.playMusic("audio/bgm2" + AudioManager.TYPE, 0);
-            }
-            playGame() {
-                let { bgmSoundChannel } = this;
+            };
+            AudioManager.prototype.playGame = function () {
+                var bgmSoundChannel = this.bgmSoundChannel;
                 if (bgmSoundChannel) {
                     bgmSoundChannel.stop();
                 }
                 bgmSoundChannel = SoundManager.playMusic("audio/bgm1" + AudioManager.TYPE, 0);
-            }
-            static getYinxiaoVolume() {
+            };
+            AudioManager.getYinxiaoVolume = function () {
                 return SoundManager.soundVolume;
-            }
-            static getMusicVolume() {
+            };
+            AudioManager.getMusicVolume = function () {
                 return SoundManager.musicVolume;
-            }
-            static changeSoundEffect(number) {
+            };
+            AudioManager.changeSoundEffect = function (number) {
                 SoundManager.soundMuted = true;
                 SoundManager.soundVolume = number;
                 SoundManager.soundMuted = false;
-            }
-            static changeMusic(number) {
+            };
+            AudioManager.changeMusic = function (number) {
                 SoundManager.musicMuted = true;
                 SoundManager.musicVolume = number;
                 SoundManager.musicMuted = false;
-            }
-            static changeSoundEffectMuted(selected) {
+            };
+            AudioManager.changeSoundEffectMuted = function (selected) {
                 SoundManager.soundMuted = selected;
-            }
-            static changeMusicMuted(selected) {
+            };
+            AudioManager.changeMusicMuted = function (selected) {
                 SoundManager.musicMuted = selected;
-            }
-            static getSoundEffectMuted() {
+            };
+            AudioManager.getSoundEffectMuted = function () {
                 return SoundManager.soundMuted;
-            }
-            static getMusicMuted() {
+            };
+            AudioManager.getMusicMuted = function () {
                 return SoundManager.musicMuted;
-            }
+            };
             /**
              * 0:女生,1:男生,2:未知
              */
-            static paiOut(sex, pai) {
+            AudioManager.paiOut = function (sex, pai) {
                 var sexStr = sex == 0 ? "woman" : "man";
                 this.play("audio/pu_" + sexStr + "/pai_" + pai);
                 this.play("audio/common/card_out");
-            }
+            };
             /**
              * 点击牌时的声音
              */
-            static paiClick() {
+            AudioManager.paiClick = function () {
                 this.play("audio/common/card_click");
-            }
+            };
             /**
              * 处理牌
              */
-            static dealCard() {
+            AudioManager.dealCard = function () {
                 this.play("audio/common/deal_card");
-            }
+            };
             /**
              * enter
              */
-            static enter() {
+            AudioManager.enter = function () {
                 this.play("audio/common/enter");
-            }
-            static win(sex, fangPaoIndex, fan) {
+            };
+            AudioManager.win = function (sex, fangPaoIndex, fan) {
                 this.play("audio/common/win");
                 var sexStr = sex == 0 ? "woman" : "man";
                 if (fan == 1) {
@@ -94,63 +96,65 @@ var mj;
                 else {
                     this.play("audio/pu_" + sexStr + "/hu_" + (LayaUtils.random(3) + 1));
                 }
-            }
+            };
             /**
              * 流局声音
              */
-            static liuJu() {
+            AudioManager.liuJu = function () {
                 this.play("audio/common/liuju");
-            }
+            };
             /**
              * 失败声音
              */
-            static lose() {
+            AudioManager.lose = function () {
                 this.play("audio/common/lose");
-            }
+            };
             /**
              * 停止计时警告
              */
-            static stopTimeupAlarm() {
-                let { isTimeupAlarmSoundChannel } = this;
+            AudioManager.stopTimeupAlarm = function () {
+                var isTimeupAlarmSoundChannel = this.isTimeupAlarmSoundChannel;
                 if (isTimeupAlarmSoundChannel) {
                     isTimeupAlarmSoundChannel.stop();
                     isTimeupAlarmSoundChannel = null;
                 }
-            }
+            };
             /**
              * 时间不够了
              */
-            static timeupAlarm() {
-                let { isTimeupAlarmSoundChannel } = this;
+            AudioManager.timeupAlarm = function () {
+                var isTimeupAlarmSoundChannel = this.isTimeupAlarmSoundChannel;
                 if (isTimeupAlarmSoundChannel) {
                     return;
                 }
-                isTimeupAlarmSoundChannel = this.play("audio/common/timeup_alarm", Handler.create(null, () => {
+                isTimeupAlarmSoundChannel = this.play("audio/common/timeup_alarm", Handler.create(null, function () {
                     isTimeupAlarmSoundChannel = null;
                 }));
-            }
-            static buttonClick() {
+            };
+            AudioManager.buttonClick = function () {
                 this.play("audio/common/button_click");
-            }
-            static play(url, complete = null) {
+            };
+            AudioManager.play = function (url, complete) {
+                if (complete === void 0) { complete = null; }
                 return SoundManager.playSound(url + AudioManager.TYPE, 1, complete);
-            }
-            static gang(sex) {
+            };
+            AudioManager.gang = function (sex) {
                 this.playOpt("gang", sex, 3);
-            }
-            static peng(sex) {
+            };
+            AudioManager.peng = function (sex) {
                 this.playOpt("peng", sex, 5);
-            }
-            static chi(sex) {
+            };
+            AudioManager.chi = function (sex) {
                 this.playOpt("chi", sex, 4);
-            }
-            static playOpt(type, sex, nums) {
+            };
+            AudioManager.playOpt = function (type, sex, nums) {
                 var sexStr = sex == 0 ? "woman" : "man";
                 this.play("audio/pu_" + sexStr + "/" + type + (LayaUtils.random(nums) + 1));
-            }
-        }
-        AudioManager.TYPE = ".mp3";
-        AudioManager.instance = new AudioManager();
+            };
+            AudioManager.TYPE = ".mp3";
+            AudioManager.instance = new AudioManager();
+            return AudioManager;
+        }());
         manager.AudioManager = AudioManager;
     })(manager = mj.manager || (mj.manager = {}));
 })(mj || (mj = {}));

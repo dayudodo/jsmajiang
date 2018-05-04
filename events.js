@@ -20,4 +20,7 @@
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
   export const server_gameover = "server_gameover";
+  export const server_canHu = "server_canHu";
+  export const server_canGang = "server_canGang";
+  export const server_canPeng = "server_canPeng";
 
