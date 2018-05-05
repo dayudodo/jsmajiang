@@ -98,7 +98,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -123,7 +123,7 @@ export class Room {
   get last_join_player() {
     return _.last(this.players);
   }
-/** 服务器中的下一个玩家 */
+  /** 服务器中的下一个玩家 */
   get next_player() {
     //下一家
     let next_index =
@@ -235,6 +235,13 @@ export class Room {
       type: g_events.server_table_fa_pai,
       pai: pai[0]
     });
+    //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
+    this.other_players(player).forEach(p => {
+      p.socket.sendmsg({
+        type: g_events.server_table_fa_pai_other,
+        user_id: player.user_id
+      })
+    })
     //发牌之后还要看玩家能否胡以及胡什么！
     //todo: 应该返回牌字符串，而非一个元素的数组！使用ts的静态类型不容易出bug
     return pai;
@@ -375,7 +382,7 @@ export class Room {
             if (Majiang.canGang(item_player.shou_pai, pai_name)) {
               console.log(
                 `房间${this.id}内发现玩家${
-                  item_player.username
+                item_player.username
                 }可以杠牌${pai_name}`
               );
               //告诉玩家你可以杠牌了
@@ -388,12 +395,12 @@ export class Room {
             } else {
               console.log(
                 `房间${this.id}内发现玩家${
-                  item_player.username
+                item_player.username
                 }可以碰牌${pai_name}`
               );
               console.dir(
                 `玩家${
-                  item_player.username
+                item_player.username
                 }的手牌为:${item_player.shou_pai.join(" ")}`
               );
               // item_player.socket.emit("server_canPeng", pai_name);

@@ -17,8 +17,12 @@ var events;
     events.server_receive_ready = "server_receive_ready";
     events.server_game_start = "server_game_start";
     events.server_table_fa_pai = "server_table_fa_pai";
+    events.server_table_fa_pai_other = "server_table_fa_pai_other";
     events.server_dapai = "server_dapai";
     events.server_dapai_other = "server_dapai_other";
     events.server_gameover = "server_gameover";
+    events.server_canHu = "server_canHu";
+    events.server_canGang = "server_canGang";
+    events.server_canPeng = "server_canPeng";
 })(events || (events = {}));
 //# sourceMappingURL=events.js.map

@@ -4,6 +4,8 @@ var config;
     config.UI_LEFT_INDEX = 0;
     config.UI_RIGHT_INDEX = 2;
     /** 客户端玩家UI中的序号，比如shouPai3, out3 */
-    config.ME_INDEX = 3;
+    config.GOD_INDEX = 3;
+    /** 用户操作最大等待时间 */
+    config.MAX_WAIT_TIME = 10;
 })(config || (config = {}));
 //# sourceMappingURL=config.js.map

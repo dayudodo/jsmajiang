@@ -59,10 +59,7 @@ var mj;
             PaiConvertor.ToCe = function (str) {
                 return "ce_" + this.ToNumber(str) + ".png";
             };
-            /**
-             * 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串
-             * @param all_pais 所有服务器发过来的牌
-             */
+            /** 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串 */
             PaiConvertor.ToShouArray = function (all_pais) {
                 var _this = this;
                 return all_pais.map(function (item) {
@@ -75,15 +72,28 @@ var mj;
                     return _this.ToZheng(item);
                 });
             };
-            /**
-             * 转换成以ce开头的横牌url数组，比如fa,zh变成ce_31.png, ce_32.png
-             * @param all_pais
-             */
+            /** 转换成以ce开头的横牌url数组，比如fa,zh变成ce_31.png, ce_32.png */
             PaiConvertor.ToCeArray = function (all_pais) {
                 var _this = this;
                 return all_pais.map(function (item) {
                     return _this.ToCe(item);
                 });
+            };
+            /** 根据二位数字算出其图片skin */
+            PaiConvertor.CountDownNumSkin = function (countNum) {
+                if (countNum > 99) {
+                    console.warn('最多只能显示2位数字！');
+                }
+                var num1, num0;
+                if (countNum > 9) {
+                    num1 = new String(countNum)[0];
+                    num0 = new String(countNum)[1];
+                }
+                else {
+                    num1 = "0";
+                    num0 = new String(countNum)[0];
+                }
+                return ["ui/game/" + num1 + ".png", "ui/game/" + num0 + ".png"];
             };
             return PaiConvertor;
         }());

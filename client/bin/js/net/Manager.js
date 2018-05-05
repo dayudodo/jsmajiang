@@ -46,6 +46,7 @@ var mj;
                     [events.server_game_start, this.server_game_start],
                     [events.server_gameover, this.server_gameover],
                     [events.server_table_fa_pai, this.server_table_fa_pai],
+                    [events.server_table_fa_pai_other, this.server_table_fa_pai_other],
                     [events.server_dapai, this.server_dapai],
                     [events.server_dapai_other, this.server_dapai_other],
                 ];
@@ -63,6 +64,40 @@ var mj;
                 var pai_name = server_message.pai_name;
                 console.log("\u670D\u52A1\u5668\u786E\u8BA4\u4F60\u5DF2\u6253\u724C " + pai_name);
             };
+            Manager.prototype.showSkinOfCountDown = function (twonumber) {
+                _a = PaiConverter.CountDownNumSkin(twonumber), this.gameTable.Num1.skin = _a[0], this.gameTable.Num0.skin = _a[1];
+                var _a;
+            };
+            /** 开始显示倒计时 */
+            Manager.prototype.show_count_down = function (player) {
+                var _this = this;
+                console.log(player.username + "\u5F00\u59CB\u5012\u8BA1\u65F6");
+                this.show_direction(player.ui_index);
+                //todo: replace this.gameTable.Num0.skin 
+                var waitTime = config.MAX_WAIT_TIME;
+                this.showSkinOfCountDown(config.MAX_WAIT_TIME);
+                var countdownOneSecond = function () {
+                    waitTime--;
+                    _this.showSkinOfCountDown(waitTime);
+                    if (0 == waitTime) {
+                        Laya.timer.clear(_this, countdownOneSecond);
+                        //计时结束隐藏方向
+                        _this.hideDirection(player.ui_index);
+                    }
+                };
+                Laya.timer.loop(1000, this, countdownOneSecond);
+            };
+            Manager.prototype.show_direction = function (index) {
+                if (index === void 0) { index = config.GOD_INDEX; }
+                this.gameTable.clock.visible = true;
+                this.gameTable["direction" + index].visible = true;
+            };
+            Manager.prototype.server_table_fa_pai_other = function (server_message) {
+                var user_id = server_message.user_id;
+                var player = Laya.room.players.find(function (p) { return p.user_id == user_id; });
+                console.log("\u670D\u52A1\u5668\u7ED9\u73A9\u5BB6" + player.username + "\u53D1\u4E86\u5F20\u724C");
+                this.show_count_down(player);
+            };
             Manager.prototype.server_table_fa_pai = function (server_message) {
                 //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
                 // console.log(server_message.pai);
@@ -72,6 +107,8 @@ var mj;
                 //显示服务器发过来的牌
                 gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai);
                 gameTable.fa3.visible = true;
+                //这张牌也是可以打出去的！与shouPai中的事件处理其实应该是一样的！或者说假装当成是shouPai的一部分？
+                this.show_direction(Laya.god_player.ui_index);
             };
             Manager.prototype.server_game_start = function (server_message) {
                 //游戏开始了
@@ -125,6 +162,9 @@ var mj;
                     _loop_1(index);
                 }
             };
+            Manager.prototype.hideDirection = function (index) {
+                this.gameTable["direction" + index].visible = false;
+            };
             Manager.prototype.handlePaiSpriteClick = function (newPaiSprite, shou_pai, index, socket, gameTable) {
                 // 如果两次点击同一张牌，应该打出去
                 if (this.prevSelectedPai === newPaiSprite) {
@@ -136,6 +176,8 @@ var mj;
                     });
                     Laya.god_player.da_pai(daPai);
                     this.show_out(daPai);
+                    //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
+                    this.hideDirection(Laya.god_player.ui_index);
                     // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
                     //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                     //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
@@ -162,7 +204,7 @@ var mj;
             };
             /** 将打牌显示在ui中的out3 sprite之中 */
             Manager.prototype.show_out = function (dapai, table_index) {
-                if (table_index === void 0) { table_index = 3; }
+                if (table_index === void 0) { table_index = config.GOD_INDEX; }
                 var outSprite = this.gameTable["out" + table_index];
                 if (this["isFirstHideOut" + table_index]) {
                     //先隐藏所有内部的图
@@ -292,6 +334,11 @@ var mj;
                 gameTable["out" + index].visible = false;
                 // 用户离线状态不显示
                 gameTable["userHeadOffline" + index].visible = false;
+                this.gameTable.clock.visible = false;
+                this.gameTable.direction0.visible = false;
+                this.gameTable.direction1.visible = false;
+                this.gameTable.direction2.visible = false;
+                this.gameTable.direction3.visible = false;
             };
             Manager.prototype.open_room = function (server_message) {
                 Laya.stage.destroyChildren();
@@ -342,6 +389,7 @@ var mj;
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
+                this.show_count_down(Laya.god_player);
                 Laya.stage.addChild(gameTable);
             };
             Manager.prototype.server_other_player_enter_room = function (server_message) {
@@ -390,7 +438,7 @@ var mj;
             //玩家成功加入房间
             Manager.prototype.server_player_enter_room = function (server_message) {
                 var room_id = server_message.room_id, username = server_message.username, user_id = server_message.user_id, east = server_message.east, seat_index = server_message.seat_index, other_players_info = server_message.other_players_info;
-                console.log(username + "\u73A9\u5BB6\u8FDB\u5165\u623F\u95F4" + room_id + "\uFF01seat_index:" + seat_index);
+                console.log(username + "\u73A9\u5BB6\u8FDB\u5165\u623F\u95F4" + room_id + ", seat_index:" + seat_index);
                 //其实这时候就可以使用room来保存玩家信息了，以后只需要用户来个id以及数据就能够更新显示了。
                 Laya.god_player.seat_index = seat_index;
                 Laya.god_player.east = east;

@@ -21,6 +21,7 @@ var GameMain = /** @class */ (function () {
         Laya.client = new Client();
         Laya.room = new Room();
         Laya.god_player = new Player();
+        Laya.god_player.ui_index = config.GOD_INDEX;
         Laya.room.players.push(Laya.god_player);
         // var mm:Laya.Sprite = new Laya.Sprite();
         // mm.loadImage("images/mm.png",0,0,0,0, Laya.Handler.create(this, this.onloaded,[mm]))

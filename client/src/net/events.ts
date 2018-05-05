@@ -1,6 +1,5 @@
 namespace events {
 
-
   export const client_testlogin = "client_testlogin";
   export const client_create_room = "client_create_room"
   export const client_join_room = "client_join_room"
@@ -19,9 +18,13 @@ namespace events {
   export const server_receive_ready = "server_receive_ready";
   export const server_game_start = "server_game_start";
   export const server_table_fa_pai = "server_table_fa_pai";
+  export const server_table_fa_pai_other = "server_table_fa_pai_other";
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
   export const server_gameover = "server_gameover";
+  export const server_canHu = "server_canHu";
+  export const server_canGang = "server_canGang";
+  export const server_canPeng = "server_canPeng";
 
 
 

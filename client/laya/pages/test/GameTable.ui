@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":8,
-    "selecteID":556,
+    "selectedBox":3,
+    "selecteID":1150,
     "referenceLines":null,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
@@ -706,20 +706,22 @@
                 {
                     "x":30,
                     "type":"Image",
-                    "props":{"y":344,"x":861,"width":130,"var":"turntable","scaleY":2,"scaleX":2,"height":130},
+                    "props":{"y":344,"x":861,"width":130,"var":"clock","scaleY":2,"scaleX":2,"height":130},
                     "nodeParent":8,
-                    "label":"Image(turntable)",
-                    "isOpen":false,
+                    "label":"Image(clock)",
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":3,
                     "child":[
                         {
+                            "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":0,"width":130,"var":"turntableCenter","height":130},
+                            "props":{"y":-5,"x":-10,"width":130,"pivotY":0,"pivotX":0,"height":130},
                             "nodeParent":3,
-                            "label":"Sprite(turntableCenter)",
+                            "label":"Sprite",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -727,7 +729,7 @@
                             "child":[
                                 {
                                     "type":"Image",
-                                    "props":{"skin":"ui/game/frame.png"},
+                                    "props":{"width":150,"skin":"ui/game/clock.png","height":150},
                                     "nodeParent":1229,
                                     "label":"Image",
                                     "isDirectory":false,
@@ -736,61 +738,14 @@
                                     "compId":1230,
                                     "child":[
                                         ]
-                                },
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":0,"var":"turntable1","skin":"ui/game/right.png"},
-                                    "nodeParent":1229,
-                                    "label":"Image(turntable1)",
-                                    "isDirectory":false,
-                                    "isAniNode":true,
-                                    "hasChild":false,
-                                    "compId":1145,
-                                    "child":[
-                                        ]
-                                },
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":0,"var":"turntable2","skin":"ui/game/up.png"},
-                                    "nodeParent":1229,
-                                    "label":"Image(turntable2)",
-                                    "isDirectory":false,
-                                    "isAniNode":true,
-                                    "hasChild":false,
-                                    "compId":1146,
-                                    "child":[
-                                        ]
-                                },
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":0,"var":"turntable3","skin":"ui/game/left.png"},
-                                    "nodeParent":1229,
-                                    "label":"Image(turntable3)",
-                                    "isDirectory":false,
-                                    "isAniNode":true,
-                                    "hasChild":false,
-                                    "compId":1144,
-                                    "child":[
-                                        ]
-                                },
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":0,"var":"turntable0","skin":"ui/game/down.png"},
-                                    "nodeParent":1229,
-                                    "label":"Image(turntable0)",
-                                    "isDirectory":false,
-                                    "isAniNode":true,
-                                    "hasChild":false,
-                                    "compId":1147,
-                                    "child":[
-                                        ]
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
-                            "props":{"y":47,"x":36,"width":30,"var":"turntableNum1","skin":"ui/game/0.png","height":40},
+                            "props":{"y":47,"x":36,"width":30,"var":"Num1","skin":"ui/game/2.png","height":40},
                             "nodeParent":3,
-                            "label":"Image(turntableNum1)",
+                            "label":"Image(Num1)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -799,10 +754,11 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Image",
-                            "props":{"y":47,"x":64,"var":"turntableNum0","skin":"ui/game/0.png"},
+                            "props":{"y":47,"x":64,"var":"Num0","skin":"ui/game/0.png"},
                             "nodeParent":3,
-                            "label":"Image(turntableNum0)",
+                            "label":"Image(Num0)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -811,10 +767,64 @@
                                 ]
                         },
                         {
+                            "x":45,
+                            "type":"Image",
+                            "props":{"y":96,"x":-62,"width":45,"var":"direction0","skin":"ui/game/direction.png","rotation":-90,"height":45},
+                            "nodeParent":3,
+                            "label":"Image(direction0)",
+                            "isDirectory":false,
+                            "isAniNode":true,
+                            "hasChild":false,
+                            "compId":1308,
+                            "child":[
+                                ]
+                        },
+                        {
+                            "x":45,
+                            "type":"Image",
+                            "props":{"y":-50,"x":42,"width":45,"var":"direction1","skin":"ui/game/direction.png","rotation":0,"height":45},
+                            "nodeParent":3,
+                            "label":"Image(direction1)",
+                            "isDirectory":false,
+                            "isAniNode":true,
+                            "hasChild":false,
+                            "compId":1310,
+                            "child":[
+                                ]
+                        },
+                        {
+                            "x":45,
+                            "type":"Image",
+                            "props":{"y":51,"x":192,"width":45,"var":"direction2","skin":"ui/game/direction.png","rotation":90,"height":45},
+                            "nodeParent":3,
+                            "label":"Image(direction2)",
+                            "isDirectory":false,
+                            "isAniNode":true,
+                            "hasChild":false,
+                            "compId":1309,
+                            "child":[
+                                ]
+                        },
+                        {
+                            "x":45,
+                            "type":"Image",
+                            "props":{"y":177,"x":87,"width":45,"var":"direction3","skin":"ui/game/direction.png","rotation":180,"height":45},
+                            "nodeParent":3,
+                            "label":"Image(direction3)",
+                            "isDirectory":false,
+                            "isAniNode":true,
+                            "hasChild":false,
+                            "compId":1307,
+                            "child":[
+                                ]
+                        },
+                        {
+                            "x":45,
                             "type":"Sprite",
-                            "props":{"y":112,"x":-49,"var":"leftPaiCountSprite","scaleY":0.75,"scaleX":0.75},
+                            "props":{"y":185,"x":-57,"var":"leftPaiCountSprite","scaleY":0.75,"scaleX":0.75},
                             "nodeParent":3,
                             "label":"Sprite(leftPaiCountSprite)",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1228,7 +1238,8 @@
                             "compId":256,
                             "child":[
                                 ]
-                        }]
+                        }],
+                    "$HIDDEN":true
                 },
                 {
                     "x":30,
@@ -1577,7 +1588,8 @@
                             "compId":369,
                             "child":[
                                 ]
-                        }]
+                        }],
+                    "$HIDDEN":true
                 },
                 {
                     "x":30,
@@ -1949,7 +1961,8 @@
                             "compId":1216,
                             "child":[
                                 ]
-                        }]
+                        }],
+                    "$HIDDEN":true
                 },
                 {
                     "x":30,
@@ -2564,7 +2577,8 @@
                                                 ]
                                         }]
                                 }]
-                        }]
+                        }],
+                    "$HIDDEN":true
                 },
                 {
                     "x":30,
@@ -3177,7 +3191,8 @@
                                                 ]
                                         }]
                                 }]
-                        }]
+                        }],
+                    "$HIDDEN":true
                 },
                 {
                     "x":30,
@@ -3790,7 +3805,8 @@
                                                 ]
                                         }]
                                 }]
-                        }]
+                        }],
+                    "$HIDDEN":true
                 },
                 {
                     "x":30,
@@ -4856,7 +4872,8 @@
                                         }]
                                 }]
                         }]
-                }]
+                }],
+            "$HIDDEN":false
         },
         {
             "x":15,

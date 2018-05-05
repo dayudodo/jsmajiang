@@ -1,4 +1,5 @@
 D .
+R A0A9CD05 .DS_Store
 D audio
 R 02D7606B bgm1.mp3
 R 5318EAB6 bgm2.mp3
@@ -202,7 +203,9 @@ P E8A33602 8.png
 P 9D8296A6 9.png
 P 2D4520AA bg.png
 P 2E5553A5 chi.png
+P 0B9796C8 clock.png
 P 513B26BD danGuiQueDing.png
+P 16F8AF28 direction.png
 P F283F648 down.png
 P DC866C9D frame.png
 R B57678EF game_name.png

@@ -9,7 +9,6 @@ module mj.net {
     import GameSoundObserver = mj.manager.GameSoundObserver
     import Image = Laya.Image
 
-
     export class Manager {
         public socket: Laya.Socket;
         public byte: Laya.Byte;
@@ -51,6 +50,7 @@ module mj.net {
                 [events.server_game_start, this.server_game_start],
                 [events.server_gameover, this.server_gameover],
                 [events.server_table_fa_pai, this.server_table_fa_pai],
+                [events.server_table_fa_pai_other, this.server_table_fa_pai_other],
                 [events.server_dapai, this.server_dapai],
                 [events.server_dapai_other, this.server_dapai_other],
 
@@ -62,15 +62,48 @@ module mj.net {
 
         }
         private server_dapai_other(server_message) {
-            let { username,user_id, pai_name} = server_message
+            let { username, user_id, pai_name} = server_message
             console.log(`${username}, id: ${user_id} 打牌${pai_name}`);
-            let player = Laya.room.players.find(p=>p.user_id == user_id)
+            let player = Laya.room.players.find(p => p.user_id == user_id)
             this.show_out(pai_name, player.ui_index)
 
         }
         private server_dapai(server_message) {
             let {pai_name} = server_message
             console.log(`服务器确认你已打牌 ${pai_name}`);
+        }
+        private showSkinOfCountDown(twonumber: number) {
+            [this.gameTable.Num1.skin, this.gameTable.Num0.skin] = PaiConverter.CountDownNumSkin(twonumber)
+        }
+        /** 开始显示倒计时 */
+        private show_count_down(player: Player) {
+            console.log(`${player.username}开始倒计时`);
+            this.show_direction(player.ui_index)
+            //todo: replace this.gameTable.Num0.skin 
+            let waitTime = config.MAX_WAIT_TIME
+            this.showSkinOfCountDown(config.MAX_WAIT_TIME)
+            let countdownOneSecond = () => {
+                waitTime--
+                this.showSkinOfCountDown(waitTime)
+                if (0 == waitTime) {
+                    Laya.timer.clear(this, countdownOneSecond)
+                    //计时结束隐藏方向
+                    this.hideDirection(player.ui_index)
+                }
+            }
+            Laya.timer.loop(1000, this, countdownOneSecond)
+        }
+        private show_direction(index: number = config.GOD_INDEX) {
+            this.gameTable.clock.visible = true
+            this.gameTable["direction" + index].visible = true
+        }
+        private server_table_fa_pai_other(server_message) {
+            let {user_id } = server_message
+            let player = Laya.room.players.find(p => p.user_id == user_id)
+            console.log(`服务器给玩家${player.username}发了张牌`);
+
+
+            this.show_count_down(player)
         }
         private server_table_fa_pai(server_message) {
             //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
@@ -81,6 +114,11 @@ module mj.net {
             //显示服务器发过来的牌
             gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai)
             gameTable.fa3.visible = true
+            //这张牌也是可以打出去的！与shouPai中的事件处理其实应该是一样的！或者说假装当成是shouPai的一部分？
+            this.show_direction(Laya.god_player.ui_index)
+
+
+
         }
 
         private server_game_start(server_message) {
@@ -135,7 +173,9 @@ module mj.net {
                 posiX += one_shou_pai_width;
             }
         }
-
+        private hideDirection(index: number) {
+            this.gameTable["direction" + index].visible = false
+        }
         private handlePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, socket: Laya.Socket, gameTable: GameTableScene) {
             // 如果两次点击同一张牌，应该打出去
             if (this.prevSelectedPai === newPaiSprite) {
@@ -147,6 +187,8 @@ module mj.net {
                 });
                 Laya.god_player.da_pai(daPai)
                 this.show_out(daPai)
+                //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
+                this.hideDirection(Laya.god_player.ui_index)
                 // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
                 //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                 //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
@@ -177,7 +219,7 @@ module mj.net {
         private isFirstHideOut2 = true
         private isFirstHideOut3 = true
         /** 将打牌显示在ui中的out3 sprite之中 */
-        private show_out(dapai: string, table_index: number = 3) {
+        private show_out(dapai: string, table_index: number = config.GOD_INDEX) {
             let outSprite = this.gameTable["out" + table_index] as Sprite
             if (this["isFirstHideOut" + table_index]) {
                 //先隐藏所有内部的图
@@ -312,6 +354,12 @@ module mj.net {
             gameTable["out" + index].visible = false
             // 用户离线状态不显示
             gameTable["userHeadOffline" + index].visible = false
+
+            this.gameTable.clock.visible = false
+            this.gameTable.direction0.visible = false
+            this.gameTable.direction1.visible = false
+            this.gameTable.direction2.visible = false
+            this.gameTable.direction3.visible = false
         }
 
         private open_room(server_message: any) {
@@ -367,6 +415,7 @@ module mj.net {
                 //显示右玩家的信息
                 this.showHead(gameTable, rightPlayer, 2);
             }
+            this.show_count_down(Laya.god_player)
             Laya.stage.addChild(gameTable);
         }
 

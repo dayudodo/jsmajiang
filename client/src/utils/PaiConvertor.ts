@@ -6,7 +6,7 @@ namespace mj.utils {
 
   //数字麻将表，加速版本
   var N_BING = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  var N_TIAO = [9,10, 11, 12, 13, 14, 15, 16, 17];
+  var N_TIAO = [9, 10, 11, 12, 13, 14, 15, 16, 17];
   var N_ZHIPAI = [31, 32, 33];
 
   export class PaiConvertor {
@@ -35,15 +35,15 @@ namespace mj.utils {
      * 返回类似于ui/majiang/shou_??.png的字符串，用于替换麻将牌的显示
      * @param str 
      */
-    static skinOfShou(str:string):string{
+    static skinOfShou(str: string): string {
       return `ui/majiang/${this.ToShou(str)}`
     }
     /** 打出牌的样子，以zheng开头的图形 */
-    static skinOfZheng(str:string):string{
+    static skinOfZheng(str: string): string {
       return `ui/majiang/${this.ToZheng(str)}`
     }
-        /** 别家打出牌的样子，以ce开头的图形 */
-    static skinOfCe(str:string):string{
+    /** 别家打出牌的样子，以ce开头的图形 */
+    static skinOfCe(str: string): string {
       return `ui/majiang/${this.ToCe(str)}`
     }
     static ToZheng(str: string): string {
@@ -57,10 +57,7 @@ namespace mj.utils {
       return `ce_${this.ToNumber(str)}.png`;
     }
 
-    /**
-     * 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串
-     * @param all_pais 所有服务器发过来的牌
-     */
+    /** 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串 */
     static ToShouArray(all_pais: Array<string>): Array<string> {
       return all_pais.map(item => {
         return this.ToShou(item);
@@ -72,14 +69,25 @@ namespace mj.utils {
         return this.ToZheng(item);
       });
     }
-    /**
-     * 转换成以ce开头的横牌url数组，比如fa,zh变成ce_31.png, ce_32.png
-     * @param all_pais 
-     */
+    /** 转换成以ce开头的横牌url数组，比如fa,zh变成ce_31.png, ce_32.png */
     static ToCeArray(all_pais: Array<string>): Array<string> {
       return all_pais.map(item => {
         return this.ToCe(item);
       });
     }
+    /** 根据二位数字算出其图片skin */
+    static CountDownNumSkin(countNum: number): Array<string> {
+      if (countNum > 99) { console.warn('最多只能显示2位数字！') }
+      let num1, num0
+      if (countNum > 9) {
+        num1 = new String(countNum)[0]
+        num0 = new String(countNum)[1]
+      } else {
+        num1 = "0"
+        num0 = new String(countNum)[0]
+      }
+      return [`ui/game/${num1}.png`, `ui/game/${num0}.png`]
+    }
+
   }
 }

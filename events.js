@@ -17,6 +17,7 @@
   export const server_receive_ready = "server_receive_ready";
   export const server_game_start = "server_game_start";
   export const server_table_fa_pai = "server_table_fa_pai";
+  export const server_table_fa_pai_other = "server_table_fa_pai_other";
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
   export const server_gameover = "server_gameover";
