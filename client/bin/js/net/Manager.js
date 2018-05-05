@@ -68,7 +68,12 @@ var mj;
                 _a = PaiConverter.CountDownNumSkin(twonumber), this.gameTable.Num1.skin = _a[0], this.gameTable.Num0.skin = _a[1];
                 var _a;
             };
-            /** 开始显示倒计时 */
+            Manager.prototype.show_direction = function (index) {
+                if (index === void 0) { index = config.GOD_INDEX; }
+                this.gameTable.clock.visible = true;
+                this.gameTable["direction" + index].visible = true;
+            };
+            /** 开始显示倒计时，包括显示方向的调用 */
             Manager.prototype.show_count_down = function (player) {
                 var _this = this;
                 console.log(player.username + "\u5F00\u59CB\u5012\u8BA1\u65F6");
@@ -87,11 +92,6 @@ var mj;
                 };
                 Laya.timer.loop(1000, this, countdownOneSecond);
             };
-            Manager.prototype.show_direction = function (index) {
-                if (index === void 0) { index = config.GOD_INDEX; }
-                this.gameTable.clock.visible = true;
-                this.gameTable["direction" + index].visible = true;
-            };
             Manager.prototype.server_table_fa_pai_other = function (server_message) {
                 var user_id = server_message.user_id;
                 var player = Laya.room.players.find(function (p) { return p.user_id == user_id; });
@@ -108,7 +108,7 @@ var mj;
                 gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai);
                 gameTable.fa3.visible = true;
                 //这张牌也是可以打出去的！与shouPai中的事件处理其实应该是一样的！或者说假装当成是shouPai的一部分？
-                this.show_direction(Laya.god_player.ui_index);
+                this.show_count_down(Laya.god_player);
             };
             Manager.prototype.server_game_start = function (server_message) {
                 //游戏开始了
@@ -389,7 +389,6 @@ var mj;
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
-                this.show_count_down(Laya.god_player);
                 Laya.stage.addChild(gameTable);
             };
             Manager.prototype.server_other_player_enter_room = function (server_message) {

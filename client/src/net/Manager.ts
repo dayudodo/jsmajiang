@@ -75,7 +75,11 @@ module mj.net {
         private showSkinOfCountDown(twonumber: number) {
             [this.gameTable.Num1.skin, this.gameTable.Num0.skin] = PaiConverter.CountDownNumSkin(twonumber)
         }
-        /** 开始显示倒计时 */
+        private show_direction(index: number = config.GOD_INDEX) {
+            this.gameTable.clock.visible = true
+            this.gameTable["direction" + index].visible = true
+        }
+        /** 开始显示倒计时，包括显示方向的调用 */
         private show_count_down(player: Player) {
             console.log(`${player.username}开始倒计时`);
             this.show_direction(player.ui_index)
@@ -93,16 +97,11 @@ module mj.net {
             }
             Laya.timer.loop(1000, this, countdownOneSecond)
         }
-        private show_direction(index: number = config.GOD_INDEX) {
-            this.gameTable.clock.visible = true
-            this.gameTable["direction" + index].visible = true
-        }
+
         private server_table_fa_pai_other(server_message) {
-            let {user_id } = server_message
+            let { user_id } = server_message
             let player = Laya.room.players.find(p => p.user_id == user_id)
             console.log(`服务器给玩家${player.username}发了张牌`);
-
-
             this.show_count_down(player)
         }
         private server_table_fa_pai(server_message) {
@@ -115,10 +114,7 @@ module mj.net {
             gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai)
             gameTable.fa3.visible = true
             //这张牌也是可以打出去的！与shouPai中的事件处理其实应该是一样的！或者说假装当成是shouPai的一部分？
-            this.show_direction(Laya.god_player.ui_index)
-
-
-
+            this.show_count_down(Laya.god_player)
         }
 
         private server_game_start(server_message) {
@@ -415,7 +411,6 @@ module mj.net {
                 //显示右玩家的信息
                 this.showHead(gameTable, rightPlayer, 2);
             }
-            this.show_count_down(Laya.god_player)
             Laya.stage.addChild(gameTable);
         }
 
