@@ -13,7 +13,7 @@ module mj.model {
         public seat_index = null;
         /**玩家的积分 */
         public score = 0;
-        /** 在界面中的序号，左玩家是0，右玩家是2 */
+        /** 在界面中的序号，左玩家是0，右玩家是2, 上玩家是1，自己是3 */
         public ui_index: number = null;
 
         constructor() {

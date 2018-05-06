@@ -14,11 +14,14 @@ module mj.net {
         public byte: Laya.Byte;
         public eventsHandler: Array<any>
         public gameTable: GameTableScene
-        private paiArray: Sprite[] = []
+        /** 方向指向自己的手牌数组，还能添加服务器的发牌 */
+        private clonePaiSpriteArray: Sprite[] = []
 
         private offsetY = 40;
         private offsetX = 10;
         private prevSelectedPai: Sprite = null;
+        /**是否在计时结束后自动打牌，测试时使用 */
+        private auto_dapai = false;
 
         constructor() {
             this.connect();
@@ -30,13 +33,13 @@ module mj.net {
             this.socket = new Laya.Socket();
             //这里我们采用小端
             this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
+            this.socket.on(Laya.Event.OPEN, this, this.openHandler);
+            this.socket.on(Laya.Event.MESSAGE, this, this.messageHandler);
+            this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);
+            this.socket.on(Laya.Event.ERROR, this, this.errorHandler);
             //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
             // this.socket.connectByUrl("ws://192.168.2.200:3333");
             this.socket.connectByUrl("ws://localhost:3333");
-            this.socket.on(Laya.Event.OPEN, this, this.openHandler);
-            this.socket.on(Laya.Event.MESSAGE, this, this.receiveHandler);
-            this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);
-            this.socket.on(Laya.Event.ERROR, this, this.errorHandler);
             this.eventsHandler = [
                 [events.server_welcome, this.server_welcome],
                 [events.server_login, this.server_login],
@@ -49,8 +52,8 @@ module mj.net {
                 [events.server_receive_ready, this.server_receive_ready],
                 [events.server_game_start, this.server_game_start],
                 [events.server_gameover, this.server_gameover],
-                [events.server_table_fa_pai, this.server_table_fa_pai],
                 [events.server_table_fa_pai_other, this.server_table_fa_pai_other],
+                [events.server_table_fa_pai, this.server_table_fa_pai],
                 [events.server_dapai, this.server_dapai],
                 [events.server_dapai_other, this.server_dapai_other],
 
@@ -72,9 +75,7 @@ module mj.net {
             let {pai_name} = server_message
             console.log(`服务器确认你已打牌 ${pai_name}`);
         }
-        private showSkinOfCountDown(twonumber: number) {
-            [this.gameTable.Num1.skin, this.gameTable.Num0.skin] = PaiConverter.CountDownNumSkin(twonumber)
-        }
+        /**显示当前index的方向三角形，UI中的三角形以direction开头 */
         private show_direction(index: number = config.GOD_INDEX) {
             this.gameTable.clock.visible = true
             this.gameTable["direction" + index].visible = true
@@ -85,14 +86,24 @@ module mj.net {
             this.show_direction(player.ui_index)
             //todo: replace this.gameTable.Num0.skin 
             let waitTime = config.MAX_WAIT_TIME
-            this.showSkinOfCountDown(config.MAX_WAIT_TIME)
+            let showSkinOfCountDown = (twonumber: number) => {
+                [this.gameTable.Num1.skin, this.gameTable.Num0.skin] = PaiConverter.CountDownNumSkin(twonumber)
+            }
+            showSkinOfCountDown(config.MAX_WAIT_TIME)
             let countdownOneSecond = () => {
                 waitTime--
-                this.showSkinOfCountDown(waitTime)
+                showSkinOfCountDown(waitTime)
                 if (0 == waitTime) {
                     Laya.timer.clear(this, countdownOneSecond)
                     //计时结束隐藏方向
-                    this.hideDirection(player.ui_index)
+                    this.hideDirection(player)
+                    //自动打牌只有本玩家才有的功能，其它玩家显示倒计时仅仅是显示而已。
+                    if ((player == Laya.god_player) && this.auto_dapai) {
+                        this.socket.sendmsg({
+                            type: events.client_da_pai,
+                            pai: Laya.god_player.table_pai
+                        })
+                    }
                 }
             }
             Laya.timer.loop(1000, this, countdownOneSecond)
@@ -112,8 +123,14 @@ module mj.net {
             let {gameTable } = this
             //显示服务器发过来的牌
             gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai)
-            gameTable.fa3.visible = true
+            let newFa3Sprite = LayaUtils.clone(gameTable.fa3) as Sprite
+            newFa3Sprite.visible = true
             //这张牌也是可以打出去的！与shouPai中的事件处理其实应该是一样的！或者说假装当成是shouPai的一部分？
+            newFa3Sprite.on(Laya.Event.CLICK, this, () => {
+                this.handleClonePaiSpriteClick(newFa3Sprite, [pai], 0, true)
+            })
+            this.clonePaiSpriteArray.push(newFa3Sprite)
+            gameTable.shouPai3.addChild(newFa3Sprite);
             this.show_count_down(Laya.god_player)
         }
 
@@ -140,7 +157,7 @@ module mj.net {
             let all_pai_urls = PaiConverter.ToShouArray(shou_pai)
             let one_shou_pai_width = gameTable.shou3.width;
             let posiX = gameTable.shou3.x;
-            gameTable.shouPai3.visible = true; //可能要先显示这个，因为其是父容器！
+            gameTable.shouPai3.visible = true;
             //隐藏里面的牌，需要的时候才会显示出来
             gameTable.chi3.visible = false;
             gameTable.anGangHide3.visible = false;
@@ -160,45 +177,44 @@ module mj.net {
                     // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
                     if (Laya.god_player.table_pai) {
                         // 如果两次点击同一张牌，应该打出去
-                        this.handlePaiSpriteClick(newPaiSprite, shou_pai, index, socket, gameTable);
+                        this.handleClonePaiSpriteClick(newPaiSprite, shou_pai, index);
                     }
-
                 });
-                this.paiArray.push(newPaiSprite) //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
+                this.clonePaiSpriteArray.push(newPaiSprite) //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
                 gameTable.shouPai3.addChild(newPaiSprite);
                 posiX += one_shou_pai_width;
             }
         }
-        private hideDirection(index: number) {
-            this.gameTable["direction" + index].visible = false
+        private hideDirection(player: Player) {
+            this.gameTable["direction" + player.ui_index].visible = false
         }
-        private handlePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, socket: Laya.Socket, gameTable: GameTableScene) {
+        private handleClonePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, is_server_faPai: boolean = false) {
             // 如果两次点击同一张牌，应该打出去
             if (this.prevSelectedPai === newPaiSprite) {
                 let daPai = shou_pai[index];
                 console.log(`用户选择打牌${daPai}`);
-                socket.sendmsg({
+                this.socket.sendmsg({
                     type: events.client_da_pai,
                     pai: daPai
                 });
                 Laya.god_player.da_pai(daPai)
                 this.show_out(daPai)
                 //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
-                this.hideDirection(Laya.god_player.ui_index)
+                this.hideDirection(Laya.god_player)
                 // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
                 //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                 //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                 newPaiSprite.y += this.offsetY;
-                this.paiArray.forEach((item, index) => {
+                this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                this.clonePaiSpriteArray.forEach((item, index) => {
                     let changePaiSprite = item as Sprite;
                     changePaiSprite.destroy(true);
                     //真正的牌面是个Image,而且是二级子！
                     // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
                     // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
                 });
-                gameTable.shou3.x = this.paiArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
-                this.paiArray = [];
-                this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai);
+                this.clonePaiSpriteArray = [];
+                this.show_god_player_shoupai(this.gameTable, Laya.god_player.shou_pai);
             }
             else {
                 //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
@@ -209,6 +225,7 @@ module mj.net {
                 newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
             }
         }
+
         // 是否隐藏了打牌所在区域sprite
         private isFirstHideOut0 = true
         private isFirstHideOut1 = true
@@ -310,7 +327,7 @@ module mj.net {
         }
         //看来这儿会成为新的调度口了，根据发过来的消息进行各种处理，暂时感觉这样也OK，不过那种socketio的on办法也实在是方便啊。
         // 其实就算是socketio也能使用查表的办法来写，代码还更具有通用性！
-        public receiveHandler(msg: any = null): void {
+        public messageHandler(msg: any = null): void {
             ///接收到数据触发函数
             let server_message = JSON.parse(msg);
             let right_element = this.eventsHandler.find(item => server_message.type == item[0])
@@ -344,8 +361,18 @@ module mj.net {
             let { gameTable } = this
             // 头像不显示
             gameTable["userHead" + index].visible = false
-            // 手牌是不显示的
-            gameTable["shouPai" + index].visible = false
+            // 手牌内部是不显示的, 但是手牌本身需要显示
+            gameTable["shouPai" + index].visible = true;
+            //隐藏里面的牌，需要的时候才会显示出来
+            gameTable["chi" + index].visible = false;
+            gameTable["anGangHide" + index].visible = false;
+            gameTable["mingGang" + index].visible = false;
+            gameTable["anGang" + index].visible = false;
+            gameTable["fa" + index].visible = false;
+            if (3 == index) {
+                //shou3并非所有的玩家都有这个名称前缀，是自己复制出来的，所以需要另行处理
+                gameTable.shou3.visible = false;
+            }
             //打过的牌暂不显示
             gameTable["out" + index].visible = false
             // 用户离线状态不显示
@@ -357,8 +384,8 @@ module mj.net {
             this.gameTable.direction2.visible = false
             this.gameTable.direction3.visible = false
         }
-
-        private open_room(server_message: any) {
+        /** 用户创建房间、加入房间后打开gameTable */
+        private open_gameTable(server_message: any) {
             Laya.stage.destroyChildren();
             // let { seat_index, east} = server_message
 
@@ -411,6 +438,10 @@ module mj.net {
                 //显示右玩家的信息
                 this.showHead(gameTable, rightPlayer, 2);
             }
+            //for test
+            // gameTable.shouPai3.visible = true
+            // this.server_table_fa_pai({pai: 't4'})
+            //end test
             Laya.stage.addChild(gameTable);
         }
 
@@ -435,7 +466,6 @@ module mj.net {
             //todo: 没效率，粗暴的刷新用户头像数据
             let leftPlayer = Laya.room.left_player(Laya.god_player)
             console.log('leftPlayer:', leftPlayer);
-
             if (leftPlayer) {
                 //显示左玩家的信息
                 this.showHead(gameTable, leftPlayer, 0)
@@ -448,7 +478,7 @@ module mj.net {
             }
         }
         /**
-         * 
+         * 显示玩家的头像数据，包括用户名,id号,庄家bool，分数值
          * @param gameTable 
          * @param p 
          * @param index 桌面中用户的序列号，右边的是2，左边的是0，上面的是1（卡五星不用）
@@ -469,17 +499,16 @@ module mj.net {
             Laya.god_player.seat_index = seat_index
             Laya.god_player.east = east
 
-            other_players_info.forEach(element => {
+            other_players_info.forEach(person => {
                 let player = new Player()
-                player.username = element.username
-                player.user_id = element.user_id
-                player.seat_index = element.seat_index
-                player.east = element.east
-                player.score = element.score
+                player.username = person.username
+                player.user_id = person.user_id
+                player.seat_index = person.seat_index
+                player.east = person.east
+                player.score = person.score
                 Laya.room.players.push(player)
             });
-            this.open_room(server_message)
-            //更新玩家的显示，排除自己！
+            this.open_gameTable(server_message)
         }
 
         private server_no_such_room() {
@@ -511,7 +540,7 @@ module mj.net {
             //关闭事件
             // console.log('服务器已经关闭，请查看官网说明');
             this.socket.cleanSocket();
-            let closeDialogue = new DialogScene("服务器已经关闭，请查看官网说明");
+            let closeDialogue = new DialogScene("连接已经关闭，请联系系统管理员");
             closeDialogue.popup();
             Laya.stage.addChild(closeDialogue);
         }

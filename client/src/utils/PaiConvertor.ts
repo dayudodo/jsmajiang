@@ -75,7 +75,7 @@ namespace mj.utils {
         return this.ToCe(item);
       });
     }
-    /** 根据二位数字算出其图片skin */
+    /** 根据countNum计算出其图片skin */
     static CountDownNumSkin(countNum: number): Array<string> {
       if (countNum > 99) { console.warn('最多只能显示2位数字！') }
       let num1, num0

@@ -2,15 +2,16 @@ module mj.model {
     export class Room {
         public players: Player[] = []
         constructor() { }
-
-        public left_player(person) { //左手玩家
+        /** 左手玩家，在此确定玩家的UI顺序 */
+        public left_player(person) { 
             let index = person.seat_index - 1
             index = (index == -1 ? config.LIMIT_IN_ROOM - 1 : index)
             let player = this.players.find(p => p.seat_index == index)
             if (player) { player.ui_index = config.UI_LEFT_INDEX }
             return player
         }
-        public right_player(person) { //右手玩家
+        /** 右手玩家，在此确定玩家的UI顺序 */
+        public right_player(person) {
             let index = person.seat_index + 1
             index = (index == config.LIMIT_IN_ROOM ? 0 : index)
             let player = this.players.find(p => p.seat_index == index)

@@ -6,6 +6,7 @@ var mj;
             function Room() {
                 this.players = [];
             }
+            /** 左手玩家，在此确定玩家的UI顺序 */
             Room.prototype.left_player = function (person) {
                 var index = person.seat_index - 1;
                 index = (index == -1 ? config.LIMIT_IN_ROOM - 1 : index);
@@ -15,6 +16,7 @@ var mj;
                 }
                 return player;
             };
+            /** 右手玩家，在此确定玩家的UI顺序 */
             Room.prototype.right_player = function (person) {
                 var index = person.seat_index + 1;
                 index = (index == config.LIMIT_IN_ROOM ? 0 : index);

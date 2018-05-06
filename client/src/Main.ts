@@ -46,7 +46,6 @@ class GameMain {
 
         this.testloading = new LoadingUI()
 
-
         Laya.stage.addChild(this.testloading)
     }
 
@@ -59,7 +58,6 @@ class GameMain {
     onLoaderComplete(): void {
         console.log(`loader complete`);
         // console.log(window.client);
-
 
         Laya.stage.removeChild(this.testloading)
         // var res: any = Laya.loader.getRes("res/atlas/base.atlas");

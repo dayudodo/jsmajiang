@@ -79,7 +79,7 @@ var mj;
                     return _this.ToCe(item);
                 });
             };
-            /** 根据二位数字算出其图片skin */
+            /** 根据countNum计算出其图片skin */
             PaiConvertor.CountDownNumSkin = function (countNum) {
                 if (countNum > 99) {
                     console.warn('最多只能显示2位数字！');
