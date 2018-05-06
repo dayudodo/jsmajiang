@@ -330,9 +330,9 @@ module mj.net {
         public messageHandler(msg: any = null): void {
             ///接收到数据触发函数
             let server_message = JSON.parse(msg);
-            let right_element = this.eventsHandler.find(item => server_message.type == item[0])
-            if (right_element) {
-                right_element[1].call(this, server_message)
+            let canRun_item = this.eventsHandler.find(item => server_message.type == item[0])
+            if (canRun_item) {
+                canRun_item[1].call(this, server_message)
                 return;
             }
             console.log("未知消息:", server_message);
@@ -368,11 +368,8 @@ module mj.net {
             gameTable["anGangHide" + index].visible = false;
             gameTable["mingGang" + index].visible = false;
             gameTable["anGang" + index].visible = false;
+            gameTable["shou" + index].visible = false;
             gameTable["fa" + index].visible = false;
-            if (3 == index) {
-                //shou3并非所有的玩家都有这个名称前缀，是自己复制出来的，所以需要另行处理
-                gameTable.shou3.visible = false;
-            }
             //打过的牌暂不显示
             gameTable["out" + index].visible = false
             // 用户离线状态不显示
