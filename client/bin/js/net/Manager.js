@@ -60,8 +60,8 @@ var mj;
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
                 var opt = new OptDialogScene();
                 opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng });
-                this.gameTable.addChild(opt);
                 laya.ui.Dialog.manager.maskLayer.alpha = config.BackGroundAlpha;
+                this.gameTable.addChild(opt);
                 opt.popup();
             };
             Manager.prototype.server_gameover = function (server_message) {

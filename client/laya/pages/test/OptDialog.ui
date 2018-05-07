@@ -2,8 +2,8 @@
     "x":0,
     "type":"Dialog",
     "selectedBox":1,
-    "selecteID":17,
-    "props":{"width":1920,"sceneColor":"#ffffff","height":240},
+    "selecteID":4,
+    "props":{"width":1920,"sceneColor":"#ffffff","height":1080},
     "nodeParent":-1,
     "label":"Dialog",
     "isOpen":true,
@@ -15,7 +15,7 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":0,"var":"hu","skin":"ui/game/operat_hu.png"},
+            "props":{"y":616,"x":333,"var":"hu","skin":"ui/game/hu.png"},
             "nodeParent":1,
             "label":"Image(hu)",
             "isDirectory":false,
@@ -28,7 +28,7 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":273,"var":"gang","skin":"ui/game/operat_gang.png"},
+            "props":{"y":616,"x":607,"var":"gang","skin":"ui/game/gang.png"},
             "nodeParent":1,
             "label":"Image(gang)",
             "isOpen":true,
@@ -42,7 +42,7 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":0,"x":560,"var":"peng","skin":"ui/game/operat_peng.png"},
+            "props":{"y":616,"x":882,"var":"peng","skin":"ui/game/peng.png"},
             "nodeParent":1,
             "label":"Image(peng)",
             "isOpen":true,
@@ -56,26 +56,26 @@
         {
             "x":15,
             "type":"Image",
-            "props":{"y":6,"x":1124,"var":"guo","skin":"ui/game/operat_guo.png"},
-            "nodeParent":1,
-            "label":"Image(guo)",
-            "isDirectory":false,
-            "isAniNode":true,
-            "hasChild":false,
-            "compId":4,
-            "child":[
-                ]
-        },
-        {
-            "x":15,
-            "type":"Image",
-            "props":{"y":0,"x":830,"var":"liang","skin":"ui/game/operat_liang.png"},
+            "props":{"y":616,"x":1156,"var":"liang","skin":"ui/game/liang.png"},
             "nodeParent":1,
             "label":"Image(liang)",
             "isDirectory":false,
             "isAniNode":true,
             "hasChild":false,
             "compId":17,
+            "child":[
+                ]
+        },
+        {
+            "x":15,
+            "type":"Image",
+            "props":{"y":616,"x":1430,"var":"guo","skin":"ui/game/opt_guo.png"},
+            "nodeParent":1,
+            "label":"Image(guo)",
+            "isDirectory":false,
+            "isAniNode":true,
+            "hasChild":false,
+            "compId":4,
             "child":[
                 ]
         }],

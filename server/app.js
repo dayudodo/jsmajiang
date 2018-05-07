@@ -48,32 +48,32 @@ function confirmInit(socket) {
 }
 function client_confirm_hu(client_message, socket) {
   let {  player, room, table_pai } = confirmInit(socket);
-  console.log(`房间:${room.room_id} 用户:${player.username} 选择胡牌`);
+  console.log(`房间:${room.id} 用户:${player.username} 选择胡牌`);
   room.client_confirm_hu(socket)
 }
 function client_confirm_ting(client_message, socket) {
   let {  player, room, table_pai } = confirmInit(socket);
-  console.log(`房间:${room.room_id} 用户:${player.username} 选择听牌`);
+  console.log(`房间:${room.id} 用户:${player.username} 选择听牌`);
   room.client_confirm_ting(socket)
 }
 function client_confirm_liang(client_message, socket) {
   let {  player, room, table_pai } = confirmInit(socket);
-  console.log(`房间:${room.room_id} 用户:${player.username} 选择亮牌`);
+  console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
   room.client_confirm_liang( socket);
 }
 function client_confirm_gang(client_message, socket) {
   let {  player, room, table_pai } = confirmInit(socket);
-  console.log(`房间:${room.room_id} 用户:${player.username} 选择杠牌`);
+  console.log(`房间:${room.id} 用户:${player.username} 选择杠牌`);
   room.client_confirm_gang(socket)
 }
 function client_confirm_peng(client_message, socket) {
   let {  player, room, table_pai } = confirmInit(socket);
-  console.log(`房间:${room.room_id} 用户:${player.username} 选择碰牌`);
+  console.log(`房间:${room.id} 用户:${player.username} 选择碰牌`);
   room.client_confirm_peng(socket)
 }
 function client_confirm_guo(client_message, socket) {
   let {  player, room, table_pai } = confirmInit(socket);
-  console.log(`房间:${room.room_id} 用户:${player.username} 选择过牌`);
+  console.log(`房间:${room.id} 用户:${player.username} 选择过牌`);
   room.client_confirm_guo(socket)
 }
 

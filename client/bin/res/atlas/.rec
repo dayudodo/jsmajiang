@@ -1,4 +1,5 @@
 D .
+R A0A9CD05 .DS_Store
 D audio
 R 02D7606B bgm1.mp3
 R 5318EAB6 bgm2.mp3
@@ -201,26 +202,24 @@ P 748C8E81 7.png
 P E8A33602 8.png
 P 9D8296A6 9.png
 P 2D4520AA bg.png
-P 2E5553A5 chi.png
 P 0B9796C8 clock.png
 P 513B26BD danGuiQueDing.png
 P 16F8AF28 direction.png
 P F283F648 down.png
 P DC866C9D frame.png
 R B57678EF game_name.png
-P 2A37410A gang.png
+P FD8A32F5 gang.png
 P 9DBCC9C0 gold_bg.png
-P B24239F6 hu.png
+P DFE57E3C hu.png
 P 73DF1DAE icon_gold.png
 P B39013A0 left.png
-P 12CD69C2 liang.png
-P E9DE00EE operat_chi.png
-P 7EA109E2 operat_gang.png
-P 8BBEF449 operat_guo.png
-P 7214C2C2 operat_hu.png
-P D1004498 operat_liang.png
-P DE695BF7 operat_peng.png
-P 7B66F91C peng.png
+P 097D469D liang.png
+P 7EA109E2 opt_gang.png
+P 8BBEF449 opt_guo.png
+P 7214C2C2 opt_hu.png
+P 5F29EE63 opt_liang.png
+P DE695BF7 opt_peng.png
+P 034D36C5 peng.png
 P BAADB4F4 result_title_bg.png
 P 60D92101 result_title_lost.png
 P 498CEF16 result_title_nor.png

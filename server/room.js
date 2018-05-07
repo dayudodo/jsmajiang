@@ -319,22 +319,9 @@ export class Room {
       //房间记录下用户打的牌
       this.table_pai = pai_name;
       //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
-      //向房间内的所有玩家显示出当前玩家打的牌
-      player.socket.sendmsg({
-        type: g_events.server_dapai,
-        pai_name: pai_name
-      });
-      //告诉其它玩家哪个打牌了, 其它信息用户在加入房间的时候已经发送过了。
-      this.other_players(player).forEach(p => {
-        p.socket.sendmsg({
-          type: g_events.server_dapai_other,
-          username: player.username,
-          user_id: player.user_id,
-          pai_name: pai_name
-        });
-      });
+      this.broadcast_server_dapai(player, pai_name);
       this.fa_pai(this.next_player);
-      return;
+      
       let isRoomPaiEmpty = 0 === this.clone_pai.length;
       if (isRoomPaiEmpty) {
         //告诉所有人游戏结束了
@@ -428,6 +415,22 @@ export class Room {
         chalk.red(`有玩家在想听还是胡牌，${player.username}不能打牌`)
       );
     }
+  }
+ /**广播服务器打牌的消息给所有玩家 */
+  broadcast_server_dapai(player, pai_name) {
+    player.socket.sendmsg({
+      type: g_events.server_dapai,
+      pai_name: pai_name
+    });
+    //告诉其它玩家哪个打牌了, 其它信息用户在加入房间的时候已经发送过了。
+    this.other_players(player).forEach(p => {
+      p.socket.sendmsg({
+        type: g_events.server_dapai_other,
+        username: player.username,
+        user_id: player.user_id,
+        pai_name: pai_name
+      });
+    });
   }
 
   get dong_jia() {

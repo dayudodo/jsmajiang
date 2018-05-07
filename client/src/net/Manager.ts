@@ -66,8 +66,8 @@ module mj.net {
             let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt
             let opt = new OptDialogScene()
             opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng })
-            this.gameTable.addChild(opt)
             laya.ui.Dialog.manager.maskLayer.alpha = config.BackGroundAlpha;
+            this.gameTable.addChild(opt)
             opt.popup()
 
         }
