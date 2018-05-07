@@ -527,7 +527,7 @@ export class Majiang {
     return false;
   }
 
-  //哪种基本的胡牌，象杠上开花是多算番的胡，并不是基本的胡牌
+  /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
   static HupaiTypeCodeArr(str, na_pai) {
     let _huArr = [];
     if (this.HuisYise(str, na_pai)) {

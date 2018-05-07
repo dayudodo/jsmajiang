@@ -6,6 +6,7 @@ module mj.net {
     import LayaUtils = mj.utils.LayaUtils
     import Sprite = laya.display.Sprite;
     import DialogScene = mj.scene.DialogScene
+    import OptDialogScene = mj.scene.OptDialogScene
     import GameSoundObserver = mj.manager.GameSoundObserver
     import Image = Laya.Image
 
@@ -56,11 +57,21 @@ module mj.net {
                 [events.server_table_fa_pai, this.server_table_fa_pai],
                 [events.server_dapai, this.server_dapai],
                 [events.server_dapai_other, this.server_dapai_other],
+                [events.server_can_select, this.server_can_select],
 
             ]
 
         }
-        private server_gameover() {
+        public server_can_select(server_message) {
+            let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt
+            let opt = new OptDialogScene()
+            opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng })
+            this.gameTable.addChild(opt)
+            laya.ui.Dialog.manager.maskLayer.alpha = config.BackGroundAlpha;
+            opt.popup()
+
+        }
+        private server_gameover(server_message) {
             console.log('server_gameover');
 
         }
@@ -363,7 +374,7 @@ module mj.net {
             gameTable["userHead" + index].visible = false
             // 手牌内部是不显示的, 但是手牌本身需要显示
             gameTable["shouPai" + index].visible = true;
-            //隐藏里面的牌，需要的时候才会显示出来
+            //隐藏里面的牌，需要的时候才会显示出来, 比如fa会显示服务器发过来的牌，如果shouPai隐藏了那么fa就不会再显示！
             gameTable["chi" + index].visible = false;
             gameTable["anGangHide" + index].visible = false;
             gameTable["mingGang" + index].visible = false;
@@ -436,8 +447,8 @@ module mj.net {
                 this.showHead(gameTable, rightPlayer, 2);
             }
             //for test
-            // gameTable.shouPai3.visible = true
-            // this.server_table_fa_pai({pai: 't4'})
+
+
             //end test
             Laya.stage.addChild(gameTable);
         }

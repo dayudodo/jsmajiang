@@ -1,5 +1,4 @@
 D .
-R A0A9CD05 .DS_Store
 D audio
 R 02D7606B bgm1.mp3
 R 5318EAB6 bgm2.mp3
@@ -214,10 +213,12 @@ P 9DBCC9C0 gold_bg.png
 P B24239F6 hu.png
 P 73DF1DAE icon_gold.png
 P B39013A0 left.png
+P 12CD69C2 liang.png
 P E9DE00EE operat_chi.png
 P 7EA109E2 operat_gang.png
 P 8BBEF449 operat_guo.png
 P 7214C2C2 operat_hu.png
+P D1004498 operat_liang.png
 P DE695BF7 operat_peng.png
 P 7B66F91C peng.png
 P BAADB4F4 result_title_bg.png

@@ -4,7 +4,7 @@ var express = require("express"),
   ip = require("ip"),
   config = require("./../config");
 import _ from "lodash";
-import { Connector } from "./Connector";
+import { LobbyManager } from "./LobbyManager";
 import { Player } from "./player";
 import { Room } from "./room";
 import chalk from "chalk";
@@ -14,15 +14,68 @@ const app = express();
 //initialize a simple http server
 const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
-const g_lobby = new Connector();
-var test_names = ["jack1", "rose2", "tom3", "jerry4", "michael5", "adam6", "bruce7","adam8","david9"];
+const g_lobby = new LobbyManager();
+var test_names = [
+  "jack1",
+  "rose2",
+  "tom3",
+  "jerry4",
+  "michael5",
+  "adam6",
+  "bruce7",
+  "adam8",
+  "david9"
+];
 var eventsHandler = [
   [g_events.client_testlogin, client_testlogin],
   [g_events.client_create_room, client_create_room],
   [g_events.client_join_room, client_join_room],
   [g_events.client_player_ready, client_player_ready],
-  [g_events.client_da_pai, client_da_pai]
+  [g_events.client_da_pai, client_da_pai],
+  [g_events.client_confirm_hu, client_confirm_hu],
+  [g_events.client_confirm_ting, client_confirm_ting],
+  [g_events.client_confirm_liang, client_confirm_liang],
+  [g_events.client_confirm_gang, client_confirm_gang],
+  [g_events.client_confirm_peng, client_confirm_peng],
+  [g_events.client_confirm_guo, client_confirm_guo]
 ];
+
+function confirmInit(socket) {
+  let player = g_lobby.find_player_by(socket);
+  let room = g_lobby.find_room_by(socket);
+  let table_pai = room.table_pai;
+  return { room, player, table_pai };
+}
+function client_confirm_hu(client_message, socket) {
+  let {  player, room, table_pai } = confirmInit(socket);
+  console.log(`房间:${room.room_id} 用户:${player.username} 选择胡牌`);
+  room.client_confirm_hu(socket)
+}
+function client_confirm_ting(client_message, socket) {
+  let {  player, room, table_pai } = confirmInit(socket);
+  console.log(`房间:${room.room_id} 用户:${player.username} 选择听牌`);
+  room.client_confirm_ting(socket)
+}
+function client_confirm_liang(client_message, socket) {
+  let {  player, room, table_pai } = confirmInit(socket);
+  console.log(`房间:${room.room_id} 用户:${player.username} 选择亮牌`);
+  room.client_confirm_liang( socket);
+}
+function client_confirm_gang(client_message, socket) {
+  let {  player, room, table_pai } = confirmInit(socket);
+  console.log(`房间:${room.room_id} 用户:${player.username} 选择杠牌`);
+  room.client_confirm_gang(socket)
+}
+function client_confirm_peng(client_message, socket) {
+  let {  player, room, table_pai } = confirmInit(socket);
+  console.log(`房间:${room.room_id} 用户:${player.username} 选择碰牌`);
+  room.client_confirm_peng(socket)
+}
+function client_confirm_guo(client_message, socket) {
+  let {  player, room, table_pai } = confirmInit(socket);
+  console.log(`房间:${room.room_id} 用户:${player.username} 选择过牌`);
+  room.client_confirm_guo(socket)
+}
 
 wsserver.on("connection", socket => {
   socket.id = g_lobby.generate_socket_id();
@@ -73,19 +126,19 @@ wsserver.on("connection", socket => {
 });
 
 function client_da_pai(client_message, socket) {
-  let player = g_lobby.find_player_by_socket(socket);
-  let room = g_lobby.find_room_by_socket(socket);
+  let player = g_lobby.find_player_by(socket);
+  let room = g_lobby.find_room_by(socket);
   let pai = client_message.pai;
   console.log(`用户${player.username}打牌:${pai}`);
   //告诉房间，哪个socket打了啥牌
-  room.da_pai(socket, pai);
+  room.client_da_pai(socket, pai);
 }
 
 function client_join_room(client_message, socket) {
   let { room_id } = client_message;
   let room = g_lobby.find_room_by_id(room_id);
   // console.dir(room);
-  let _me = g_lobby.find_player_by_socket(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
+  let _me = g_lobby.find_player_by(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
   let conn = g_lobby.find_conn_by(socket);
   //找到房间后，还要把当前连接的room保存到其连接信息中，而在登录时conn中已经保存有用户信息了
   conn.room = room;
@@ -139,7 +192,7 @@ function client_create_room(client_message, socket) {
         conn.player.seat_index
       }`
     );
-    conn.room.player_enter_room(socket)
+    conn.room.player_enter_room(socket);
   }
 }
 
@@ -155,7 +208,7 @@ function client_testlogin(client_message, socket) {
     user_id: g_lobby.generate_user_id()
   });
   //todo: 模拟用户的积分，暂时定为其id增长1万。
-  s_player.score = s_player.user_id + 10000
+  s_player.score = s_player.user_id + 10000;
   console.log(
     `${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${
       socket.id
@@ -171,8 +224,8 @@ function client_testlogin(client_message, socket) {
 }
 
 function client_player_ready(client_message, socket) {
-  let player = g_lobby.find_player_by_socket(socket);
-  let room = g_lobby.find_room_by_socket(socket);
+  let player = g_lobby.find_player_by(socket);
+  let room = g_lobby.find_room_by(socket);
   player.ready = true;
 
   //向房间内的所有人广播说我已经开始了
@@ -182,9 +235,7 @@ function client_player_ready(client_message, socket) {
   // 如果所有的人都准备好了，就开始游戏！
   if (room.all_ready) {
     console.log(
-      chalk.green(
-        `===>房间${room.id}全部玩家准备完毕，可以游戏啦！`
-      )
+      chalk.green(`===>房间${room.id}全部玩家准备完毕，可以游戏啦！`)
     );
     // room.send_all_players_message();
     //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。

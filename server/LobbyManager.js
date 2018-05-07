@@ -3,7 +3,7 @@
 import _ from "lodash";
 
 //room也添加进来，是为了方便添加用户或者删除，其实有点儿冗余，因为player里面包含有room信息
-export class Connector {
+export class LobbyManager {
   constructor() {
     this.conn_array = [];
     this._id_seed = 0
@@ -24,8 +24,8 @@ export class Connector {
     });
   }
   dis_connect(socket) {
-    let player = this.find_player_by_socket(socket);
-    let room = this.find_room_by_socket(socket);
+    let player = this.find_player_by(socket);
+    let room = this.find_room_by(socket);
     if (player && room) {
       //todo:如果用户已经进入房间，还需要在房间里面断开连接，告诉其它人此用户已经掉线
     }
@@ -46,28 +46,30 @@ export class Connector {
       }
     });
   }
-  //通过socket_id找到玩家所在的房间
-  find_room_by_socket(socket) {
+  /**通过socket找到玩家所在的房间*/
+  find_room_by(socket) {
     return this.find_conn_by(socket).room;
   }
-  //查找存在的房间
-  find_room_by_id(room_name) {
+  /**通过room_id查找存在的房间*/
+  find_room_by_id(room_id) {
     let conn = this.conn_array.find(item => {
       if (item.room) {
-        return item.room.id == room_name;
+        return item.room.id == room_id;
       } else {
         return false;
       }
     });
     return conn ? conn.room : null;
   }
-  find_player_by_socket(socket) {
+  /**通过socket找到玩家 */
+  find_player_by(socket) {
     return this.find_conn_by(socket).player;
   }
-
+  /**所有连接计数 */
   get clients_count() {
     return this.conn_array.length;
   }
+  /**所有玩家的姓名 */
   get player_names() {
     return this.conn_array.reduce((result, item) => {
       if (item.player) {

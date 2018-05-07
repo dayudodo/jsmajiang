@@ -24,25 +24,23 @@ export class Player {
     this.shou_pai = shou_pai; //玩家当前拥有的牌
     this.used_pai = []; //打过的牌有哪些，断线后可以重新发送此数据
     this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
-
-    this.hupai_types = []; //什么样的胡，保存这个数据也是为了能够保存到数据库中
-    //胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。
-    //还得知道是谁打的这张牌，自摸还是他人放炮？还是杠了之后的牌？
+    /** 什么样的胡，保存这个数据也是为了能够保存到数据库中 */
+    this.hupai_types = []; 
+    /**胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。
+    还得知道是谁打的这张牌，自摸还是他人放炮？还是杠了之后的牌？*/
     this.hupai_zhang = [];
     //临时保存的胡牌张，供用户选择，如果听或者亮，则成为正式的胡牌张
     this.temp_hupai_zhang = [];
-    //玩家是否亮牌，只在可以听胡的时候才能亮牌，这个还是需要服务器做出判断，在玩家打完牌之后进行听胡的判断。
+    /** 玩家是否亮牌，只在可以听胡的时候才能亮牌，这个还是需要服务器做出判断，在玩家打完牌之后进行听胡的判断。*/
     this.is_liang = false;
-    //玩家是否选择听牌，只有大胡的时候才能听牌！
+    /**玩家是否选择听牌，只有大胡的时候才能听牌！*/
     this.is_ting = false;
     //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
     this.is_thinking_tingliang = false;
     /**玩家的积分 */
     this.score = 0;
   }
-  /**
-   * 加入参数pai到玩家手牌之中
-   */
+  /**  加入参数pai到玩家手牌之中  */
   set table_pai(pai) {
     if (!_.isString(pai)) {
       throw new Error(chalk.red(`pai应该是个字符串:${pai}`));
@@ -53,10 +51,7 @@ export class Player {
   get table_pai() {
     return this._table_pai;
   }
-  /**
-   * 删除玩家手牌index处的牌
-   * @param index
-   */
+  /** 删除玩家手牌index处的牌 */
   da_pai(pai) {
     let firstIndex = this.shou_pai.indexOf(pai);
     if (firstIndex > -1) {

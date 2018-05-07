@@ -6,6 +6,7 @@ var mj;
         var PaiConverter = mj.utils.PaiConvertor;
         var LayaUtils = mj.utils.LayaUtils;
         var DialogScene = mj.scene.DialogScene;
+        var OptDialogScene = mj.scene.OptDialogScene;
         var Manager = /** @class */ (function () {
             function Manager() {
                 /** 方向指向自己的手牌数组，还能添加服务器的发牌 */
@@ -52,9 +53,18 @@ var mj;
                     [events.server_table_fa_pai, this.server_table_fa_pai],
                     [events.server_dapai, this.server_dapai],
                     [events.server_dapai_other, this.server_dapai_other],
+                    [events.server_can_select, this.server_can_select],
                 ];
             };
-            Manager.prototype.server_gameover = function () {
+            Manager.prototype.server_can_select = function (server_message) {
+                var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
+                var opt = new OptDialogScene();
+                opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng });
+                this.gameTable.addChild(opt);
+                laya.ui.Dialog.manager.maskLayer.alpha = config.BackGroundAlpha;
+                opt.popup();
+            };
+            Manager.prototype.server_gameover = function (server_message) {
                 console.log('server_gameover');
             };
             Manager.prototype.server_dapai_other = function (server_message) {
@@ -319,9 +329,9 @@ var mj;
                 if (msg === void 0) { msg = null; }
                 ///接收到数据触发函数
                 var server_message = JSON.parse(msg);
-                var right_element = this.eventsHandler.find(function (item) { return server_message.type == item[0]; });
-                if (right_element) {
-                    right_element[1].call(this, server_message);
+                var canRun_item = this.eventsHandler.find(function (item) { return server_message.type == item[0]; });
+                if (canRun_item) {
+                    canRun_item[1].call(this, server_message);
                     return;
                 }
                 console.log("未知消息:", server_message);
@@ -349,16 +359,13 @@ var mj;
                 gameTable["userHead" + index].visible = false;
                 // 手牌内部是不显示的, 但是手牌本身需要显示
                 gameTable["shouPai" + index].visible = true;
-                //隐藏里面的牌，需要的时候才会显示出来
+                //隐藏里面的牌，需要的时候才会显示出来, 比如fa会显示服务器发过来的牌，如果shouPai隐藏了那么fa就不会再显示！
                 gameTable["chi" + index].visible = false;
                 gameTable["anGangHide" + index].visible = false;
                 gameTable["mingGang" + index].visible = false;
                 gameTable["anGang" + index].visible = false;
+                gameTable["shou" + index].visible = false;
                 gameTable["fa" + index].visible = false;
-                if (3 == index) {
-                    //shou3并非所有的玩家都有这个名称前缀，是自己复制出来的，所以需要另行处理
-                    gameTable.shou3.visible = false;
-                }
                 //打过的牌暂不显示
                 gameTable["out" + index].visible = false;
                 // 用户离线状态不显示
@@ -420,8 +427,6 @@ var mj;
                     this.showHead(gameTable, rightPlayer, 2);
                 }
                 //for test
-                // gameTable.shouPai3.visible = true
-                // this.server_table_fa_pai({pai: 't4'})
                 //end test
                 Laya.stage.addChild(gameTable);
             };

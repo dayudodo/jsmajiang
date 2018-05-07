@@ -1,11 +1,19 @@
 namespace events {
 
+
   export const client_testlogin = "client_testlogin";
   export const client_create_room = "client_create_room"
   export const client_join_room = "client_join_room"
   export const client_player_ready = "client_player_ready"
   export const client_unknown = "client_unknown"
   export const client_da_pai = "client_da_pai"
+
+  export const client_confirm_hu = "client_confirm_hu"
+  export const client_confirm_ting = "client_confirm_ting"
+  export const client_confirm_liang = "client_confirm_liang"
+  export const client_confirm_gang = "client_confirm_gang"
+  export const client_confirm_peng = "client_confirm_peng"
+  export const client_confirm_guo = "client_confirm_guo"
 
   export const server_login = "server_login";
   export const server_welcome = "server_welcome";
@@ -22,9 +30,8 @@ namespace events {
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
   export const server_gameover = "server_gameover";
-  export const server_canHu = "server_canHu";
-  export const server_canGang = "server_canGang";
-  export const server_canPeng = "server_canPeng";
+
+  export const server_can_select = "server_can_select";
 
 
 
