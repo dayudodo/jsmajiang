@@ -21,7 +21,7 @@ export class Room {
     //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
     this.can_receive_confirm = false;
     /** 服务器当前发的牌 */
-    this.fa_pai = null;
+    this.table_fa_pai = null;
     /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
     this.table_pai = null;
 
@@ -476,7 +476,7 @@ export class Room {
       }
     });
   }
-  
+
   sendShouPaiOf(p) {
     p.socket.sendmsg({
       type: g_events.server_game_start,
