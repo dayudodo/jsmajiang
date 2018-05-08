@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1187,
-    "selecteID":1305,
+    "selectedBox":556,
+    "selecteID":457,
     "referenceLines":null,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
@@ -908,10 +908,10 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":0,"width":104,"var":"chi0","height":212.00000000000006},
+                            "props":{"y":0,"x":0,"width":104,"var":"peng0","height":212.00000000000006},
                             "nodeParent":229,
-                            "label":"Sprite(chi0)",
-                            "isOpen":null,
+                            "label":"Sprite(peng0)",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -922,6 +922,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":230,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -945,6 +946,7 @@
                                     "props":{"y":60,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":230,
                                     "label":"Image",
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -952,7 +954,7 @@
                                     "child":[
                                         {
                                             "type":"Image",
-                                            "props":{"y":7.105427357601002e-14,"x":0,"skin":"ui/majiang/ce_33.png"},
+                                            "props":{"y":7.105427357601002e-14,"x":0,"skin":"ui/majiang/ce_18.png"},
                                             "nodeParent":233,
                                             "label":"Image",
                                             "isDirectory":false,
@@ -968,6 +970,7 @@
                                     "props":{"y":120,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":230,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1251,7 +1254,7 @@
                             "child":[
                                 ]
                         }],
-                    "$HIDDEN":true
+                    "$HIDDEN":false
                 },
                 {
                     "x":30,
@@ -1613,14 +1616,13 @@
                     "props":{"y":100,"x":1700,"width":104,"var":"shouPai2","scaleY":0.65,"scaleX":-0.65,"height":1102},
                     "nodeParent":8,
                     "label":"Sprite(shouPai2)",
-                    "isOpen":true,
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1187,
                     "child":[
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":0,"x":0,"visible":false,"var":"test_shoupai2","skin":"ui/majiang/ce_bg.png"},
                             "nodeParent":1187,
@@ -1645,12 +1647,11 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":0,"width":104,"var":"chi2","height":212},
+                            "props":{"y":0,"x":0,"width":104,"var":"peng2","height":212},
                             "nodeParent":1187,
-                            "label":"Sprite(chi2)",
-                            "isOpen":null,
+                            "label":"Sprite(peng2)",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -1661,6 +1662,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1188,
                                     "label":"Image",
+                                    "isOpen":false,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1684,6 +1686,7 @@
                                     "props":{"y":60,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1188,
                                     "label":"Image",
+                                    "isOpen":false,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1691,7 +1694,7 @@
                                     "child":[
                                         {
                                             "type":"Image",
-                                            "props":{"y":7.105427357601002e-14,"x":0,"skin":"ui/majiang/ce_33.png"},
+                                            "props":{"y":7.105427357601002e-14,"x":0,"skin":"ui/majiang/ce_18.png"},
                                             "nodeParent":1191,
                                             "label":"Image",
                                             "isDirectory":false,
@@ -1707,6 +1710,7 @@
                                     "props":{"y":120,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1188,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1727,7 +1731,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":412,"x":0,"width":104,"var":"anGangHide2","height":207},
                             "nodeParent":1187,
@@ -1788,7 +1791,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":208,"x":0,"width":104,"var":"anGang2","height":207},
                             "nodeParent":1187,
@@ -1860,7 +1862,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":616,"x":0,"width":104,"var":"mingGang2","height":212},
                             "nodeParent":1187,
@@ -1965,7 +1966,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":828,"x":0,"width":53,"var":"shou2","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":1187,
@@ -1978,7 +1978,6 @@
                                 ]
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":970,"x":0,"width":53,"var":"fa2","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":1187,
@@ -1998,13 +1997,14 @@
                     "props":{"y":287,"x":260,"width":177,"var":"out0","height":477},
                     "nodeParent":8,
                     "label":"Sprite(out0)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":556,
                     "child":[
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":106,"scaleY":0.65,"scaleX":0.65},
                             "nodeParent":556,
@@ -2016,6 +2016,7 @@
                             "compId":1013,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"var":"outPai2","skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2040,6 +2041,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":59,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2064,6 +2066,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":117,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2088,6 +2091,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":175,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2112,6 +2116,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":234,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2136,6 +2141,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":293,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2160,6 +2166,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":351,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2184,6 +2191,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":409,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2208,6 +2216,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":467,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2232,6 +2241,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":526,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2256,6 +2266,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":584,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2280,6 +2291,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":642,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":1013,
@@ -2305,6 +2317,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":36,"scaleY":0.65,"scaleX":0.65},
                             "nodeParent":556,
@@ -2316,6 +2329,7 @@
                             "compId":457,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2340,6 +2354,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":59,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2364,6 +2379,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":117,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2388,6 +2404,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":175,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2412,6 +2429,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":234,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2436,6 +2454,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":293,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2460,6 +2479,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":351,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2484,6 +2504,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":409,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2508,6 +2529,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":467,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2532,6 +2554,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":526,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2556,6 +2579,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":584,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2580,6 +2604,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":642,"x":0,"skin":"ui/majiang/ce_bg.png"},
                                     "nodeParent":457,
@@ -2604,7 +2629,7 @@
                                         }]
                                 }]
                         }],
-                    "$HIDDEN":true
+                    "$HIDDEN":false
                 },
                 {
                     "x":30,
@@ -4437,10 +4462,10 @@
                     "child":[
                         {
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":250,"var":"chi3","height":128},
+                            "props":{"y":26,"x":0,"width":250,"var":"peng3","height":128},
                             "nodeParent":82,
-                            "label":"Sprite(chi3)",
-                            "isOpen":null,
+                            "label":"Sprite(peng3)",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -4451,6 +4476,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":289,
                                     "label":"Image",
+                                    "isOpen":false,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4474,6 +4500,7 @@
                                     "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":289,
                                     "label":"Image",
+                                    "isOpen":false,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4481,7 +4508,7 @@
                                     "child":[
                                         {
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_32.png"},
+                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
                                             "nodeParent":290,
                                             "label":"Image",
                                             "isDirectory":false,
@@ -4497,6 +4524,7 @@
                                     "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":289,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4784,7 +4812,8 @@
                                             "child":[
                                                 ]
                                         }]
-                                }]
+                                }],
+                            "$HIDDEN":true
                         },
                         {
                             "type":"Sprite",
@@ -4819,7 +4848,8 @@
                                             "child":[
                                                 ]
                                         }]
-                                }]
+                                }],
+                            "$HIDDEN":true
                         }]
                 },
                 {
