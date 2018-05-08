@@ -1,14 +1,14 @@
 var express = require("express"),
   http = require("http"),
   WebSocket = require("ws"),
-  ip = require("ip"),
-  config = require("./../config");
-import _ from "lodash";
+  ip = require("ip")
+import * as config from './config'
+import * as _ from "lodash";
 import { LobbyManager } from "./LobbyManager";
 import { Player } from "./player";
 import { Room } from "./room";
 import chalk from "chalk";
-import * as g_events from "../events"; //events呢容易产生同名，所以加个前缀
+import * as g_events from "./events"; //events呢容易产生同名，所以加个前缀
 const app = express();
 
 //initialize a simple http server
@@ -26,7 +26,7 @@ var test_names = [
   "adam8",
   "david9"
 ];
-var eventsHandler = [
+var eventsHandler: Array<[String, Function]> = [
   [g_events.client_testlogin, client_testlogin],
   [g_events.client_create_room, client_create_room],
   [g_events.client_join_room, client_join_room],
@@ -118,7 +118,8 @@ wsserver.on("connection", socket => {
       item => client_message.type == item[0]
     );
     if (right_element) {
-      right_element[1].call(this, client_message, socket);
+      let func = right_element[1]
+      func.call(this, client_message, socket);
       return;
     }
     console.log("未知消息:", client_message);
@@ -149,7 +150,7 @@ function client_join_room(client_message, socket) {
     //todo: 检查房间玩家数量，超过3人就不能再添加了
     console.log(`${room_id}房间内全部玩家：${room.all_player_names}`);
     if (room.players_count == config.LIMIT_IN_ROOM) {
-      console.log(`房间${room_name}已满，玩家有：${room.all_player_names}`);
+      console.log(`房间${room_id}已满，玩家有：${room.all_player_names}`);
       socket.sendmsg({ type: g_events.server_room_full });
     } else {
       console.log(`用户${_me.username}成功加入房间${room_id}`);
@@ -169,14 +170,12 @@ function client_create_room(client_message, socket) {
   let conn = g_lobby.find_conn_by(socket);
   if (!conn.player) {
     socket = null;
-    console.log(`用户${conn.username}未登录执行了创建房间：${conn.socket.id}`);
+    console.log(`用户${conn.player.username}未登录执行了创建房间：${conn.socket_id}`);
     return;
   } else {
     let owner_room = new Room();
-    let room_name = Room.make();
-    if (room_name) {
-      owner_room.id = room_name;
-    } else {
+    let room_name = owner_room.id;
+    if (!room_name) {
       console.log("服务器无可用房间了");
       socket.sendmsg({
         type: g_events.server_no_room

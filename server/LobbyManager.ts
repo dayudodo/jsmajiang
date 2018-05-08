@@ -1,9 +1,20 @@
 //管理所有的连接和与其相关的用户信息及其房间信息
 //所有的一切其实都与连接有关系？但是连接建立的时候，貌似还没有用户信息过来！只用户加入游戏之后才会有相关的信息
-import _ from "lodash";
+import * as _ from "lodash";
+import { Player } from "./player";
+import { Room } from "./room";
 
+interface ConnInterface{
+  socket_id: number,
+  player: Player,
+  room: Room
+}
 //room也添加进来，是为了方便添加用户或者删除，其实有点儿冗余，因为player里面包含有room信息
 export class LobbyManager {
+  public conn_array:Array<ConnInterface>
+  public _id_seed: number
+  public _user_id_seed: number;
+
   constructor() {
     this.conn_array = [];
     this._id_seed = 0
@@ -23,7 +34,7 @@ export class LobbyManager {
       room: null
     });
   }
-  dis_connect(socket) {
+  dis_connect(socket): ConnInterface[] {
     let player = this.find_player_by(socket);
     let room = this.find_room_by(socket);
     if (player && room) {
@@ -34,7 +45,7 @@ export class LobbyManager {
     // console.dir(dc),dc其实是个数组，里面包含了你删除的那几个元素，找不到会返回个空数组
     return dc;
   }
-  find_conn_by(socket) {
+  find_conn_by(socket): ConnInterface {
     return this.conn_array.find(item => item.socket_id == socket.id);
   }
   find_conn_by_username(name) {
@@ -62,7 +73,7 @@ export class LobbyManager {
     return conn ? conn.room : null;
   }
   /**通过socket找到玩家 */
-  find_player_by(socket) {
+  find_player_by(socket): Player {
     return this.find_conn_by(socket).player;
   }
   /**所有连接计数 */

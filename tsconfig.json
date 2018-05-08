@@ -1,16 +1,26 @@
 {
     "compilerOptions": {
-        "target": "es6",
         "module": "commonjs",
-        "outDir": "./dist",
-        "strict": true,
+        "target": "es6",
+        "rootDir":"./server",
+        "outDir": "./server_build",
         "sourceMap": true,
         "typeRoots": [
             "node_modules/@types"
+        ],
+        "watch": true,
+        "lib": [
+            "dom","es2017"
         ]
     },
+    "include": [
+        "./server/**/*"
+    ],
+
     "exclude": [
-        "dist",
-        "node_modules"
+        "server_build",
+        "node_modules",
+        "client",
+        "spec"
     ]
 }

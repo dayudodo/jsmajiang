@@ -1,8 +1,8 @@
 //麻将判胡算法主程序
 
-import _ from "lodash";
+import * as _ from "lodash";
 import chalk from "chalk";
-import * as config from "./../config";
+import * as config from "./config";
 // 全局常量，所有的牌
 var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
@@ -10,6 +10,13 @@ var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
 var ZHIPAI = ["zh", "fa", "di"];
 
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
+
+declare global {
+  interface Array<T> {
+    remove(o): T[];
+    equalArrays(o): boolean;
+  }
+}
 
 Array.prototype.remove = function(val) {
   var index = this.indexOf(val);
@@ -214,7 +221,7 @@ export class Majiang {
 ["b2b2", "b3b3", "b4b4", "b5b5", "b7b7"]
 */
 
-  static HuisPihu(str, na_pai) {
+  static HuisPihu(str, na_pai?) {
     let result = checkValidAndReturnArr(str)
       .concat(na_pai)
       .sort();
@@ -528,7 +535,7 @@ export class Majiang {
   }
 
   /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
-  static HupaiTypeCodeArr(str, na_pai) {
+  static HupaiTypeCodeArr(str, na_pai) : Array<number>{
     let _huArr = [];
     if (this.HuisYise(str, na_pai)) {
       _huArr.push(config.HuisYise);
@@ -575,7 +582,7 @@ export class Majiang {
     });
   }
   //是否是大胡，通过胡的类型码数组来进行判断
-  static isDaHu(hupaicodeArr) {
+  static isDaHu(hupaicodeArr: Array<number>) {
     if (!_.isArray(hupaicodeArr)) {
       throw new Error(`hupaicodeArr必须是个数组，但：${hupaicodeArr}`);
     }

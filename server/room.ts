@@ -1,35 +1,37 @@
-var config = require("../config");
-import _ from "lodash";
+import * as config from './config'
+import * as _ from "lodash";
 import chalk from "chalk";
 import { Majiang } from "./Majiang";
 // import * as config from "../config";
-import * as g_events from "../events";
+import * as g_events from "./events";
+import { Player } from './player';
 
 let room_valid_names = ["ange", "jack", "rose"];
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
 export class Room {
+  /**房间号，唯一，用户需要根据这个id进入房间*/
+  public readonly id: string = null;
+  //房间内的所有玩家，人数有上限，定义在config.
+  public players: Array<Player> = [];
+  //房间内的牌
+  public clone_pai = [];
+  //当前玩家，哪个打牌哪个就是当前玩家
+  public current_player = null;
+  //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
+  public can_receive_confirm = false;
+  /** 服务器当前发的牌 */
+  public table_fa_pai = null;
+  /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
+  public table_pai = null;
+
+  public fapai_to_who: Player = null;
+  public dapai_player: Player = null;
+
+  //计时器
+  public room_clock = null;
   constructor() {
-    // this.allowed_users_count
-    //应该是唯一的，用户需要根据这个id进入房间
-    this.id = null;
-    //房间内的所有玩家，人数有上限，定义在config.
-    this.players = [];
-    //房间内的牌
-    this.clone_pai = [];
-    //当前玩家，哪个打牌哪个就是当前玩家
-    this.current_player = null;
-    //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
-    this.can_receive_confirm = false;
-    /** 服务器当前发的牌 */
-    this.table_fa_pai = null;
-    /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
-    this.table_pai = null;
-
-    this.fapai_to_who = null;
-    this.dapai_player = null;
-
-    //计时器
-    this.room_clock = null;
+    // 房间新建之后，就会拥有个id了
+    this.id = Room.make()
   }
 
   //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
@@ -103,25 +105,25 @@ export class Room {
     return this.players.find(item => item.socket == socket);
   }
   //玩家们是否都已经准备好开始游戏
-  get all_ready() {
+  get all_ready(): boolean {
     let player_ready_count = this.players.filter(item => item.ready).length;
     console.log(`房间:${this.id}内玩家准备开始计数：${player_ready_count}`);
     return player_ready_count == config.LIMIT_IN_ROOM;
   }
-  get players_count() {
+  get players_count(): number {
     return this.players.length;
   }
-  get all_player_names() {
+  get all_player_names() : Array<string>{
     return this.players.map(person => {
       return person.username;
     });
   }
   //最后一位加入游戏的玩家
-  get last_join_player() {
+  get last_join_player(): Player{
     return _.last(this.players);
   }
   /** 服务器中的下一个玩家 */
-  get next_player() {
+  get next_player(): Player {
     //下一家
     let next_index =
       (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
@@ -130,7 +132,7 @@ export class Room {
     // return this.players[next_index];
   }
   //除了person外的其它玩家们
-  other_players(person) {
+  other_players(person) : Array<Player>{
     // console.log("查找本玩家%s的其它玩家", person.username);
     let o_players = this.players.filter(p => p.user_id != person.user_id);
     // console.log(o_players.map(p => p.username));
@@ -158,7 +160,7 @@ export class Room {
   }
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_gang(socket) {
-    this.confirm_peng(socket);
+    this.client_confirm_peng(socket);
     //todo: 计算收益，杠牌是有钱的！
   }
   /**亮牌其实是为了算账*/
@@ -183,10 +185,15 @@ export class Room {
     let player = this.find_player_by(socket);
     let room_name = this.id;
     //保存胡牌信息到玩家类中
-    player.hupai_types = this.hupai_types;
-    let hupaiNames = Majiang.HuPaiNamesFromArr(this.hupai_types);
+    // player.hupai_types = this.hupai_types;
+    let hupaiNames = Majiang.HuPaiNamesFromArr(player.hupai_types);
     //告诉所有人哪个胡了
-    io.to(room_name).emit("server_winner", player.username, hupaiNames);
+    // io.to(room_name).emit("server_winner", player.username, hupaiNames);
+    this.players.forEach(p=>{
+      p.socket.sendmsg({
+        type: g_events.server_winner,
+      })
+    })
     console.dir(player);
   }
   //玩家选择放弃，给下一家发牌
@@ -376,10 +383,6 @@ export class Room {
               );
               //告诉玩家你可以杠牌了
               // item_player.socket.emit("server_canGang", pai_name);
-              item_player.socket.sendmsg({
-                type: g_events.server_canGang,
-                pai_name: pai_name
-              });
               //只能碰，就用碰的办法处理！
             } else {
               console.log(

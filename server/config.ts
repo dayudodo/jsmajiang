@@ -1,18 +1,34 @@
-//以前还不熟悉如何复制一个数组
-Array.prototype.repeat = function(times) {
-  var result = [];
-  for (var i = 0; i < times; i++) {
-    this.map(item => {
-      result.push(item);
-    });
+declare global {
+  interface Array<T> {
+    repeat(o): T[];
   }
-  return result;
-};
-
-var WebSocket = require("ws")
-WebSocket.prototype.sendmsg = function(msg){
-  this.send(JSON.stringify(msg))
 }
+/** 复制一个数组*/
+if(!Array.prototype.repeat){
+  Array.prototype.repeat = function(times) {
+    var result = [];
+    for (var i = 0; i < times; i++) {
+      this.map(item => {
+        result.push(item);
+      });
+    }
+    return result;
+  };
+}
+
+
+var WebSocket = require("ws");
+declare global {
+  interface WebSocket{
+    /** 扩展的socket id号， */
+    id: number
+    /** 扩展发送msg对象 */
+    sendmsg(msg): void
+  }
+}
+WebSocket.prototype.sendmsg = function(msg) {
+  this.send(JSON.stringify(msg));
+};
 
 const BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 const TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
@@ -23,7 +39,7 @@ export const all_pai = BING.repeat(4)
   .concat(TIAO.repeat(4))
   .concat(ZHIPAI.repeat(4));
 
-export var PORT = 3333;  //服务器端口号，供服务器和客户端使用！
+export var PORT = 3333; //服务器端口号，供服务器和客户端使用！
 export const FIRST_SHOUPAI_COUNT = 13;
 export const LIMIT_IN_ROOM = 3; //房间玩家人数上限
 export const MaxWaitTime = 10; //碰、杠牌时等待用户多少秒

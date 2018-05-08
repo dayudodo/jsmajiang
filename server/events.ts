@@ -28,6 +28,7 @@
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
   export const server_gameover = "server_gameover";
+  export const server_winner = "server_winner";
 
   export const server_can_select = "server_can_select";
 
