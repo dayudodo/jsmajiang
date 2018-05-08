@@ -27,6 +27,24 @@ var mj;
                 enumerable: true,
                 configurable: true
             });
+            Object.defineProperty(Player.prototype, "last_out_coordinate", {
+                /** 最后一张打出的牌在out中的坐标 */
+                get: function () {
+                    var line = 0, row = 0;
+                    var len = this.used_pai.length;
+                    if (len >= config.OutLineBreakCount) {
+                        line = 1;
+                        row = len - config.OutLineBreakCount;
+                    }
+                    else {
+                        line = 0;
+                        row = (len == 0 ? 0 : len - 1);
+                    }
+                    return [line, row];
+                },
+                enumerable: true,
+                configurable: true
+            });
             /**         从玩家手牌中删除pai         */
             Player.prototype.da_pai = function (pai) {
                 var firstIndex = this.shou_pai.indexOf(pai);

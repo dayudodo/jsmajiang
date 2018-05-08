@@ -1,7 +1,3 @@
-
-
-
-
 import laText = Laya.Text
 import Stage = Laya.Stage
 import Loader = Laya.Loader
@@ -16,6 +12,7 @@ import LoadingUI = ui.test.LoadingUI
 import LoginUI = ui.test.LoginUI
 import MainUI = ui.test.MainUI
 import test = ui.test
+
 
 class GameMain {
     public testloading: LoadingUI

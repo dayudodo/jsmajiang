@@ -324,7 +324,7 @@ class Majiang {
         }
         return this.isAA(jiang);
     }
-    //胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！
+    /**胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！*/
     static HuWhatPai(shou_pai) {
         let result = checkValidAndReturnArr(shou_pai);
         let hupai_data = [];

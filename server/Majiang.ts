@@ -4,10 +4,10 @@ import * as _ from "lodash";
 import chalk from "chalk";
 import * as config from "./config";
 // 全局常量，所有的牌
-var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
-var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
+var BING: Array<Pai> = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
+var TIAO: Array<Pai> = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-var ZHIPAI = ["zh", "fa", "di"];
+var ZHIPAI: Array<Pai> = ["zh", "fa", "di"];
 
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
 
@@ -345,7 +345,7 @@ export class Majiang {
     return this.isAA(jiang);
   }
 
-  //胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！
+  /**胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！*/
   static HuWhatPai(shou_pai) {
     let result = checkValidAndReturnArr(shou_pai);
     let hupai_data = [];
@@ -576,7 +576,7 @@ export class Majiang {
     });
     return _output;
   }
-  static HuPaiNamesFromArr(hupaicodeArr) {
+  static HuPaiNamesFromArr(hupaicodeArr) : Array<string>{
     return hupaicodeArr.map(item => {
       return config.HuPaiSheet[item].name;
     });

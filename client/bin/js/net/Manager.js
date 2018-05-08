@@ -54,13 +54,30 @@ var mj;
                     [events.server_dapai, this.server_dapai],
                     [events.server_dapai_other, this.server_dapai_other],
                     [events.server_can_select, this.server_can_select],
+                    [events.server_other_player_peng, this.server_other_player_peng],
                 ];
+            };
+            /**out牌中删除掉打牌 */
+            Manager.prototype.out_remove = function (player) {
+                //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
+                // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
+                var _a = player.last_out_coordinate, line = _a[0], row = _a[1];
+            };
+            /** 其他人碰了牌，肯定是左右玩家 */
+            Manager.prototype.server_other_player_peng = function (server_message) {
+                var user_id = server_message.user_id;
+                var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == user_id; });
+                //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
+                //而碰玩家要显示出这三张碰牌！
+                pengPlayer.shou_pai.push(Laya.room.table_dapai);
+                //打牌玩家out牌这张牌应该消失, 有增有减
+                this.out_remove(Laya.room.dapai_player);
             };
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
                 var opt = new OptDialogScene();
                 opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng });
-                laya.ui.Dialog.manager.maskLayer.alpha = config.BackGroundAlpha;
+                laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
                 this.gameTable.addChild(opt);
                 opt.popup();
             };
@@ -71,7 +88,13 @@ var mj;
                 var username = server_message.username, user_id = server_message.user_id, pai_name = server_message.pai_name;
                 console.log(username + ", id: " + user_id + " \u6253\u724C" + pai_name);
                 var player = Laya.room.players.find(function (p) { return p.user_id == user_id; });
-                this.show_out(pai_name, player.ui_index);
+                //记录下打牌玩家
+                Laya.room.dapai_player = player;
+                //还要记录下其它玩家打过啥牌，以便有人碰杠的话删除之
+                player.table_pai = pai_name;
+                player.da_pai(pai_name);
+                //牌打出去之后才能显示出来！
+                this.show_out(player, pai_name);
             };
             Manager.prototype.server_dapai = function (server_message) {
                 var pai_name = server_message.pai_name;
@@ -204,7 +227,9 @@ var mj;
                         pai: daPai
                     });
                     Laya.god_player.da_pai(daPai);
-                    this.show_out(daPai);
+                    //不仅这牌要记录要玩家那儿，还要记录在当前房间中！表示这张牌已经可以显示出来了。
+                    Laya.room.table_dapai = daPai;
+                    this.show_out(Laya.god_player, daPai);
                     //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
                     this.hideDirection(Laya.god_player);
                     // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
@@ -232,10 +257,9 @@ var mj;
                 }
             };
             /** 将打牌显示在ui中的out3 sprite之中 */
-            Manager.prototype.show_out = function (dapai, table_index) {
-                if (table_index === void 0) { table_index = config.GOD_INDEX; }
-                var outSprite = this.gameTable["out" + table_index];
-                if (this["isFirstHideOut" + table_index]) {
+            Manager.prototype.show_out = function (player, dapai) {
+                var outSprite = this.gameTable["out" + player.ui_index];
+                if (this["isFirstHideOut" + player.ui_index]) {
                     //先隐藏所有内部的图
                     for (var index = 0; index < outSprite.numChildren; index++) {
                         var oneLine = outSprite.getChildAt(index);
@@ -245,36 +269,43 @@ var mj;
                         }
                     }
                     //只需要隐藏一次，下一次就不需要了，不然以前显示的打牌就被隐藏了
-                    this["isFirstHideOut" + table_index] = false;
+                    this["isFirstHideOut" + player.ui_index] = false;
                 }
+                var _a = player.last_out_coordinate, line = _a[0], row = _a[1];
                 outSprite.visible = true;
                 //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
-                var lastValidSprite = null;
-                for (var index = 0; index < outSprite.numChildren; index++) {
-                    var oneLine = outSprite.getChildAt(index);
-                    for (var l_index_1 = 0; l_index_1 < oneLine.numChildren; l_index_1++) {
-                        var onePai = oneLine.getChildAt(l_index_1);
-                        var paiImgSprite = onePai.getChildAt(0);
-                        // console.log(paiImgSprite);
-                        //如果是一万的图形, 就换成打牌的图形
-                        if ((table_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
-                            onePai.visible = true;
-                            lastValidSprite = paiImgSprite;
-                            lastValidSprite.skin = PaiConverter.skinOfZheng(dapai);
-                            break;
-                        }
-                        //如果是其它玩家的牌，就显示成横牌
-                        if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
-                            onePai.visible = true;
-                            lastValidSprite = paiImgSprite;
-                            lastValidSprite.skin = PaiConverter.skinOfCe(dapai);
-                            break;
-                        }
-                    }
-                    if (lastValidSprite) {
-                        break;
-                    }
+                var lastValidSprite = outSprite.getChildAt(line).getChildAt(row);
+                var paiImgSprite = lastValidSprite.getChildAt(0);
+                if (player.ui_index == 3) {
+                    paiImgSprite.skin = PaiConverter.skinOfZheng(dapai);
                 }
+                else {
+                    paiImgSprite.skin = PaiConverter.skinOfCe(dapai);
+                }
+                lastValidSprite.visible = true;
+                // for (let index = 0; index < outSprite.numChildren; index++) {
+                //     const oneLine = outSprite.getChildAt(index) as Sprite;
+                //     for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
+                //         var onePai = oneLine.getChildAt(l_index) as Sprite;
+                //         let paiImgSprite = onePai.getChildAt(0) as Image
+                //         // console.log(paiImgSprite);
+                //         //如果是一万的图形, 就换成打牌的图形
+                //         if ((ui_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
+                //             onePai.visible = true
+                //             lastValidSprite = paiImgSprite
+                //             lastValidSprite.skin = PaiConverter.skinOfZheng(dapai)
+                //             break;
+                //         }
+                //         //如果是其它玩家的牌，就显示成横牌
+                //         if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
+                //             onePai.visible = true
+                //             lastValidSprite = paiImgSprite
+                //             lastValidSprite.skin = PaiConverter.skinOfCe(dapai)
+                //             break;
+                //         }
+                //     }
+                //     if (lastValidSprite) { break; }
+                // }
             };
             Manager.prototype.show_right_player_shoupai = function (gameTable, server_message) {
                 gameTable.shouPai2.visible = true;

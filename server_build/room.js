@@ -16,7 +16,7 @@ class Room {
         this.players = [];
         //房间内的牌
         this.clone_pai = [];
-        //当前玩家，哪个打牌哪个就是当前玩家
+        /**当前玩家，哪个打牌哪个就是当前玩家*/
         this.current_player = null;
         //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
         this.can_receive_confirm = false;
@@ -24,24 +24,24 @@ class Room {
         this.table_fa_pai = null;
         /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
         this.table_pai = null;
+        /**发牌给哪个玩家 */
         this.fapai_to_who = null;
+        /**哪个玩家在打牌 */
         this.dapai_player = null;
         //计时器
         this.room_clock = null;
         // 房间新建之后，就会拥有个id了
-        this.id = Room.make();
+        this.id = Room.getId();
     }
-    //创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面
-    static make() {
+    /**创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面*/
+    static getId() {
         //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
         //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
-        //return room_valid_names.pop();
         return "001";
     }
     //用户加入房间，还需要告诉其它的用户我已经加入了
     join_player(person) {
         this.players.push(person);
-        // tellOtherPeopleIamIn();
     }
     player_enter_room(socket) {
         let player = this.find_player_by(socket);
@@ -125,7 +125,6 @@ class Room {
         let next_index = (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
         //最后通过座位号来找到玩家,而不是数组序号,更不容易出错，哪怕是players数组乱序也不要紧
         return this.players.find(p => p.seat_index == next_index);
-        // return this.players[next_index];
     }
     //除了person外的其它玩家们
     other_players(person) {
@@ -150,14 +149,28 @@ class Room {
     client_confirm_peng(socket) {
         let player = this.find_player_by(socket);
         //碰之后此牌就属于本玩家了,前后台都需要添加!
-        player.table_pai = this.table_pai;
-        //当前玩家顺序改变
+        player.table_pai = this.table_fa_pai;
+        //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = player;
+        //告诉其它人我已经碰了此牌！
+        this.other_players(player).forEach(p => {
+            p.socket.sendmsg({
+                type: g_events.server_other_player_peng,
+                user_id: player.user_id
+            });
+        });
     }
     /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
     client_confirm_gang(socket) {
+        let player = this.find_player_by(socket);
         this.client_confirm_peng(socket);
         //todo: 计算收益，杠牌是有钱的！
+        this.other_players(player).forEach(p => {
+            p.socket.sendmsg({
+                type: g_events.server_other_player_gang,
+                user_id: player.user_id
+            });
+        });
     }
     /**亮牌其实是为了算账*/
     client_confirm_liang(socket) {
@@ -187,7 +200,7 @@ class Room {
         // io.to(room_name).emit("server_winner", player.username, hupaiNames);
         this.players.forEach(p => {
             p.socket.sendmsg({
-                type: g_events.server_winner,
+                type: g_events.server_winner
             });
         });
         console.dir(player);
@@ -212,6 +225,8 @@ class Room {
         let pai = this.clone_pai.splice(0, 1);
         //发牌的时候，桌面牌变化。
         this.table_pai = pai[0];
+        //还需要添加到player的桌面牌中，表示人家收到了
+        player.table_pai = pai[0];
         if (_.isEmpty(pai)) {
             throw new Error(chalk_1.default.red(`room.pai中无可用牌了`));
         }
@@ -223,16 +238,13 @@ class Room {
         this.fapai_to_who = player;
         //发牌给谁，谁就是当前玩家
         this.current_player = player;
-        player.table_pai = pai[0]; //先保存到玩家的桌面牌中，打出之后才会合并到shou_pai之中
-        // let c_player = _.clone(player);
-        // c_player.socket = "hidden, 属于clone(player)";
-        // console.dir(c_player);
-        console.log("服务器发牌 %s 给：%s", pai[0], player.username);
+        this.table_fa_pai = pai[0];
+        console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
         console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
         // player.socket.emit("server_table_fapai", pai);
         player.socket.sendmsg({
             type: g_events.server_table_fa_pai,
-            pai: pai[0]
+            pai: this.table_fa_pai
         });
         //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
         this.other_players(player).forEach(p => {
@@ -243,7 +255,7 @@ class Room {
         });
         //发牌之后还要看玩家能否胡以及胡什么！
         //todo: 应该返回牌字符串，而非一个元素的数组！使用ts的静态类型不容易出bug
-        return pai;
+        return pai[0];
     }
     judge_ting(player) {
         let statusCode = -1; //状态返回码，是听还是亮！
@@ -258,7 +270,7 @@ class Room {
             player.is_thinking_tingliang = true;
             //如果用户没亮牌，才会发送你可以亮牌了！
             if (!player.is_liang) {
-                player.socket.emit("server_canLiang");
+                // player.socket.emit("server_canLiang");
             }
         }
         console.dir(all_hupai_types);
@@ -273,7 +285,7 @@ class Room {
             player.is_thinking_tingliang = true;
             //如果用户没有听牌，才会发送这个消息，不然啥也不做！
             if (!player.is_ting) {
-                player.socket.emit("server_canTing");
+                // player.socket.emit("server_canTing");
             }
         }
         return statusCode;
@@ -313,6 +325,7 @@ class Room {
             //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
             this.broadcast_server_dapai(player, pai_name);
             this.fa_pai(this.next_player);
+            return;
             let isRoomPaiEmpty = 0 === this.clone_pai.length;
             if (isRoomPaiEmpty) {
                 //告诉所有人游戏结束了

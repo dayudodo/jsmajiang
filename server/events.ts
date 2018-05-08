@@ -27,6 +27,9 @@
   export const server_table_fa_pai_other = "server_table_fa_pai_other";
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
+  export const server_other_player_peng = "server_other_player_peng";
+  export const server_other_player_gang = "server_other_player_gang";
+  export const server_other_player_liang = "server_other_player_liang";
   export const server_gameover = "server_gameover";
   export const server_winner = "server_winner";
 

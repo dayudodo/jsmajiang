@@ -1,11 +1,21 @@
+
 declare global {
   interface Array<T> {
-    repeat(o): T[];
+    /** 复制一个数组*/
+    repeat(o: number): T[];
   }
+  interface WebSocket{
+    /** 扩展的socket id号， */
+    id: number
+    /** 扩展发送msg对象 */
+    sendmsg(msg): void
+  }
+  /**定义个pai类型的别名，以后会变！ */
+  type Pai = string;
 }
-/** 复制一个数组*/
+
 if(!Array.prototype.repeat){
-  Array.prototype.repeat = function(times) {
+Array.prototype.repeat = function(times) {
     var result = [];
     for (var i = 0; i < times; i++) {
       this.map(item => {
@@ -16,16 +26,7 @@ if(!Array.prototype.repeat){
   };
 }
 
-
 var WebSocket = require("ws");
-declare global {
-  interface WebSocket{
-    /** 扩展的socket id号， */
-    id: number
-    /** 扩展发送msg对象 */
-    sendmsg(msg): void
-  }
-}
 WebSocket.prototype.sendmsg = function(msg) {
   this.send(JSON.stringify(msg));
 };

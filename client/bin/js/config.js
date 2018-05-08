@@ -9,5 +9,7 @@ var config;
     config.MAX_WAIT_TIME = 10;
     /**弹出框背景透明度*/
     config.BackGroundAlpha = 0.5;
+    /**out牌中多少数量换行 */
+    config.OutLineBreakCount = 13;
 })(config || (config = {}));
 //# sourceMappingURL=config.js.map

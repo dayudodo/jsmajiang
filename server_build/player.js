@@ -11,6 +11,7 @@ class Player {
         this.east = false;
         this._table_pai = null; //用户还没有选择打的时候，服务器发给的牌
         this.used_pai = []; //打过的牌有哪些，断线后可以重新发送此数据
+        /** 玩家在房间的座位号，也是加入房间的顺序号 */
         this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
         /** 什么样的胡，保存这个数据也是为了能够保存到数据库中 */
         this.hupai_types = [];

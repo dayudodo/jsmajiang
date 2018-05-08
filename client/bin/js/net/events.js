@@ -26,7 +26,11 @@ var events;
     events.server_table_fa_pai_other = "server_table_fa_pai_other";
     events.server_dapai = "server_dapai";
     events.server_dapai_other = "server_dapai_other";
+    events.server_other_player_peng = "server_other_player_peng";
+    events.server_other_player_gang = "server_other_player_gang";
+    events.server_other_player_liang = "server_other_player_liang";
     events.server_gameover = "server_gameover";
+    events.server_winner = "server_winner";
     events.server_can_select = "server_can_select";
 })(events || (events = {}));
 //# sourceMappingURL=events.js.map

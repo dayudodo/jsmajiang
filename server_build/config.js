@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/** 复制一个数组*/
 if (!Array.prototype.repeat) {
     Array.prototype.repeat = function (times) {
         var result = [];

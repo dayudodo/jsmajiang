@@ -1,6 +1,10 @@
 module mj.model {
     export class Room {
         public players: Player[] = []
+        /** 前一玩家打的牌，因为会影响客户端显示，所以保存在此！ */
+        public table_dapai : Pai
+        public dapai_player: Player
+
         constructor() { }
         /** 左手玩家，在此确定玩家的UI顺序 */
         public left_player(person) { 

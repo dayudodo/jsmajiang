@@ -1,6 +1,7 @@
 
 
 module mj.net {
+
     import GameTableScene = mj.scene.GameTableScene;
     import PaiConverter = mj.utils.PaiConvertor
     import LayaUtils = mj.utils.LayaUtils
@@ -58,15 +59,38 @@ module mj.net {
                 [events.server_dapai, this.server_dapai],
                 [events.server_dapai_other, this.server_dapai_other],
                 [events.server_can_select, this.server_can_select],
+                [events.server_other_player_peng, this.server_other_player_peng],
 
             ]
+
+        }
+        /**out牌中删除掉打牌 */
+        private out_remove(player: Player) {
+            //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
+            // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
+            let [line, row] = player.last_out_coordinate
+
+
+        }
+        /** 其他人碰了牌，肯定是左右玩家 */
+        public server_other_player_peng(server_message) {
+            let { user_id } = server_message
+            let pengPlayer = Laya.room.players.find(p => p.user_id == user_id)
+
+            //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
+            //而碰玩家要显示出这三张碰牌！
+            pengPlayer.shou_pai.push(Laya.room.table_dapai)
+            //打牌玩家out牌这张牌应该消失, 有增有减
+            this.out_remove(Laya.room.dapai_player)
+
+
 
         }
         public server_can_select(server_message) {
             let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt
             let opt = new OptDialogScene()
             opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng })
-            laya.ui.Dialog.manager.maskLayer.alpha = config.BackGroundAlpha;
+            laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
             this.gameTable.addChild(opt)
             opt.popup()
 
@@ -79,7 +103,13 @@ module mj.net {
             let { username, user_id, pai_name} = server_message
             console.log(`${username}, id: ${user_id} 打牌${pai_name}`);
             let player = Laya.room.players.find(p => p.user_id == user_id)
-            this.show_out(pai_name, player.ui_index)
+            //记录下打牌玩家
+            Laya.room.dapai_player = player
+            //还要记录下其它玩家打过啥牌，以便有人碰杠的话删除之
+            player.table_pai = pai_name
+            player.da_pai(pai_name)
+            //牌打出去之后才能显示出来！
+            this.show_out(player, pai_name)
 
         }
         private server_dapai(server_message) {
@@ -202,14 +232,17 @@ module mj.net {
         private handleClonePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, is_server_faPai: boolean = false) {
             // 如果两次点击同一张牌，应该打出去
             if (this.prevSelectedPai === newPaiSprite) {
-                let daPai = shou_pai[index];
+                let daPai: Pai = shou_pai[index];
                 console.log(`用户选择打牌${daPai}`);
                 this.socket.sendmsg({
                     type: events.client_da_pai,
                     pai: daPai
                 });
                 Laya.god_player.da_pai(daPai)
-                this.show_out(daPai)
+                //不仅这牌要记录要玩家那儿，还要记录在当前房间中！表示这张牌已经可以显示出来了。
+                Laya.room.table_dapai = daPai
+
+                this.show_out(Laya.god_player, daPai)
                 //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
                 this.hideDirection(Laya.god_player)
                 // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
@@ -242,10 +275,11 @@ module mj.net {
         private isFirstHideOut1 = true
         private isFirstHideOut2 = true
         private isFirstHideOut3 = true
+
         /** 将打牌显示在ui中的out3 sprite之中 */
-        private show_out(dapai: string, table_index: number = config.GOD_INDEX) {
-            let outSprite = this.gameTable["out" + table_index] as Sprite
-            if (this["isFirstHideOut" + table_index]) {
+        private show_out( player: Player, dapai: Pai) {
+            let outSprite = this.gameTable["out" + player.ui_index] as Sprite
+            if (this["isFirstHideOut" + player.ui_index]) {
                 //先隐藏所有内部的图
                 for (let index = 0; index < outSprite.numChildren; index++) {
                     const oneLine = outSprite.getChildAt(index) as Sprite;
@@ -255,36 +289,47 @@ module mj.net {
                     }
                 }
                 //只需要隐藏一次，下一次就不需要了，不然以前显示的打牌就被隐藏了
-                this["isFirstHideOut" + table_index] = false
+                this["isFirstHideOut" + player.ui_index] = false
             }
+            let [line, row] = player.last_out_coordinate
 
             outSprite.visible = true
-            //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
-            let lastValidSprite = null;
-            for (let index = 0; index < outSprite.numChildren; index++) {
-                const oneLine = outSprite.getChildAt(index) as Sprite;
-                for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
-                    var onePai = oneLine.getChildAt(l_index) as Sprite;
-                    let paiImgSprite = onePai.getChildAt(0) as Image
-                    // console.log(paiImgSprite);
 
-                    //如果是一万的图形, 就换成打牌的图形
-                    if ((table_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
-                        onePai.visible = true
-                        lastValidSprite = paiImgSprite
-                        lastValidSprite.skin = PaiConverter.skinOfZheng(dapai)
-                        break;
-                    }
-                    //如果是其它玩家的牌，就显示成横牌
-                    if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
-                        onePai.visible = true
-                        lastValidSprite = paiImgSprite
-                        lastValidSprite.skin = PaiConverter.skinOfCe(dapai)
-                        break;
-                    }
-                }
-                if (lastValidSprite) { break; }
+            //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
+            let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
+            let paiImgSprite = lastValidSprite.getChildAt(0) as Image
+            if (player.ui_index == 3) {
+                paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
+
+            } else {
+                paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
             }
+            lastValidSprite.visible = true
+
+            // for (let index = 0; index < outSprite.numChildren; index++) {
+            //     const oneLine = outSprite.getChildAt(index) as Sprite;
+            //     for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
+            //         var onePai = oneLine.getChildAt(l_index) as Sprite;
+            //         let paiImgSprite = onePai.getChildAt(0) as Image
+            //         // console.log(paiImgSprite);
+
+            //         //如果是一万的图形, 就换成打牌的图形
+            //         if ((ui_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
+            //             onePai.visible = true
+            //             lastValidSprite = paiImgSprite
+            //             lastValidSprite.skin = PaiConverter.skinOfZheng(dapai)
+            //             break;
+            //         }
+            //         //如果是其它玩家的牌，就显示成横牌
+            //         if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
+            //             onePai.visible = true
+            //             lastValidSprite = paiImgSprite
+            //             lastValidSprite.skin = PaiConverter.skinOfCe(dapai)
+            //             break;
+            //         }
+            //     }
+            //     if (lastValidSprite) { break; }
+            // }
 
         }
 

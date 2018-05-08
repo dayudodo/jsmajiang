@@ -23,6 +23,7 @@ public _table_pai = null; //用户还没有选择打的时候，服务器发给�
 /**玩家当前拥有的牌*/
 public shou_pai: Array<string>
 public used_pai = []; //打过的牌有哪些，断线后可以重新发送此数据
+/** 玩家在房间的座位号，也是加入房间的顺序号 */
 public seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
 /** 什么样的胡，保存这个数据也是为了能够保存到数据库中 */
 public hupai_types = []; 
@@ -56,7 +57,7 @@ public score = 0;
     return this._table_pai;
   }
   /** 删除玩家手牌index处的牌 */
-  da_pai(pai: string) {
+  da_pai(pai: Pai) {
     let firstIndex = this.shou_pai.indexOf(pai);
     if (firstIndex > -1) {
       this.shou_pai.splice(firstIndex, 1);
