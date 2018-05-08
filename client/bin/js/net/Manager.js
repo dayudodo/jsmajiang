@@ -62,6 +62,17 @@ var mj;
                 //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
                 // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
                 var _a = player.last_out_coordinate, line = _a[0], row = _a[1];
+                var outSprite = this.gameTable["out" + player.ui_index];
+                var lastValidSprite = outSprite.getChildAt(line).getChildAt(row);
+                var paiImgSprite = lastValidSprite.getChildAt(0);
+                var dapai = player.used_pai.pop();
+                if (player.ui_index == 3) {
+                    paiImgSprite.skin = PaiConverter.skinOfZheng(dapai);
+                }
+                else {
+                    paiImgSprite.skin = PaiConverter.skinOfCe(dapai);
+                }
+                lastValidSprite.visible = false;
             };
             /** 其他人碰了牌，肯定是左右玩家 */
             Manager.prototype.server_other_player_peng = function (server_message) {
@@ -283,29 +294,6 @@ var mj;
                     paiImgSprite.skin = PaiConverter.skinOfCe(dapai);
                 }
                 lastValidSprite.visible = true;
-                // for (let index = 0; index < outSprite.numChildren; index++) {
-                //     const oneLine = outSprite.getChildAt(index) as Sprite;
-                //     for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
-                //         var onePai = oneLine.getChildAt(l_index) as Sprite;
-                //         let paiImgSprite = onePai.getChildAt(0) as Image
-                //         // console.log(paiImgSprite);
-                //         //如果是一万的图形, 就换成打牌的图形
-                //         if ((ui_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
-                //             onePai.visible = true
-                //             lastValidSprite = paiImgSprite
-                //             lastValidSprite.skin = PaiConverter.skinOfZheng(dapai)
-                //             break;
-                //         }
-                //         //如果是其它玩家的牌，就显示成横牌
-                //         if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
-                //             onePai.visible = true
-                //             lastValidSprite = paiImgSprite
-                //             lastValidSprite.skin = PaiConverter.skinOfCe(dapai)
-                //             break;
-                //         }
-                //     }
-                //     if (lastValidSprite) { break; }
-                // }
             };
             Manager.prototype.show_right_player_shoupai = function (gameTable, server_message) {
                 gameTable.shouPai2.visible = true;
@@ -409,6 +397,7 @@ var mj;
             };
             /** 用户创建房间、加入房间后打开gameTable */
             Manager.prototype.open_gameTable = function (server_message) {
+                var _this = this;
                 Laya.stage.destroyChildren();
                 // let { seat_index, east} = server_message
                 //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
@@ -458,6 +447,15 @@ var mj;
                     this.showHead(gameTable, rightPlayer, 2);
                 }
                 //for test
+                Laya.god_player.table_pai = 't2';
+                Laya.god_player.da_pai('t2');
+                this.show_out(Laya.god_player, 't2');
+                Laya.god_player.table_pai = 'b2';
+                Laya.god_player.da_pai('b2');
+                this.show_out(Laya.god_player, 'b2');
+                Laya.timer.once(2000, this, function () {
+                    _this.out_remove(Laya.god_player);
+                });
                 //end test
                 Laya.stage.addChild(gameTable);
             };

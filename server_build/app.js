@@ -40,36 +40,36 @@ var eventsHandler = [
 function confirmInit(socket) {
     let player = g_lobby.find_player_by(socket);
     let room = g_lobby.find_room_by(socket);
-    let table_pai = room.table_pai;
-    return { room, player, table_pai };
+    // let table_pai = room.table_dapai;
+    return { room, player };
 }
 function client_confirm_hu(client_message, socket) {
-    let { player, room, table_pai } = confirmInit(socket);
+    let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择胡牌`);
     room.client_confirm_hu(socket);
 }
 function client_confirm_ting(client_message, socket) {
-    let { player, room, table_pai } = confirmInit(socket);
+    let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择听牌`);
     room.client_confirm_ting(socket);
 }
 function client_confirm_liang(client_message, socket) {
-    let { player, room, table_pai } = confirmInit(socket);
+    let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
     room.client_confirm_liang(socket);
 }
 function client_confirm_gang(client_message, socket) {
-    let { player, room, table_pai } = confirmInit(socket);
+    let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择杠牌`);
     room.client_confirm_gang(socket);
 }
 function client_confirm_peng(client_message, socket) {
-    let { player, room, table_pai } = confirmInit(socket);
+    let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择碰牌`);
     room.client_confirm_peng(socket);
 }
 function client_confirm_guo(client_message, socket) {
-    let { player, room, table_pai } = confirmInit(socket);
+    let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择过牌`);
     room.client_confirm_guo(socket);
 }

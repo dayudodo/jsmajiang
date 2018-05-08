@@ -23,7 +23,7 @@ class Room {
         /** 服务器当前发的牌 */
         this.table_fa_pai = null;
         /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
-        this.table_pai = null;
+        this.table_dapai = null;
         /**发牌给哪个玩家 */
         this.fapai_to_who = null;
         /**哪个玩家在打牌 */
@@ -148,11 +148,13 @@ class Room {
     /**玩家选择碰牌，或者是超时自动跳过！*/
     client_confirm_peng(socket) {
         let player = this.find_player_by(socket);
+        //碰之后打牌玩家的打牌就跑到碰玩家手中了
+        let dapai = this.dapai_player.arr_dapai.pop();
         //碰之后此牌就属于本玩家了,前后台都需要添加!
-        player.table_pai = this.table_fa_pai;
+        player.received_pai = dapai;
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = player;
-        //告诉其它人我已经碰了此牌！
+        //告诉其它人我已经碰了此牌！客户端知道哪个玩家打了牌，因为碰之前肯定是有人打了牌的！
         this.other_players(player).forEach(p => {
             p.socket.sendmsg({
                 type: g_events.server_other_player_peng,
@@ -224,9 +226,9 @@ class Room {
     fa_pai(player) {
         let pai = this.clone_pai.splice(0, 1);
         //发牌的时候，桌面牌变化。
-        this.table_pai = pai[0];
+        this.table_dapai = pai[0];
         //还需要添加到player的桌面牌中，表示人家收到了
-        player.table_pai = pai[0];
+        player.received_pai = pai[0];
         if (_.isEmpty(pai)) {
             throw new Error(chalk_1.default.red(`room.pai中无可用牌了`));
         }
@@ -321,7 +323,7 @@ class Room {
             //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
             player.da_pai(pai_name);
             //房间记录下用户打的牌
-            this.table_pai = pai_name;
+            this.table_dapai = pai_name;
             //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
             this.broadcast_server_dapai(player, pai_name);
             this.fa_pai(this.next_player);
@@ -474,7 +476,7 @@ class Room {
         this.players.forEach(p => {
             p.shou_pai = null;
             p.ready = false;
-            p.used_pai = [];
+            p.arr_dapai = [];
         });
         this.start_game();
     }

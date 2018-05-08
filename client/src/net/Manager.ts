@@ -65,23 +65,33 @@ module mj.net {
 
         }
         /**out牌中删除掉打牌 */
-        private out_remove(player: Player) {
+        private out_remove(player: Player): Pai {
             //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
             // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
             let [line, row] = player.last_out_coordinate
-
-
+            let outSprite = this.gameTable["out" + player.ui_index] as Sprite
+            let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
+            let paiImgSprite = lastValidSprite.getChildAt(0) as Image
+            //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
+            let dapai: Pai = player.used_pai.pop()
+            if (player.ui_index == 3) {
+                paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
+            } else {
+                paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
+            }
+            lastValidSprite.visible = false
+            return dapai
         }
-        /** 其他人碰了牌，肯定是左右玩家 */
+        /** 其他人碰了牌 */
         public server_other_player_peng(server_message) {
             let { user_id } = server_message
             let pengPlayer = Laya.room.players.find(p => p.user_id == user_id)
 
+            //打牌玩家out牌这张牌应该消失, 有增有减
+            let dapai: Pai = this.out_remove(Laya.room.dapai_player)
             //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
             //而碰玩家要显示出这三张碰牌！
-            pengPlayer.shou_pai.push(Laya.room.table_dapai)
-            //打牌玩家out牌这张牌应该消失, 有增有减
-            this.out_remove(Laya.room.dapai_player)
+            pengPlayer.shou_pai.push(dapai)
 
 
 
@@ -106,7 +116,7 @@ module mj.net {
             //记录下打牌玩家
             Laya.room.dapai_player = player
             //还要记录下其它玩家打过啥牌，以便有人碰杠的话删除之
-            player.table_pai = pai_name
+            player.received_pai = pai_name
             player.da_pai(pai_name)
             //牌打出去之后才能显示出来！
             this.show_out(player, pai_name)
@@ -142,7 +152,7 @@ module mj.net {
                     if ((player == Laya.god_player) && this.auto_dapai) {
                         this.socket.sendmsg({
                             type: events.client_da_pai,
-                            pai: Laya.god_player.table_pai
+                            pai: Laya.god_player.received_pai
                         })
                     }
                 }
@@ -160,7 +170,7 @@ module mj.net {
             //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
             // console.log(server_message.pai);
             let pai: string = server_message.pai
-            Laya.god_player.table_pai = pai
+            Laya.god_player.received_pai = pai
             let {gameTable } = this
             //显示服务器发过来的牌
             gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai)
@@ -216,7 +226,7 @@ module mj.net {
                 //为新建的牌sprite创建点击处理函数
                 newPaiSprite.on(Laya.Event.CLICK, this, () => {
                     // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
-                    if (Laya.god_player.table_pai) {
+                    if (Laya.god_player.received_pai) {
                         // 如果两次点击同一张牌，应该打出去
                         this.handleClonePaiSpriteClick(newPaiSprite, shou_pai, index);
                     }
@@ -277,7 +287,7 @@ module mj.net {
         private isFirstHideOut3 = true
 
         /** 将打牌显示在ui中的out3 sprite之中 */
-        private show_out( player: Player, dapai: Pai) {
+        private show_out(player: Player, dapai: Pai) {
             let outSprite = this.gameTable["out" + player.ui_index] as Sprite
             if (this["isFirstHideOut" + player.ui_index]) {
                 //先隐藏所有内部的图
@@ -305,32 +315,6 @@ module mj.net {
                 paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
             }
             lastValidSprite.visible = true
-
-            // for (let index = 0; index < outSprite.numChildren; index++) {
-            //     const oneLine = outSprite.getChildAt(index) as Sprite;
-            //     for (let l_index = 0; l_index < oneLine.numChildren; l_index++) {
-            //         var onePai = oneLine.getChildAt(l_index) as Sprite;
-            //         let paiImgSprite = onePai.getChildAt(0) as Image
-            //         // console.log(paiImgSprite);
-
-            //         //如果是一万的图形, 就换成打牌的图形
-            //         if ((ui_index == 3) && "ui/majiang/zheng_18.png" == paiImgSprite.skin) {
-            //             onePai.visible = true
-            //             lastValidSprite = paiImgSprite
-            //             lastValidSprite.skin = PaiConverter.skinOfZheng(dapai)
-            //             break;
-            //         }
-            //         //如果是其它玩家的牌，就显示成横牌
-            //         if ("ui/majiang/ce_18.png" == paiImgSprite.skin) {
-            //             onePai.visible = true
-            //             lastValidSprite = paiImgSprite
-            //             lastValidSprite.skin = PaiConverter.skinOfCe(dapai)
-            //             break;
-            //         }
-            //     }
-            //     if (lastValidSprite) { break; }
-            // }
-
         }
 
         private show_right_player_shoupai(gameTable: GameTableScene, server_message: any) {
@@ -492,7 +476,17 @@ module mj.net {
                 this.showHead(gameTable, rightPlayer, 2);
             }
             //for test
+            Laya.god_player.received_pai = 't2'
+            Laya.god_player.da_pai('t2')
+            this.show_out(Laya.god_player, 't2')
 
+            Laya.god_player.received_pai = 'b2'
+            Laya.god_player.da_pai('b2')
+            this.show_out(Laya.god_player, 'b2')
+            Laya.timer.once(2000, this, () => {
+                this.out_remove(Laya.god_player)
+
+            })
 
             //end test
             Laya.stage.addChild(gameTable);
