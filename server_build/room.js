@@ -15,7 +15,7 @@ class Room {
         //房间内的所有玩家，人数有上限，定义在config.
         this.players = [];
         //房间内的牌
-        this.clone_pai = [];
+        this.cloneTablePais = [];
         /**当前玩家，哪个打牌哪个就是当前玩家*/
         this.current_player = null;
         //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
@@ -119,7 +119,7 @@ class Room {
     get last_join_player() {
         return _.last(this.players);
     }
-    /** 服务器中的下一个玩家 */
+    /** 房间中要发牌的下一个玩家 */
     get next_player() {
         //下一家
         let next_index = (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM;
@@ -152,13 +152,18 @@ class Room {
         let dapai = this.dapai_player.arr_dapai.pop();
         //碰之后此牌就属于本玩家了,前后台都需要添加!
         player.received_pai = dapai;
+        //玩家确认碰牌后将会生成带有peng：dapai的对象
+        player.confirm_peng(dapai);
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = player;
         //告诉其它人我已经碰了此牌！客户端知道哪个玩家打了牌，因为碰之前肯定是有人打了牌的！
         this.other_players(player).forEach(p => {
             p.socket.sendmsg({
                 type: g_events.server_other_player_peng,
-                user_id: player.user_id
+                player: {
+                    user_id: player.user_id,
+                    pengPai: dapai
+                }
             });
         });
     }
@@ -224,9 +229,7 @@ class Room {
     }
     //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
     fa_pai(player) {
-        let pai = this.clone_pai.splice(0, 1);
-        //发牌的时候，桌面牌变化。
-        this.table_dapai = pai[0];
+        let pai = this.cloneTablePais.splice(0, 1);
         //还需要添加到player的桌面牌中，表示人家收到了
         player.received_pai = pai[0];
         if (_.isEmpty(pai)) {
@@ -242,7 +245,7 @@ class Room {
         this.current_player = player;
         this.table_fa_pai = pai[0];
         console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
-        console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
+        console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
         // player.socket.emit("server_table_fapai", pai);
         player.socket.sendmsg({
             type: g_events.server_table_fa_pai,
@@ -261,7 +264,7 @@ class Room {
     }
     judge_ting(player) {
         let statusCode = -1; //状态返回码，是听还是亮！
-        let { all_hupai_zhang, all_hupai_types } = Majiang_1.Majiang.HuWhatPai(player.shou_pai);
+        let { all_hupai_zhang, all_hupai_types } = Majiang_1.Majiang.HuWhatPai(player.flat_shou_pai);
         //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
         if (all_hupai_types) {
             console.log(`${player.username}可以亮牌`);
@@ -295,7 +298,7 @@ class Room {
     //用户杠了之后需要摸一张牌
     gang_mo_pai(player) {
         //杠发牌，是从最后切一个出来，不影响前面的顺序，所以单独写成个发牌的方法
-        let pai = this.clone_pai.splice(this.clone_pai.length - 1, 1);
+        let pai = this.cloneTablePais.splice(this.cloneTablePais.length - 1, 1);
         if (_.isEmpty(pai)) {
             throw new Error(chalk_1.default.red(`room.pai中无可用牌了`));
         }
@@ -306,7 +309,7 @@ class Room {
         // c_player.socket = "hidden, 属于clone(player)";
         // console.dir(c_player);
         console.log(`服务器发${chalk_1.default.yellow("杠牌")}　${pai} 给：${player.username}`);
-        console.log("房间 %s 牌还有%s张", this.id, this.clone_pai.length);
+        console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
         player.socket.emit("server_table_fapai", pai);
         return pai;
     }
@@ -328,7 +331,7 @@ class Room {
             this.broadcast_server_dapai(player, pai_name);
             this.fa_pai(this.next_player);
             return;
-            let isRoomPaiEmpty = 0 === this.clone_pai.length;
+            let isRoomPaiEmpty = 0 === this.cloneTablePais.length;
             if (isRoomPaiEmpty) {
                 //告诉所有人游戏结束了
                 this.players.forEach(p => {
@@ -347,7 +350,7 @@ class Room {
                     //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
                     //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
                     //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
-                    let cloneShouPai = _.clone(item_player.shou_pai);
+                    let cloneShouPai = _.clone(item_player.flat_shou_pai);
                     let hupai_typesCode = Majiang_1.Majiang.HupaiTypeCodeArr(cloneShouPai, pai_name);
                     let canHu = !_.isEmpty(hupai_typesCode);
                     if (canHu) {
@@ -364,12 +367,12 @@ class Room {
                         }
                     }
                     //其实只有一个玩家可以碰！
-                    if (Majiang_1.Majiang.canPeng(item_player.shou_pai, pai_name)) {
+                    if (Majiang_1.Majiang.canPeng(item_player.flat_shou_pai, pai_name)) {
                         //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
                         //这里面也包括了可以杠的情况，因为能杠肯定就能碰！
                         canNormalFaPai = false;
                         isShowPeng = true;
-                        if (Majiang_1.Majiang.canGang(item_player.shou_pai, pai_name)) {
+                        if (Majiang_1.Majiang.canGang(item_player.flat_shou_pai, pai_name)) {
                             isShowGang = true;
                             console.log(`房间${this.id}内发现玩家${item_player.username}可以杠牌${pai_name}`);
                             //告诉玩家你可以杠牌了
@@ -378,7 +381,7 @@ class Room {
                         }
                         else {
                             console.log(`房间${this.id}内发现玩家${item_player.username}可以碰牌${pai_name}`);
-                            console.dir(`玩家${item_player.username}的手牌为:${item_player.shou_pai.join(" ")}`);
+                            console.dir(`玩家${item_player.username}的手牌为:${item_player.flat_shou_pai.join(" ")}`);
                             // item_player.socket.emit("server_canPeng", pai_name);
                             item_player.socket.sendmsg({
                                 type: g_events.server_can_select,
@@ -432,7 +435,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.clone_pai = _.clone(config.all_pai);
+        this.cloneTablePais = _.clone(config.all_pai);
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));
@@ -440,7 +443,7 @@ class Room {
         //先把所有玩家的牌准备好！
         this.players.forEach((p, index) => {
             //玩家收到的牌保存好，以便服务器进行分析，每次都需要排序下，便于分析和查看
-            p.shou_pai = this.clone_pai.splice(0, 13).sort();
+            p.flat_shou_pai = this.cloneTablePais.splice(0, 13).sort();
         });
         // 再进行相关的消息发送！
         this.players.forEach((p, index) => {
@@ -448,7 +451,7 @@ class Room {
             //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
             if (p == this.dong_jia) {
                 //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
-                this.sendShouPaiOf(p);
+                this.sendFlatShouPaiOf(p);
                 //todo: 开始游戏不考虑东家会听牌的情况，
                 this.fa_pai(p);
                 this.current_player = p;
@@ -457,24 +460,24 @@ class Room {
             }
             else {
                 //非东家，接收到牌即可
-                this.sendShouPaiOf(p);
+                this.sendFlatShouPaiOf(p);
                 // let ting_liangCode = this.judge_ting(p);
             }
         });
     }
-    sendShouPaiOf(p) {
+    sendFlatShouPaiOf(p) {
         p.socket.sendmsg({
             type: g_events.server_game_start,
-            shou_pai: p.shou_pai,
-            left_player: this.left_player(p).shou_pai,
-            right_player: this.right_player(p).shou_pai
+            flat_shou_pai: p.flat_shou_pai,
+            left_player: { flat_shou_pai: this.left_player(p).flat_shou_pai },
+            right_player: { flat_shou_pai: this.right_player(p).flat_shou_pai }
         });
     }
     //游戏结束后重新开始游戏！
     restart_game() {
         //清空所有玩家的牌
         this.players.forEach(p => {
-            p.shou_pai = null;
+            p.flat_shou_pai = null;
             p.ready = false;
             p.arr_dapai = [];
         });

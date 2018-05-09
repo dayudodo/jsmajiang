@@ -65,7 +65,8 @@ var mj;
                 var outSprite = this.gameTable["out" + player.ui_index];
                 var lastValidSprite = outSprite.getChildAt(line).getChildAt(row);
                 var paiImgSprite = lastValidSprite.getChildAt(0);
-                var dapai = player.used_pai.pop();
+                //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
+                var dapai = player.arr_dapai.pop();
                 if (player.ui_index == 3) {
                     paiImgSprite.skin = PaiConverter.skinOfZheng(dapai);
                 }
@@ -73,16 +74,64 @@ var mj;
                     paiImgSprite.skin = PaiConverter.skinOfCe(dapai);
                 }
                 lastValidSprite.visible = false;
+                return dapai;
             };
-            /** 其他人碰了牌，肯定是左右玩家 */
+            /**UI上显示出group手牌，每次都会重绘！ */
+            Manager.prototype.show_group_shoupai = function (player) {
+                var _this = this;
+                var groupShou = player.group_shou_pai;
+                var index = 0;
+                var y_one_pai_height = 60; //todo: 应该改成获取其中一个牌的高度！
+                var x_one_pai_width = this.gameTable.shou3.width;
+                if (groupShou.anGang.length > 0) {
+                    //显示暗杠
+                    // groupShou.anGang.forEach(gangPai => {
+                    //     let clonePengSprite = LayaUtils.clone(this.gameTable["anGang" + player.ui_index])
+                    //     for (var i = 0; i < clonePengSprite.numChildren; i++) {
+                    //         var imgSprite = clonePengSprite[i];
+                    //         imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(gangPai) : PaiConverter.skinOfCe(gangPai))
+                    //     }
+                    //     index = index + 4
+                    // });
+                }
+                if (groupShou.mingGang.length > 0) {
+                    //显示明杠
+                }
+                if (groupShou.peng.length > 0) {
+                    //显示碰
+                    groupShou.peng.forEach(function (pengPai) {
+                        var clonePengSprite = LayaUtils.clone(_this.gameTable["peng" + player.ui_index]);
+                        for (var i = 0; i < clonePengSprite.numChildren; i++) {
+                            var imgSprite = clonePengSprite[i];
+                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(pengPai) : PaiConverter.skinOfCe(pengPai));
+                        }
+                        if (player.ui_index == 3) {
+                            clonePengSprite.x = index * x_one_pai_width;
+                        }
+                        else {
+                            clonePengSprite.y = index * y_one_pai_height;
+                        }
+                        clonePengSprite.visible = true;
+                        index = index + 3;
+                    });
+                }
+                //显示剩下的shouPai, 如果为空，补齐成空牌！
+            };
+            /** 其他人碰了牌 */
             Manager.prototype.server_other_player_peng = function (server_message) {
-                var user_id = server_message.user_id;
-                var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == user_id; });
+                var player = server_message.player;
+                var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == player.user_id; });
+                var pengPai = player.pengPai;
+                // let dapaiPlayer = Laya.room.players.find(p => p.user_id == dapai_player_id)
+                //打牌玩家out牌这张牌应该消失, 有增有减
+                var dapai = this.out_remove(Laya.room.dapai_player);
+                if (pengPai != dapai) {
+                    throw new Error('碰的牌就是刚刚打出来的牌，检查代码！');
+                }
                 //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
                 //而碰玩家要显示出这三张碰牌！
-                pengPlayer.shou_pai.push(Laya.room.table_dapai);
-                //打牌玩家out牌这张牌应该消失, 有增有减
-                this.out_remove(Laya.room.dapai_player);
+                pengPlayer.group_shou_pai.peng.push(pengPai);
+                this.show_group_shoupai(pengPlayer);
             };
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
@@ -102,7 +151,7 @@ var mj;
                 //记录下打牌玩家
                 Laya.room.dapai_player = player;
                 //还要记录下其它玩家打过啥牌，以便有人碰杠的话删除之
-                player.table_pai = pai_name;
+                player.received_pai = pai_name;
                 player.da_pai(pai_name);
                 //牌打出去之后才能显示出来！
                 this.show_out(player, pai_name);
@@ -140,7 +189,7 @@ var mj;
                         if ((player == Laya.god_player) && _this.auto_dapai) {
                             _this.socket.sendmsg({
                                 type: events.client_da_pai,
-                                pai: Laya.god_player.table_pai
+                                pai: Laya.god_player.received_pai
                             });
                         }
                     }
@@ -158,7 +207,7 @@ var mj;
                 //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
                 // console.log(server_message.pai);
                 var pai = server_message.pai;
-                Laya.god_player.table_pai = pai;
+                Laya.god_player.received_pai = pai;
                 var gameTable = this.gameTable;
                 //显示服务器发过来的牌
                 gameTable.fa3Image.skin = PaiConverter.skinOfShou(pai);
@@ -176,14 +225,14 @@ var mj;
                 //游戏开始了
                 //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
                 //客户端也需要保存好当前的牌，以便下一步处理
-                Laya.god_player.shou_pai = server_message.shou_pai;
+                Laya.god_player.flat_shou_pai = server_message.flat_shou_pai;
                 // console.log(server_message);
                 var gameTable = this.gameTable;
-                this.show_god_player_shoupai(gameTable, Laya.god_player.shou_pai);
+                this.show_god_player_shoupai(gameTable, Laya.god_player.flat_shou_pai);
                 //test: 显示上一玩家所有的牌
-                this.show_left_player_shoupai(gameTable, server_message);
+                this.show_left_player_shoupai(gameTable, server_message.left_player);
                 //显示下一玩家所有牌
-                this.show_right_player_shoupai(gameTable, server_message);
+                this.show_right_player_shoupai(gameTable, server_message.right_player);
             };
             Manager.prototype.show_god_player_shoupai = function (gameTable, shou_pai) {
                 var _this = this;
@@ -194,7 +243,7 @@ var mj;
                 var posiX = gameTable.shou3.x;
                 gameTable.shouPai3.visible = true;
                 //隐藏里面的牌，需要的时候才会显示出来
-                gameTable.chi3.visible = false;
+                gameTable.peng3.visible = false;
                 gameTable.anGangHide3.visible = false;
                 gameTable.mingGang3.visible = false;
                 gameTable.anGang3.visible = false;
@@ -209,7 +258,7 @@ var mj;
                     //为新建的牌sprite创建点击处理函数
                     newPaiSprite.on(Laya.Event.CLICK, this_1, function () {
                         // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
-                        if (Laya.god_player.table_pai) {
+                        if (Laya.god_player.received_pai) {
                             // 如果两次点击同一张牌，应该打出去
                             _this.handleClonePaiSpriteClick(newPaiSprite, shou_pai, index);
                         }
@@ -256,7 +305,7 @@ var mj;
                         // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
                     });
                     this.clonePaiSpriteArray = [];
-                    this.show_god_player_shoupai(this.gameTable, Laya.god_player.shou_pai);
+                    this.show_god_player_shoupai(this.gameTable, Laya.god_player.flat_shou_pai);
                 }
                 else {
                     //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
@@ -295,9 +344,9 @@ var mj;
                 }
                 lastValidSprite.visible = true;
             };
-            Manager.prototype.show_right_player_shoupai = function (gameTable, server_message) {
+            Manager.prototype.show_right_player_shoupai = function (gameTable, right_player) {
                 gameTable.shouPai2.visible = true;
-                gameTable.chi2.visible = false;
+                gameTable.peng2.visible = false;
                 gameTable.anGangHide2.visible = false;
                 gameTable.mingGang2.visible = false;
                 gameTable.anGang2.visible = false;
@@ -305,7 +354,7 @@ var mj;
                 gameTable.shou2.visible = false;
                 var right_pai_y = gameTable.test_shoupai2.y;
                 var right_pai_height = 60; //gameTable.test_shoupai2_image.height
-                var all_right_urls = PaiConverter.ToCeArray(server_message.right_player);
+                var all_right_urls = PaiConverter.ToCeArray(right_player.flat_shou_pai);
                 for (var index = 0; index < all_right_urls.length; index++) {
                     var url = all_right_urls[index];
                     gameTable.test_shoupai2_image.skin = "ui/majiang/" + url;
@@ -316,9 +365,9 @@ var mj;
                     right_pai_y = right_pai_y + right_pai_height;
                 }
             };
-            Manager.prototype.show_left_player_shoupai = function (gameTable, server_message) {
+            Manager.prototype.show_left_player_shoupai = function (gameTable, left_player) {
                 gameTable.shouPai0.visible = true;
-                gameTable.chi0.visible = false;
+                gameTable.peng0.visible = false;
                 gameTable.anGangHide0.visible = false;
                 gameTable.mingGang0.visible = false;
                 gameTable.anGang0.visible = false;
@@ -327,7 +376,7 @@ var mj;
                 var left_pai_y = gameTable.test_shoupai0.y;
                 var left_pai_height = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
                 // let left_data: Array<string> = 
-                var all_left_urls = PaiConverter.ToCeArray(server_message.left_player);
+                var all_left_urls = PaiConverter.ToCeArray(left_player.flat_shou_pai);
                 for (var index = 0; index < all_left_urls.length; index++) {
                     var url = all_left_urls[index];
                     gameTable.test_shoupai0_image.skin = "ui/majiang/" + url;
@@ -379,7 +428,7 @@ var mj;
                 // 手牌内部是不显示的, 但是手牌本身需要显示
                 gameTable["shouPai" + index].visible = true;
                 //隐藏里面的牌，需要的时候才会显示出来, 比如fa会显示服务器发过来的牌，如果shouPai隐藏了那么fa就不会再显示！
-                gameTable["chi" + index].visible = false;
+                gameTable["peng" + index].visible = false;
                 gameTable["anGangHide" + index].visible = false;
                 gameTable["mingGang" + index].visible = false;
                 gameTable["anGang" + index].visible = false;
@@ -397,7 +446,6 @@ var mj;
             };
             /** 用户创建房间、加入房间后打开gameTable */
             Manager.prototype.open_gameTable = function (server_message) {
-                var _this = this;
                 Laya.stage.destroyChildren();
                 // let { seat_index, east} = server_message
                 //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
@@ -447,15 +495,15 @@ var mj;
                     this.showHead(gameTable, rightPlayer, 2);
                 }
                 //for test
-                Laya.god_player.table_pai = 't2';
-                Laya.god_player.da_pai('t2');
-                this.show_out(Laya.god_player, 't2');
-                Laya.god_player.table_pai = 'b2';
-                Laya.god_player.da_pai('b2');
-                this.show_out(Laya.god_player, 'b2');
-                Laya.timer.once(2000, this, function () {
-                    _this.out_remove(Laya.god_player);
-                });
+                // Laya.god_player.received_pai = 't2'
+                // Laya.god_player.da_pai('t2')
+                // this.show_out(Laya.god_player, 't2')
+                // Laya.god_player.received_pai = 'b2'
+                // Laya.god_player.da_pai('b2')
+                // this.show_out(Laya.god_player, 'b2')
+                // Laya.timer.once(2000, this, () => {
+                //     this.out_remove(Laya.god_player)
+                // })
                 //end test
                 Laya.stage.addChild(gameTable);
             };
