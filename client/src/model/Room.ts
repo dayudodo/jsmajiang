@@ -3,6 +3,7 @@ module mj.model {
         public players: Player[] = []
         /** 前一玩家打的牌，因为会影响客户端显示，所以保存在此！ */
         public table_dapai : Pai
+        /**记录下打牌玩家 */
         public dapai_player: Player
 
         constructor() { }

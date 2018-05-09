@@ -1,5 +1,5 @@
 import * as config from "./config";
-import * as _ from "lodash";
+import * as _ from "lodash"
 import chalk from "chalk";
 import { Majiang } from "./Majiang";
 // import * as config from "../config";
@@ -96,7 +96,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -234,10 +234,7 @@ export class Room {
   //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
   fa_pai(player: Player): Pai {
     let pai = this.cloneTablePais.splice(0, 1);
-    
-    
-    //还需要添加到player的桌面牌中，表示人家收到了
-    player.received_pai = pai[0];
+
     if (_.isEmpty(pai)) {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
     }
@@ -249,6 +246,7 @@ export class Room {
     this.fapai_to_who = player;
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
+    player.received_pai = pai[0];
     this.table_fa_pai = pai[0];
 
     console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
@@ -397,7 +395,7 @@ export class Room {
               isShowGang = true;
               console.log(
                 `房间${this.id}内发现玩家${
-                  item_player.username
+                item_player.username
                 }可以杠牌${pai_name}`
               );
               //告诉玩家你可以杠牌了
@@ -406,12 +404,12 @@ export class Room {
             } else {
               console.log(
                 `房间${this.id}内发现玩家${
-                  item_player.username
+                item_player.username
                 }可以碰牌${pai_name}`
               );
               console.dir(
                 `玩家${
-                  item_player.username
+                item_player.username
                 }的手牌为:${item_player.flat_shou_pai.join(" ")}`
               );
               // item_player.socket.emit("server_canPeng", pai_name);

@@ -230,8 +230,6 @@ class Room {
     //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
     fa_pai(player) {
         let pai = this.cloneTablePais.splice(0, 1);
-        //还需要添加到player的桌面牌中，表示人家收到了
-        player.received_pai = pai[0];
         if (_.isEmpty(pai)) {
             throw new Error(chalk_1.default.red(`room.pai中无可用牌了`));
         }
@@ -243,6 +241,7 @@ class Room {
         this.fapai_to_who = player;
         //发牌给谁，谁就是当前玩家
         this.current_player = player;
+        player.received_pai = pai[0];
         this.table_fa_pai = pai[0];
         console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
         console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);

@@ -16,6 +16,7 @@ var mj;
                 this.prevSelectedPai = null;
                 /**是否在计时结束后自动打牌，测试时使用 */
                 this.auto_dapai = false;
+                this.waitTime = config.MAX_WAIT_TIME;
                 // 是否隐藏了打牌所在区域sprite
                 this.isFirstHideOut0 = true;
                 this.isFirstHideOut1 = true;
@@ -57,16 +58,14 @@ var mj;
                     [events.server_other_player_peng, this.server_other_player_peng],
                 ];
             };
-            /**out牌中删除掉打牌 */
-            Manager.prototype.out_remove = function (player) {
+            /**更新UI，out牌中删除掉打牌 */
+            Manager.prototype.out_remove = function (player, dapai) {
                 //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
                 // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
                 var _a = player.last_out_coordinate, line = _a[0], row = _a[1];
                 var outSprite = this.gameTable["out" + player.ui_index];
                 var lastValidSprite = outSprite.getChildAt(line).getChildAt(row);
                 var paiImgSprite = lastValidSprite.getChildAt(0);
-                //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
-                var dapai = player.arr_dapai.pop();
                 if (player.ui_index == 3) {
                     paiImgSprite.skin = PaiConverter.skinOfZheng(dapai);
                 }
@@ -123,14 +122,17 @@ var mj;
                 var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == player.user_id; });
                 var pengPai = player.pengPai;
                 // let dapaiPlayer = Laya.room.players.find(p => p.user_id == dapai_player_id)
-                //打牌玩家out牌这张牌应该消失, 有增有减
-                var dapai = this.out_remove(Laya.room.dapai_player);
+                //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
+                var dapai = Laya.room.dapai_player.arr_dapai.pop();
                 if (pengPai != dapai) {
                     throw new Error('碰的牌就是刚刚打出来的牌，检查代码！');
                 }
+                //更新UI中的显示
+                this.out_remove(Laya.room.dapai_player, dapai);
                 //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
                 //而碰玩家要显示出这三张碰牌！
-                pengPlayer.group_shou_pai.peng.push(pengPai);
+                // pengPlayer.group_shou_pai.peng.push(pengPai)
+                pengPlayer.confirm_peng(pengPai);
                 this.show_group_shoupai(pengPlayer);
             };
             Manager.prototype.server_can_select = function (server_message) {
@@ -167,24 +169,26 @@ var mj;
                 this.gameTable["direction" + index].visible = true;
             };
             /** 开始显示倒计时，包括显示方向的调用 */
-            Manager.prototype.show_count_down = function (player) {
+            Manager.prototype.show_count_down = function (player, reset) {
                 var _this = this;
+                if (reset === void 0) { reset = true; }
+                if (reset) {
+                    clearInterval(this.countdownOneSecond);
+                    this.waitTime = config.MAX_WAIT_TIME;
+                }
                 console.log(player.username + "\u5F00\u59CB\u5012\u8BA1\u65F6");
+                //先隐藏所有，因为不知道上一次到底显示的是哪个
+                Laya.room.players.forEach(function (p) {
+                    _this.hideDirection(p);
+                });
                 this.show_direction(player.ui_index);
                 //todo: replace this.gameTable.Num0.skin 
-                var waitTime = config.MAX_WAIT_TIME;
-                var showSkinOfCountDown = function (twonumber) {
-                    _a = PaiConverter.CountDownNumSkin(twonumber), _this.gameTable.Num1.skin = _a[0], _this.gameTable.Num0.skin = _a[1];
-                    var _a;
-                };
-                showSkinOfCountDown(config.MAX_WAIT_TIME);
-                var countdownOneSecond = function () {
-                    waitTime--;
-                    showSkinOfCountDown(waitTime);
-                    if (0 == waitTime) {
-                        Laya.timer.clear(_this, countdownOneSecond);
-                        //计时结束隐藏方向
-                        _this.hideDirection(player);
+                this.gameTable.showSkinOfCountDown(config.MAX_WAIT_TIME);
+                this.countdownOneSecond = setInterval(function () {
+                    _this.waitTime--;
+                    _this.gameTable.showSkinOfCountDown(_this.waitTime);
+                    if (0 == _this.waitTime) {
+                        clearInterval(_this.countdownOneSecond);
                         //自动打牌只有本玩家才有的功能，其它玩家显示倒计时仅仅是显示而已。
                         if ((player == Laya.god_player) && _this.auto_dapai) {
                             _this.socket.sendmsg({
@@ -193,13 +197,13 @@ var mj;
                             });
                         }
                     }
-                };
-                Laya.timer.loop(1000, this, countdownOneSecond);
+                }, 1000);
             };
             Manager.prototype.server_table_fa_pai_other = function (server_message) {
                 var user_id = server_message.user_id;
                 var player = Laya.room.players.find(function (p) { return p.user_id == user_id; });
                 console.log("\u670D\u52A1\u5668\u7ED9\u73A9\u5BB6" + player.username + "\u53D1\u4E86\u5F20\u724C");
+                //无清掉所有的计时，再开始新的！
                 this.show_count_down(player);
             };
             Manager.prototype.server_table_fa_pai = function (server_message) {

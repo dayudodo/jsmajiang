@@ -64,16 +64,15 @@ module mj.net {
             ]
 
         }
-        /**out牌中删除掉打牌 */
-        private out_remove(player: Player): Pai {
+        /**更新UI，out牌中删除掉打牌 */
+        private out_remove(player: Player, dapai): Pai {
             //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
             // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
             let [line, row] = player.last_out_coordinate
             let outSprite = this.gameTable["out" + player.ui_index] as Sprite
             let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
             let paiImgSprite = lastValidSprite.getChildAt(0) as Image
-            //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
-            let dapai: Pai = player.arr_dapai.pop()
+
             if (player.ui_index == 3) {
                 paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
             } else {
@@ -131,11 +130,13 @@ module mj.net {
             let pengPlayer = Laya.room.players.find(p => p.user_id == player.user_id)
             let pengPai = player.pengPai
             // let dapaiPlayer = Laya.room.players.find(p => p.user_id == dapai_player_id)
-            //打牌玩家out牌这张牌应该消失, 有增有减
-            let dapai: Pai = this.out_remove(Laya.room.dapai_player)
+            //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
+            let dapai: Pai = Laya.room.dapai_player.arr_dapai.pop()
             if (pengPai != dapai) {
                 throw new Error('碰的牌就是刚刚打出来的牌，检查代码！')
             }
+            //更新UI中的显示
+            this.out_remove(Laya.room.dapai_player, dapai)
             //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
             //而碰玩家要显示出这三张碰牌！
             // pengPlayer.group_shou_pai.peng.push(pengPai)
@@ -178,23 +179,29 @@ module mj.net {
             this.gameTable.clock.visible = true
             this.gameTable["direction" + index].visible = true
         }
+
+        private waitTime = config.MAX_WAIT_TIME
+        private countdownOneSecond
         /** 开始显示倒计时，包括显示方向的调用 */
-        private show_count_down(player: Player) {
+        private show_count_down(player: Player, reset = true) {
+            if (reset) {
+                clearInterval(this.countdownOneSecond);
+                this.waitTime = config.MAX_WAIT_TIME
+            }
             console.log(`${player.username}开始倒计时`);
+            //先隐藏所有，因为不知道上一次到底显示的是哪个
+            Laya.room.players.forEach(p => {
+                this.hideDirection(p)
+            })
             this.show_direction(player.ui_index)
             //todo: replace this.gameTable.Num0.skin 
-            let waitTime = config.MAX_WAIT_TIME
-            let showSkinOfCountDown = (twonumber: number) => {
-                [this.gameTable.Num1.skin, this.gameTable.Num0.skin] = PaiConverter.CountDownNumSkin(twonumber)
-            }
-            showSkinOfCountDown(config.MAX_WAIT_TIME)
-            let countdownOneSecond = () => {
-                waitTime--
-                showSkinOfCountDown(waitTime)
-                if (0 == waitTime) {
-                    Laya.timer.clear(this, countdownOneSecond)
-                    //计时结束隐藏方向
-                    this.hideDirection(player)
+
+            this.gameTable.showSkinOfCountDown(config.MAX_WAIT_TIME)
+            this.countdownOneSecond = setInterval(() => {
+                this.waitTime--
+                this.gameTable.showSkinOfCountDown(this.waitTime)
+                if (0 == this.waitTime) {
+                    clearInterval(this.countdownOneSecond)
                     //自动打牌只有本玩家才有的功能，其它玩家显示倒计时仅仅是显示而已。
                     if ((player == Laya.god_player) && this.auto_dapai) {
                         this.socket.sendmsg({
@@ -203,14 +210,14 @@ module mj.net {
                         })
                     }
                 }
-            }
-            Laya.timer.loop(1000, this, countdownOneSecond)
+            }, 1000)
         }
 
         private server_table_fa_pai_other(server_message) {
             let { user_id } = server_message
             let player = Laya.room.players.find(p => p.user_id == user_id)
             console.log(`服务器给玩家${player.username}发了张牌`);
+            //无清掉所有的计时，再开始新的！
             this.show_count_down(player)
         }
         private server_table_fa_pai(server_message) {

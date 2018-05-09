@@ -44,16 +44,11 @@ class Player {
     /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */
     set flat_shou_pai(arr_pai) {
         this._flat_shou_pai = arr_pai;
-        this.group_shou_pai.shouPai = arr_pai;
+        this.group_shou_pai.shouPai = [].concat(arr_pai);
     }
     /** 玩家手牌数组 */
     get flat_shou_pai() {
         return this._flat_shou_pai;
-    }
-    /** 手牌中增加一张牌 */
-    add_shoupai(pai) {
-        this._flat_shou_pai.push(pai);
-        this.group_shou_pai.shouPai.push(pai);
     }
     /** 从牌数组中删除一张牌 */
     delete_pai(arr, pai) {
@@ -68,16 +63,23 @@ class Player {
     }
     /**从手牌中删除一张牌，同时也会删除group_shou_pai中的！ */
     delete_shoupai(pai) {
-        let shouResult = this.delete_pai(this._flat_shou_pai, pai);
-        this._flat_shou_pai.sort(); //删除元素之后排序
-        let groupShouResult = this.delete_pai(this.group_shou_pai.shouPai, pai);
+        let groupShouDeleteOK = this.delete_pai(this.group_shou_pai.shouPai, pai);
+        if (!groupShouDeleteOK) {
+            throw new Error(`group_shou_pai中找不到${pai}`);
+        }
         this.group_shou_pai.shouPai.sort();
-        return shouResult && groupShouResult;
+        let shouDeleteOK = this.delete_pai(this._flat_shou_pai, pai);
+        if (!groupShouDeleteOK) {
+            throw new Error(`_flat_shou_pai中找不到${pai}`);
+        }
+        this._flat_shou_pai.sort(); //删除元素之后排序
+        return shouDeleteOK && groupShouDeleteOK;
     }
-    /**玩家收到的牌，有三种途径：服务器发的牌，碰、杠到的牌 */
+    /**玩家收到的牌，保存到手牌及group手牌中 */
     set received_pai(pai) {
         this._received_pai = pai;
-        this.add_shoupai(pai);
+        this._flat_shou_pai.push(pai);
+        this.group_shou_pai.shouPai.push(pai);
     }
     get received_pai() {
         return this._received_pai;
@@ -88,7 +90,7 @@ class Player {
             this.arr_dapai.push(pai);
         }
         else {
-            throw new Error(`${this.username}居然打了张不存在的牌？${pai}`);
+            throw new Error(`${this.username}打了张非法牌？${pai}`);
         }
         this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
     }

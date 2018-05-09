@@ -29,7 +29,7 @@ var mj;
                 /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */
                 set: function (arr_pai) {
                     this._flat_shou_pai = arr_pai;
-                    this.group_shou_pai.shouPai = arr_pai;
+                    this.group_shou_pai.shouPai = [].concat(arr_pai);
                 },
                 enumerable: true,
                 configurable: true

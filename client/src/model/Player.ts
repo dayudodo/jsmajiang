@@ -34,7 +34,7 @@ module mj.model {
         /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */
         set flat_shou_pai(arr_pai: Array<Pai>) {
             this._flat_shou_pai = arr_pai;
-            this.group_shou_pai.shouPai = arr_pai;
+            this.group_shou_pai.shouPai = [].concat(arr_pai)
         }
         /** 玩家手牌数组 */
         get flat_shou_pai(): Array<Pai> {

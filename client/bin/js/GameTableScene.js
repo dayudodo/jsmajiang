@@ -12,11 +12,16 @@ var mj;
 (function (mj) {
     var scene;
     (function (scene) {
+        var PaiConverter = mj.utils.PaiConvertor;
         var GameTableScene = /** @class */ (function (_super) {
             __extends(GameTableScene, _super);
             function GameTableScene() {
                 return _super.call(this) || this;
             }
+            GameTableScene.prototype.showSkinOfCountDown = function (twonumber) {
+                _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
+                var _a;
+            };
             return GameTableScene;
         }(ui.test.GameTableUI));
         scene.GameTableScene = GameTableScene;
