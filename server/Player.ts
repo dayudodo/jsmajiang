@@ -25,17 +25,15 @@ export class Player {
   /**用户名称，以后可以显示微信名称*/
   public username;
   /**用户唯一id号 */
-  //todo:用户应该有一个唯一的id, 这样断线后再登录才知道你在哪个服务器
   public user_id;
+  public seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
+  /** 什么样的胡，保存这个数据也是为了能够保存到数据库中 */
 
   public _received_pai = null;
-
   private _flat_shou_pai: Array<Pai> = [];
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = []; //打过的牌有哪些，断线后可以重新发送此数据
   /** 玩家在房间的座位号，也是加入房间的顺序号 */
-  public seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
-  /** 什么样的胡，保存这个数据也是为了能够保存到数据库中 */
   public hupai_types = [];
   /**胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。
    还得知道是谁打的这张牌，自摸还是他人放炮？还是杠了之后的牌？*/
@@ -48,8 +46,18 @@ export class Player {
   public is_ting = false;
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
   public is_thinking_tingliang = false;
+
   /**玩家的积分 */
   public score = 0;
+  /**暗杠数量 */
+  public count_anGang = 0
+  /**明杠数量 */
+  public count_mingGang = 0
+  /**自摸数量 */
+  public count_zimo=0
+  /**放炮数量，8局为一次？需要合在一起进行计算，但是每一次的计算放哪儿呢？ */
+  public count_fangPao = 0
+
   public group_shou_pai: ShoupaiConstuctor = {
     anGang: [],
     mingGang: [],
@@ -57,7 +65,7 @@ export class Player {
     shouPai: []
   };
 
-  //连接之后，用户就会有一个socket_id，一个socket其实就是一个连接了
+  //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ flat_shou_pai = [], socket, username, user_id }) {
     this.flat_shou_pai = flat_shou_pai;
     this.socket = socket;
