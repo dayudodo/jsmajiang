@@ -1,5 +1,5 @@
 // import MJ from '../server/Majiang'
-var MJ = require("../server/Majiang");
+var MJ = require("../server_build/Majiang");
 
 describe("Base is", function() {
   it("应为将", function() {

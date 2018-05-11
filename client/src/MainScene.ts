@@ -1,4 +1,5 @@
 
+// var g_events = require('../net/g_events')
 module mj.scene {
     import SettingScene = ui.test.SettingDialogUI
     
@@ -29,7 +30,7 @@ module mj.scene {
             let {god_player} = Laya
             //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
             let msg = {
-                type: events.client_join_room,
+                type: g_events.client_join_room,
                 username: god_player.username,
                 user_id: god_player.user_id,
                 room_id: '001'
@@ -40,7 +41,7 @@ module mj.scene {
         ClickCreate(): void {
             //创建房间
 
-            let msg = { type: events.client_create_room }
+            let msg = { type: g_events.client_create_room }
             this.socket.send(JSON.stringify(msg))
         }
         ClickSetting(): void {

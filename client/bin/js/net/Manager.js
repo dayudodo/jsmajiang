@@ -39,23 +39,23 @@ var mj;
                 // this.socket.connectByUrl("ws://192.168.2.200:3333");
                 this.socket.connectByUrl("ws://localhost:3333");
                 this.eventsHandler = [
-                    [events.server_welcome, this.server_welcome],
-                    [events.server_login, this.server_login],
-                    [events.server_no_room, this.server_no_room],
-                    [events.server_no_such_room, this.server_no_such_room],
-                    [events.server_other_player_enter_room, this.server_other_player_enter_room],
-                    [events.server_player_enter_room, this.server_player_enter_room],
-                    [events.server_room_full, this.server_room_full],
+                    [g_events.server_welcome, this.server_welcome],
+                    [g_events.server_login, this.server_login],
+                    [g_events.server_no_room, this.server_no_room],
+                    [g_events.server_no_such_room, this.server_no_such_room],
+                    [g_events.server_other_player_enter_room, this.server_other_player_enter_room],
+                    [g_events.server_player_enter_room, this.server_player_enter_room],
+                    [g_events.server_room_full, this.server_room_full],
                     // [events.server_create_room_ok, this.server_create_room_ok],
-                    [events.server_receive_ready, this.server_receive_ready],
-                    [events.server_game_start, this.server_game_start],
-                    [events.server_gameover, this.server_gameover],
-                    [events.server_table_fa_pai_other, this.server_table_fa_pai_other],
-                    [events.server_table_fa_pai, this.server_table_fa_pai],
-                    [events.server_dapai, this.server_dapai],
-                    [events.server_dapai_other, this.server_dapai_other],
-                    [events.server_can_select, this.server_can_select],
-                    [events.server_other_player_peng, this.server_other_player_peng],
+                    [g_events.server_receive_ready, this.server_receive_ready],
+                    [g_events.server_game_start, this.server_game_start],
+                    [g_events.server_gameover, this.server_gameover],
+                    [g_events.server_table_fa_pai_other, this.server_table_fa_pai_other],
+                    [g_events.server_table_fa_pai, this.server_table_fa_pai],
+                    [g_events.server_dapai, this.server_dapai],
+                    [g_events.server_dapai_other, this.server_dapai_other],
+                    [g_events.server_can_select, this.server_can_select],
+                    [g_events.server_peng, this.server_peng],
                 ];
             };
             /**更新UI，out牌中删除掉打牌 */
@@ -117,7 +117,7 @@ var mj;
                 //显示剩下的shouPai, 如果为空，补齐成空牌！
             };
             /** 其他人碰了牌 */
-            Manager.prototype.server_other_player_peng = function (server_message) {
+            Manager.prototype.server_peng = function (server_message) {
                 var player = server_message.player;
                 var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == player.user_id; });
                 var pengPai = player.pengPai;
@@ -192,7 +192,7 @@ var mj;
                         //自动打牌只有本玩家才有的功能，其它玩家显示倒计时仅仅是显示而已。
                         if ((player == Laya.god_player) && _this.auto_dapai) {
                             _this.socket.sendmsg({
-                                type: events.client_da_pai,
+                                type: g_events.client_da_pai,
                                 pai: Laya.god_player.received_pai
                             });
                         }
@@ -287,7 +287,7 @@ var mj;
                     var daPai = shou_pai[index];
                     console.log("\u7528\u6237\u9009\u62E9\u6253\u724C" + daPai);
                     this.socket.sendmsg({
-                        type: events.client_da_pai,
+                        type: g_events.client_da_pai,
                         pai: daPai
                     });
                     Laya.god_player.da_pai(daPai);
@@ -484,7 +484,7 @@ var mj;
                 //设置为自动开始
                 if (gameTable.isAutoStart.selected) {
                     // console.log('本玩家准备好游戏了。。。');
-                    this.socket.sendmsg({ type: events.client_player_ready });
+                    this.socket.sendmsg({ type: g_events.client_player_ready });
                 }
                 var leftPlayer = Laya.room.left_player(Laya.god_player);
                 // console.log('leftPlayer:', leftPlayer);

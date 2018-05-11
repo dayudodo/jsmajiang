@@ -53,7 +53,7 @@
   },
   "ava": {
     "files": [
-      "spec/ava_majiangTest.js"
+      "spec/ava_playerTest.js"
     ],
     "require": [
       "babel-register"

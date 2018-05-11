@@ -59,8 +59,18 @@ function checkValidAndReturnArr(str) {
 function getAllJiangArr(result) {
   return result.join("").match(/(..)\1/g);
 }
-
-export class Majiang {
+declare global {
+  interface hupaiConstructor {
+    /**所有的胡牌类型码 */
+    all_hupai_typesCode: Array<number>;
+    /**所有的胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。*/
+    all_hupai_zhang: Array<Pai>;
+    /**胡牌字典，哪个牌是什么胡，如果为空自然是没胡喽。 */
+    hupai_dict: {};
+  }
+}
+/**麻将胡牌算法 */
+export class MajiangAlgo {
   /*
 可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
 */
@@ -242,7 +252,7 @@ export class Majiang {
         // console.log(newstr)
         for (var i = 0; i < 2; i++) {
           if (newstr.length == 0) {
-            console.log(`检查${origin}, 可能不是一手牌`);
+            // console.warn(`检查${origin}, 可能不是一手牌`);
             // 有可能遇到全是杠的情况
             is_hu = true;
             break;
@@ -345,10 +355,10 @@ export class Majiang {
     return this.isAA(jiang);
   }
 
-  /**胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！*/
-  static HuWhatPai(shou_pai) {
+  /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
+  static HuWhatPai(shou_pai): hupaiConstructor {
     let result = checkValidAndReturnArr(shou_pai);
-    let hupai_data = [];
+    let hupai_dict = {};
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
@@ -364,31 +374,28 @@ export class Majiang {
         // throw new Error('irregular Pai, record in database, maybe Hacker.')
         //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
       } else {
-        let hupai_types = this.HupaiTypeCodeArr(result, single_pai);
-        if (!_.isEmpty(hupai_types)) {
-          hupai_data.push({
-            hupai_zhang: single_pai,
-            hupai_types: hupai_types
-          });
+        let hupai_typesCode = this.HupaiTypeCodeArr(result, single_pai);
+        if (!_.isEmpty(hupai_typesCode)) {
+          hupai_dict[single_pai] = hupai_typesCode;
         }
       }
     }
-    let all_hupai_zhang = _.map(hupai_data, item => item.hupai_zhang);
-    let arr1 = [];
-    hupai_data.forEach(item => {
-      item.hupai_types.forEach(h_type => {
-        arr1.push(h_type);
-      });
-    });
-    let all_hupai_types = _.uniq(arr1);
+    let all_hupai_zhang = _.keys(hupai_dict);
+    let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
+    let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
     //如果hupai_data为空，sortBy也会返回空
-    // return _.sortBy(hupai_data, item => item.hupai_zhang);
+    //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
     if (_.isEmpty(all_hupai_zhang)) {
-      return {}
+      return {
+        all_hupai_zhang: [],
+        all_hupai_typesCode: [],
+        hupai_dict: {}
+      };
     }
     return {
       all_hupai_zhang: all_hupai_zhang.sort(),
-      all_hupai_types: all_hupai_types.sort()
+      all_hupai_typesCode: all_hupai_typesCode.sort(),
+      hupai_dict: hupai_dict
     };
   }
 
@@ -409,9 +416,9 @@ export class Majiang {
   // }
 
   static isDaHuTing(shou_pai) {
-    let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_types;
+    let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_typesCode;
     // return _.some(hupai_data, item => this.isDaHu(item));
-    return this.isDaHu(all_hupai_types)
+    return this.isDaHu(all_hupai_types);
   }
 
   static HuisKaWuXing(str, na_pai) {
@@ -535,7 +542,7 @@ export class Majiang {
   }
 
   /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
-  static HupaiTypeCodeArr(str, na_pai) : Array<number>{
+  static HupaiTypeCodeArr(str, na_pai): Array<number> {
     let _huArr = [];
     if (this.HuisYise(str, na_pai)) {
       _huArr.push(config.HuisYise);
@@ -576,13 +583,16 @@ export class Majiang {
     });
     return _output;
   }
-  static HuPaiNamesFromArr(hupaicodeArr) : Array<string>{
+  static HuPaiNamesFromArr(hupaicodeArr): Array<string> {
     return hupaicodeArr.map(item => {
       return config.HuPaiSheet[item].name;
     });
   }
-  //是否是大胡，通过胡的类型码数组来进行判断
+  /**通过胡的类型码数组来判断是否是大胡*/
   static isDaHu(hupaicodeArr: Array<number>) {
+    if (!hupaicodeArr) {
+      return false;
+    }
     if (!_.isArray(hupaicodeArr)) {
       throw new Error(`hupaicodeArr必须是个数组，但：${hupaicodeArr}`);
     }

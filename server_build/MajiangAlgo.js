@@ -51,7 +51,8 @@ function checkValidAndReturnArr(str) {
 function getAllJiangArr(result) {
     return result.join("").match(/(..)\1/g);
 }
-class Majiang {
+/**麻将胡牌算法 */
+class MajiangAlgo {
     /*
   可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
   */
@@ -219,7 +220,7 @@ class Majiang {
                 // console.log(newstr)
                 for (var i = 0; i < 2; i++) {
                     if (newstr.length == 0) {
-                        console.log(`检查${origin}, 可能不是一手牌`);
+                        // console.warn(`检查${origin}, 可能不是一手牌`);
                         // 有可能遇到全是杠的情况
                         is_hu = true;
                         break;
@@ -324,10 +325,10 @@ class Majiang {
         }
         return this.isAA(jiang);
     }
-    /**胡什么牌，以前的名称是WhoIsHu，不仅要知道胡什么牌，还得知道是什么胡！*/
+    /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
     static HuWhatPai(shou_pai) {
         let result = checkValidAndReturnArr(shou_pai);
-        let hupai_data = [];
+        let hupai_dict = {};
         for (var i = 0; i < all_single_pai.length; i++) {
             let single_pai = all_single_pai[i];
             let newShouPaiStr = result
@@ -343,31 +344,28 @@ class Majiang {
                 //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
             }
             else {
-                let hupai_types = this.HupaiTypeCodeArr(result, single_pai);
-                if (!_.isEmpty(hupai_types)) {
-                    hupai_data.push({
-                        hupai_zhang: single_pai,
-                        hupai_types: hupai_types
-                    });
+                let hupai_typesCode = this.HupaiTypeCodeArr(result, single_pai);
+                if (!_.isEmpty(hupai_typesCode)) {
+                    hupai_dict[single_pai] = hupai_typesCode;
                 }
             }
         }
-        let all_hupai_zhang = _.map(hupai_data, item => item.hupai_zhang);
-        let arr1 = [];
-        hupai_data.forEach(item => {
-            item.hupai_types.forEach(h_type => {
-                arr1.push(h_type);
-            });
-        });
-        let all_hupai_types = _.uniq(arr1);
+        let all_hupai_zhang = _.keys(hupai_dict);
+        let flatten_hupai_data = _.flatten(_.values(hupai_dict));
+        let all_hupai_typesCode = _.uniq(flatten_hupai_data);
         //如果hupai_data为空，sortBy也会返回空
-        // return _.sortBy(hupai_data, item => item.hupai_zhang);
+        //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
         if (_.isEmpty(all_hupai_zhang)) {
-            return {};
+            return {
+                all_hupai_zhang: [],
+                all_hupai_typesCode: [],
+                hupai_dict: {}
+            };
         }
         return {
             all_hupai_zhang: all_hupai_zhang.sort(),
-            all_hupai_types: all_hupai_types.sort()
+            all_hupai_typesCode: all_hupai_typesCode.sort(),
+            hupai_dict: hupai_dict
         };
     }
     // static all_hupai_zhang(shou_pai) {
@@ -385,7 +383,7 @@ class Majiang {
     //   return _.uniq(arr1);
     // }
     static isDaHuTing(shou_pai) {
-        let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_types;
+        let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_typesCode;
         // return _.some(hupai_data, item => this.isDaHu(item));
         return this.isDaHu(all_hupai_types);
     }
@@ -549,8 +547,11 @@ class Majiang {
             return config.HuPaiSheet[item].name;
         });
     }
-    //是否是大胡，通过胡的类型码数组来进行判断
+    /**通过胡的类型码数组来判断是否是大胡*/
     static isDaHu(hupaicodeArr) {
+        if (!hupaicodeArr) {
+            return false;
+        }
         if (!_.isArray(hupaicodeArr)) {
             throw new Error(`hupaicodeArr必须是个数组，但：${hupaicodeArr}`);
         }
@@ -566,5 +567,5 @@ class Majiang {
         return false;
     }
 }
-exports.Majiang = Majiang;
-//# sourceMappingURL=Majiang.js.map
+exports.MajiangAlgo = MajiangAlgo;
+//# sourceMappingURL=MajiangAlgo.js.map

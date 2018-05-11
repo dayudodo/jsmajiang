@@ -1,14 +1,14 @@
 var express = require("express"),
   http = require("http"),
   WebSocket = require("ws"),
-  ip = require("ip")
-import * as config from './config'
+  ip = require("ip");
+import * as config from "./config";
 import * as _ from "lodash";
 import { LobbyManager } from "./LobbyManager";
 import { Player } from "./player";
 import { Room } from "./room";
 import chalk from "chalk";
-import * as g_events from "./events"; //events呢容易产生同名，所以加个前缀
+import * as g_events from "./events";
 const app = express();
 
 //initialize a simple http server
@@ -47,34 +47,34 @@ function confirmInit(socket) {
   return { room, player };
 }
 function client_confirm_hu(client_message, socket) {
-  let {  player, room } = confirmInit(socket);
+  let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择胡牌`);
-  room.client_confirm_hu(socket)
+  room.client_confirm_hu(socket);
 }
 function client_confirm_ting(client_message, socket) {
-  let {  player, room } = confirmInit(socket);
+  let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择听牌`);
-  room.client_confirm_ting(socket)
+  room.client_confirm_ting(socket);
 }
 function client_confirm_liang(client_message, socket) {
-  let {  player, room } = confirmInit(socket);
+  let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
-  room.client_confirm_liang( socket);
+  room.client_confirm_liang(socket);
 }
 function client_confirm_gang(client_message, socket) {
-  let {  player, room } = confirmInit(socket);
+  let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择杠牌`);
-  room.client_confirm_gang(socket)
+  room.client_confirm_gang(socket);
 }
 function client_confirm_peng(client_message, socket) {
-  let {  player, room } = confirmInit(socket);
+  let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择碰牌`);
-  room.client_confirm_peng(socket)
+  room.client_confirm_peng(socket);
 }
 function client_confirm_guo(client_message, socket) {
-  let {  player, room } = confirmInit(socket);
+  let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择过牌`);
-  room.client_confirm_guo(socket)
+  room.client_confirm_guo(socket);
 }
 
 wsserver.on("connection", socket => {
@@ -118,7 +118,7 @@ wsserver.on("connection", socket => {
       item => client_message.type == item[0]
     );
     if (right_element) {
-      let func = right_element[1]
+      let func = right_element[1];
       func.call(this, client_message, socket);
       return;
     }
@@ -170,7 +170,9 @@ function client_create_room(client_message, socket) {
   let conn = g_lobby.find_conn_by(socket);
   if (!conn.player) {
     socket = null;
-    console.log(`用户${conn.player.username}未登录执行了创建房间：${conn.socket_id}`);
+    console.log(
+      `用户${conn.player.username}未登录执行了创建房间：${conn.socket_id}`
+    );
     return;
   } else {
     let owner_room = new Room();
@@ -202,6 +204,12 @@ function client_testlogin(client_message, socket) {
   }
   let conn = g_lobby.find_conn_by(socket);
   let s_player = new Player({
+    group_shou_pai: {
+      anGang: [],
+      mingGang: [],
+      peng: [],
+      shouPai: []
+    },
     socket: socket,
     username: shift_name,
     user_id: g_lobby.generate_user_id()

@@ -24,7 +24,7 @@ var mj;
             }
             LoginScene.prototype.loginClicked = function () {
                 //todo: 使用自动的用户名称，简化测试或者其它操作！
-                var msg = { type: events.client_testlogin };
+                var msg = { type: g_events.client_testlogin };
                 var socket = Laya.client.socket;
                 if (socket.connected) {
                     socket.sendmsg(msg);

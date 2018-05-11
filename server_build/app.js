@@ -7,7 +7,7 @@ const LobbyManager_1 = require("./LobbyManager");
 const player_1 = require("./player");
 const room_1 = require("./room");
 const chalk_1 = require("chalk");
-const g_events = require("./events"); //events呢容易产生同名，所以加个前缀
+const g_events = require("./events");
 const app = express();
 //initialize a simple http server
 const server = http.createServer(app);
@@ -191,6 +191,12 @@ function client_testlogin(client_message, socket) {
     }
     let conn = g_lobby.find_conn_by(socket);
     let s_player = new player_1.Player({
+        group_shou_pai: {
+            anGang: [],
+            mingGang: [],
+            peng: [],
+            shouPai: []
+        },
         socket: socket,
         username: shift_name,
         user_id: g_lobby.generate_user_id()

@@ -8,6 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var g_events = require('../net/g_events');
 var mj;
 (function (mj) {
     var scene;
@@ -38,7 +39,7 @@ var mj;
                 var god_player = Laya.god_player;
                 //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
                 var msg = {
-                    type: events.client_join_room,
+                    type: g_events.client_join_room,
                     username: god_player.username,
                     user_id: god_player.user_id,
                     room_id: '001'
@@ -47,7 +48,7 @@ var mj;
             };
             MainScene.prototype.ClickCreate = function () {
                 //创建房间
-                var msg = { type: events.client_create_room };
+                var msg = { type: g_events.client_create_room };
                 this.socket.send(JSON.stringify(msg));
             };
             MainScene.prototype.ClickSetting = function () {

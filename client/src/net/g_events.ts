@@ -1,5 +1,5 @@
-namespace events {
 
+module g_events{
   export const client_testlogin = "client_testlogin";
   export const client_create_room = "client_create_room"
   export const client_join_room = "client_join_room"
@@ -28,14 +28,13 @@ namespace events {
   export const server_table_fa_pai_other = "server_table_fa_pai_other";
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
-  export const server_other_player_peng = "server_other_player_peng";
-  export const server_other_player_gang = "server_other_player_gang";
-  export const server_other_player_liang = "server_other_player_liang";
+  
+  export const server_peng = "server_peng";
+  export const server_gang = "server_gang";
+  export const server_liang = "server_liang";
   export const server_gameover = "server_gameover";
   export const server_winner = "server_winner";
 
   export const server_can_select = "server_can_select";
-
-
 
 }

@@ -27,32 +27,32 @@ var mj;
                 this.initButton(this.hu, isShowHu, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u80E1");
                     _this.socket.sendmsg({
-                        type: events.client_confirm_hu
+                        type: g_events.client_confirm_hu
                     });
                 });
                 this.initButton(this.liang, isShowLiang, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u4EAE");
                     _this.socket.sendmsg({
-                        type: events.client_confirm_liang
+                        type: g_events.client_confirm_liang
                     });
                 });
                 this.initButton(this.gang, isShowGang, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u6760");
                     _this.socket.sendmsg({
-                        type: events.client_confirm_gang
+                        type: g_events.client_confirm_gang
                     });
                 });
                 this.initButton(this.peng, isShowPeng, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u78B0");
                     _this.socket.sendmsg({
-                        type: events.client_confirm_peng
+                        type: g_events.client_confirm_peng
                     });
                 });
                 //过肯定是在所有情况下都要显示的！
                 this.initButton(this.guo, true, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u8FC7");
                     _this.socket.sendmsg({
-                        type: events.client_confirm_guo
+                        type: g_events.client_confirm_guo
                     });
                 });
             };
