@@ -81,10 +81,10 @@ module mj.net {
             lastValidSprite.visible = false
             return dapai
         }
+
         /**UI上显示出group手牌，每次都会重绘！ */
         public show_group_shoupai(player: Player) {
             let groupShou = player.group_shou_pai
-            let index = 0
             let y_one_pai_height = 60 //todo: 应该改成获取其中一个牌的高度！
             let x_one_pai_width = this.gameTable.shou3.width;
 
@@ -108,20 +108,24 @@ module mj.net {
                 groupShou.peng.forEach(pengPai => {
                     let clonePengSprite = LayaUtils.clone(this.gameTable["peng" + player.ui_index]) as Sprite
                     for (var i = 0; i < clonePengSprite.numChildren; i++) {
-                        var imgSprite = clonePengSprite[i];
+                        var imgSprite = clonePengSprite._childs[i];
                         imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(pengPai) : PaiConverter.skinOfCe(pengPai))
 
                     }
                     if (player.ui_index == 3) {
-                        clonePengSprite.x = index * x_one_pai_width
+                        clonePengSprite.x = player.shouPai_start_index * x_one_pai_width
                     } else {
-                        clonePengSprite.y = index * y_one_pai_height
+                        clonePengSprite.y = player.shouPai_start_index * y_one_pai_height
                     }
                     clonePengSprite.visible = true
-                    index = index + 3
+                    this.gameTable.shouPai3.addChild(clonePengSprite)
+                    player.shouPai_start_index = player.shouPai_start_index + 3
                 });
             }
             //显示剩下的shouPai, 如果为空，补齐成空牌！
+            if (groupShou.shouPai.length > 0) {
+                this.show_god_player_shoupai(player)
+            }
 
         }
         /** 其他人碰了牌 */
@@ -234,7 +238,7 @@ module mj.net {
             newFa3Sprite.visible = true
             //这张牌也是可以打出去的！与shouPai中的事件处理其实应该是一样的！或者说假装当成是shouPai的一部分？
             newFa3Sprite.on(Laya.Event.CLICK, this, () => {
-                this.handleClonePaiSpriteClick(newFa3Sprite, [pai], 0, true)
+                this.handleClonePaiSpriteClick(newFa3Sprite, [pai], 0, true, 0)
             })
             this.clonePaiSpriteArray.push(newFa3Sprite)
             gameTable.shouPai3.addChild(newFa3Sprite);
@@ -246,23 +250,26 @@ module mj.net {
             //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
 
             //客户端也需要保存好当前的牌，以便下一步处理
-            Laya.god_player.flat_shou_pai = server_message.flat_shou_pai
+            Laya.god_player.group_shou_pai = server_message.group_shou_pai
 
             // console.log(server_message);
             let { gameTable } = this
-            this.show_god_player_shoupai(gameTable, Laya.god_player.flat_shou_pai);
+            // this.show_god_player_shoupai(gameTable, Laya.god_player);
+            this.show_group_shoupai(Laya.god_player)
             //test: 显示上一玩家所有的牌
-            this.show_left_player_shoupai(gameTable, server_message.left_player);
+            // this.show_left_player_shoupai(gameTable, server_message.left_player);
             //显示下一玩家所有牌
-            this.show_right_player_shoupai(gameTable, server_message.right_player);
+            // this.show_right_player_shoupai(gameTable, server_message.right_player);
 
         }
-        private show_god_player_shoupai(gameTable: GameTableScene, shou_pai: string[]) {
-            let {socket} = this
+        /**显示本玩家的手牌，在位置index处 */
+        private show_god_player_shoupai(player: Player) {
+            let {socket, gameTable} = this
+            let {group_shou_pai} = player
             // let all_pais: Array<string> = shou_pai
-            let all_pai_urls = PaiConverter.ToShouArray(shou_pai)
+            let shouPai_urls = PaiConverter.ToShouArray(group_shou_pai.shouPai)
             let one_shou_pai_width = gameTable.shou3.width;
-            let posiX = gameTable.shou3.x;
+            let posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.GAP
             gameTable.shouPai3.visible = true;
             //隐藏里面的牌，需要的时候才会显示出来
             gameTable.peng3.visible = false;
@@ -272,8 +279,8 @@ module mj.net {
             gameTable.fa3.visible = false;
             gameTable.shou3.visible = false;
             // gameTable.shou3.visible = true
-            for (let index = 0; index < all_pai_urls.length; index++) {
-                const url = all_pai_urls[index];
+            for (let index = 0; index < shouPai_urls.length; index++) {
+                const url = shouPai_urls[index];
                 gameTable.skin_shoupai3.skin = `ui/majiang/${url}`;
                 gameTable.shou3.x = posiX;
                 let newPaiSprite = LayaUtils.clone(gameTable.shou3) as Sprite;
@@ -281,9 +288,10 @@ module mj.net {
                 //为新建的牌sprite创建点击处理函数
                 newPaiSprite.on(Laya.Event.CLICK, this, () => {
                     // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
-                    if (Laya.god_player.received_pai) {
+                    // if (Laya.god_player.received_pai) {
+                        if(true){
                         // 如果两次点击同一张牌，应该打出去
-                        this.handleClonePaiSpriteClick(newPaiSprite, shou_pai, index);
+                        this.handleClonePaiSpriteClick(newPaiSprite, group_shou_pai.shouPai, index, false, player.shouPai_start_index);
                     }
                 });
                 this.clonePaiSpriteArray.push(newPaiSprite) //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
@@ -294,7 +302,7 @@ module mj.net {
         private hideDirection(player: Player) {
             this.gameTable["direction" + player.ui_index].visible = false
         }
-        private handleClonePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, is_server_faPai: boolean = false) {
+        private handleClonePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, is_server_faPai: boolean = false, start_index) {
             // 如果两次点击同一张牌，应该打出去
             if (this.prevSelectedPai === newPaiSprite) {
                 let daPai: Pai = shou_pai[index];
@@ -323,7 +331,7 @@ module mj.net {
                     // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
                 });
                 this.clonePaiSpriteArray = [];
-                this.show_god_player_shoupai(this.gameTable, Laya.god_player.flat_shou_pai);
+                this.show_god_player_shoupai(Laya.god_player);
             }
             else {
                 //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
@@ -531,15 +539,13 @@ module mj.net {
                 this.showHead(gameTable, rightPlayer, 2);
             }
             //for test
-            // Laya.god_player.received_pai = 't2'
-            // Laya.god_player.da_pai('t2')
-            // this.show_out(Laya.god_player, 't2')
-
-            // Laya.god_player.received_pai = 'b2'
-            // Laya.god_player.da_pai('b2')
-            // this.show_out(Laya.god_player, 'b2')
-            // Laya.timer.once(2000, this, () => {
-            //     this.out_remove(Laya.god_player)
+            Laya.god_player.group_shou_pai = {
+                anGang: [],
+                mingGang: [],
+                peng: ["t1"],
+                shouPai: "t2 t3 t4 t5 t6 t7 b1 b2 b3 zh".split(" ")
+            }
+            this.show_group_shoupai(Laya.god_player)
 
             // })
 

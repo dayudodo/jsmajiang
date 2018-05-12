@@ -11,5 +11,7 @@ var config;
     config.BackGroundAlpha = 0.5;
     /**out牌中多少数量换行 */
     config.OutLineBreakCount = 13;
+    /** 手牌与左边杠、碰牌的缝隙 */
+    config.GAP = 20;
 })(config || (config = {}));
 //# sourceMappingURL=config.js.map

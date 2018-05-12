@@ -20,6 +20,8 @@ var mj;
                 this.score = 0;
                 /** 在界面中的序号，左玩家是0，右玩家是2, 上玩家是1，自己是3 */
                 this.ui_index = null;
+                /** 手牌从哪个位置开始 */
+                this.shouPai_start_index = 0;
             }
             Object.defineProperty(Player.prototype, "flat_shou_pai", {
                 /** 玩家手牌数组 */

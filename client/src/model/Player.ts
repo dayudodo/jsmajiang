@@ -29,6 +29,8 @@ module mj.model {
         public score = 0;
         /** 在界面中的序号，左玩家是0，右玩家是2, 上玩家是1，自己是3 */
         public ui_index: number = null;
+        /** 手牌从哪个位置开始 */
+        public shouPai_start_index = 0
 
         constructor() { }
         /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */

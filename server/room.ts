@@ -2,7 +2,6 @@ import * as config from "./config";
 import * as _ from "lodash";
 import chalk from "chalk";
 import { MajiangAlgo } from "./MajiangAlgo";
-// import * as config from "../config";
 import * as g_events from "./events";
 import { Player } from "./player";
 
@@ -293,9 +292,7 @@ export class Room {
 
   judge_ting(player: Player) {
     let statusCode = -1; //状态返回码，是听还是亮！
-    let { all_hupai_zhang, all_hupai_typesCode } = MajiangAlgo.HuWhatPai(
-      player.flat_shou_pai
-    );
+    let { all_hupai_zhang, all_hupai_typesCode } = player.hupai_data
     //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
     if (all_hupai_typesCode) {
       console.log(`${player.username}可以亮牌`);
@@ -480,6 +477,15 @@ export class Room {
     player.east = true;
   }
 
+
+  sendFlatShouPaiOf(p) {
+    p.socket.sendmsg({
+      type: g_events.server_game_start,
+      god_player: { group_shou_pai: p.group_shou_pai },
+      left_player: { group_shou_pai: this.left_player(p).group_shou_pai },
+      right_player: { group_shou_pai: this.right_player(p).group_shou_pai }
+    });
+  }
   start_game() {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
@@ -500,7 +506,6 @@ export class Room {
       //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
       if (p == this.dong_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
-
         this.sendFlatShouPaiOf(p);
         //todo: 开始游戏不考虑东家会听牌的情况，
         this.server_fa_pai(p);
@@ -515,14 +520,6 @@ export class Room {
     });
   }
 
-  sendFlatShouPaiOf(p) {
-    p.socket.sendmsg({
-      type: g_events.server_game_start,
-      flat_shou_pai: p.flat_shou_pai,
-      left_player: { flat_shou_pai: this.left_player(p).flat_shou_pai },
-      right_player: { flat_shou_pai: this.right_player(p).flat_shou_pai }
-    });
-  }
 
   //游戏结束后重新开始游戏！
   restart_game() {

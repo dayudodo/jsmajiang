@@ -14,5 +14,7 @@ namespace config {
     export const BackGroundAlpha = 0.5;
     /**out牌中多少数量换行 */
     export const OutLineBreakCount = 13
+    /** 手牌与左边杠、碰牌的缝隙 */
+    export const GAP = 20
 }
 
