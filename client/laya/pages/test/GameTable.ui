@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":330,
-    "selecteID":331,
+    "selectedBox":82,
+    "selecteID":928,
     "referenceLines":null,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
@@ -1255,14 +1255,13 @@
                     "props":{"y":0,"x":618,"width":1227,"var":"shouPai1","scaleY":0.8,"scaleX":0.8,"height":194},
                     "nodeParent":8,
                     "label":"Sprite(shouPai1)",
-                    "isOpen":true,
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":330,
                     "child":[
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":72,"x":0,"width":248,"var":"peng1","height":128},
                             "nodeParent":330,
@@ -1344,7 +1343,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":72,"x":255,"width":248,"var":"anGang1","height":128},
                             "nodeParent":330,
@@ -1416,7 +1414,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":73.00000000000004,"x":511,"width":248,"var":"anGangHide1","height":128},
                             "nodeParent":330,
@@ -1477,7 +1474,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Sprite",
                             "props":{"y":72,"x":766.9999999999998,"width":248,"var":"mingGang1","height":128},
                             "nodeParent":330,
@@ -1582,7 +1578,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":72,"x":1028,"width":85,"var":"shou1","skin":"ui/majiang/zheng_li.png","height":125},
                             "nodeParent":330,
@@ -1595,7 +1590,6 @@
                                 ]
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":72,"x":1142,"width":85,"var":"fa1","skin":"ui/majiang/zheng_li.png","height":125},
                             "nodeParent":330,
@@ -4439,13 +4433,14 @@
                             "props":{"y":26,"x":0,"width":250,"var":"peng3","height":128},
                             "nodeParent":82,
                             "label":"Sprite(peng3)",
-                            "isOpen":false,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":289,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":289,
@@ -4470,6 +4465,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":289,
@@ -4494,6 +4490,7 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":289,
@@ -4585,17 +4582,19 @@
                             "props":{"y":26,"x":760,"width":248,"var":"mingGang3","height":128},
                             "nodeParent":82,
                             "label":"Sprite(mingGang3)",
-                            "isOpen":null,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":319,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":319,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4615,10 +4614,12 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":83,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":319,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4638,10 +4639,12 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":166,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":319,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4661,10 +4664,12 @@
                                         }]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":-31,"x":83,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":319,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -4687,16 +4692,17 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":254,"width":250,"var":"anGang3","height":128},
+                            "props":{"y":26,"x":254,"width":270,"var":"anGang3","pivotX":0,"height":128},
                             "nodeParent":82,
                             "label":"Sprite(anGang3)",
-                            "isOpen":null,
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":928,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"},
                                     "nodeParent":928,
@@ -4709,6 +4715,7 @@
                                         ]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"},
                                     "nodeParent":928,
@@ -4721,6 +4728,7 @@
                                         ]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"},
                                     "nodeParent":928,
@@ -4733,10 +4741,12 @@
                                         ]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":928,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,

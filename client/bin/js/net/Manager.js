@@ -37,7 +37,8 @@ var mj;
                 this.socket.on(Laya.Event.ERROR, this, this.errorHandler);
                 //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
                 // this.socket.connectByUrl("ws://192.168.2.200:3333");
-                this.socket.connectByUrl("ws://localhost:3333");
+                this.socket.connectByUrl("ws://192.168.2.23:3333");
+                // this.socket.connectByUrl("ws://localhost:3333");
                 this.eventsHandler = [
                     [g_events.server_welcome, this.server_welcome],
                     [g_events.server_login, this.server_login],
@@ -83,17 +84,43 @@ var mj;
                 var x_one_pai_width = this.gameTable.shou3.width;
                 if (groupShou.anGang.length > 0) {
                     //显示暗杠
-                    // groupShou.anGang.forEach(gangPai => {
-                    //     let clonePengSprite = LayaUtils.clone(this.gameTable["anGang" + player.ui_index])
-                    //     for (var i = 0; i < clonePengSprite.numChildren; i++) {
-                    //         var imgSprite = clonePengSprite[i];
-                    //         imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(gangPai) : PaiConverter.skinOfCe(gangPai))
-                    //     }
-                    //     index = index + 4
-                    // });
+                    groupShou.anGang.forEach(function (anGangPai) {
+                        var cloneanGangSprite = LayaUtils.clone(_this.gameTable["anGang" + player.ui_index]);
+                        //暗杠特殊的是只需要显示一张牌
+                        var imgSprite = cloneanGangSprite._childs[3];
+                        imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(anGangPai) : PaiConverter.skinOfCe(anGangPai));
+                        if (player.ui_index == 3) {
+                            cloneanGangSprite.x = player.shouPai_start_index * x_one_pai_width;
+                        }
+                        else {
+                            cloneanGangSprite.y = player.shouPai_start_index * y_one_pai_height;
+                        }
+                        cloneanGangSprite.visible = true;
+                        cloneanGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
+                        _this.gameTable.shouPai3.addChild(cloneanGangSprite);
+                        //只需要移动3位即可，因为暗杠其实点位也只有3张牌！
+                        player.shouPai_start_index = player.shouPai_start_index + 3;
+                    });
                 }
                 if (groupShou.mingGang.length > 0) {
                     //显示明杠
+                    groupShou.mingGang.forEach(function (mingGangPai) {
+                        var clonemingGangSprite = LayaUtils.clone(_this.gameTable["mingGang" + player.ui_index]);
+                        for (var i = 0; i < clonemingGangSprite.numChildren; i++) {
+                            var imgSprite = clonemingGangSprite._childs[i];
+                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(mingGangPai) : PaiConverter.skinOfCe(mingGangPai));
+                        }
+                        if (player.ui_index == 3) {
+                            clonemingGangSprite.x = player.shouPai_start_index * x_one_pai_width;
+                        }
+                        else {
+                            clonemingGangSprite.y = player.shouPai_start_index * y_one_pai_height;
+                        }
+                        clonemingGangSprite.visible = true;
+                        clonemingGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
+                        _this.gameTable.shouPai3.addChild(clonemingGangSprite);
+                        player.shouPai_start_index = player.shouPai_start_index + 3;
+                    });
                 }
                 if (groupShou.peng.length > 0) {
                     //显示碰
@@ -101,7 +128,7 @@ var mj;
                         var clonePengSprite = LayaUtils.clone(_this.gameTable["peng" + player.ui_index]);
                         for (var i = 0; i < clonePengSprite.numChildren; i++) {
                             var imgSprite = clonePengSprite._childs[i];
-                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(pengPai) : PaiConverter.skinOfCe(pengPai));
+                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(pengPai) : PaiConverter.skinOfCe(pengPai));
                         }
                         if (player.ui_index == 3) {
                             clonePengSprite.x = player.shouPai_start_index * x_one_pai_width;
@@ -110,6 +137,7 @@ var mj;
                             clonePengSprite.y = player.shouPai_start_index * y_one_pai_height;
                         }
                         clonePengSprite.visible = true;
+                        clonePengSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
                         _this.gameTable.shouPai3.addChild(clonePengSprite);
                         player.shouPai_start_index = player.shouPai_start_index + 3;
                     });
@@ -252,7 +280,7 @@ var mj;
                 // let all_pais: Array<string> = shou_pai
                 var shouPai_urls = PaiConverter.ToShouArray(group_shou_pai.shouPai);
                 var one_shou_pai_width = gameTable.shou3.width;
-                var posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.GAP;
+                var posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP;
                 gameTable.shouPai3.visible = true;
                 //隐藏里面的牌，需要的时候才会显示出来
                 gameTable.peng3.visible = false;
@@ -509,10 +537,10 @@ var mj;
                 }
                 //for test
                 Laya.god_player.group_shou_pai = {
-                    anGang: [],
-                    mingGang: [],
-                    peng: ["t1"],
-                    shouPai: "t2 t3 t4 t5 t6 t7 b1 b2 b3 zh".split(" ")
+                    anGang: ["zh"],
+                    mingGang: ["fa"],
+                    peng: ["di"],
+                    shouPai: "b1 b2 b3 zh".split(" ")
                 };
                 this.show_group_shoupai(Laya.god_player);
                 // })

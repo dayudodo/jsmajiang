@@ -14,7 +14,11 @@ namespace config {
     export const BackGroundAlpha = 0.5;
     /**out牌中多少数量换行 */
     export const OutLineBreakCount = 13
-    /** 手牌与左边杠、碰牌的缝隙 */
-    export const GAP = 20
+    /** 本玩家手牌与左边杠、碰牌的缝隙 */
+    export const X_GAP = 30
+    /**左右玩家杠、碰牌与手牌的间隙 */
+    export const Y_GAP = 10
+    /**组牌（杠、碰组）缩小比率 */
+    export const GROUP_RATIO = 0.9
 }
 

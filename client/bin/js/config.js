@@ -11,7 +11,11 @@ var config;
     config.BackGroundAlpha = 0.5;
     /**out牌中多少数量换行 */
     config.OutLineBreakCount = 13;
-    /** 手牌与左边杠、碰牌的缝隙 */
-    config.GAP = 20;
+    /** 本玩家手牌与左边杠、碰牌的缝隙 */
+    config.X_GAP = 30;
+    /**左右玩家杠、碰牌与手牌的间隙 */
+    config.Y_GAP = 10;
+    /**组牌（杠、碰组）缩小比率 */
+    config.GROUP_RATIO = 0.9;
 })(config || (config = {}));
 //# sourceMappingURL=config.js.map

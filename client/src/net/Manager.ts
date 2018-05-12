@@ -41,7 +41,8 @@ module mj.net {
             this.socket.on(Laya.Event.ERROR, this, this.errorHandler);
             //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
             // this.socket.connectByUrl("ws://192.168.2.200:3333");
-            this.socket.connectByUrl("ws://localhost:3333");
+            this.socket.connectByUrl("ws://192.168.2.23:3333");
+            // this.socket.connectByUrl("ws://localhost:3333");
             this.eventsHandler = [
                 [g_events.server_welcome, this.server_welcome],
                 [g_events.server_login, this.server_login],
@@ -90,18 +91,42 @@ module mj.net {
 
             if (groupShou.anGang.length > 0) {
                 //显示暗杠
-                // groupShou.anGang.forEach(gangPai => {
-                //     let clonePengSprite = LayaUtils.clone(this.gameTable["anGang" + player.ui_index])
-                //     for (var i = 0; i < clonePengSprite.numChildren; i++) {
-                //         var imgSprite = clonePengSprite[i];
-                //         imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(gangPai) : PaiConverter.skinOfCe(gangPai))
+                groupShou.anGang.forEach(anGangPai => {
+                    let cloneanGangSprite = LayaUtils.clone(this.gameTable["anGang" + player.ui_index]) as Sprite
+                    //暗杠特殊的是只需要显示一张牌
+                    var imgSprite = cloneanGangSprite._childs[3]
+                    imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(anGangPai) : PaiConverter.skinOfCe(anGangPai))
 
-                //     }
-                //     index = index + 4
-                // });
+                    if (player.ui_index == 3) {
+                        cloneanGangSprite.x = player.shouPai_start_index * x_one_pai_width
+                    } else {
+                        cloneanGangSprite.y = player.shouPai_start_index * y_one_pai_height
+                    }
+                    cloneanGangSprite.visible = true
+                    cloneanGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
+                    this.gameTable.shouPai3.addChild(cloneanGangSprite)
+                    //只需要移动3位即可，因为暗杠其实点位也只有3张牌！
+                    player.shouPai_start_index = player.shouPai_start_index + 3
+                });
             }
             if (groupShou.mingGang.length > 0) {
                 //显示明杠
+                groupShou.mingGang.forEach(mingGangPai => {
+                    let clonemingGangSprite = LayaUtils.clone(this.gameTable["mingGang" + player.ui_index]) as Sprite
+                    for (var i = 0; i < clonemingGangSprite.numChildren; i++) {
+                        var imgSprite = clonemingGangSprite._childs[i];
+                        imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(mingGangPai) : PaiConverter.skinOfCe(mingGangPai))
+                    }
+                    if (player.ui_index == 3) {
+                        clonemingGangSprite.x = player.shouPai_start_index * x_one_pai_width
+                    } else {
+                        clonemingGangSprite.y = player.shouPai_start_index * y_one_pai_height
+                    }
+                    clonemingGangSprite.visible = true
+                    clonemingGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
+                    this.gameTable.shouPai3.addChild(clonemingGangSprite)
+                    player.shouPai_start_index = player.shouPai_start_index + 3
+                });
             }
             if (groupShou.peng.length > 0) {
                 //显示碰
@@ -109,7 +134,7 @@ module mj.net {
                     let clonePengSprite = LayaUtils.clone(this.gameTable["peng" + player.ui_index]) as Sprite
                     for (var i = 0; i < clonePengSprite.numChildren; i++) {
                         var imgSprite = clonePengSprite._childs[i];
-                        imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(pengPai) : PaiConverter.skinOfCe(pengPai))
+                        imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(pengPai) : PaiConverter.skinOfCe(pengPai))
 
                     }
                     if (player.ui_index == 3) {
@@ -118,6 +143,7 @@ module mj.net {
                         clonePengSprite.y = player.shouPai_start_index * y_one_pai_height
                     }
                     clonePengSprite.visible = true
+                    clonePengSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
                     this.gameTable.shouPai3.addChild(clonePengSprite)
                     player.shouPai_start_index = player.shouPai_start_index + 3
                 });
@@ -269,7 +295,7 @@ module mj.net {
             // let all_pais: Array<string> = shou_pai
             let shouPai_urls = PaiConverter.ToShouArray(group_shou_pai.shouPai)
             let one_shou_pai_width = gameTable.shou3.width;
-            let posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.GAP
+            let posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP
             gameTable.shouPai3.visible = true;
             //隐藏里面的牌，需要的时候才会显示出来
             gameTable.peng3.visible = false;
@@ -289,7 +315,7 @@ module mj.net {
                 newPaiSprite.on(Laya.Event.CLICK, this, () => {
                     // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
                     // if (Laya.god_player.received_pai) {
-                        if(true){
+                    if (true) {
                         // 如果两次点击同一张牌，应该打出去
                         this.handleClonePaiSpriteClick(newPaiSprite, group_shou_pai.shouPai, index, false, player.shouPai_start_index);
                     }
@@ -540,10 +566,10 @@ module mj.net {
             }
             //for test
             Laya.god_player.group_shou_pai = {
-                anGang: [],
-                mingGang: [],
-                peng: ["t1"],
-                shouPai: "t2 t3 t4 t5 t6 t7 b1 b2 b3 zh".split(" ")
+                anGang: ["zh"],
+                mingGang: ["fa"],
+                peng: ["di"],
+                shouPai: "b1 b2 b3 zh".split(" ")
             }
             this.show_group_shoupai(Laya.god_player)
 

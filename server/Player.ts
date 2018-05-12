@@ -5,12 +5,14 @@ import * as config from "./config";
 import { MajiangAlgo } from "./MajiangAlgo";
 
 /**手牌组，根据这些来进行手牌的显示 */
-interface ShoupaiConstuctor {
-  anGang: Array<Pai>;
-  mingGang: Array<Pai>;
-  peng: Array<Pai>;
-  /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
-  shouPai: Array<Pai>;
+declare global {
+  interface ShoupaiConstuctor {
+    anGang: Array<Pai>;
+    mingGang: Array<Pai>;
+    peng: Array<Pai>;
+    /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
+    shouPai: Array<Pai>;
+  }
 }
 
 export class Player {
@@ -90,7 +92,7 @@ export class Player {
   }
   /**是否是大胡 */
   isDaHu(pai_name: Pai): boolean {
-      return MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
+    return MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
   }
 
   /** 玩家手牌数组，从group_shou_pai中生成 */
@@ -134,14 +136,14 @@ export class Player {
     return this._received_pai;
   }
   /**能碰吗？ */
-  canPeng(pai: Pai){
+  canPeng(pai: Pai) {
     MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai)
   }
   /**能杠吗？ */
-  canGang(pai:Pai){
+  canGang(pai: Pai) {
     MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai)
   }
-  
+
   confirm_peng(pai: Pai) {
     this.group_shou_pai.peng.push(pai);
     //首先从手牌中删除二张牌
