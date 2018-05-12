@@ -118,6 +118,8 @@ var mj;
             };
             /** 其他人碰了牌 */
             Manager.prototype.server_peng = function (server_message) {
+                console.log(server_message);
+                return;
                 var player = server_message.player;
                 var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == player.user_id; });
                 var pengPai = player.pengPai;

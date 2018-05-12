@@ -156,7 +156,9 @@ function client_join_room(client_message, socket) {
     }
     else {
         console.log(`服务器无此房间：${room_id}`);
-        socket.send(JSON.stringify({ type: g_events.server_no_such_room }));
+        socket.sendmsg({
+            type: g_events.server_no_such_room
+        });
     }
 }
 function client_create_room(client_message, socket) {

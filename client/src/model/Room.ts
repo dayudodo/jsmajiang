@@ -28,6 +28,5 @@ module mj.model {
             return this.players.filter(p => p.user_id != person.user_id);
 
         }
-
     }
 }

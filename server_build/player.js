@@ -94,6 +94,14 @@ class Player {
     get received_pai() {
         return this._received_pai;
     }
+    /**能碰吗？ */
+    canPeng(pai) {
+        MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
+    }
+    /**能杠吗？ */
+    canGang(pai) {
+        MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai);
+    }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);
         //首先从手牌中删除二张牌
@@ -115,7 +123,7 @@ class Player {
         }
         this.group_shou_pai.anGang.push(pai);
     }
-    /**         从玩家手牌中删除pai         */
+    /**  从玩家手牌中删除pai并计算胡牌*/
     da_pai(pai) {
         if (this.delete_pai(this.group_shou_pai.shouPai, pai)) {
             this.arr_dapai.push(pai);

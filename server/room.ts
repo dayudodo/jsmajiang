@@ -43,16 +43,15 @@ export class Room {
     return "001";
   }
   //用户加入房间，还需要告诉其它的用户我已经加入了
-  join_player(person: Player) {
+  public join_player(person: Player) {
     this.players.push(person);
   }
-  player_enter_room(socket) {
+  public player_enter_room(socket) {
+    //首先应该看玩家是否已经 在房间里面了
     let player = this.find_player_by(socket);
-    // player.socket.sendmsg({
-    //   type: g_events.server_player_enter_room,
-    //   room_id: this.id,
-    //   seat_index: player.seat_index
-    // });
+    if (!player) {
+      console.warn('加入房间之前，玩家未加入this.players')
+    }
     //首先告诉其它人player进入房间！客户端会添加此玩家
     this.other_players(player).forEach(p => {
       p.socket.sendmsg({
@@ -85,7 +84,8 @@ export class Room {
       other_players_info: other_players_info
     });
   }
-  server_receive_ready(socket) {
+
+  public server_receive_ready(socket) {
     //向房间内所有人通知我已经准备好
     let player = this.find_player_by(socket);
     this.players.forEach(p => {
@@ -96,12 +96,12 @@ export class Room {
     });
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
-  exit_room(socket) {
-    _.remove(this.players, function(item) {
+  public exit_room(socket) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
-  find_player_by(socket): Player {
+  public find_player_by(socket): Player {
     return this.players.find(item => item.socket == socket);
   }
   //玩家们是否都已经准备好开始游戏
@@ -131,26 +131,26 @@ export class Room {
     return this.players.find(p => p.seat_index == next_index);
   }
   //除了person外的其它玩家们
-  other_players(person): Array<Player> {
+  public other_players(person): Array<Player> {
     // console.log("查找本玩家%s的其它玩家", person.username);
     let o_players = this.players.filter(p => p.user_id != person.user_id);
     // console.log(o_players.map(p => p.username));
     return o_players;
   }
-  left_player(person: Player): Player {
+  public left_player(person: Player): Player {
     //左手玩家
     let index = person.seat_index - 1;
     index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index;
     return this.players.find(p => p.seat_index == index);
   }
-  right_player(person: Player): Player {
+  public right_player(person: Player): Player {
     //右手玩家
     let index = person.seat_index + 1;
     index = index == config.LIMIT_IN_ROOM ? 0 : index;
     return this.players.find(p => p.seat_index == index);
   }
   /**差异化处理，和上一次的数据相比有没有发生变化 */
-  player_data_filter(socket, player) {
+  public player_data_filter(socket, player) {
     let player_data = {};
     Player.filter_properties.forEach(item => {
       player_data[item] = player[item];
@@ -250,12 +250,12 @@ export class Room {
     //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
     let isPlayerNormalDapai = this.fapai_to_who === this.dapai_player;
     if (isPlayerNormalDapai) {
-      this.fa_pai(this.next_player);
+      this.server_fa_pai(this.next_player);
     }
   }
 
   //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
-  fa_pai(player: Player): Pai {
+  server_fa_pai(player: Player): Pai {
     let pai = this.cloneTablePais.splice(0, 1);
 
     if (_.isEmpty(pai)) {
@@ -351,8 +351,13 @@ export class Room {
   //玩家所在socket打牌pai
   client_da_pai(socket, dapai_name) {
     let player = this.find_player_by(socket);
-    let canNormalFaPai = true; //能否正常给下一家发牌
-    let isShowHu, isShowLiang, isShowGang, isShowPeng;
+    //能否正常给下一家发牌
+    let canNormalFaPai = true;
+    // 返回并控制客户端是否显示胡、亮、杠、碰 
+    let isShowHu: boolean,
+      isShowLiang: boolean,
+      isShowGang: boolean,
+      isShowPeng: boolean;
     //记录下哪个在打牌
     this.dapai_player = player;
     /**没有用户在选择操作胡、杠、碰、过、亮 */
@@ -367,8 +372,8 @@ export class Room {
       this.table_dapai = dapai_name;
       //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
       this.broadcast_server_dapai(player, dapai_name);
-      this.fa_pai(this.next_player);
-      return;
+      this.server_fa_pai(this.next_player);
+      // return;
       let isRoomPaiEmpty = 0 === this.cloneTablePais.length;
       if (isRoomPaiEmpty) {
         //告诉所有人游戏结束了
@@ -388,56 +393,40 @@ export class Room {
           //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
           //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
           //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
-
-          let canHu = item_player.canHu(dapai_name);
-          if (canHu) {
+          //流式处理，一次判断所有，然后结果发送给客户端
+          if (item_player.canHu(dapai_name)) {
             //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
             if (item_player.is_liang || item_player.isDaHu(dapai_name)) {
+              canNormalFaPai = false;
               isShowHu = true;
               //todo: 等待20秒，过时发牌
             }
           }
+          if (item_player.canGang(dapai_name)) {
+            canNormalFaPai = false;
+            isShowGang = true;
+            console.log(`房间${this.id}内发现玩家${item_player.username}可以杠牌${dapai_name}`);
+          }
 
-          //其实只有一个玩家可以碰！
-          if (MajiangAlgo.canPeng(item_player.flat_shou_pai, dapai_name)) {
+          if (item_player.canPeng(dapai_name)) {
             //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
             //这里面也包括了可以杠的情况，因为能杠肯定就能碰！
             canNormalFaPai = false;
             isShowPeng = true;
-            if (MajiangAlgo.canGang(item_player.flat_shou_pai, dapai_name)) {
-              isShowGang = true;
-              console.log(
-                `房间${this.id}内发现玩家${
-                  item_player.username
-                }可以杠牌${dapai_name}`
-              );
-              //告诉玩家你可以杠牌了
-              // item_player.socket.emit("server_canGang", pai_name);
-              //只能碰，就用碰的办法处理！
-            } else {
-              console.log(
-                `房间${this.id}内发现玩家${
-                  item_player.username
-                }可以碰牌${dapai_name}`
-              );
-              console.dir(
-                `玩家${
-                  item_player.username
-                }的手牌为:${item_player.flat_shou_pai.join(" ")}`
-              );
-              // item_player.socket.emit("server_canPeng", pai_name);
-              item_player.socket.sendmsg({
-                type: g_events.server_can_select,
-                select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
-              });
-            }
+            //只能碰，就用碰的办法处理！
+            console.log(`房间${this.id}内发现玩家${item_player.username}可以碰牌${dapai_name}`);
           }
+          console.dir(`玩家${item_player.username}的手牌为:${item_player.group_shou_pai}`);
+          item_player.socket.sendmsg({
+            type: g_events.server_can_select,
+            select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
+          });
         }
         //todo: 打牌玩家能否亮牌？是否听胡，能听就能亮，选择在玩家！
 
         //不能胡、杠、碰就发牌给下一个玩家
         if (canNormalFaPai) {
-          this.fa_pai(this.next_player);
+          this.server_fa_pai(this.next_player);
         }
       }
     } else {
@@ -448,6 +437,19 @@ export class Room {
         chalk.red(`有玩家在想听还是胡牌，${player.username}不能打牌`)
       );
     }
+  }
+  /**
+   * 给房间内的所有玩家广播消息
+   * @param event_type 事件类型
+   * @param data 事件所携带数据
+   */
+  broadcast(event_type: EVENT_TYPE, data) {
+    this.players.forEach(p => {
+      p.socket.sendmsg({
+        type: event_type,
+        data: data
+      })
+    })
   }
   /**广播服务器打牌的消息给所有玩家 */
   broadcast_server_dapai(player, pai_name) {
@@ -501,7 +503,7 @@ export class Room {
 
         this.sendFlatShouPaiOf(p);
         //todo: 开始游戏不考虑东家会听牌的情况，
-        this.fa_pai(p);
+        this.server_fa_pai(p);
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。

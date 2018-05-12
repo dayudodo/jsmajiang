@@ -126,6 +126,8 @@ module mj.net {
         }
         /** 其他人碰了牌 */
         public server_peng(server_message) {
+            console.log(server_message)
+            return;
             let { player } = server_message
             let pengPlayer = Laya.room.players.find(p => p.user_id == player.user_id)
             let pengPai = player.pengPai

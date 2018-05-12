@@ -163,9 +163,12 @@ function client_join_room(client_message, socket) {
     }
   } else {
     console.log(`服务器无此房间：${room_id}`);
-    socket.send(JSON.stringify({ type: g_events.server_no_such_room }));
+    socket.sendmsg({
+      type: g_events.server_no_such_room
+    })
   }
 }
+
 function client_create_room(client_message, socket) {
   let conn = g_lobby.find_conn_by(socket);
   if (!conn.player) {
@@ -190,7 +193,7 @@ function client_create_room(client_message, socket) {
     conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
     console.log(
       `${conn.player.username}创建了房间${owner_room.id}, seat_index: ${
-        conn.player.seat_index
+      conn.player.seat_index
       }`
     );
     conn.room.player_enter_room(socket);
@@ -218,7 +221,7 @@ function client_testlogin(client_message, socket) {
   s_player.score = s_player.user_id + 10000;
   console.log(
     `${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${
-      socket.id
+    socket.id
     }`
   );
   conn.player = s_player;

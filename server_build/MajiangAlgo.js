@@ -81,20 +81,21 @@ class MajiangAlgo {
         let s1 = result[0], s2 = result[1], s3 = result[2], s4 = result[3];
         return s1 == s2 && s2 == s3 && s3 == s4;
     }
-    //一套牌能够碰给出的pai
+    /**能碰吗？ */
     static canPeng(shouPai, pai) {
         if (typeof pai != "string") {
             throw new Error(`pai must be a string`);
         }
         //貌似会改变以前的数组值，所以得克隆一份来进行检测
         let result = _.clone(checkValidAndReturnArr(shouPai));
-        let newstr = result
+        let newstrArr = result
             .concat(pai)
             .sort()
             .join("");
         let paiThreeTimesReg = new RegExp(`(${pai})\\1\\1`);
-        return paiThreeTimesReg.test(newstr.replace(/\s+/g, ""));
+        return paiThreeTimesReg.test(newstrArr.replace(/\s+/g, ""));
     }
+    /**能杠吗？ */
     static canGang(shouPai, pai) {
         if (typeof pai != "string") {
             throw new Error(`pai must be a string`);

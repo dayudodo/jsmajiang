@@ -108,21 +108,22 @@ export class MajiangAlgo {
       s4 = result[3];
     return s1 == s2 && s2 == s3 && s3 == s4;
   }
-  //一套牌能够碰给出的pai
-  static canPeng(shouPai, pai) {
+  /**能碰吗？ */
+  static canPeng(shouPai: Array<Pai>, pai: Pai) {
     if (typeof pai != "string") {
       throw new Error(`pai must be a string`);
     }
     //貌似会改变以前的数组值，所以得克隆一份来进行检测
     let result = _.clone(checkValidAndReturnArr(shouPai));
-    let newstr = result
+    let newstrArr = result
       .concat(pai)
       .sort()
       .join("");
     let paiThreeTimesReg = new RegExp(`(${pai})\\1\\1`);
-    return paiThreeTimesReg.test(newstr.replace(/\s+/g, ""));
+    return paiThreeTimesReg.test(newstrArr.replace(/\s+/g, ""));
   }
-  static canGang(shouPai, pai) {
+  /**能杠吗？ */
+  static canGang(shouPai: Array<Pai>, pai: Pai) {
     if (typeof pai != "string") {
       throw new Error(`pai must be a string`);
     }

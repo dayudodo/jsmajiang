@@ -12,6 +12,8 @@ declare global {
   }
   /**定义个pai类型的别名，以后会变！ */
   type Pai = string;
+  /**事件类型，以后可能改为数值 */
+  type EVENT_TYPE = string;
 }
 
 if(!Array.prototype.repeat){
