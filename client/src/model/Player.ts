@@ -31,6 +31,8 @@ module mj.model {
         public ui_index: number = null;
         /** 手牌从哪个位置开始 */
         public shouPai_start_index = 0
+        /**玩家group手牌中的shouPai数量 */
+        public shouPaiCount
 
         constructor() { }
         /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */

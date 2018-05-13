@@ -7,11 +7,15 @@ import { MajiangAlgo } from "./MajiangAlgo";
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
   interface ShoupaiConstuctor {
-    anGang: Array<Pai>;
+    anGang: Array<Pai> ;
+    /**暗杠计数 */
+    anGangCount?: number;
     mingGang: Array<Pai>;
     peng: Array<Pai>;
     /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
-    shouPai: Array<Pai>;
+    shouPai: Array<Pai> ;
+    /**手牌计数 */
+    shouPaiCount?: number;
   }
 }
 

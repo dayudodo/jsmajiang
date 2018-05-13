@@ -163,6 +163,8 @@ export class Room {
       filterd_group["anGang"] = player.group_shou_pai.anGang.length;
       filterd_group["mingGang"] = player.group_shou_pai.mingGang;
       filterd_group["peng"] = player.group_shou_pai.peng;
+      filterd_group["shouPaiCount"] = player.group_shou_pai.shouPai.length;
+
       player_data["group_shou_pai"] = filterd_group;
       //返回过滤的数据
       return player_data;
@@ -477,16 +479,33 @@ export class Room {
     player.east = true;
   }
 
+  filter_group(group_shouPai: ShoupaiConstuctor) {
+    let newGroup = _.clone(group_shouPai)
+    newGroup.anGang = []
+    newGroup.anGangCount = group_shouPai.anGang.length
+    newGroup.shouPai = []
+    newGroup.shouPaiCount = group_shouPai.shouPai.length
+    return newGroup
+  }
 
-  sendFlatShouPaiOf(p) {
+
+  sendFlatShouPaiOf(p: Player) {
+    let leftGroup = this.filter_group(this.left_player(p).group_shou_pai)
+    let rightGroup = this.filter_group(this.right_player(p).group_shou_pai)
     p.socket.sendmsg({
       type: g_events.server_game_start,
       god_player: { group_shou_pai: p.group_shou_pai },
-      left_player: { group_shou_pai: this.left_player(p).group_shou_pai },
-      right_player: { group_shou_pai: this.right_player(p).group_shou_pai }
+      left_player: { group_shou_pai: leftGroup },
+      right_player: { group_shou_pai: rightGroup }
     });
+    // p.socket.sendmsg({
+    //   type: g_events.server_game_start,
+    //   god_player: { group_shou_pai: p.group_shou_pai },
+    //   left_player: { group_shou_pai: this.left_player(p).group_shou_pai },
+    //   right_player: { group_shou_pai: this.right_player(p).group_shou_pai }
+    // });
   }
-  start_game() {
+  server_game_start() {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //仅供测试用
@@ -534,6 +553,6 @@ export class Room {
       p.ready = false;
       p.arr_dapai = [];
     });
-    this.start_game();
+    this.server_game_start();
   }
 }

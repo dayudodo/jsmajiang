@@ -143,8 +143,11 @@ var mj;
                     });
                 }
                 //显示剩下的shouPai, 如果为空，补齐成空牌！
-                if (groupShou.shouPai.length > 0) {
+                if (player.ui_index == 3) {
                     this.show_god_player_shoupai(player);
+                }
+                else {
+                    var sp_count = player.shouPaiCount;
                 }
             };
             /** 其他人碰了牌 */
@@ -259,6 +262,8 @@ var mj;
                 this.show_count_down(Laya.god_player);
             };
             Manager.prototype.server_game_start = function (server_message) {
+                console.log(server_message);
+                return;
                 //游戏开始了
                 //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
                 //客户端也需要保存好当前的牌，以便下一步处理
@@ -374,7 +379,7 @@ var mj;
                 }
                 var _a = player.last_out_coordinate, line = _a[0], row = _a[1];
                 outSprite.visible = true;
-                //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
+                //直接找到行和列替换成真正的打牌
                 var lastValidSprite = outSprite.getChildAt(line).getChildAt(row);
                 var paiImgSprite = lastValidSprite.getChildAt(0);
                 if (player.ui_index == 3) {
@@ -536,13 +541,13 @@ var mj;
                     this.showHead(gameTable, rightPlayer, 2);
                 }
                 //for test
-                Laya.god_player.group_shou_pai = {
-                    anGang: ["zh"],
-                    mingGang: ["fa"],
-                    peng: ["di"],
-                    shouPai: "b1 b2 b3 zh".split(" ")
-                };
-                this.show_group_shoupai(Laya.god_player);
+                // Laya.god_player.group_shou_pai = {
+                //     anGang: ["zh"],
+                //     mingGang: ["fa"],
+                //     peng: ["di"],
+                //     shouPai: "b1 b2 b3 zh".split(" ")
+                // }
+                // this.show_group_shoupai(Laya.god_player)
                 // })
                 //end test
                 Laya.stage.addChild(gameTable);

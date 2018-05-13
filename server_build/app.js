@@ -227,7 +227,7 @@ function client_player_ready(client_message, socket) {
         console.log(chalk_1.default.green(`===>房间${room.id}全部玩家准备完毕，可以游戏啦！`));
         // room.send_all_players_message();
         //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
-        room.start_game();
+        room.server_game_start();
     }
 }
 //start our server

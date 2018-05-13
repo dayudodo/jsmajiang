@@ -149,8 +149,10 @@ module mj.net {
                 });
             }
             //显示剩下的shouPai, 如果为空，补齐成空牌！
-            if (groupShou.shouPai.length > 0) {
+            if (player.ui_index == 3) {
                 this.show_god_player_shoupai(player)
+            }else{
+                let sp_count = player.shouPaiCount
             }
 
         }
@@ -272,6 +274,8 @@ module mj.net {
         }
 
         private server_game_start(server_message) {
+            console.log(server_message);
+            return
             //游戏开始了
             //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
 
@@ -394,7 +398,7 @@ module mj.net {
 
             outSprite.visible = true
 
-            //找到第一个没用的，其实就是找到第一个 是万的，临时的解决办法。
+            //直接找到行和列替换成真正的打牌
             let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
             let paiImgSprite = lastValidSprite.getChildAt(0) as Image
             if (player.ui_index == 3) {
@@ -565,13 +569,13 @@ module mj.net {
                 this.showHead(gameTable, rightPlayer, 2);
             }
             //for test
-            Laya.god_player.group_shou_pai = {
-                anGang: ["zh"],
-                mingGang: ["fa"],
-                peng: ["di"],
-                shouPai: "b1 b2 b3 zh".split(" ")
-            }
-            this.show_group_shoupai(Laya.god_player)
+            // Laya.god_player.group_shou_pai = {
+            //     anGang: ["zh"],
+            //     mingGang: ["fa"],
+            //     peng: ["di"],
+            //     shouPai: "b1 b2 b3 zh".split(" ")
+            // }
+            // this.show_group_shoupai(Laya.god_player)
 
             // })
 
