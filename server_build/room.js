@@ -352,7 +352,7 @@ class Room {
             //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
             this.broadcast_server_dapai(player, dapai_name);
             this.server_fa_pai(this.next_player);
-            // return;
+            return;
             let isRoomPaiEmpty = 0 === this.cloneTablePais.length;
             if (isRoomPaiEmpty) {
                 //告诉所有人游戏结束了
