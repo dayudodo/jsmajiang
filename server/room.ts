@@ -49,7 +49,7 @@ export class Room {
     //首先应该看玩家是否已经 在房间里面了
     let player = this.find_player_by(socket);
     if (!player) {
-      console.warn('加入房间之前，玩家未加入this.players')
+      console.warn("加入房间之前，玩家未加入this.players");
     }
     //首先告诉其它人player进入房间！客户端会添加此玩家
     this.other_players(player).forEach(p => {
@@ -96,7 +96,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function (item) {
+    _.remove(this.players, function(item) {
       return item.socket.id == socket.id;
     });
   }
@@ -294,7 +294,7 @@ export class Room {
 
   judge_ting(player: Player) {
     let statusCode = -1; //状态返回码，是听还是亮！
-    let { all_hupai_zhang, all_hupai_typesCode } = player.hupai_data
+    let { all_hupai_zhang, all_hupai_typesCode } = player.hupai_data;
     //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
     if (all_hupai_typesCode) {
       console.log(`${player.username}可以亮牌`);
@@ -352,7 +352,7 @@ export class Room {
     let player = this.find_player_by(socket);
     //能否正常给下一家发牌
     let canNormalFaPai = true;
-    // 返回并控制客户端是否显示胡、亮、杠、碰 
+    // 返回并控制客户端是否显示胡、亮、杠、碰
     let isShowHu: boolean,
       isShowLiang: boolean,
       isShowGang: boolean,
@@ -404,7 +404,11 @@ export class Room {
           if (item_player.canGang(dapai_name)) {
             canNormalFaPai = false;
             isShowGang = true;
-            console.log(`房间${this.id}内发现玩家${item_player.username}可以杠牌${dapai_name}`);
+            console.log(
+              `房间${this.id}内发现玩家${
+                item_player.username
+              }可以杠牌${dapai_name}`
+            );
           }
 
           if (item_player.canPeng(dapai_name)) {
@@ -413,9 +417,15 @@ export class Room {
             canNormalFaPai = false;
             isShowPeng = true;
             //只能碰，就用碰的办法处理！
-            console.log(`房间${this.id}内发现玩家${item_player.username}可以碰牌${dapai_name}`);
+            console.log(
+              `房间${this.id}内发现玩家${
+                item_player.username
+              }可以碰牌${dapai_name}`
+            );
           }
-          console.dir(`玩家${item_player.username}的手牌为:${item_player.group_shou_pai}`);
+          console.dir(
+            `玩家${item_player.username}的手牌为:${item_player.group_shou_pai}`
+          );
           item_player.socket.sendmsg({
             type: g_events.server_can_select,
             select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
@@ -447,8 +457,8 @@ export class Room {
       p.socket.sendmsg({
         type: event_type,
         data: data
-      })
-    })
+      });
+    });
   }
   /**广播服务器打牌的消息给所有玩家 */
   broadcast_server_dapai(player, pai_name) {
@@ -479,31 +489,35 @@ export class Room {
     player.east = true;
   }
 
-  filter_group(group_shouPai: ShoupaiConstuctor) {
-    let newGroup = _.clone(group_shouPai)
-    newGroup.anGang = []
-    newGroup.anGangCount = group_shouPai.anGang.length
-    newGroup.shouPai = []
-    newGroup.shouPaiCount = group_shouPai.shouPai.length
-    return newGroup
+  /**过滤grou_shou_pai,
+   * @param ignore_filter 是否忽略此过滤器，用户选择亮牌，就不再需要过滤了。
+   */
+  filter_group(
+    group_shouPai: ShoupaiConstuctor,
+    ignore_filter: boolean = false
+  ) {
+    if (ignore_filter) {
+      return group_shouPai;
+    } else {
+      //需要新建group对象返回，不能改变原有的数据！
+      let newGroup = _.clone(group_shouPai);
+      newGroup.anGang = [];
+      newGroup.anGangCount = group_shouPai.anGang.length;
+      newGroup.shouPai = [];
+      newGroup.shouPaiCount = group_shouPai.shouPai.length;
+      return newGroup;
+    }
   }
 
-
   sendFlatShouPaiOf(p: Player) {
-    let leftGroup = this.filter_group(this.left_player(p).group_shou_pai)
-    let rightGroup = this.filter_group(this.right_player(p).group_shou_pai)
+    let leftGroup = this.filter_group(this.left_player(p).group_shou_pai);
+    let rightGroup = this.filter_group(this.right_player(p).group_shou_pai);
     p.socket.sendmsg({
       type: g_events.server_game_start,
       god_player: { group_shou_pai: p.group_shou_pai },
       left_player: { group_shou_pai: leftGroup },
       right_player: { group_shou_pai: rightGroup }
     });
-    // p.socket.sendmsg({
-    //   type: g_events.server_game_start,
-    //   god_player: { group_shou_pai: p.group_shou_pai },
-    //   left_player: { group_shou_pai: this.left_player(p).group_shou_pai },
-    //   right_player: { group_shou_pai: this.right_player(p).group_shou_pai }
-    // });
   }
   server_game_start() {
     //初始化牌面
@@ -538,7 +552,6 @@ export class Room {
       }
     });
   }
-
 
   //游戏结束后重新开始游戏！
   restart_game() {

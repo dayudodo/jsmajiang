@@ -47,7 +47,7 @@ class Room {
         //首先应该看玩家是否已经 在房间里面了
         let player = this.find_player_by(socket);
         if (!player) {
-            console.warn('加入房间之前，玩家未加入this.players');
+            console.warn("加入房间之前，玩家未加入this.players");
         }
         //首先告诉其它人player进入房间！客户端会添加此玩家
         this.other_players(player).forEach(p => {
@@ -338,7 +338,7 @@ class Room {
         let player = this.find_player_by(socket);
         //能否正常给下一家发牌
         let canNormalFaPai = true;
-        // 返回并控制客户端是否显示胡、亮、杠、碰 
+        // 返回并控制客户端是否显示胡、亮、杠、碰
         let isShowHu, isShowLiang, isShowGang, isShowPeng;
         //记录下哪个在打牌
         this.dapai_player = player;
@@ -454,13 +454,22 @@ class Room {
         });
         player.east = true;
     }
-    filter_group(group_shouPai) {
-        let newGroup = _.clone(group_shouPai);
-        newGroup.anGang = [];
-        newGroup.anGangCount = group_shouPai.anGang.length;
-        newGroup.shouPai = [];
-        newGroup.shouPaiCount = group_shouPai.shouPai.length;
-        return newGroup;
+    /**过滤grou_shou_pai,
+     * @param ignore_filter 是否忽略此过滤器，用户选择亮牌，就不再需要过滤了。
+     */
+    filter_group(group_shouPai, ignore_filter = false) {
+        if (ignore_filter) {
+            return group_shouPai;
+        }
+        else {
+            //需要新建group对象返回，不能改变原有的数据！
+            let newGroup = _.clone(group_shouPai);
+            newGroup.anGang = [];
+            newGroup.anGangCount = group_shouPai.anGang.length;
+            newGroup.shouPai = [];
+            newGroup.shouPaiCount = group_shouPai.shouPai.length;
+            return newGroup;
+        }
     }
     sendFlatShouPaiOf(p) {
         let leftGroup = this.filter_group(this.left_player(p).group_shou_pai);
@@ -471,12 +480,6 @@ class Room {
             left_player: { group_shou_pai: leftGroup },
             right_player: { group_shou_pai: rightGroup }
         });
-        // p.socket.sendmsg({
-        //   type: g_events.server_game_start,
-        //   god_player: { group_shou_pai: p.group_shou_pai },
-        //   left_player: { group_shou_pai: this.left_player(p).group_shou_pai },
-        //   right_player: { group_shou_pai: this.right_player(p).group_shou_pai }
-        // });
     }
     server_game_start() {
         //初始化牌面

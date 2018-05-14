@@ -37,8 +37,8 @@ var mj;
                 this.socket.on(Laya.Event.ERROR, this, this.errorHandler);
                 //建立连接, 如果想在手机上使用，需要用物理地址，只是浏览器测试，用localhost!
                 // this.socket.connectByUrl("ws://192.168.2.200:3333");
-                this.socket.connectByUrl("ws://192.168.2.23:3333");
-                // this.socket.connectByUrl("ws://localhost:3333");
+                // this.socket.connectByUrl("ws://192.168.2.23:3333");
+                this.socket.connectByUrl("ws://localhost:3333");
                 this.eventsHandler = [
                     [g_events.server_welcome, this.server_welcome],
                     [g_events.server_login, this.server_login],
@@ -263,11 +263,11 @@ var mj;
             };
             Manager.prototype.server_game_start = function (server_message) {
                 console.log(server_message);
-                return;
+                // return
                 //游戏开始了
                 //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
                 //客户端也需要保存好当前的牌，以便下一步处理
-                Laya.god_player.group_shou_pai = server_message.group_shou_pai;
+                Laya.god_player.group_shou_pai = server_message.god_player.group_shou_pai;
                 // console.log(server_message);
                 var gameTable = this.gameTable;
                 // this.show_god_player_shoupai(gameTable, Laya.god_player);
