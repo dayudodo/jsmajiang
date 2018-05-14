@@ -562,13 +562,13 @@ var mj;
                 // console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
-                    this.showHead(gameTable, leftPlayer, 0);
+                    this.showHead(gameTable, leftPlayer);
                 }
                 var rightPlayer = Laya.room.right_player;
                 // console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
-                    this.showHead(gameTable, rightPlayer, 2);
+                    this.showHead(gameTable, rightPlayer);
                 }
                 //for test
                 // Laya.god_player.ui_index = 0
@@ -607,13 +607,13 @@ var mj;
                 console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
-                    this.showHead(gameTable, leftPlayer, 0);
+                    this.showHead(gameTable, leftPlayer);
                 }
                 var rightPlayer = Laya.room.right_player;
                 console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
-                    this.showHead(gameTable, rightPlayer, 2);
+                    this.showHead(gameTable, rightPlayer);
                 }
             };
             /**
@@ -622,11 +622,12 @@ var mj;
              * @param p
              * @param index 桌面中用户的序列号，右边的是2，左边的是0，上面的是1（卡五星不用）
              */
-            Manager.prototype.showHead = function (gameTable, p, index) {
-                gameTable["userName" + index].text = p.username;
-                gameTable["userId" + index].text = p.user_id;
-                gameTable["zhuang" + index].visible = p.east;
-                gameTable["score" + index].text = p.score.toString(); //todo: 用户的积分需要数据库配合
+            Manager.prototype.showHead = function (gameTable, player) {
+                var index = player.ui_index;
+                gameTable["userName" + index].text = player.username;
+                gameTable["userId" + index].text = player.user_id;
+                gameTable["zhuang" + index].visible = player.east;
+                gameTable["score" + index].text = player.score.toString(); //todo: 用户的积分需要数据库配合
                 gameTable["userHead" + index].visible = true;
             };
             //玩家成功加入房间
