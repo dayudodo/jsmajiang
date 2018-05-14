@@ -17,5 +17,6 @@ var config;
     config.Y_GAP = 10;
     /**组牌（杠、碰组）缩小比率 */
     config.GROUP_RATIO = 0.9;
+    config.BACK_URL = "ui/majiang/ce_an.png";
 })(config || (config = {}));
 //# sourceMappingURL=config.js.map

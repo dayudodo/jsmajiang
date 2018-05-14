@@ -1,12 +1,16 @@
 module mj.model {
     /**手牌组，根据这些来进行手牌的显示 */
-    interface ShoupaiConstuctor {
-        anGang: Array<Pai>
-        mingGang: Array<Pai>
-        peng: Array<Pai>
-        /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
-        shouPai: Array<Pai>
-    }
+  interface ShoupaiConstuctor {
+    anGang: Array<Pai> ;
+    /**暗杠计数 */
+    anGangCount?: number;
+    mingGang: Array<Pai>;
+    peng: Array<Pai>;
+    /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
+    shouPai: Array<Pai> ;
+    /**手牌计数 */
+    shouPaiCount?: number;
+  }
     export class Player {
         public username: string
         public user_id: string
@@ -33,8 +37,11 @@ module mj.model {
         public shouPai_start_index = 0
         /**玩家group手牌中的shouPai数量 */
         public shouPaiCount
+        /**玩家group手牌中的暗杠数量 */
+        public anGangCount
 
         constructor() { }
+
         /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */
         set flat_shou_pai(arr_pai: Array<Pai>) {
             this._flat_shou_pai = arr_pai;

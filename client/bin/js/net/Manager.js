@@ -76,7 +76,7 @@ var mj;
                 lastValidSprite.visible = false;
                 return dapai;
             };
-            /**UI上显示出group手牌，每次都会重绘！ */
+            /**UI上显示出玩家的group手牌！ */
             Manager.prototype.show_group_shoupai = function (player) {
                 var _this = this;
                 var groupShou = player.group_shou_pai;
@@ -97,10 +97,22 @@ var mj;
                         }
                         cloneanGangSprite.visible = true;
                         cloneanGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                        _this.gameTable.shouPai3.addChild(cloneanGangSprite);
+                        _this.gameTable["shouPai" + player.ui_index].addChild(cloneanGangSprite);
                         //只需要移动3位即可，因为暗杠其实点位也只有3张牌！
                         player.shouPai_start_index = player.shouPai_start_index + 3;
                     });
+                }
+                else {
+                    /**有几组暗杠，就显示几组背面，背面图UI中已经有就不再需要赋值了 */
+                    for (var i = 0; i < groupShou.anGangCount; i++) {
+                        var cloneanGangHideSprite = LayaUtils.clone(this.gameTable["anGangHide" + player.ui_index]);
+                        //有anGangCount的肯定就是左右玩家了，不可能会是god player!
+                        cloneanGangHideSprite.y = player.shouPai_start_index * y_one_pai_height;
+                        cloneanGangHideSprite.visible = true;
+                        cloneanGangHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
+                        this.gameTable["shouPai" + player.ui_index].addChild(cloneanGangHideSprite);
+                        player.shouPai_start_index = player.shouPai_start_index + 3;
+                    }
                 }
                 if (groupShou.mingGang.length > 0) {
                     //显示明杠
@@ -118,7 +130,7 @@ var mj;
                         }
                         clonemingGangSprite.visible = true;
                         clonemingGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                        _this.gameTable.shouPai3.addChild(clonemingGangSprite);
+                        _this.gameTable["shouPai" + player.ui_index].addChild(clonemingGangSprite);
                         player.shouPai_start_index = player.shouPai_start_index + 3;
                     });
                 }
@@ -138,7 +150,7 @@ var mj;
                         }
                         clonePengSprite.visible = true;
                         clonePengSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                        _this.gameTable.shouPai3.addChild(clonePengSprite);
+                        _this.gameTable["shouPai" + player.ui_index].addChild(clonePengSprite);
                         player.shouPai_start_index = player.shouPai_start_index + 3;
                     });
                 }
@@ -147,13 +159,13 @@ var mj;
                     this.show_god_player_shoupai(player);
                 }
                 else {
-                    var sp_count = player.shouPaiCount;
+                    this.show_side_player_shoupai(player);
                 }
             };
             /** 其他人碰了牌 */
             Manager.prototype.server_peng = function (server_message) {
                 console.log(server_message);
-                return;
+                // return;
                 var player = server_message.player;
                 var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == player.user_id; });
                 var pengPai = player.pengPai;
@@ -264,18 +276,20 @@ var mj;
             Manager.prototype.server_game_start = function (server_message) {
                 console.log(server_message);
                 // return
+                var gameTable = this.gameTable;
                 //游戏开始了
                 //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
                 //客户端也需要保存好当前的牌，以便下一步处理
                 Laya.god_player.group_shou_pai = server_message.god_player.group_shou_pai;
+                //把group保存到两边玩家的手牌之中。
+                var leftPlayer = Laya.room.left_player;
+                leftPlayer.group_shou_pai = server_message.left_player.group_shou_pai;
+                var rightPlayer = Laya.room.right_player;
+                rightPlayer.group_shou_pai = server_message.right_player.group_shou_pai;
                 // console.log(server_message);
-                var gameTable = this.gameTable;
-                // this.show_god_player_shoupai(gameTable, Laya.god_player);
                 this.show_group_shoupai(Laya.god_player);
-                //test: 显示上一玩家所有的牌
-                // this.show_left_player_shoupai(gameTable, server_message.left_player);
-                //显示下一玩家所有牌
-                // this.show_right_player_shoupai(gameTable, server_message.right_player);
+                this.show_group_shoupai(leftPlayer);
+                this.show_group_shoupai(rightPlayer);
             };
             /**显示本玩家的手牌，在位置index处 */
             Manager.prototype.show_god_player_shoupai = function (player) {
@@ -390,48 +404,64 @@ var mj;
                 }
                 lastValidSprite.visible = true;
             };
-            Manager.prototype.show_right_player_shoupai = function (gameTable, right_player) {
-                gameTable.shouPai2.visible = true;
-                gameTable.peng2.visible = false;
-                gameTable.anGangHide2.visible = false;
-                gameTable.mingGang2.visible = false;
-                gameTable.anGang2.visible = false;
-                gameTable.fa2.visible = false;
-                gameTable.shou2.visible = false;
-                var right_pai_y = gameTable.test_shoupai2.y;
-                var right_pai_height = 60; //gameTable.test_shoupai2_image.height
-                var all_right_urls = PaiConverter.ToCeArray(right_player.flat_shou_pai);
-                for (var index = 0; index < all_right_urls.length; index++) {
-                    var url = all_right_urls[index];
-                    gameTable.test_shoupai2_image.skin = "ui/majiang/" + url;
-                    gameTable.test_shoupai2.y = right_pai_y;
-                    var newPai = LayaUtils.clone(gameTable.test_shoupai2);
+            Manager.prototype.show_side_player_shoupai = function (player) {
+                var group_shou_pai = player.group_shou_pai;
+                var gameTable = this.gameTable;
+                gameTable["shouPai" + player.ui_index].visible = true;
+                var cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
+                //手牌显示的起码坐标Y
+                var right_posiY = gameTable["test_shoupai" + player.ui_index].y + (cePaiHeight * player.shouPai_start_index) + config.Y_GAP;
+                var show_oneShou = function (url, posiY) {
+                    gameTable["testImageShoupai" + player.ui_index].skin = url;
+                    gameTable["test_shoupai" + player.ui_index].y = posiY;
+                    var newPai = LayaUtils.clone(gameTable["test_shoupai" + player.ui_index]);
                     newPai.visible = true;
-                    gameTable.shouPai2.addChild(newPai);
-                    right_pai_y = right_pai_y + right_pai_height;
+                    gameTable["shouPai" + player.ui_index].addChild(newPai);
+                };
+                //如果有值，就显示，没有值就显示空的。
+                if (group_shou_pai.shouPai.length > 0) {
+                    for (var index = 0; index < group_shou_pai.shouPai.length; index++) {
+                        var url = PaiConverter.skinOfCe(group_shou_pai.shouPai[index]);
+                        show_oneShou(url, right_posiY);
+                        right_posiY += cePaiHeight;
+                    }
+                }
+                else { //只显示背景！
+                    for (var index = 0; index < group_shou_pai.shouPaiCount; index++) {
+                        show_oneShou(config.BACK_URL, right_posiY);
+                        right_posiY += cePaiHeight;
+                    }
                 }
             };
-            Manager.prototype.show_left_player_shoupai = function (gameTable, left_player) {
-                gameTable.shouPai0.visible = true;
-                gameTable.peng0.visible = false;
-                gameTable.anGangHide0.visible = false;
-                gameTable.mingGang0.visible = false;
-                gameTable.anGang0.visible = false;
-                gameTable.fa0.visible = false;
-                gameTable.shou0.visible = false;
-                var left_pai_y = gameTable.test_shoupai0.y;
-                var left_pai_height = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
-                // let left_data: Array<string> = 
-                var all_left_urls = PaiConverter.ToCeArray(left_player.flat_shou_pai);
-                for (var index = 0; index < all_left_urls.length; index++) {
-                    var url = all_left_urls[index];
-                    gameTable.test_shoupai0_image.skin = "ui/majiang/" + url;
-                    gameTable.test_shoupai0.y = left_pai_y;
-                    var newPai = LayaUtils.clone(gameTable.test_shoupai0);
-                    newPai.visible = true;
-                    gameTable.shouPai0.addChild(newPai);
-                    left_pai_y = left_pai_y + left_pai_height;
-                }
+            // private show_left_player_shoupai(left_player: any) {
+            //     let {group_shou_pai} = left_player
+            //     let {gameTable } = this
+            //     gameTable.shouPai0.visible = true;
+            //     let cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
+            //     //手牌显示的起码坐标Y
+            //     let left_posiY = gameTable.test_shoupai0.y + (cePaiHeight * left_player.shouPai_start_index) + config.Y_GAP
+            //     let show_oneShou = function (url, poxiY) {
+            //         gameTable.test_shoupai0_image.skin = url;
+            //         gameTable.test_shoupai0.y = poxiY;
+            //         let newPai = LayaUtils.clone(gameTable.test_shoupai0) as Sprite;
+            //         newPai.visible = true;
+            //         gameTable.shouPai0.addChild(newPai);
+            //     }
+            //     //如果有值，就显示，没有值就显示空的。
+            //     if (group_shou_pai.shouPai.length > 0) {
+            //         for (let index = 0; index < group_shou_pai.shouPai.length; index++) {
+            //             const url = PaiConverter.skinOfCe(group_shou_pai.shouPai[index])
+            //             show_oneShou(url, left_posiY);
+            //             left_posiY += cePaiHeight;
+            //         }
+            //     } else {//只显示背景！
+            //         for (let index = 0; index < group_shou_pai.shouPaiCount; index++) {
+            //             show_oneShou(config.BACK_URL, left_posiY)
+            //             left_posiY += cePaiHeight;
+            //         }
+            //     }
+            // }
+            Manager.prototype.show_left_shou = function (gameTable, url, left_posiY) {
             };
             Manager.prototype.openHandler = function (event) {
                 if (event === void 0) { event = null; }
@@ -528,27 +558,31 @@ var mj;
                     // console.log('本玩家准备好游戏了。。。');
                     this.socket.sendmsg({ type: g_events.client_player_ready });
                 }
-                var leftPlayer = Laya.room.left_player(Laya.god_player);
+                var leftPlayer = Laya.room.left_player;
                 // console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
                     this.showHead(gameTable, leftPlayer, 0);
                 }
-                var rightPlayer = Laya.room.right_player(Laya.god_player);
+                var rightPlayer = Laya.room.right_player;
                 // console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer, 2);
                 }
                 //for test
+                // Laya.god_player.ui_index = 0
                 // Laya.god_player.group_shou_pai = {
-                //     anGang: ["zh"],
-                //     mingGang: ["fa"],
+                //     // anGang: ["zh"],
+                //     anGang: [],
+                //     anGangCount: 1,
+                //     mingGang: ["fa", "zh"],
                 //     peng: ["di"],
-                //     shouPai: "b1 b2 b3 zh".split(" ")
+                //     shouPai: "b1 b2 b3 t4".split(" ")
+                //     // shouPai: [],
+                //     // shouPaiCount: 4
                 // }
                 // this.show_group_shoupai(Laya.god_player)
-                // })
                 //end test
                 Laya.stage.addChild(gameTable);
             };
@@ -569,13 +603,13 @@ var mj;
                 // let otherPlayers = Laya.room.other_players(Laya.god_player)
                 // console.log(otherPlayers);
                 //todo: 没效率，粗暴的刷新用户头像数据
-                var leftPlayer = Laya.room.left_player(Laya.god_player);
+                var leftPlayer = Laya.room.left_player;
                 console.log('leftPlayer:', leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
                     this.showHead(gameTable, leftPlayer, 0);
                 }
-                var rightPlayer = Laya.room.right_player(Laya.god_player);
+                var rightPlayer = Laya.room.right_player;
                 console.log('rightPlayer:', rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息

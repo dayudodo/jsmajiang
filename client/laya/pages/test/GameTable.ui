@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":82,
-    "selecteID":928,
+    "selectedBox":1305,
+    "selecteID":1306,
     "referenceLines":null,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
@@ -874,28 +874,30 @@
                     "props":{"y":93,"x":192,"width":104,"var":"shouPai0","scaleY":0.65,"scaleX":0.65,"height":1102},
                     "nodeParent":8,
                     "label":"Sprite(shouPai0)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":229,
                     "child":[
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":-3,"x":0,"visible":false,"var":"test_shoupai0","skin":"ui/majiang/ce_bg.png"},
                             "nodeParent":229,
                             "label":"Image(test_shoupai0)",
-                            "isOpen":null,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":1303,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
-                                    "props":{"y":7.105427357601002e-14,"x":0,"var":"test_shoupai0_image","skin":"ui/majiang/ce_18.png"},
+                                    "props":{"y":7.105427357601002e-14,"x":0,"var":"testImageShoupai0","skin":"ui/majiang/ce_18.png"},
                                     "nodeParent":1303,
-                                    "label":"Image(test_shoupai0_image)",
+                                    "label":"Image(testImageShoupai0)",
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
@@ -905,6 +907,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":0,"width":104,"var":"peng0","height":212.00000000000006},
                             "nodeParent":229,
@@ -989,6 +992,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":412,"x":0,"width":104,"var":"anGangHide0","height":207},
                             "nodeParent":229,
@@ -1049,6 +1053,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":208,"x":0,"width":104,"var":"anGang0","height":207},
                             "nodeParent":229,
@@ -1120,6 +1125,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":616,"x":0,"width":104,"var":"mingGang0","height":212},
                             "nodeParent":229,
@@ -1224,6 +1230,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":828,"x":0,"width":53,"var":"shou0","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":229,
@@ -1236,6 +1243,7 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":970,"x":0,"width":53,"var":"fa0","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":229,
@@ -1609,28 +1617,30 @@
                     "props":{"y":100,"x":1700,"width":104,"var":"shouPai2","scaleY":0.65,"scaleX":-0.65,"height":1102},
                     "nodeParent":8,
                     "label":"Sprite(shouPai2)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1187,
                     "child":[
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":0,"x":0,"visible":false,"var":"test_shoupai2","skin":"ui/majiang/ce_bg.png"},
                             "nodeParent":1187,
                             "label":"Image(test_shoupai2)",
-                            "isOpen":null,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":1305,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
-                                    "props":{"y":7.105427357601002e-14,"x":0,"var":"test_shoupai2_image","skin":"ui/majiang/ce_18.png"},
+                                    "props":{"y":7.105427357601002e-14,"x":0,"var":"testImageShoupai2","skin":"ui/majiang/ce_18.png"},
                                     "nodeParent":1305,
-                                    "label":"Image(test_shoupai2_image)",
+                                    "label":"Image(testImageShoupai2)",
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
@@ -1640,6 +1650,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":0,"width":104,"var":"peng2","height":212},
                             "nodeParent":1187,
@@ -1724,6 +1735,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":412,"x":0,"width":104,"var":"anGangHide2","height":207},
                             "nodeParent":1187,
@@ -1784,6 +1796,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":208,"x":0,"width":104,"var":"anGang2","height":207},
                             "nodeParent":1187,
@@ -1855,6 +1868,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":616,"x":0,"width":104,"var":"mingGang2","height":212},
                             "nodeParent":1187,
@@ -1959,6 +1973,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":828,"x":0,"width":53,"var":"shou2","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":1187,
@@ -1971,6 +1986,7 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":970,"x":0,"width":53,"var":"fa2","skin":"ui/majiang/ce_li.png","height":132},
                             "nodeParent":1187,
@@ -4702,7 +4718,6 @@
                             "compId":928,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"},
                                     "nodeParent":928,
@@ -4715,7 +4730,6 @@
                                         ]
                                 },
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"},
                                     "nodeParent":928,
@@ -4728,7 +4742,6 @@
                                         ]
                                 },
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"},
                                     "nodeParent":928,
@@ -4741,7 +4754,6 @@
                                         ]
                                 },
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},
                                     "nodeParent":928,

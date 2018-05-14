@@ -20,5 +20,6 @@ namespace config {
     export const Y_GAP = 10
     /**组牌（杠、碰组）缩小比率 */
     export const GROUP_RATIO = 0.9
+    export const BACK_URL  = "ui/majiang/ce_an.png"
 }
 
