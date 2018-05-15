@@ -388,6 +388,9 @@ class MajiangAlgo {
         // return _.some(hupai_data, item => this.isDaHu(item));
         return this.isDaHu(all_hupai_types);
     }
+    /**是否是卡五星
+     * @param na_pai 这张牌是否是4，6中间的牌
+     */
     static HuisKaWuXing(str, na_pai) {
         let result = checkValidAndReturnArr(str)
             .concat(na_pai)

@@ -46,10 +46,6 @@ class Player {
             return false;
         }
     }
-    /**能否听牌 */
-    get canTing() {
-        return this.hupai_data.all_hupai_zhang.length > 0;
-    }
     /**是否是大胡 */
     isDaHu(pai_name) {
         return MajiangAlgo_1.MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
@@ -94,13 +90,21 @@ class Player {
     get received_pai() {
         return this._received_pai;
     }
+    /**能否听牌 */
+    canTing() {
+        return this.hupai_data.all_hupai_zhang.length > 0;
+    }
+    // /**能亮否？ */
+    // canLiang(): boolean {
+    //   return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
+    // }
     /**能碰吗？ */
     canPeng(pai) {
-        MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
+        return MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
     }
     /**能杠吗？ */
     canGang(pai) {
-        MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai);
+        return MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai);
     }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);
@@ -132,7 +136,10 @@ class Player {
             throw new Error(`${this.username}打了张非法牌？${pai}`);
         }
         this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
-        //打牌之后要计算各种胡牌的状态
+        this.calculateHu();
+    }
+    /**计算各种胡牌的状态 */
+    calculateHu() {
         let shoupai_changed = true;
         if (shoupai_changed) {
             this.hupai_data = MajiangAlgo_1.MajiangAlgo.HuWhatPai(this.flat_shou_pai);

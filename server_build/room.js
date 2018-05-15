@@ -6,7 +6,11 @@ const chalk_1 = require("chalk");
 const MajiangAlgo_1 = require("./MajiangAlgo");
 const g_events = require("./events");
 const player_1 = require("./player");
+const util = require("util");
 let room_valid_names = ["ange", "jack", "rose"];
+function puts(obj) {
+    console.log(util.inspect(obj));
+}
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
 class Room {
     constructor() {
@@ -333,7 +337,7 @@ class Room {
         player.socket.emit("server_table_fapai", pai);
         return pai;
     }
-    //玩家所在socket打牌pai
+    /**玩家所在socket打牌pai*/
     client_da_pai(socket, dapai_name) {
         let player = this.find_player_by(socket);
         //能否正常给下一家发牌
@@ -351,8 +355,8 @@ class Room {
             this.table_dapai = dapai_name;
             //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
             this.broadcast_server_dapai(player, dapai_name);
-            this.server_fa_pai(this.next_player);
-            return;
+            // this.server_fa_pai(this.next_player);
+            // return;
             let isRoomPaiEmpty = 0 === this.cloneTablePais.length;
             if (isRoomPaiEmpty) {
                 //告诉所有人游戏结束了
@@ -369,36 +373,44 @@ class Room {
                 //打牌之后自己也可以听、或者亮的！当然喽，不能胡自己打的牌。所以还是有可能出现三家都在听的情况！
                 let oplayers = this.other_players(player);
                 for (let item_player of oplayers) {
-                    //判断是否能够胡牌，别人打的还是有可能胡牌的！首先检查，能够胡了还碰个啥呢？不过也可能放过不胡，这些都需要玩家做出选择
-                    //但是，平胡不能胡，不过亮牌的可以胡，所以这个还需要再判断！
                     //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
                     //流式处理，一次判断所有，然后结果发送给客户端
+                    //玩家能胡了就可以亮牌
                     if (item_player.canHu(dapai_name)) {
+                        // canNormalFaPai = false;
+                        isShowLiang = true;
+                        console.log(`房间${this.id} 玩家${item_player.username}可以亮牌${dapai_name}`);
                         //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
-                        if (item_player.is_liang || item_player.isDaHu(dapai_name)) {
-                            canNormalFaPai = false;
-                            isShowHu = true;
-                            //todo: 等待20秒，过时发牌
-                        }
+                    }
+                    // 平胡不能胡，亮牌的才可以胡，或者玩家是大胡
+                    if (item_player.is_liang || item_player.isDaHu(dapai_name)) {
+                        // canNormalFaPai = false;
+                        isShowHu = true;
+                        console.log(`房间${this.id} 玩家${item_player.username}可以胡牌${dapai_name}`);
+                        //todo: 等待20秒，过时发牌
                     }
                     if (item_player.canGang(dapai_name)) {
-                        canNormalFaPai = false;
+                        // canNormalFaPai = false;
                         isShowGang = true;
-                        console.log(`房间${this.id}内发现玩家${item_player.username}可以杠牌${dapai_name}`);
+                        console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`);
                     }
                     if (item_player.canPeng(dapai_name)) {
-                        //只要有人能碰,就不能再正常发牌了, 需要这个变量是因为下面的answer里面是回调函数,需要等待的!
                         //这里面也包括了可以杠的情况，因为能杠肯定就能碰！
-                        canNormalFaPai = false;
+                        // canNormalFaPai = false;
                         isShowPeng = true;
                         //只能碰，就用碰的办法处理！
-                        console.log(`房间${this.id}内发现玩家${item_player.username}可以碰牌${dapai_name}`);
+                        console.log(`房间${this.id} 玩家${item_player.username}可以碰牌${dapai_name}`);
                     }
-                    console.dir(`玩家${item_player.username}的手牌为:${item_player.group_shou_pai}`);
-                    item_player.socket.sendmsg({
-                        type: g_events.server_can_select,
-                        select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
-                    });
+                    console.log(`房间${this.id} 玩家${item_player.username}的手牌为:`);
+                    puts(item_player.group_shou_pai);
+                    let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
+                    if (canShowSelect) {
+                        item_player.socket.sendmsg({
+                            type: g_events.server_can_select,
+                            select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
+                        });
+                        canNormalFaPai = false;
+                    }
                 }
                 //todo: 打牌玩家能否亮牌？是否听胡，能听就能亮，选择在玩家！
                 //不能胡、杠、碰就发牌给下一个玩家
@@ -411,7 +423,7 @@ class Room {
             //todo: 过时计算，双重保险，有变量is_thinking_tingliang来控制。
             //另外，商用版本的话有人这时候打牌肯定是用了外挂或者客户端出了毛病！
             //有人还在想着打牌，你就打了，这样是无效的操作。
-            console.log(chalk_1.default.red(`有玩家在想听还是胡牌，${player.username}不能打牌`));
+            console.log(chalk_1.default.red(`有玩家在思考中，${player.username}不能打牌`));
         }
     }
     /**
@@ -471,7 +483,7 @@ class Room {
             return newGroup;
         }
     }
-    sendFlatShouPaiOf(p) {
+    sendGroupShouPaiOf(p) {
         let leftGroup = this.filter_group(this.left_player(p).group_shou_pai);
         let rightGroup = this.filter_group(this.right_player(p).group_shou_pai);
         p.socket.sendmsg({
@@ -494,6 +506,8 @@ class Room {
         this.players.forEach((p, index) => {
             //玩家收到的牌保存好，以便服务器进行分析，每次都需要排序下，便于分析和查看
             p.group_shou_pai.shouPai = this.cloneTablePais.splice(0, 13).sort();
+            //发牌完毕就要计算胡了
+            p.calculateHu();
         });
         // 再进行相关的消息发送！
         this.players.forEach((p, index) => {
@@ -501,7 +515,7 @@ class Room {
             //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
             if (p == this.dong_jia) {
                 //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
-                this.sendFlatShouPaiOf(p);
+                this.sendGroupShouPaiOf(p);
                 //todo: 开始游戏不考虑东家会听牌的情况，
                 this.server_fa_pai(p);
                 this.current_player = p;
@@ -510,7 +524,7 @@ class Room {
             }
             else {
                 //非东家，接收到牌即可
-                this.sendFlatShouPaiOf(p);
+                this.sendGroupShouPaiOf(p);
                 // let ting_liangCode = this.judge_ting(p);
             }
         });

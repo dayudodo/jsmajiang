@@ -311,7 +311,7 @@ module mj.net {
             // let all_pais: Array<string> = shou_pai
             let shouPai_urls = PaiConverter.ToShouArray(group_shou_pai.shouPai)
             let one_shou_pai_width = gameTable.shou3.width;
-            let posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP
+            let posiX = (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP
             gameTable.shouPai3.visible = true;
             //隐藏里面的牌，需要的时候才会显示出来
             // gameTable.peng3.visible = false;

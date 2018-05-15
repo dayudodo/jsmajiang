@@ -299,7 +299,7 @@ var mj;
                 // let all_pais: Array<string> = shou_pai
                 var shouPai_urls = PaiConverter.ToShouArray(group_shou_pai.shouPai);
                 var one_shou_pai_width = gameTable.shou3.width;
-                var posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP;
+                var posiX = (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP;
                 gameTable.shouPai3.visible = true;
                 var _loop_1 = function (index) {
                     var url = shouPai_urls[index];

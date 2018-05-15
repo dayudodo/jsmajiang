@@ -1,23 +1,27 @@
+import * as util from "util";
 
 declare global {
   interface Array<T> {
     /** 复制一个数组*/
     repeat(o: number): T[];
   }
-  interface WebSocket{
+  interface WebSocket {
     /** 扩展的socket id号， */
-    id: number
+    id: number;
     /** 扩展发送msg对象 */
-    sendmsg(msg): void
+    sendmsg(msg): void;
   }
   /**定义个pai类型的别名，以后会变！ */
   type Pai = string;
   /**事件类型，以后可能改为数值 */
   type EVENT_TYPE = string;
+
+
 }
 
-if(!Array.prototype.repeat){
-Array.prototype.repeat = function(times) {
+
+if (!Array.prototype.repeat) {
+  Array.prototype.repeat = function(times) {
     var result = [];
     for (var i = 0; i < times; i++) {
       this.map(item => {
@@ -50,7 +54,6 @@ export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔,单�
 
 export const IS_TING = 1;
 export const IS_LIANG = 2;
-
 
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 export const HuPaiSheet = [

@@ -7,13 +7,13 @@ import { MajiangAlgo } from "./MajiangAlgo";
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
   interface ShoupaiConstuctor {
-    anGang: Array<Pai> ;
+    anGang: Array<Pai>;
     /**暗杠计数 */
     anGangCount?: number;
     mingGang: Array<Pai>;
     peng: Array<Pai>;
     /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
-    shouPai: Array<Pai> ;
+    shouPai: Array<Pai>;
     /**手牌计数 */
     shouPaiCount?: number;
   }
@@ -52,9 +52,6 @@ export class Player {
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = []; //打过的牌有哪些，断线后可以重新发送此数据
 
-  /**所有胡牌相关的数据都在这儿了 */
-  public hupai_data: hupaiConstructor;
-
   /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
   public is_liang = false;
   /**玩家是否选择听牌，只有大胡的时候才能听牌！*/
@@ -72,8 +69,10 @@ export class Player {
   public count_zimo = 0;
   /**放炮数量，8局为一次？需要合在一起进行计算，但是每一次的计算放哪儿呢？ */
   public count_fangPao = 0;
-
+  /**玩家手牌组，包括有几个杠、几个碰 */
   public group_shou_pai: ShoupaiConstuctor;
+  /**所有胡牌相关的数据都在这儿了 */
+  public hupai_data: hupaiConstructor;
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
@@ -90,10 +89,7 @@ export class Player {
       return false;
     }
   }
-  /**能否听牌 */
-  get canTing(): boolean {
-    return this.hupai_data.all_hupai_zhang.length > 0;
-  }
+
   /**是否是大胡 */
   isDaHu(pai_name: Pai): boolean {
     return MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
@@ -139,13 +135,21 @@ export class Player {
   get received_pai() {
     return this._received_pai;
   }
+  /**能否听牌 */
+  canTing(): boolean {
+    return this.hupai_data.all_hupai_zhang.length > 0;
+  }
+  // /**能亮否？ */
+  // canLiang(): boolean {
+  //   return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
+  // }
   /**能碰吗？ */
-  canPeng(pai: Pai) {
-    MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai)
+  canPeng(pai: Pai): boolean {
+    return MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
   }
   /**能杠吗？ */
-  canGang(pai: Pai) {
-    MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai)
+  canGang(pai: Pai): boolean {
+    return MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai);
   }
 
   confirm_peng(pai: Pai) {
@@ -177,7 +181,10 @@ export class Player {
       throw new Error(`${this.username}打了张非法牌？${pai}`);
     }
     this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
-    //打牌之后要计算各种胡牌的状态
+    this.calculateHu();
+  }
+  /**计算各种胡牌的状态 */
+  calculateHu() {
     let shoupai_changed = true;
     if (shoupai_changed) {
       this.hupai_data = MajiangAlgo.HuWhatPai(this.flat_shou_pai);
