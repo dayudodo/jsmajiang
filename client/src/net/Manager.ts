@@ -314,12 +314,12 @@ module mj.net {
             let posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP
             gameTable.shouPai3.visible = true;
             //隐藏里面的牌，需要的时候才会显示出来
-            gameTable.peng3.visible = false;
-            gameTable.anGangHide3.visible = false;
-            gameTable.mingGang3.visible = false;
-            gameTable.anGang3.visible = false;
-            gameTable.fa3.visible = false;
-            gameTable.shou3.visible = false;
+            // gameTable.peng3.visible = false;
+            // gameTable.anGangHide3.visible = false;
+            // gameTable.mingGang3.visible = false;
+            // gameTable.anGang3.visible = false;
+            // gameTable.fa3.visible = false;
+            // gameTable.shou3.visible = false;
             // gameTable.shou3.visible = true
             for (let index = 0; index < shouPai_urls.length; index++) {
                 const url = shouPai_urls[index];
@@ -345,6 +345,8 @@ module mj.net {
             this.gameTable["direction" + player.ui_index].visible = false
         }
         private handleClonePaiSpriteClick(newPaiSprite: Sprite, shou_pai: string[], index: number, is_server_faPai: boolean = false, start_index) {
+            let {gameTable} = this
+            let one_shou_pai_width = gameTable.shou3.width
             // 如果两次点击同一张牌，应该打出去
             if (this.prevSelectedPai === newPaiSprite) {
                 let daPai: Pai = shou_pai[index];
@@ -364,7 +366,8 @@ module mj.net {
                 //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                 //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                 newPaiSprite.y += this.offsetY;
-                this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                // this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                gameTable.shou3.x = (one_shou_pai_width * Laya.god_player.shouPai_start_index) + config.X_GAP //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
                 this.clonePaiSpriteArray.forEach((item, index) => {
                     let changePaiSprite = item as Sprite;
                     changePaiSprite.destroy(true);
@@ -391,7 +394,7 @@ module mj.net {
         private isFirstHideOut2 = true
         private isFirstHideOut3 = true
 
-        /** 将打牌显示在ui中的out3 sprite之中 */
+        /** 将打牌显示在ui中的out? Sprite之中 */
         private show_out(player: Player, dapai: Pai) {
             let outSprite = this.gameTable["out" + player.ui_index] as Sprite
             if (this["isFirstHideOut" + player.ui_index]) {
@@ -449,40 +452,6 @@ module mj.net {
                     right_posiY += cePaiHeight;
                 }
             }
-        }
-
-        // private show_left_player_shoupai(left_player: any) {
-        //     let {group_shou_pai} = left_player
-        //     let {gameTable } = this
-        //     gameTable.shouPai0.visible = true;
-        //     let cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
-        //     //手牌显示的起码坐标Y
-        //     let left_posiY = gameTable.test_shoupai0.y + (cePaiHeight * left_player.shouPai_start_index) + config.Y_GAP
-        //     let show_oneShou = function (url, poxiY) {
-        //         gameTable.test_shoupai0_image.skin = url;
-        //         gameTable.test_shoupai0.y = poxiY;
-        //         let newPai = LayaUtils.clone(gameTable.test_shoupai0) as Sprite;
-        //         newPai.visible = true;
-        //         gameTable.shouPai0.addChild(newPai);
-        //     }
-        //     //如果有值，就显示，没有值就显示空的。
-        //     if (group_shou_pai.shouPai.length > 0) {
-        //         for (let index = 0; index < group_shou_pai.shouPai.length; index++) {
-        //             const url = PaiConverter.skinOfCe(group_shou_pai.shouPai[index])
-        //             show_oneShou(url, left_posiY);
-        //             left_posiY += cePaiHeight;
-        //         }
-        //     } else {//只显示背景！
-        //         for (let index = 0; index < group_shou_pai.shouPaiCount; index++) {
-        //             show_oneShou(config.BACK_URL, left_posiY)
-        //             left_posiY += cePaiHeight;
-        //         }
-        //     }
-
-        // }
-
-        private show_left_shou(gameTable: GameTableScene, url: string, left_posiY: number) {
-
         }
 
         public openHandler(event: any = null): void {

@@ -301,13 +301,6 @@ var mj;
                 var one_shou_pai_width = gameTable.shou3.width;
                 var posiX = gameTable.shou3.x + (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP;
                 gameTable.shouPai3.visible = true;
-                //隐藏里面的牌，需要的时候才会显示出来
-                gameTable.peng3.visible = false;
-                gameTable.anGangHide3.visible = false;
-                gameTable.mingGang3.visible = false;
-                gameTable.anGang3.visible = false;
-                gameTable.fa3.visible = false;
-                gameTable.shou3.visible = false;
                 var _loop_1 = function (index) {
                     var url = shouPai_urls[index];
                     gameTable.skin_shoupai3.skin = "ui/majiang/" + url;
@@ -328,6 +321,13 @@ var mj;
                     posiX += one_shou_pai_width;
                 };
                 var this_1 = this;
+                //隐藏里面的牌，需要的时候才会显示出来
+                // gameTable.peng3.visible = false;
+                // gameTable.anGangHide3.visible = false;
+                // gameTable.mingGang3.visible = false;
+                // gameTable.anGang3.visible = false;
+                // gameTable.fa3.visible = false;
+                // gameTable.shou3.visible = false;
                 // gameTable.shou3.visible = true
                 for (var index = 0; index < shouPai_urls.length; index++) {
                     _loop_1(index);
@@ -338,6 +338,8 @@ var mj;
             };
             Manager.prototype.handleClonePaiSpriteClick = function (newPaiSprite, shou_pai, index, is_server_faPai, start_index) {
                 if (is_server_faPai === void 0) { is_server_faPai = false; }
+                var gameTable = this.gameTable;
+                var one_shou_pai_width = gameTable.shou3.width;
                 // 如果两次点击同一张牌，应该打出去
                 if (this.prevSelectedPai === newPaiSprite) {
                     var daPai = shou_pai[index];
@@ -356,7 +358,8 @@ var mj;
                     //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
                     //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                     newPaiSprite.y += this.offsetY;
-                    this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                    // this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                    gameTable.shou3.x = (one_shou_pai_width * Laya.god_player.shouPai_start_index) + config.X_GAP; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
                     this.clonePaiSpriteArray.forEach(function (item, index) {
                         var changePaiSprite = item;
                         changePaiSprite.destroy(true);
@@ -376,7 +379,7 @@ var mj;
                     newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
                 }
             };
-            /** 将打牌显示在ui中的out3 sprite之中 */
+            /** 将打牌显示在ui中的out? Sprite之中 */
             Manager.prototype.show_out = function (player, dapai) {
                 var outSprite = this.gameTable["out" + player.ui_index];
                 if (this["isFirstHideOut" + player.ui_index]) {
@@ -432,36 +435,6 @@ var mj;
                         right_posiY += cePaiHeight;
                     }
                 }
-            };
-            // private show_left_player_shoupai(left_player: any) {
-            //     let {group_shou_pai} = left_player
-            //     let {gameTable } = this
-            //     gameTable.shouPai0.visible = true;
-            //     let cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
-            //     //手牌显示的起码坐标Y
-            //     let left_posiY = gameTable.test_shoupai0.y + (cePaiHeight * left_player.shouPai_start_index) + config.Y_GAP
-            //     let show_oneShou = function (url, poxiY) {
-            //         gameTable.test_shoupai0_image.skin = url;
-            //         gameTable.test_shoupai0.y = poxiY;
-            //         let newPai = LayaUtils.clone(gameTable.test_shoupai0) as Sprite;
-            //         newPai.visible = true;
-            //         gameTable.shouPai0.addChild(newPai);
-            //     }
-            //     //如果有值，就显示，没有值就显示空的。
-            //     if (group_shou_pai.shouPai.length > 0) {
-            //         for (let index = 0; index < group_shou_pai.shouPai.length; index++) {
-            //             const url = PaiConverter.skinOfCe(group_shou_pai.shouPai[index])
-            //             show_oneShou(url, left_posiY);
-            //             left_posiY += cePaiHeight;
-            //         }
-            //     } else {//只显示背景！
-            //         for (let index = 0; index < group_shou_pai.shouPaiCount; index++) {
-            //             show_oneShou(config.BACK_URL, left_posiY)
-            //             left_posiY += cePaiHeight;
-            //         }
-            //     }
-            // }
-            Manager.prototype.show_left_shou = function (gameTable, url, left_posiY) {
             };
             Manager.prototype.openHandler = function (event) {
                 if (event === void 0) { event = null; }
