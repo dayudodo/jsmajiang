@@ -165,22 +165,28 @@ var mj;
             /** 其他人碰了牌 */
             Manager.prototype.server_peng = function (server_message) {
                 console.log(server_message);
-                // return;
-                var player = server_message.player;
-                var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == player.user_id; });
-                var pengPai = player.pengPai;
+                return;
+                //哪个人碰了牌，就更新那个人的手牌和打牌
+                // let { player } = server_message
+                var pengPlayer = server_message.pengPlayer, dapaiPlayer = server_message.dapaiPlayer;
+                // let pengPlayer = Laya.room.players.find(p => p.user_id == player.user_id)
+                var pengPai = dapaiPlayer.pengPai;
                 // let dapaiPlayer = Laya.room.players.find(p => p.user_id == dapai_player_id)
                 //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
-                var dapai = Laya.room.dapai_player.arr_dapai.pop();
-                if (pengPai != dapai) {
-                    throw new Error('碰的牌就是刚刚打出来的牌，检查代码！');
-                }
+                //更新本地player数据
+                var localPengPlayer = Laya.room.players.find(function (p) { return p.user_id == pengPlayer.user_id; });
+                localPengPlayer.cloneValuesFrom(pengPlayer);
+                console.log(localPengPlayer);
+                var localDapaiPlayer = Laya.room.players.find(function (p) { return p.user_id == dapaiPlayer.user_id; });
+                localDapaiPlayer.cloneValuesFrom(dapaiPlayer);
+                console.log(localDapaiPlayer);
+                return;
                 //更新UI中的显示
-                this.out_remove(Laya.room.dapai_player, dapai);
+                // this.out_remove(Laya.room.dapai_player, dapai)
                 //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
                 //而碰玩家要显示出这三张碰牌！
                 // pengPlayer.group_shou_pai.peng.push(pengPai)
-                pengPlayer.confirm_peng(pengPai);
+                // pengPlayer.confirm_peng(pengPai)
                 this.show_group_shoupai(pengPlayer);
             };
             Manager.prototype.server_can_select = function (server_message) {

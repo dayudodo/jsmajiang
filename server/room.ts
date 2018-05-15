@@ -170,9 +170,11 @@ export class Room {
     } else {
       //暗杠只有数量，但是不显示具体的内容
       let filterd_group = {};
-      filterd_group["anGang"] = player.group_shou_pai.anGang.length;
+      filterd_group["anGang"] = []
+      filterd_group["anGangCount"] = player.group_shou_pai.anGang.length
       filterd_group["mingGang"] = player.group_shou_pai.mingGang;
       filterd_group["peng"] = player.group_shou_pai.peng;
+      filterd_group["shouPai"] = []
       filterd_group["shouPaiCount"] = player.group_shou_pai.shouPai.length;
 
       player_data["group_shou_pai"] = filterd_group;
@@ -184,23 +186,24 @@ export class Room {
   client_confirm_peng(socket) {
     let pengPlayer = this.find_player_by(socket);
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
-    let dapai: Pai = this.dapai_player.arr_dapai.pop();
+    let dapai: Pai = this.dapai_player.arr_dapai.pop()
     //碰之后此牌就属于本玩家了,前后台都需要添加!
-    pengPlayer.received_pai = dapai;
+    // pengPlayer.received_pai = dapai;
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     pengPlayer.confirm_peng(dapai);
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
     this.current_player = pengPlayer;
-    //告诉其它人我已经碰了此牌！客户端知道哪个玩家打了牌，因为碰之前肯定是有人打了牌的！
-    this.other_players(pengPlayer).forEach(p => {
-      let player_data = this.player_data_filter(socket, p);
-      p.socket.sendmsg({
+
+    //给每个人都要发出全部玩家的更新数据，这样最方便！
+    this.players.forEach(person=>{
+      let players = this.players.map(p=>{
+        return this.player_data_filter(person.socket, p)
+      })
+      person.socket.sendmsg({
         type: g_events.server_peng,
-        player: {
-          ...player_data
-        }
-      });
-    });
+        players: players
+      })
+    })
   }
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_gang(socket) {

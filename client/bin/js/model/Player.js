@@ -23,6 +23,12 @@ var mj;
                 /** 手牌从哪个位置开始 */
                 this.shouPai_start_index = 0;
             }
+            Player.prototype.cloneValuesFrom = function (p2) {
+                var _this = this;
+                Player.filter_properties.forEach(function (prop) {
+                    _this[prop] = p2[prop];
+                });
+            };
             Object.defineProperty(Player.prototype, "flat_shou_pai", {
                 /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */
                 get: function () {
@@ -99,6 +105,15 @@ var mj;
                 enumerable: true,
                 configurable: true
             });
+            Player.filter_properties = [
+                "username",
+                "user_id",
+                "seat_index",
+                "group_shou_pai",
+                "arr_dapai",
+                "is_liang",
+                "is_ting"
+            ];
             return Player;
         }());
         model.Player = Player;

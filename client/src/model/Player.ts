@@ -12,6 +12,15 @@ module mj.model {
         shouPaiCount?: number;
     }
     export class Player {
+        static filter_properties = [
+            "username",
+            "user_id",
+            "seat_index",
+            "group_shou_pai",
+            "arr_dapai",
+            "is_liang",
+            "is_ting"
+        ];
         public username: string
         public user_id: string
         private _flat_shou_pai: Array<Pai> = []
@@ -42,6 +51,11 @@ module mj.model {
 
         constructor() { }
 
+        cloneValuesFrom(p2){
+            Player.filter_properties.forEach(prop=>{
+                this[prop] = p2[prop]
+            })
+        }
         /** 应该只初始化 一次，以后的添加删除通过add, delete来操作 */
         get flat_shou_pai(): Array<Pai> {
             let real_shoupai = [];
