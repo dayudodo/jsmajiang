@@ -9,8 +9,8 @@ import * as util from "util"
 let room_valid_names = ["ange", "jack", "rose"];
 
 declare global {
-    /**在console中输出一个对象的全部内容 */
-    function puts(o: any): void;
+  /**在console中输出一个对象的全部内容 */
+  function puts(o: any): void;
 }
 
 function puts(obj) {
@@ -106,7 +106,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -195,13 +195,14 @@ export class Room {
     this.current_player = pengPlayer;
 
     //给每个人都要发出全部玩家的更新数据，这样最方便！
-    this.players.forEach(person=>{
-      let players = this.players.map(p=>{
+    this.players.forEach(person => {
+      let players = this.players.map(p => {
         return this.player_data_filter(person.socket, p)
       })
       person.socket.sendmsg({
         type: g_events.server_peng,
-        players: players
+        players: players,
+        pengPlayer_user_id: pengPlayer.user_id
       })
     })
   }
@@ -365,11 +366,7 @@ export class Room {
     let player = this.find_player_by(socket);
     //能否正常给下一家发牌
     let canNormalFaPai = true;
-    // 返回并控制客户端是否显示胡、亮、杠、碰
-    let isShowHu: boolean,
-      isShowLiang: boolean,
-      isShowGang: boolean,
-      isShowPeng: boolean;
+
     //记录下哪个在打牌
     this.dapai_player = player;
     /**没有用户在选择操作胡、杠、碰、过、亮 */
@@ -402,6 +399,11 @@ export class Room {
         //打牌之后自己也可以听、或者亮的！当然喽，不能胡自己打的牌。所以还是有可能出现三家都在听的情况！
         let oplayers = this.other_players(player);
         for (let item_player of oplayers) {
+          //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
+          let isShowHu: boolean = false,
+            isShowLiang: boolean = false,
+            isShowGang: boolean = false,
+            isShowPeng: boolean = false;
           //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
           //流式处理，一次判断所有，然后结果发送给客户端
 
@@ -434,10 +436,7 @@ export class Room {
           }
 
           if (item_player.canPeng(dapai_name)) {
-            //这里面也包括了可以杠的情况，因为能杠肯定就能碰！
-            // canNormalFaPai = false;
             isShowPeng = true;
-            //只能碰，就用碰的办法处理！
             console.log(
               `房间${this.id} 玩家${item_player.username}可以碰牌${dapai_name}`
             );
@@ -448,6 +447,8 @@ export class Room {
           let canShowSelect =
             isShowHu || isShowLiang || isShowGang || isShowPeng;
           if (canShowSelect) {
+            // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
+
             item_player.socket.sendmsg({
               type: g_events.server_can_select,
               select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]

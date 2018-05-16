@@ -419,6 +419,10 @@ test("不能碰di", function(t) {
   let str = "b2 b3 b5 b7 b8 b9 t2 t3 t6 t8 zh zh zh";
   t.is(MajiangAlgo.canPeng(str, "b1"), false);
 });
+test("不能碰di", function(t) {
+  let str = "b1 b3 b5 b7 b8 b9 t2 t3 t6 t8 zh zh zh";
+  t.is(MajiangAlgo.canPeng(str, "b1"), false);
+});
 
 //哪种胡类型
 test("屁胡", t => {

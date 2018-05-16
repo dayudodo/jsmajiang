@@ -110,9 +110,6 @@ export class MajiangAlgo {
   }
   /**能碰吗？ */
   static canPeng(shouPai: Array<Pai>, pai: Pai) {
-    if (typeof pai != "string") {
-      throw new Error(`pai must be a string`);
-    }
     //貌似会改变以前的数组值，所以得克隆一份来进行检测
     let result = _.clone(checkValidAndReturnArr(shouPai));
     let newstrArr = result
@@ -328,17 +325,17 @@ export class MajiangAlgo {
     }
   }
   //是否是清一色，
-  static HuisYise(str, na_pai) {
-    let result = checkValidAndReturnArr(str)
+  static HuisYise(shouPai: Array<Pai>, na_pai) {
+    let result = checkValidAndReturnArr(shouPai)
       .concat(na_pai)
       .sort();
-    if (result.length < 14) {
-      throw new Error(`str:${str}  must larger than 14 values`);
-    }
+    // if (result.length < 14) {
+    //   throw new Error(`shouPai: ${shouPai}  must larger than 14 values`);
+    // }
     let first = result.map(item => item[0]);
     let isUniq = new Set(first).size;
     //不仅要是一色而且还得满足平胡
-    return isUniq == 1 && this.HuisPihu(str, na_pai);
+    return isUniq == 1 && this.HuisPihu(shouPai, na_pai);
   }
   static HuisPengpeng(str, na_pai) {
     let result = checkValidAndReturnArr(str)

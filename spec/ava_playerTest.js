@@ -110,10 +110,10 @@ test("打牌之后能否大胡", function(t) {
 });
 test("打牌之后能否听", function(t) {
   player.da_pai("t9");
-  let canting = player.canTing
+  let canting = player.canTing()
   t.is(canting, true)
   player.da_pai('t8')
-  canting = player.canTing
+  canting = player.canTing()
   t.is(canting, false)
 });
 

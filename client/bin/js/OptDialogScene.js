@@ -29,6 +29,7 @@ var mj;
                     _this.socket.sendmsg({
                         type: g_events.client_confirm_hu
                     });
+                    _this.close();
                     _this.removeSelf();
                 });
                 this.initButton(this.liang, isShowLiang, function () {
@@ -36,6 +37,7 @@ var mj;
                     _this.socket.sendmsg({
                         type: g_events.client_confirm_liang
                     });
+                    _this.close();
                     _this.removeSelf();
                 });
                 this.initButton(this.gang, isShowGang, function () {
@@ -43,6 +45,7 @@ var mj;
                     _this.socket.sendmsg({
                         type: g_events.client_confirm_gang
                     });
+                    _this.close();
                     _this.removeSelf();
                 });
                 this.initButton(this.peng, isShowPeng, function () {
@@ -50,6 +53,7 @@ var mj;
                     _this.socket.sendmsg({
                         type: g_events.client_confirm_peng
                     });
+                    _this.close();
                     _this.removeSelf();
                 });
                 //过肯定是在所有情况下都要显示的！
@@ -58,6 +62,7 @@ var mj;
                     _this.socket.sendmsg({
                         type: g_events.client_confirm_guo
                     });
+                    _this.close();
                     _this.removeSelf();
                 });
             };

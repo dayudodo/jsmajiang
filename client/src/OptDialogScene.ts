@@ -21,6 +21,7 @@ module mj.scene {
                 this.socket.sendmsg({
                     type: g_events.client_confirm_hu
                 })
+                this.close()
                 this.removeSelf()
             })
             this.initButton(this.liang, isShowLiang, () => {
@@ -28,6 +29,7 @@ module mj.scene {
                 this.socket.sendmsg({
                     type: g_events.client_confirm_liang
                 })
+                this.close()
                 this.removeSelf()
             })
             this.initButton(this.gang, isShowGang, () => {
@@ -35,6 +37,7 @@ module mj.scene {
                 this.socket.sendmsg({
                     type: g_events.client_confirm_gang
                 })
+                this.close()
                 this.removeSelf()
             })
             this.initButton(this.peng, isShowPeng, () => {
@@ -42,6 +45,7 @@ module mj.scene {
                 this.socket.sendmsg({
                     type: g_events.client_confirm_peng
                 })
+                this.close()
                 this.removeSelf()
             })
             //过肯定是在所有情况下都要显示的！
@@ -50,6 +54,7 @@ module mj.scene {
                 this.socket.sendmsg({
                     type: g_events.client_confirm_guo
                 })
+                this.close()
                 this.removeSelf()
             })
         }

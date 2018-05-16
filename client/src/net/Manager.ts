@@ -187,13 +187,13 @@ module mj.net {
             // return;
             //哪个人碰了牌，就更新那个人的手牌和打牌
             // let { player } = server_message
-            let { players } = server_message
-            // let pengPlayer = Laya.room.players.find(p => p.user_id == player.user_id)
+            let { players, pengPlayer_user_id } = server_message
             //更新本地player数据
             players.forEach(person => {
                 let localPlayer = Laya.room.players.find(p => p.user_id == person.user_id)
                 localPlayer.cloneValuesFrom(person)
             });
+            let pengPlayer = Laya.room.players.find(p=>p.user_id == pengPlayer_user_id)
             // console.log(Laya.room.players)
             //更新UI中的显示
             this.show_group_shoupai(Laya.god_player)
@@ -204,6 +204,8 @@ module mj.net {
 
             this.show_group_shoupai(Laya.room.right_player)
             this.show_out(Laya.room.right_player)
+            //重新计时并改变方向
+            this.show_count_down(pengPlayer)
 
         }
         public server_can_select(server_message) {
@@ -244,7 +246,11 @@ module mj.net {
 
         private waitTime = config.MAX_WAIT_TIME
         private countdownOneSecond
-        /** 开始显示倒计时，包括显示方向的调用 */
+        /**
+         * 开始显示倒计时，包括显示方向的调用
+         * @param player 
+         * @param reset 是否重新计时
+         */
         private show_count_down(player: Player, reset = true) {
             if (reset) {
                 clearInterval(this.countdownOneSecond);

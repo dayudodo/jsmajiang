@@ -179,13 +179,13 @@ var mj;
                 // return;
                 //哪个人碰了牌，就更新那个人的手牌和打牌
                 // let { player } = server_message
-                var players = server_message.players;
-                // let pengPlayer = Laya.room.players.find(p => p.user_id == player.user_id)
+                var players = server_message.players, pengPlayer_user_id = server_message.pengPlayer_user_id;
                 //更新本地player数据
                 players.forEach(function (person) {
                     var localPlayer = Laya.room.players.find(function (p) { return p.user_id == person.user_id; });
                     localPlayer.cloneValuesFrom(person);
                 });
+                var pengPlayer = Laya.room.players.find(function (p) { return p.user_id == pengPlayer_user_id; });
                 // console.log(Laya.room.players)
                 //更新UI中的显示
                 this.show_group_shoupai(Laya.god_player);
@@ -194,6 +194,8 @@ var mj;
                 this.show_out(Laya.room.left_player);
                 this.show_group_shoupai(Laya.room.right_player);
                 this.show_out(Laya.room.right_player);
+                //重新计时并改变方向
+                this.show_count_down(pengPlayer);
             };
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
@@ -228,7 +230,11 @@ var mj;
                 this.gameTable.clock.visible = true;
                 this.gameTable["direction" + index].visible = true;
             };
-            /** 开始显示倒计时，包括显示方向的调用 */
+            /**
+             * 开始显示倒计时，包括显示方向的调用
+             * @param player
+             * @param reset 是否重新计时
+             */
             Manager.prototype.show_count_down = function (player, reset) {
                 var _this = this;
                 if (reset === void 0) { reset = true; }
