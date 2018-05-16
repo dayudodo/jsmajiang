@@ -65,26 +65,35 @@ module mj.net {
             ]
 
         }
-        /**更新UI，out牌中删除掉打牌 */
-        private out_remove(player: Player, dapai): Pai {
-            //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
-            // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
-            let [line, row] = player.last_out_coordinate
-            let outSprite = this.gameTable["out" + player.ui_index] as Sprite
-            let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
-            let paiImgSprite = lastValidSprite.getChildAt(0) as Image
+        // /**更新UI，out牌中删除掉打牌 */
+        // private out_remove(player: Player, dapai): Pai {
+        //     //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
+        //     // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
+        //     let [line, row] = player.last_out_coordinate
+        //     let outSprite = this.gameTable["out" + player.ui_index] as Sprite
+        //     let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
+        //     let paiImgSprite = lastValidSprite.getChildAt(0) as Image
 
-            if (player.ui_index == 3) {
-                paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
-            } else {
-                paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
-            }
-            lastValidSprite.visible = false
-            return dapai
-        }
+        //     if (player.ui_index == 3) {
+        //         paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
+        //     } else {
+        //         paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
+        //     }
+        //     lastValidSprite.visible = false
+        //     return dapai
+        // }
 
         /**UI上显示出玩家的group手牌！ */
         public show_group_shoupai(player: Player) {
+            //先清除以前显示过的group_shou_pai
+            player.ui_clone_arr.forEach(clone => {
+                let cloneSpirte = clone as Sprite
+                cloneSpirte.destroy()
+            })
+            player.ui_clone_arr = []
+            //起始的索引也要重新开始！
+            player.shouPai_start_index = 0
+
             let groupShou = player.group_shou_pai
             let y_one_pai_height = 60 //todo: 应该改成获取其中一个牌的高度！
             let x_one_pai_width = this.gameTable.shou3.width;
@@ -105,6 +114,7 @@ module mj.net {
                     cloneanGangSprite.visible = true
                     cloneanGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
                     this.gameTable["shouPai" + player.ui_index].addChild(cloneanGangSprite)
+                    player.ui_clone_arr.push(cloneanGangSprite)
                     //只需要移动3位即可，因为暗杠其实点位也只有3张牌！
                     player.shouPai_start_index = player.shouPai_start_index + 3
                 });
@@ -117,6 +127,7 @@ module mj.net {
                     cloneanGangHideSprite.visible = true
                     cloneanGangHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
                     this.gameTable["shouPai" + player.ui_index].addChild(cloneanGangHideSprite)
+                    player.ui_clone_arr.push(cloneanGangHideSprite)
                     player.shouPai_start_index = player.shouPai_start_index + 3
                 }
             }
@@ -136,6 +147,7 @@ module mj.net {
                     clonemingGangSprite.visible = true
                     clonemingGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
                     this.gameTable["shouPai" + player.ui_index].addChild(clonemingGangSprite)
+                    player.ui_clone_arr.push(clonemingGangSprite)
                     player.shouPai_start_index = player.shouPai_start_index + 3
                 });
             }
@@ -156,6 +168,7 @@ module mj.net {
                     clonePengSprite.visible = true
                     clonePengSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true)
                     this.gameTable["shouPai" + player.ui_index].addChild(clonePengSprite)
+                    player.ui_clone_arr.push(clonePengSprite)
                     player.shouPai_start_index = player.shouPai_start_index + 3
                 });
             }
@@ -170,32 +183,27 @@ module mj.net {
 
         /** 其他人碰了牌 */
         public server_peng(server_message) {
-            console.log(server_message)
-            return;
+            // console.log(server_message)
+            // return;
             //哪个人碰了牌，就更新那个人的手牌和打牌
             // let { player } = server_message
-            let {pengPlayer, dapaiPlayer} = server_message
+            let { players } = server_message
             // let pengPlayer = Laya.room.players.find(p => p.user_id == player.user_id)
-            let pengPai = dapaiPlayer.pengPai
-            // let dapaiPlayer = Laya.room.players.find(p => p.user_id == dapai_player_id)
-            //删除掉这张打牌，不再属于player, 而是归pengPlayer所有！
             //更新本地player数据
-            let localPengPlayer= Laya.room.players.find(p=>p.user_id == pengPlayer.user_id)
-            localPengPlayer.cloneValuesFrom(pengPlayer)
-            console.log(localPengPlayer)
-
-            let localDapaiPlayer = Laya.room.players.find(p=>p.user_id == dapaiPlayer.user_id)
-            localDapaiPlayer.cloneValuesFrom(dapaiPlayer)
-            console.log(localDapaiPlayer);
-            
-            return;
+            players.forEach(person => {
+                let localPlayer = Laya.room.players.find(p => p.user_id == person.user_id)
+                localPlayer.cloneValuesFrom(person)
+            });
+            // console.log(Laya.room.players)
             //更新UI中的显示
-            // this.out_remove(Laya.room.dapai_player, dapai)
-            //碰牌的过程就是你打出来的牌消失，跑到player的手牌中
-            //而碰玩家要显示出这三张碰牌！
-            // pengPlayer.group_shou_pai.peng.push(pengPai)
-            // pengPlayer.confirm_peng(pengPai)
-            this.show_group_shoupai(pengPlayer)
+            this.show_group_shoupai(Laya.god_player)
+            this.show_out(Laya.god_player)
+
+            this.show_group_shoupai(Laya.room.left_player)
+            this.show_out(Laya.room.left_player)
+
+            this.show_group_shoupai(Laya.room.right_player)
+            this.show_out(Laya.room.right_player)
 
         }
         public server_can_select(server_message) {
@@ -221,7 +229,7 @@ module mj.net {
             player.received_pai = pai_name
             player.da_pai(pai_name)
             //牌打出去之后才能显示出来！
-            this.show_out(player, pai_name)
+            this.show_out(player)
 
         }
         private server_dapai(server_message) {
@@ -294,7 +302,7 @@ module mj.net {
         }
 
         private server_game_start(server_message) {
-            console.log(server_message);
+            // console.log(server_message);
             // return
             let { gameTable } = this
             //游戏开始了
@@ -315,6 +323,9 @@ module mj.net {
         }
         /**显示本玩家的手牌，在位置index处 */
         private show_god_player_shoupai(player: Player) {
+            //先清除以前的，再显示
+            this.destroyAllPaiCloneSprites()
+
             let {socket, gameTable} = this
             let {group_shou_pai} = player
             // let all_pais: Array<string> = shou_pai
@@ -322,14 +333,7 @@ module mj.net {
             let one_shou_pai_width = gameTable.shou3.width;
             let posiX = (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP
             gameTable.shouPai3.visible = true;
-            //隐藏里面的牌，需要的时候才会显示出来
-            // gameTable.peng3.visible = false;
-            // gameTable.anGangHide3.visible = false;
-            // gameTable.mingGang3.visible = false;
-            // gameTable.anGang3.visible = false;
-            // gameTable.fa3.visible = false;
-            // gameTable.shou3.visible = false;
-            // gameTable.shou3.visible = true
+
             for (let index = 0; index < shouPai_urls.length; index++) {
                 const url = shouPai_urls[index];
                 gameTable.skin_shoupai3.skin = `ui/majiang/${url}`;
@@ -368,7 +372,7 @@ module mj.net {
                 //不仅这牌要记录要玩家那儿，还要记录在当前房间中！表示这张牌已经可以显示出来了。
                 Laya.room.table_dapai = daPai
 
-                this.show_out(Laya.god_player, daPai)
+                this.show_out(Laya.god_player)
                 //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
                 this.hideDirection(Laya.god_player)
                 // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
@@ -377,14 +381,7 @@ module mj.net {
                 newPaiSprite.y += this.offsetY;
                 // this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
                 gameTable.shou3.x = (one_shou_pai_width * Laya.god_player.shouPai_start_index) + config.X_GAP //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
-                this.clonePaiSpriteArray.forEach((item, index) => {
-                    let changePaiSprite = item as Sprite;
-                    changePaiSprite.destroy(true);
-                    //真正的牌面是个Image,而且是二级子！
-                    // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
-                    // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
-                });
-                this.clonePaiSpriteArray = [];
+                this.destroyAllPaiCloneSprites();
                 this.show_god_player_shoupai(Laya.god_player);
             }
             else {
@@ -403,35 +400,48 @@ module mj.net {
         private isFirstHideOut2 = true
         private isFirstHideOut3 = true
 
+        /**删除掉所有剩余shouPai的复制 */
+        private destroyAllPaiCloneSprites() {
+            this.clonePaiSpriteArray.forEach((item, index) => {
+                let changePaiSprite = item as Sprite;
+                changePaiSprite.destroy(true);
+                //真正的牌面是个Image,而且是二级子！
+                // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
+                // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
+            });
+            this.clonePaiSpriteArray = [];
+        }
+
         /** 将打牌显示在ui中的out? Sprite之中 */
-        private show_out(player: Player, dapai: Pai) {
+        private show_out(player: Player) {
+            //所有复制的牌都会在show_..._shou_pai的再次调用中被删除
+
             let outSprite = this.gameTable["out" + player.ui_index] as Sprite
-            if (this["isFirstHideOut" + player.ui_index]) {
-                //先隐藏所有内部的图
-                for (let index = 0; index < outSprite.numChildren; index++) {
-                    const oneLine = outSprite.getChildAt(index) as Sprite;
-                    for (var l_index = 0; l_index < oneLine.numChildren; l_index++) {
-                        var onePai = oneLine.getChildAt(l_index) as Sprite;
-                        onePai.visible = false
-                    }
+            //先隐藏所有内部的图，再去全部重新显示
+            for (let index = 0; index < outSprite.numChildren; index++) {
+                const oneLine = outSprite.getChildAt(index) as Sprite;
+                for (var l_index = 0; l_index < oneLine.numChildren; l_index++) {
+                    var onePai = oneLine.getChildAt(l_index) as Sprite;
+                    onePai.visible = false
                 }
-                //只需要隐藏一次，下一次就不需要了，不然以前显示的打牌就被隐藏了
-                this["isFirstHideOut" + player.ui_index] = false
             }
-            let [line, row] = player.last_out_coordinate
+            // let [line, row] = player.last_out_coordinate
 
             outSprite.visible = true
 
             //直接找到行和列替换成真正的打牌
-            let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
-            let paiImgSprite = lastValidSprite.getChildAt(0) as Image
-            if (player.ui_index == 3) {
-                paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
+            player.arr_dapai.forEach((dapai,index) => {
+                let [line, row ] = player.coordinateOf(index)
+                let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
+                let paiImgSprite = lastValidSprite.getChildAt(0) as Image
+                if (player.ui_index == 3) {
+                    paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
 
-            } else {
-                paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
-            }
-            lastValidSprite.visible = true
+                } else {
+                    paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
+                }
+                lastValidSprite.visible = true
+            })
         }
 
         private show_side_player_shoupai(player: Player) {
@@ -440,25 +450,26 @@ module mj.net {
             gameTable["shouPai" + player.ui_index].visible = true;
             let cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
             //手牌显示的起码坐标Y
-            let right_posiY = gameTable["test_shoupai" + player.ui_index].y + (cePaiHeight * player.shouPai_start_index) + config.Y_GAP
+            let start_posiY = (cePaiHeight * player.shouPai_start_index) + config.Y_GAP
             let show_oneShou = function (url, posiY) {
                 gameTable["testImageShoupai" + player.ui_index].skin = url;
                 gameTable["test_shoupai" + player.ui_index].y = posiY;
                 let newPai = LayaUtils.clone(gameTable["test_shoupai" + player.ui_index]) as Sprite;
                 newPai.visible = true;
                 gameTable["shouPai" + player.ui_index].addChild(newPai);
+                player.ui_clone_arr.push(newPai)
             }
-            //如果有值，就显示，没有值就显示空的。
+            //如果有值，就显示此牌，没有值就显示空的。
             if (group_shou_pai.shouPai.length > 0) {
                 for (let index = 0; index < group_shou_pai.shouPai.length; index++) {
                     const url = PaiConverter.skinOfCe(group_shou_pai.shouPai[index])
-                    show_oneShou(url, right_posiY);
-                    right_posiY += cePaiHeight;
+                    show_oneShou(url, start_posiY);
+                    start_posiY += cePaiHeight;
                 }
             } else {//只显示背景！
                 for (let index = 0; index < group_shou_pai.shouPaiCount; index++) {
-                    show_oneShou(config.BACK_URL, right_posiY)
-                    right_posiY += cePaiHeight;
+                    show_oneShou(config.BACK_URL, start_posiY)
+                    start_posiY += cePaiHeight;
                 }
             }
         }

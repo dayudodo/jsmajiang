@@ -30,6 +30,8 @@ module mj.model {
             peng: [],
             shouPai: []
         }
+        /**clone的界面元素全部保存在此 */
+        public ui_clone_arr = []
         public arr_dapai: Pai[] = []
         public room_name: string
         public hupai_zhang: string
@@ -106,16 +108,15 @@ module mj.model {
             }
             this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
         }
-        /** 最后一张打出的牌在out中的坐标，out结构为2行*12列 */
-        get last_out_coordinate(): [number, number] {
+        /** arr_dapai中的index号换算成行列坐标 */
+        coordinateOf(index: number): [number, number] {
             let line = 0, row = 0
-            let len = this.arr_dapai.length
-            if (len >= config.OutLineBreakCount) {
+            if (index >= config.OutLineBreakCount) {
                 line = 1
-                row = len - config.OutLineBreakCount
+                row = index - config.OutLineBreakCount
             } else {
                 line = 0
-                row = (len == 0 ? 0 : len - 1)
+                row = index
             }
             return [line, row]
         }

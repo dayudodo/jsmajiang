@@ -11,6 +11,8 @@ var mj;
                     peng: [],
                     shouPai: []
                 };
+                /**clone的界面元素全部保存在此 */
+                this.ui_clone_arr = [];
                 this.arr_dapai = [];
                 /**         是否是庄家         */
                 this.east = false;
@@ -87,24 +89,19 @@ var mj;
                 }
                 this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
             };
-            Object.defineProperty(Player.prototype, "last_out_coordinate", {
-                /** 最后一张打出的牌在out中的坐标，out结构为2行*12列 */
-                get: function () {
-                    var line = 0, row = 0;
-                    var len = this.arr_dapai.length;
-                    if (len >= config.OutLineBreakCount) {
-                        line = 1;
-                        row = len - config.OutLineBreakCount;
-                    }
-                    else {
-                        line = 0;
-                        row = (len == 0 ? 0 : len - 1);
-                    }
-                    return [line, row];
-                },
-                enumerable: true,
-                configurable: true
-            });
+            /** arr_dapai中的index号换算成行列坐标 */
+            Player.prototype.coordinateOf = function (index) {
+                var line = 0, row = 0;
+                if (index >= config.OutLineBreakCount) {
+                    line = 1;
+                    row = index - config.OutLineBreakCount;
+                }
+                else {
+                    line = 0;
+                    row = index;
+                }
+                return [line, row];
+            };
             Player.filter_properties = [
                 "username",
                 "user_id",
