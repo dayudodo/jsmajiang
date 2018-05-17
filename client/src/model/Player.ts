@@ -107,6 +107,7 @@ module mj.model {
                 throw new Error(`${this.username}打了张非法牌？${pai}`);
             }
             this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+            this.group_shou_pai.shouPai.sort() //打牌之后还是需要重新排序下的，以和服务器保持一致。
         }
         /** arr_dapai中的index号换算成行列坐标 */
         coordinateOf(index: number): [number, number] {

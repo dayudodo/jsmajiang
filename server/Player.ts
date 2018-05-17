@@ -117,24 +117,7 @@ export class Player {
 
   /** 玩家手牌数组，从group_shou_pai中生成 */
   get flat_shou_pai(): Array<Pai> {
-    let real_shoupai = [];
-    this.group_shou_pai.anGang.forEach(pai => {
-      for (let i = 0; i < 4; i++) {
-        real_shoupai.push(pai);
-      }
-    });
-    this.group_shou_pai.mingGang.forEach(pai => {
-      for (let i = 0; i < 4; i++) {
-        real_shoupai.push(pai);
-      }
-    });
-    this.group_shou_pai.peng.forEach(pai => {
-      for (let i = 0; i < 3; i++) {
-        real_shoupai.push(pai);
-      }
-    });
-    real_shoupai = real_shoupai.concat(this.group_shou_pai.shouPai);
-    return real_shoupai.sort();
+    return  MajiangAlgo.flat_shou_pai(this.group_shou_pai)
   }
   /** 从牌数组中删除一张牌 */
   private delete_pai(arr: Array<Pai>, pai: Pai): boolean {

@@ -5,7 +5,7 @@ import { MajiangAlgo } from "./MajiangAlgo";
 import * as g_events from "./events";
 import { Player } from "./player";
 import * as util from "util"
-import {TablePaiManager} from './TablePaiManager'
+import { TablePaiManager } from './TablePaiManager'
 
 let room_valid_names = ["ange", "jack", "rose"];
 
@@ -37,7 +37,7 @@ export class Room {
   /**发牌给哪个玩家 */
   public fapai_to_who: Player = null;
   /**哪个玩家在打牌 */
-  public dapai_player: Player = null;
+  public daPai_player: Player = null;
 
   //计时器
   public room_clock = null;
@@ -187,7 +187,7 @@ export class Room {
   client_confirm_peng(socket) {
     let pengPlayer = this.find_player_by(socket);
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
-    let dapai: Pai = this.dapai_player.arr_dapai.pop()
+    let dapai: Pai = this.daPai_player.arr_dapai.pop()
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     pengPlayer.confirm_peng(dapai);
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
@@ -209,7 +209,7 @@ export class Room {
   client_confirm_mingGang(socket) {
     let gangPlayer = this.find_player_by(socket);
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
-    let dapai: Pai = this.dapai_player.arr_dapai.pop()
+    let dapai: Pai = this.daPai_player.arr_dapai.pop()
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     gangPlayer.confirm_mingGang(dapai);
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
@@ -226,7 +226,10 @@ export class Room {
         gangPlayer_user_id: gangPlayer.user_id
       })
     })
+    //发送完消息再发最后一张牌！
+    this.server_fa_pai(gangPlayer, true)
   }
+
   /**亮牌其实是为了算账*/
   client_confirm_liang(socket) {
     let player = this.find_player_by(socket);
@@ -272,15 +275,22 @@ export class Room {
     //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
     //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
     //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
-    let isPlayerNormalDapai = this.fapai_to_who === this.dapai_player;
+    let isPlayerNormalDapai = this.fapai_to_who === this.daPai_player;
     if (isPlayerNormalDapai) {
       this.server_fa_pai(this.next_player);
     }
   }
 
-  //房间发一张给player, 让player记录此次发牌，只有本玩家能看到
-  server_fa_pai(player: Player): Pai {
-    let pai = this.cloneTablePais.splice(0, 1);
+  /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
+   * @param fromEnd 是否从最后发牌
+  */
+  server_fa_pai(player: Player, fromEnd: boolean = false): Pai {
+    let pai: Array<Pai>
+    if(fromEnd){
+      pai =[ this.cloneTablePais[this.cloneTablePais.length -1] ]
+    }else{
+      pai = this.cloneTablePais.splice(0, 1);
+    }
 
     if (_.isEmpty(pai)) {
       throw new Error(chalk.red(`room.pai中无可用牌了`));
@@ -377,7 +387,7 @@ export class Room {
     let canNormalFaPai = true;
 
     //记录下哪个在打牌
-    this.dapai_player = player;
+    this.daPai_player = player;
     /**没有用户在选择操作胡、杠、碰、过、亮 */
     let noPlayerSelecting = this.players.every(
       p => p.is_thinking_tingliang === false

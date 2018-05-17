@@ -88,6 +88,7 @@ var mj;
                     throw new Error(this.username + "\u6253\u4E86\u5F20\u975E\u6CD5\u724C\uFF1F" + pai);
                 }
                 this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+                this.group_shou_pai.shouPai.sort(); //打牌之后还是需要重新排序下的，以和服务器保持一致。
             };
             /** arr_dapai中的index号换算成行列坐标 */
             Player.prototype.coordinateOf = function (index) {

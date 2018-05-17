@@ -67,7 +67,9 @@ export const HuPaiSheet = [
   { type: "HuisGangShangKai", name: "杠上开花", score: 1 },
   { type: "HuisGangShangPao", name: "杠上炮", score: 1 },
   { type: "HuisPihu", name: "屁胡", score: 1 },
-  { type: "HuisZiMo", name: "自摸", score: 1 }
+  { type: "HuisZiMo", name: "自摸", score: 1 },
+  { type: "HuisMingSiGui", name: "明四归", score: 1 },
+  { type: "HuisAnSiGui", name: "暗四归", score: 1 },
 ];
 
 // var output = "";
@@ -99,4 +101,8 @@ export const HuisGangShangKai = 7;
 export const HuisGangShangPao = 8;
 export const HuisPihu = 9;
 export const HuisZiMo = 10;
+/**明四归，碰了牌之后还是胡仅剩下的这张牌，就是明四归 */
+export const HuisMingSiGui = 11;
+/**和上面的区别是三张牌不是碰的，是自己手起的，然后还胡这张牌 */
+export const HuisAnSiGui = 12;
 //end自动生成代码

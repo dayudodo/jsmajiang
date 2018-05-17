@@ -230,8 +230,8 @@ export class MajiangAlgo {
 ["b2b2", "b3b3", "b4b4", "b5b5", "b7b7"]
 */
 
-  static HuisPihu(str, na_pai?) {
-    let result = checkValidAndReturnArr(str)
+  static HuisPihu(shou_pai: Array<Pai>, na_pai?: Pai) {
+    let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
     let allJiang = getAllJiangArr(result);
@@ -293,13 +293,14 @@ export class MajiangAlgo {
     }
   }
 
-  static HuisQidui(str, na_pai) {
+  static HuisQidui(shou_pai:Array<Pai>, na_pai:Pai) {
     //判断是否是七对
-    let result = checkValidAndReturnArr(str)
+    let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 13) {
-      throw new Error(`str${str} must have 13 values`);
+      return false
+      // throw new Error(`shou_pai${shou_pai} must have 13 values`);
     }
     // console.log(result)
     for (var i = 0; i < result.length; i += 2) {
@@ -311,39 +312,52 @@ export class MajiangAlgo {
     }
     return true;
   }
-  static HuisNongQiDui(str, na_pai) {
-    let result = checkValidAndReturnArr(str)
+  static HuisNongQiDui(shou_pai:Array<Pai>, na_pai:Pai) {
+    let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 13) {
-      throw new Error(`str:${str} must have 13 values`);
+      return false
+      // throw new Error(`str:${shou_pai} must have 13 values`);
     }
-    if (this.HuisQidui(str, na_pai)) {
+    if (this.HuisQidui(shou_pai, na_pai)) {
       let uniq = new Set(result);
       return uniq.size < 7;
     } else {
       return false;
     }
   }
-  //是否是清一色，
-  static HuisYise(shouPai: Array<Pai>, na_pai) {
+  /**是否是清一色， */
+  static HuisYise(group_shoupai: ShoupaiConstuctor, na_pai: Pai): boolean{
+    if(MajiangAlgo.isOnlyFlatShouPai(group_shoupai)){
+      return MajiangAlgo._HuisYise(group_shoupai.shouPai, na_pai)
+    }else{
+      let unionArr = group_shoupai.anGang.concat(group_shoupai.mingGang).concat(group_shoupai.peng)
+      return this.isYise(unionArr) && this.HuisPihu(group_shoupai.shouPai, na_pai)
+    }
+  }
+  private static isYise(arr: Array<Pai>): boolean{
+    let first = arr.map(item => item[0]);
+    let isUniq = new Set(first).size;
+    //不仅要是一色而且还得满足平胡
+    return isUniq == 1 
+  }
+  private static _HuisYise(shouPai: Array<Pai>, na_pai) {
     let result = checkValidAndReturnArr(shouPai)
       .concat(na_pai)
       .sort();
     // if (result.length < 14) {
     //   throw new Error(`shouPai: ${shouPai}  must larger than 14 values`);
     // }
-    let first = result.map(item => item[0]);
-    let isUniq = new Set(first).size;
     //不仅要是一色而且还得满足平胡
-    return isUniq == 1 && this.HuisPihu(shouPai, na_pai);
+    return this.isYise(result) && this.HuisPihu(shouPai, na_pai);
   }
-  static HuisPengpeng(str, na_pai) {
-    let result = checkValidAndReturnArr(str)
+  static HuisPengpeng(shou_pai:Array<Pai>, na_pai) {
+    let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 14) {
-      throw new Error(`str:${str} must larger than 14 values`);
+      throw new Error(`str:${shou_pai} must larger than 14 values`);
     }
     //把所有三个或四个相同的干掉，看最后剩下的是否是将
     let reg = /(..)\1\1\1?/g;
@@ -397,6 +411,41 @@ export class MajiangAlgo {
       hupai_dict: hupai_dict
     };
   }
+  static flat_shou_pai(group_shou_pai: ShoupaiConstuctor): Array<Pai> {
+    let real_shoupai = [];
+    group_shou_pai.anGang.forEach(pai => {
+      for (let i = 0; i < 4; i++) {
+        real_shoupai.push(pai);
+      }
+    });
+    group_shou_pai.mingGang.forEach(pai => {
+      for (let i = 0; i < 4; i++) {
+        real_shoupai.push(pai);
+      }
+    });
+    group_shou_pai.peng.forEach(pai => {
+      for (let i = 0; i < 3; i++) {
+        real_shoupai.push(pai);
+      }
+    });
+    real_shoupai = real_shoupai.concat(group_shou_pai.shouPai);
+    return real_shoupai.sort();
+  }
+  static HuWhatGroupPai(group_shoupai: ShoupaiConstuctor):hupaiConstructor{
+    let onlyFlatShouPai = MajiangAlgo.isOnlyFlatShouPai(group_shoupai)
+    if(onlyFlatShouPai){
+      return this.HuWhatPai(this.flat_shou_pai(group_shoupai))
+    }
+    // else{
+    //   return this.HuisPihu(group_shoupai.shouPai)
+    // }
+  }
+  /**group手牌中只有手牌，anGang, mingGang, peng都为空 */
+  private static isOnlyFlatShouPai(group_shoupai: ShoupaiConstuctor) {
+    return group_shoupai.anGang.length == 0 &&
+      group_shoupai.mingGang.length == 0 &&
+      group_shoupai.peng.length == 0;
+  }
 
   // static all_hupai_zhang(shou_pai) {
   //   let hupai_data = this.HuWhatPai(shou_pai);
@@ -423,16 +472,16 @@ export class MajiangAlgo {
   /**是否是卡五星
    * @param na_pai 这张牌是否是4，6中间的牌
    */
-  static HuisKaWuXing(str, na_pai) {
-    let result = checkValidAndReturnArr(str)
+  static HuisKaWuXing(shou_pai: Array<Pai>, na_pai:Pai) {
+    let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
-    if (result.length < 14) {
-      throw new Error(`str${str} must larger than 14 values`);
-    }
+    // if (result.length < 14) {
+    //   throw new Error(`shou_pai${shou_pai} must larger than 14 values`);
+    // }
     //胡牌但是并不是碰胡也不是将牌，就是卡五星,或者胡牌并且两边有4，5，也是卡五星，如果是45556的情况？
     if (this.HuisPihu(result)) {
-      if (na_pai[1] == 5) {
+      if (na_pai[1] == "5") {
         let four = na_pai[0] + "4";
         let six = na_pai[0] + "6";
         let is_huwu = result.includes(four) && result.includes(six);
@@ -544,38 +593,38 @@ export class MajiangAlgo {
   }
 
   /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
-  static HupaiTypeCodeArr(str, na_pai): Array<number> {
+  static HupaiTypeCodeArr(group_shoupai: ShoupaiConstuctor, na_pai: Pai): Array<number> {
     let _huArr = [];
-    if (this.HuisYise(str, na_pai)) {
+    if (this.HuisYise(group_shoupai, na_pai)) {
       _huArr.push(config.HuisYise);
     }
-    if (this.HuisKaWuXing(str, na_pai)) {
-      _huArr.push(config.HuisKaWuXing);
-    }
-    if (this.HuisQidui(str, na_pai)) {
-      _huArr.push(config.HuisQidui);
-    }
-    if (this.HuisNongQiDui(str, na_pai)) {
-      _huArr.push(config.HuisNongQiDui);
-    }
-    if (this.HuisPengpeng(str, na_pai)) {
-      _huArr.push(config.HuisPengpeng);
-    }
-    if (this.HuisXiaoShanYuan(str, na_pai)) {
-      _huArr.push(config.HuisXiaoShanYuan);
-    }
-    if (this.HuisDaShanYuan(str, na_pai)) {
-      _huArr.push(config.HuisDaShanYuan);
-    }
+    // if (this.HuisKaWuXing(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisKaWuXing);
+    // }
+    // if (this.HuisQidui(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisQidui);
+    // }
+    // if (this.HuisNongQiDui(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisNongQiDui);
+    // }
+    // if (this.HuisPengpeng(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisPengpeng);
+    // }
+    // if (this.HuisXiaoShanYuan(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisXiaoShanYuan);
+    // }
+    // if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisDaShanYuan);
+    // }
     // if (this.HuisGangShangKai(str, na_pai)) {
     //   _huArr.push(config.HuisGangShangKai);
     // }
     // if (this.HuisGangShangPao(str, na_pai)) {
     //   _huArr.push(config.HuisGangShangPao);
     // }
-    if (this.HuisPihu(str, na_pai)) {
-      _huArr.push(config.HuisPihu);
-    }
+    // if (this.HuisPihu(group_shoupai, na_pai)) {
+    //   _huArr.push(config.HuisPihu);
+    // }
     return _huArr;
   }
   static HuPaiNames(str, na_pai) {
