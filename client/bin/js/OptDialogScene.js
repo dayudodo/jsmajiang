@@ -43,7 +43,7 @@ var mj;
                 this.initButton(this.gang, isShowGang, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u6760");
                     _this.socket.sendmsg({
-                        type: g_events.client_confirm_gang
+                        type: g_events.client_confirm_mingGang
                     });
                     _this.close();
                     _this.removeSelf();

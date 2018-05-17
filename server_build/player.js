@@ -13,7 +13,6 @@ class Player {
         /** 玩家在房间的座位号，也是加入房间的顺序号 */
         this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
         this._received_pai = null;
-        this._flat_shou_pai = [];
         /**玩家打牌形成的数组 */
         this.arr_dapai = []; //打过的牌有哪些，断线后可以重新发送此数据
         /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
@@ -22,6 +21,16 @@ class Player {
         this.is_ting = false;
         //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
         this.is_thinking_tingliang = false;
+        /**玩家放碰、杠的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
+        this.fang = {
+            gang: [{ pai: "", user_id: "" }],
+            peng: [{ pai: "", user_id: "" }]
+        };
+        /**收到哪个的碰、杠，user_id：哪个玩家放的牌 */
+        this.shou = {
+            gang: [{ pai: "", user_id: "" }],
+            peng: [{ pai: "", user_id: "" }]
+        };
         /**玩家的积分 */
         this.score = 0;
         /**暗杠数量 */
@@ -86,6 +95,7 @@ class Player {
     set received_pai(pai) {
         this._received_pai = pai;
         this.group_shou_pai.shouPai.push(pai);
+        this.group_shou_pai.shouPai.sort();
     }
     get received_pai() {
         return this._received_pai;
@@ -98,13 +108,13 @@ class Player {
     // canLiang(): boolean {
     //   return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
     // }
-    /**能碰吗？ */
+    /**能碰吗？只能是手牌中的才能检测碰 */
     canPeng(pai) {
         return MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
     }
-    /**能杠吗？ */
+    /**能杠吗？分碰了之后杠还是本来就有三张牌！最简单的自然是使用flat_shou_pai */
     canGang(pai) {
-        return MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai.shouPai, pai);
+        return MajiangAlgo_1.MajiangAlgo.canGang(this.flat_shou_pai, pai);
     }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);
@@ -112,13 +122,22 @@ class Player {
         for (let i = 0; i < 2; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
+        this.group_shou_pai.shouPai.sort();
     }
+    //确定杠肯定就是明杠！暗杠不需要检测，是由玩家来选择的！
     confirm_mingGang(pai) {
-        //首先从手牌中删除三张牌，变成peng: pai
-        for (var i = 0; i < 3; i++) {
-            this.delete_pai(this.group_shou_pai.shouPai, pai);
-        }
         this.group_shou_pai.mingGang.push(pai);
+        //如果是碰了之后杠，需要删除这张碰牌
+        if (this.group_shou_pai.peng.includes(pai)) {
+            this.group_shou_pai.peng.remove(pai);
+            //如果是手牌里面杠的，删除这三张牌！
+        }
+        else {
+            for (var i = 0; i < 3; i++) {
+                this.delete_pai(this.group_shou_pai.shouPai, pai);
+            }
+            this.group_shou_pai.shouPai.sort();
+        }
     }
     confirm_anGang(pai) {
         //首先从手牌中删除三张牌，变成peng: pai
@@ -126,6 +145,7 @@ class Player {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.anGang.push(pai);
+        this.group_shou_pai.shouPai.sort();
     }
     /**  从玩家手牌中删除pai并计算胡牌*/
     da_pai(pai) {
@@ -135,6 +155,7 @@ class Player {
         else {
             throw new Error(`${this.username}打了张非法牌？${pai}`);
         }
+        this.group_shou_pai.shouPai.sort();
         this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
         this.calculateHu();
     }

@@ -7,6 +7,7 @@ const MajiangAlgo_1 = require("./MajiangAlgo");
 const g_events = require("./events");
 const player_1 = require("./player");
 const util = require("util");
+const TablePaiManager_1 = require("./TablePaiManager");
 let room_valid_names = ["ange", "jack", "rose"];
 function puts(obj) {
     console.log(util.inspect(obj));
@@ -177,8 +178,6 @@ class Room {
         let pengPlayer = this.find_player_by(socket);
         //碰之后打牌玩家的打牌就跑到碰玩家手中了
         let dapai = this.dapai_player.arr_dapai.pop();
-        //碰之后此牌就属于本玩家了,前后台都需要添加!
-        // pengPlayer.received_pai = dapai;
         //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
         pengPlayer.confirm_peng(dapai);
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
@@ -196,14 +195,23 @@ class Room {
         });
     }
     /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
-    client_confirm_gang(socket) {
-        let player = this.find_player_by(socket);
-        this.client_confirm_peng(socket);
-        //todo: 计算收益，杠牌是有钱的！
-        this.other_players(player).forEach(p => {
-            p.socket.sendmsg({
-                type: g_events.server_gang,
-                user_id: player.user_id
+    client_confirm_mingGang(socket) {
+        let gangPlayer = this.find_player_by(socket);
+        //碰之后打牌玩家的打牌就跑到碰玩家手中了
+        let dapai = this.dapai_player.arr_dapai.pop();
+        //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
+        gangPlayer.confirm_mingGang(dapai);
+        //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
+        this.current_player = gangPlayer;
+        //给每个人都要发出全部玩家的更新数据，这样最方便！
+        this.players.forEach(person => {
+            let players = this.players.map(p => {
+                return this.player_data_filter(person.socket, p);
+            });
+            person.socket.sendmsg({
+                type: g_events.server_mingGang,
+                players: players,
+                gangPlayer_user_id: gangPlayer.user_id
             });
         });
     }
@@ -500,7 +508,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = _.clone(config.all_pai);
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.fapai_gang();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

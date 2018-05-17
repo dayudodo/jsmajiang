@@ -57,24 +57,32 @@ var mj;
                     [g_events.server_dapai_other, this.server_dapai_other],
                     [g_events.server_can_select, this.server_can_select],
                     [g_events.server_peng, this.server_peng],
+                    [g_events.server_mingGang, this.server_mingGang],
                 ];
             };
-            // /**更新UI，out牌中删除掉打牌 */
-            // private out_remove(player: Player, dapai): Pai {
-            //     //player打出的牌保存在used_pai中，也就是打出来的序号了，还是需要计算出在第几行第几个
-            //     // 小于12的第一排，大于12的依次排列！这样增加删除都会比较方便！
-            //     let [line, row] = player.last_out_coordinate
-            //     let outSprite = this.gameTable["out" + player.ui_index] as Sprite
-            //     let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
-            //     let paiImgSprite = lastValidSprite.getChildAt(0) as Image
-            //     if (player.ui_index == 3) {
-            //         paiImgSprite.skin = PaiConverter.skinOfZheng(dapai)
-            //     } else {
-            //         paiImgSprite.skin = PaiConverter.skinOfCe(dapai)
-            //     }
-            //     lastValidSprite.visible = false
-            //     return dapai
-            // }
+            Manager.prototype.server_mingGang = function (server_message) {
+                // console.log(server_message)
+                // return;
+                //哪个人碰了牌，就更新那个人的手牌和打牌
+                // let { player } = server_message
+                var players = server_message.players, gangPlayer_user_id = server_message.gangPlayer_user_id;
+                //更新本地player数据
+                players.forEach(function (person) {
+                    var localPlayer = Laya.room.players.find(function (p) { return p.user_id == person.user_id; });
+                    localPlayer.cloneValuesFrom(person);
+                });
+                var gangPlayer = Laya.room.players.find(function (p) { return p.user_id == gangPlayer_user_id; });
+                // console.log(Laya.room.players)
+                //更新UI中的显示
+                this.show_group_shoupai(Laya.god_player);
+                this.show_out(Laya.god_player);
+                this.show_group_shoupai(Laya.room.left_player);
+                this.show_out(Laya.room.left_player);
+                this.show_group_shoupai(Laya.room.right_player);
+                this.show_out(Laya.room.right_player);
+                //重新计时并改变方向
+                this.show_count_down(gangPlayer);
+            };
             /**UI上显示出玩家的group手牌！ */
             Manager.prototype.show_group_shoupai = function (player) {
                 var _this = this;

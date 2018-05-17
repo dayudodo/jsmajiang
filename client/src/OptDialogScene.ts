@@ -35,7 +35,7 @@ module mj.scene {
             this.initButton(this.gang, isShowGang, () => {
                 console.log(`用户选择杠`);
                 this.socket.sendmsg({
-                    type: g_events.client_confirm_gang
+                    type: g_events.client_confirm_mingGang
                 })
                 this.close()
                 this.removeSelf()

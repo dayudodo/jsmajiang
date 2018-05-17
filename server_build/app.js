@@ -33,7 +33,7 @@ var eventsHandler = [
     [g_events.client_confirm_hu, client_confirm_hu],
     [g_events.client_confirm_ting, client_confirm_ting],
     [g_events.client_confirm_liang, client_confirm_liang],
-    [g_events.client_confirm_gang, client_confirm_gang],
+    [g_events.client_confirm_mingGang, client_confirm_mingGang],
     [g_events.client_confirm_peng, client_confirm_peng],
     [g_events.client_confirm_guo, client_confirm_guo]
 ];
@@ -58,10 +58,10 @@ function client_confirm_liang(client_message, socket) {
     console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
     room.client_confirm_liang(socket);
 }
-function client_confirm_gang(client_message, socket) {
+function client_confirm_mingGang(client_message, socket) {
     let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择杠牌`);
-    room.client_confirm_gang(socket);
+    room.client_confirm_mingGang(socket);
 }
 function client_confirm_peng(client_message, socket) {
     let { player, room } = confirmInit(socket);

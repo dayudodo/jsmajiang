@@ -13,6 +13,7 @@ var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
 
 declare global {
   interface Array<T> {
+    /**数组中删除一个元素 */
     remove(o): T[];
     equalArrays(o): boolean;
   }

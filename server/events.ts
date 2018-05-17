@@ -9,7 +9,7 @@
   export const client_confirm_hu = "client_confirm_hu"
   export const client_confirm_ting = "client_confirm_ting"
   export const client_confirm_liang = "client_confirm_liang"
-  export const client_confirm_gang = "client_confirm_gang"
+  export const client_confirm_mingGang = "client_confirm_mingGang"
   export const client_confirm_peng = "client_confirm_peng"
   export const client_confirm_guo = "client_confirm_guo"
 
@@ -29,7 +29,7 @@
   export const server_dapai_other = "server_dapai_other";
   
   export const server_peng = "server_peng";
-  export const server_gang = "server_gang";
+  export const server_mingGang = "server_mingGang";
   export const server_liang = "server_liang";
   export const server_gameover = "server_gameover";
   export const server_winner = "server_winner";
