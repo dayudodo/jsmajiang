@@ -60,6 +60,24 @@ test("is4ABC 14张牌，false", function(t){
   t.is(MajiangAlgo.is4ABC(str), false)
 })
 
+test("is4ABC 15张牌，有三杠", function(t){
+  let str= 'b1 b2 b3 b4 b4 b4 b4 di di di di zh zh zh zh'
+  t.is(MajiangAlgo.is4ABC(str), true)
+})
+test("is4ABC 15张牌，有三杠, 杠在前", function(t){
+  let str= 'b1 b1 b1 b1 b3 b4 b5 di di di di zh zh zh zh'
+  t.is(MajiangAlgo.is4ABC(str), true)
+})
+
+test("is4ABC 15张牌，有三杠, 杠在前 false", function(t){
+  let str= 'b1 b1 b1 b2 b3 b4 b5 di di di di zh zh zh zh'
+  t.is(MajiangAlgo.is4ABC(str), false)
+})
+test("is4ABC 15张牌 false", function(t){
+  let str= 'b1 b2 b3 b3 b4 b4 b4 di di di di zh zh zh zh'
+  t.is(MajiangAlgo.is4ABC(str), false)
+})
+
 test("is4ABC 16张牌，四杠", function(t){
   let str= 'b1 b1 b1 b1 b2 b2 b2 b2 di di di di zh zh zh zh'
   t.is(MajiangAlgo.is4ABC(str), true)

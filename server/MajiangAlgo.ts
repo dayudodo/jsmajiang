@@ -234,7 +234,7 @@ export class MajiangAlgo {
     //检查有杠的情况
     // let frontFour = result.slice(0,4)
     // let afterFour = result.slice(4,15)
-    if (result.length < 14) { //小于14张，只会有一个杠, 4+3*3
+    if (result.length < 16) { //小于15张，可能会有二个杠
       if (this.is2ABC(frontSix) && this.is2ABC(lastSix)) {
         return true;
       }
@@ -261,7 +261,7 @@ export class MajiangAlgo {
     }
     return false
   }
-  
+
   /**只要能胡，就应该是屁胡，包括七对！ */
   static HuisPihu(group_shoupai: ShoupaiConstuctor, na_pai?: Pai): boolean {
     return this._HuisPihu(group_shoupai.shouPai, na_pai);
