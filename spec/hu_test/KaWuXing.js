@@ -2,7 +2,6 @@
 
 import test from "ava";
 import { MajiangAlgo } from "../../server_build/MajiangAlgo"
-// var Majiang = require("../server/Majiang");
 
 test("卡五星", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
@@ -49,7 +48,7 @@ test("可胡但不是卡五星", function(t) {
     shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
-  t.is(MajiangAlgo.HuisPihu(str, na_pai), true);
+  // t.is(MajiangAlgo.HuisPihu(str, na_pai), true);
 });
 test("胡五条但不是卡", function(t) {
   let str = "fa fa fa t2 t2 t3 t4 t6 t7 t8 zh zh zh";
@@ -61,7 +60,7 @@ test("胡五条但不是卡", function(t) {
     shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
-  t.is(MajiangAlgo.HuisPihu(str, na_pai), true);
+  // t.is(MajiangAlgo.HuisPihu(str, na_pai), true);
 });
 test("group卡五星", function(t) {
   let str = "b1 b1 b4 b6";

@@ -81,15 +81,15 @@ class MajiangAlgo {
         let s1 = result[0], s2 = result[1], s3 = result[2], s4 = result[3];
         return s1 == s2 && s2 == s3 && s3 == s4;
     }
-    static is34A(test_arr) {
-        let result = checkValidAndReturnArr(test_arr);
-        if (result.length == 3) {
-            return this._isAAA(test_arr);
-        }
-        if (result.length == 4) {
-            return this._is4A(test_arr);
-        }
-    }
+    // static is34A(test_arr) {
+    //   let result = checkValidAndReturnArr(test_arr);
+    //   if (result.length == 3) {
+    //     return this._isAAA(test_arr);
+    //   }
+    //   if (result.length == 4) {
+    //     return this._is4A(test_arr);
+    //   }
+    // }
     static isABC(test_arr) {
         let result = checkValidAndReturnArr(test_arr);
         if (result.length < 3) {
@@ -102,14 +102,23 @@ class MajiangAlgo {
             (s1[0] == s2[0] && s2[0] == s3[0]);
         return isABC;
     }
-    static isABCorAAA(str) {
-        return this.is34A(str) || this.isABC(str);
+    static isABCorAAA(test_arr) {
+        let result = checkValidAndReturnArr(test_arr);
+        if (result.length == 3) {
+            return (this._isAAA(test_arr) || this.isABC(test_arr));
+        }
+        if (result.length == 4) {
+            return this._is4A(test_arr);
+        }
     }
+    /**是否是2句话，最复杂！ */
     static is2ABC(test_arr) {
         //like 123456 or 122334,233445这样的牌型
         let result = checkValidAndReturnArr(test_arr);
-        if (result.length < 6) {
-            throw new Error(`test_arr: ${test_arr} 必须大于等于6`);
+        if (result.length < 5) {
+            //为啥不是6呢？因为在3ABC里面有可能会出现fa fa fa t1 t2 t3 t4 t5 t6这样的情况
+            //后面的4个被切掉，前面就不够6个了，自然不是3ABC
+            throw new Error(`test_arr: ${test_arr} 必须大于等于5`);
         }
         let s1 = result[0], s2 = result[1], s3 = result[2], s4 = result[3], s5 = result[4], s6 = result[5];
         let startThree = result.slice(0, 3);
@@ -118,8 +127,8 @@ class MajiangAlgo {
         let beforeThree = result.slice(0, result.length - 3);
         let endThree = result.slice(result.length - 3, result.length);
         //前四和后面的几个，比如b1 b1 b1 b1 t1 t2 t3
-        let startFour = result.slice(0, result.length - 4);
-        let afterFour = result.slice(result.length - 4, result.length);
+        let startFour = result.slice(0, 4);
+        let afterFour = result.slice(4, result.length);
         //特殊情况，比如112233的情况？
         if (result.length == 6) {
             //如果是正规的6张牌
@@ -133,7 +142,6 @@ class MajiangAlgo {
                 //交换2,3 比如将122334中间的两个交换过来，再检查
                 startThree = [s1, s2, s4];
                 afterThree = [s3, s5, s6];
-                // console.log(frontThree,lastThree)
                 if (this.isABCorAAA(startThree) && this.isABCorAAA(afterThree)) {
                     return true;
                 }
@@ -141,13 +149,19 @@ class MajiangAlgo {
                     return false;
                 }
             }
+            //如果是有杠的牌, 三种情况，二个杠， 前杠后ABC，前ABC后杠
         }
         else {
-            //如果是有杠的牌, 三种情况，二个杠， 前杠后ABC，前ABC后杠
-            if (this.isABCorAAA(beforeThree) && this.isABCorAAA(endThree)) {
+            if (this.isABCorAAA(startThree) && this.isABCorAAA(afterThree)) {
+                // console.log("startThree,afterThree ",startThree,afterThree)
                 return true;
             }
-            else if (this.isABCorAAA(startFour) && this.isABCorAAA(afterFour)) {
+            if (this.isABCorAAA(startFour) && this.isABCorAAA(afterFour)) {
+                // console.log("startFour,afterFour ", startFour, afterFour)
+                return true;
+            }
+            if (this.isABCorAAA(beforeThree) && this.isABCorAAA(endThree)) {
+                // console.log("beforeThree,endThree ", beforeThree, endThree)
                 return true;
             }
         }
@@ -156,73 +170,69 @@ class MajiangAlgo {
     static is3ABC(test_arr) {
         let result = checkValidAndReturnArr(test_arr);
         if (result.length < 9) {
-            throw new Error(`test_arr: ${test_arr}必须大于等于9`);
+            throw new Error(`test_arr: ${test_arr}必须大于或等于9`);
         }
-        let frontThree = result.slice(0, 3);
+        if (result.length > 13) { //有可能是3杠
+            throw new Error(`test_arr: ${test_arr}必须小于或等于12`);
+        }
+        //前三
+        let startThree = result.slice(0, 3);
         let afterThree = result.slice(3, result.length);
-        //取出后三个和前面的几张牌
+        //前四
+        let startFour = result.slice(0, 4);
+        let afterFour = result.slice(4, result.length);
+        //后三
         let beforeThree = result.slice(0, result.length - 3);
         let lastThree = result.slice(result.length - 3, result.length);
-        // console.log(frontThree,lastSix)
-        // let
-        if (result.length < 12) {
-            if (this.isABCorAAA(frontThree) && this.is2ABC(afterThree)) {
-                return true;
-            }
-            else if (this.is2ABC(beforeThree) && this.isABCorAAA(lastThree)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+        //后四
+        let beforeFour = result.slice(0, result.length - 4);
+        let lastFour = result.slice(result.length - 4, result.length);
+        if (this.isABCorAAA(startThree) && this.is2ABC(afterThree)) {
+            // console.log("startThree, afterThree ", startThree, afterThree);
+            return true;
         }
-        else {
-            let startFour = result.slice(0, 4);
-            let after = result.slice(4, result.length);
-            return this.isABCorAAA(startFour) && this.is2ABC(after);
+        if (this.isABCorAAA(startFour) && this.is2ABC(afterFour)) {
+            // console.log("startFour, afterFour ", startFour, afterFour);
+            return true;
         }
+        if (this.is2ABC(beforeThree) && this.isABCorAAA(lastThree)) {
+            // console.log("beforeThree, lastThree ", beforeThree, lastThree);
+            return true;
+        }
+        if (this.is2ABC(beforeFour) && this.isABCorAAA(lastFour)) {
+            // console.log("beforeFour, lastFour ", beforeFour, lastFour);
+            return true;
+        }
+        return false;
     }
     static is4ABC(test_arr) {
         let result = checkValidAndReturnArr(test_arr);
         if (result.length < 12) {
             throw new Error(`test_arr: ${test_arr} must large than 12 values`);
         }
-        let frontThree = result.slice(0, 3);
+        let startThree = result.slice(0, 3);
         let afterThree = result.slice(3, result.length);
-        let frontNine = result.slice(0, 9);
-        let lastThree = result.slice(9, result.length);
-        let frontSix = result.slice(0, 6);
-        let lastSix = result.slice(6, result.length);
-        //检查有杠的情况
-        // let frontFour = result.slice(0,4)
-        // let afterFour = result.slice(4,15)
-        if (result.length < 16) { //小于15张，可能会有二个杠
-            if (this.is2ABC(frontSix) && this.is2ABC(lastSix)) {
-                return true;
-            }
-            if (this.isABCorAAA(frontThree) && this.is3ABC(afterThree)) {
-                return true;
-            }
-            else if (this.is3ABC(frontNine) && this.isABCorAAA(lastThree)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+        //取出后三个和前面的几张牌
+        // let beforeThree = result.slice(0, result.length - 3);
+        // let lastThree = result.slice(result.length - 3, result.length);
+        let startFour = result.slice(0, 4);
+        let afterFour = result.slice(4, result.length);
+        if (this.isABCorAAA(startThree) && this.is3ABC(afterThree)) {
+            return true;
         }
-        else { //大于14则有二杠，
-            //前一杠
-            let startFour = result.slice(0, 4);
-            let afterFour = result.slice(4, result.length);
-            if (this.isABCorAAA(startFour) && this.is3ABC(afterFour)) {
-                return true;
-            }
-            //后一杠
-            let beforeFour = result.slice(0, result.length - 4);
-            let endFour = result.slice(result.length - 4, result.length);
-            if (this.is3ABC(beforeFour) && this.isABCorAAA(endFour)) {
-                return true;
-            }
+        if (this.isABCorAAA(startFour) && this.is3ABC(afterFour)) {
+            return true;
+        }
+        //前6和后6的算法
+        let startSix = result.slice(0, 6);
+        let afterSix = result.slice(6, result.length);
+        if (this.is2ABC(startSix) && this.is2ABC(afterSix)) {
+            return true;
+        }
+        let beforeSix = result.slice(0, result.length - 6);
+        let endSix = result.slice(result.length - 6, result.length);
+        if (this.is2ABC(beforeSix) && this.is2ABC(endSix)) {
+            return true;
         }
         return false;
     }
@@ -249,64 +259,12 @@ class MajiangAlgo {
                 var newstr = result.join("");
                 //去掉这两个将,item是这样的"b1b1","didi"
                 newstr = newstr.replace(item, "");
-                //首先去掉四个一样的牌，杠可能有多个
-                var origin = newstr;
-                // newstr = newstr.replace(reg_four, "");
-                for (var i = 0; i < 2; i++) {
-                    if (newstr.length == 0) {
-                        // console.warn(`检查${origin}, 可能不是一手牌`);
-                        // 有可能遇到全是杠的情况
-                        is_hu = true;
-                        break;
-                    }
-                    else {
-                        let last_result = checkValidAndReturnArr(newstr);
-                        console.log("====================================");
-                        console.log("item: ", item);
-                        console.log("last_result: ", last_result);
-                        console.log("====================================");
-                        // if(item == "fafa"){
-                        //   console.log("last_result:",last_result);
-                        //   console.log(this.is3ABC(last_result));
-                        // }
-                        switch (last_result.length) {
-                            case 3:
-                                if (this.isABCorAAA(last_result)) {
-                                    is_hu = true;
-                                }
-                                break;
-                            case 6:
-                                if (this.is2ABC(last_result)) {
-                                    is_hu = true;
-                                }
-                                break;
-                            case 9:
-                                if (this.is3ABC(last_result)) {
-                                    is_hu = true;
-                                }
-                                break;
-                            case 12:
-                            case 13:
-                            case 14:
-                            case 15:
-                                if (this.is4ABC(last_result)) {
-                                    is_hu = true;
-                                }
-                                break;
-                        }
-                        if (false == is_hu) {
-                            // newstr = origin.replace(reg_four, "");
-                            newstr = origin.replace(reg_three, "");
-                        }
-                    }
+                if (this.is4ABC(newstr)) {
+                    is_hu = true;
                 }
             });
-            return is_hu;
         }
-        else {
-            //连将都没有，自然不是屁胡
-            return false;
-        }
+        return is_hu;
     }
     static HuisQiDui(group_shoupai, na_pai) {
         return this._HuisQiDui(group_shoupai.shouPai, na_pai);
@@ -495,7 +453,28 @@ class MajiangAlgo {
      * @param na_pai 这张牌是否是4，6中间的牌
      */
     static HuisKaWuXing(group_shoupai, na_pai) {
-        return this._HuisKaWuXing(group_shoupai.shouPai, na_pai);
+        // return this._HuisKaWuXing(group_shoupai.shouPai, na_pai);
+        return this._HuisKaWuXing(this.flat_shou_pai(group_shoupai), na_pai);
+    }
+    /**带将的3ABC检测，貌似只是为卡五星服务！ */
+    static _jiang3ABC(shou_pai) {
+        let result = checkValidAndReturnArr(shou_pai);
+        let allJiang = getAllJiangArr(result);
+        let is_hu = false;
+        // console.log(allJiang)
+        //循环的目的是因为可能胡不止一张牌
+        if (allJiang) {
+            allJiang.forEach(jiang => {
+                // console.log(item)
+                var newstr = result.join("");
+                //去掉这两个将,item是这样的"b1b1","didi"
+                newstr = newstr.replace(jiang, "");
+                if (this.is3ABC(newstr)) {
+                    is_hu = true;
+                }
+            });
+        }
+        return is_hu;
     }
     static _HuisKaWuXing(shou_pai, na_pai) {
         let result = checkValidAndReturnArr(shou_pai)
@@ -519,7 +498,7 @@ class MajiangAlgo {
                     .remove(four)
                     .remove(six)
                     .sort();
-                return this._HuisPihu(after_delete_kawa);
+                return this._jiang3ABC(after_delete_kawa);
             }
         }
         return false;

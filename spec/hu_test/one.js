@@ -16,3 +16,5 @@ import { MajiangAlgo } from "../../server_build/MajiangAlgo"
 //   let str= 'b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t1 t3 t4 t5'
 //   t.is(MajiangAlgo.is4ABC(str), true)
 // })
+
+

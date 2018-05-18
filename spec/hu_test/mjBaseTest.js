@@ -43,6 +43,23 @@ test("4 should vlaid4A throw error", function (t) {
   t.throws(MajiangAlgo._is4A.bind(null, str), /必须等于/);
 });
 
+test("should isABCorAAA true", function (t) {
+  t.is(MajiangAlgo.isABCorAAA("b1 b1 b1"), true);
+});
+test("should isABCorAAA true", function (t) {
+  t.is(MajiangAlgo.isABCorAAA("b1 b2 b3"), true);
+});
+test("should isABCorAAA true", function (t) {
+  t.is(MajiangAlgo.isABCorAAA("b1 b1 b1 b1"), true);
+});
+test("should isABCorAAA true", function (t) {
+  t.is(MajiangAlgo.isABCorAAA("b1 b1 b1 t1"), false);
+});
+test("should isABCorAAA false", function (t) {
+  t.is(MajiangAlgo.isABCorAAA("b1 b2 b3 t3"), false);
+});
+
+
 test("should isABC true", function (t) {
   t.is(MajiangAlgo.isABC("b1 b2 b3"), true);
 });
@@ -142,73 +159,15 @@ test("is2ABC 7张牌，一杠，前三为ABC", function(t){
   let str= "b1 b2 b3 b5 b5 b5 b5"
   t.is(MajiangAlgo.is2ABC(str), true)
 })
+test("is2ABC 7张牌，一杠，前三为ABC", function(t){
+  let str= "t1 t1 t1 t2 t3 t4 t5"
+  t.is(MajiangAlgo.is2ABC(str), false)
+})
+test("is2ABC 8张牌，一杠，false", function(t){
+  let str= "b2 b2 b2 b2 t1 t1 t1 t2"
+  t.is(MajiangAlgo.is2ABC(str), false)
+})
 
-// describe('is3ABC group', function(t) {
-test("is3ABC 正规九张牌", function (t) {
-  let str = "b1 b2 b3 fa fa fa t1 t2 t3";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 九张 122334123", function (t) {
-  let str = "b1 b2 b2 b3 b3 b4 t1 t2 t3";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 九张 112233456", function (t) {
-  let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 九张 123445566", function (t) {
-  let str = "b1 b2 b3 b4 b4 b5 b5 b6 b6";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十张 ", function (t) {
-  let str = "b1 b2 b3 b4 b4 b4 b4 b6 b6 b6";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十张, 前一杠 ", function (t) {
-  let str = "b1 b1 b1 b1 b3 b4 b5 b6 b6 b6";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十张, 后一杠 ", function (t) {
-  let str = "b1 b2 b3 b5 b6 b7 b8 b8 b8 b8";
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十张, 中间一杠 ", function (t) {
-  let str = "b1 b2 b3 t1 t1 t1 t1 zh zh zh"
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十一张, 前二杠 ", function (t) {
-  let str = "b1 b1 b1 b1 t1 t1 t1 t1 zh zh zh"
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十一张, 后二杠 ", function (t) {
-  let str = "b1 b1 b1 t1 t1 t1 t1 zh zh zh zh"
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-test("is3ABC 十二张, 三杠 ", function (t) {
-  let str = "b1 b1 b1 b1 t1 t1 t1 t1 zh zh zh zh"
-  t.is(MajiangAlgo.is3ABC(str), true);
-});
-
-test("is3ABC 11张牌，二杠,前三为ABC", function(t){
-  let str= "b1 b2 b3 b5 b5 b5 b5 zh zh zh zh"
-  t.is(MajiangAlgo.is3ABC(str), true)
-})
-test("is3ABC 11张牌，二杠，中间为ABC", function(t){
-  let str= "b2 b2 b2 b2 t1 t2 t3 zh zh zh zh"
-  t.is(MajiangAlgo.is3ABC(str), true)
-})
-test("is3ABC 11张牌，二杠，后三为ABC", function(t){
-  let str= "b2 b2 b2 b2 t1 t1 t1 t1 t3 t4 t5"
-  t.is(MajiangAlgo.is3ABC(str), true)
-})
-test("is3ABC 11张牌，false", function(t){
-  let str= "b2 b2 b2 b2 t1 t1 t1 t1 t3 t4 t4"
-  t.is(MajiangAlgo.is3ABC(str), false)
-})
-test("is3ABC 11张牌，false", function(t){
-  let str= "b2 b2 b2 b2 t1 t1 t1 t2 t3 t4 t5"
-  t.is(MajiangAlgo.is3ABC(str), false)
-})
 
 
 
