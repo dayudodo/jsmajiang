@@ -115,10 +115,14 @@ class MajiangAlgo {
     static is2ABC(test_arr) {
         //like 123456 or 122334,233445这样的牌型
         let result = checkValidAndReturnArr(test_arr);
-        if (result.length < 5) {
+        if (result.length < 6) {
+            return false;
+        }
+        if (result.length < 4) {
             //为啥不是6呢？因为在3ABC里面有可能会出现fa fa fa t1 t2 t3 t4 t5 t6这样的情况
             //后面的4个被切掉，前面就不够6个了，自然不是3ABC
-            throw new Error(`test_arr: ${test_arr} 必须大于等于5`);
+            //为啥不是5呢？在小三元的检测里面也会有少于6个的情况。手牌为b1 b1 b1 b2 b3 di di di fa fa zh zh zh
+            throw new Error(`test_arr: ${test_arr} 必须大于等于4`);
         }
         let s1 = result[0], s2 = result[1], s3 = result[2], s4 = result[3], s5 = result[4], s6 = result[5];
         let startThree = result.slice(0, 3);
@@ -169,8 +173,8 @@ class MajiangAlgo {
     }
     static is3ABC(test_arr) {
         let result = checkValidAndReturnArr(test_arr);
-        if (result.length < 9) {
-            throw new Error(`test_arr: ${test_arr}必须大于或等于9`);
+        if (result.length < 8) {
+            throw new Error(`test_arr: ${test_arr}必须大于或等于8`);
         }
         if (result.length > 13) { //有可能是3杠
             throw new Error(`test_arr: ${test_arr}必须小于或等于12`);
@@ -558,10 +562,10 @@ class MajiangAlgo {
         if (result.length < 14) {
             throw new Error(`shou_pai: ${shou_pai} must larger than 14 values`);
         }
-        console.log("====================================");
-        console.log(result);
-        console.log(this._HuisPihu(shou_pai, na_pai));
-        console.log("====================================");
+        // console.log("====================================");
+        // console.log(result);
+        // console.log(this._HuisPihu(shou_pai, na_pai));
+        // console.log("====================================");
         if (this._HuisPihu(shou_pai, na_pai)) {
             //将里面有没有zh, fa, di, 或者可以用表查询来做，毕竟组合就那么几个
             let xiaoSheet = [
@@ -570,7 +574,7 @@ class MajiangAlgo {
                 ["di", "zhzhzh", "zhzhzhzh", "fafafa", "fafafafa"]
             ];
             let shouStr = result.join("");
-            console.log(shouStr);
+            console.log("shouStr: ", shouStr);
             let isXiao = false;
             xiaoSheet.forEach(item => {
                 //只要判断是否有上面的三种即可！
