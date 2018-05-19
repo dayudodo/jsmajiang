@@ -83,7 +83,27 @@ test("flat可胡，但group非卡五星", function(t) {
     peng: ['t2'],
     shouPai: str.split(" ")
   };
-  t.is(MajiangAlgo._HuisKaWuXing(MajiangAlgo.flat_shou_pai(group_shoupai), na_pai), true);
   t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
-  // t.is(MajiangAlgo.HuisPihu(str, na_pai), true);
+});
+test("单胡5将，group非卡五星", function(t) {
+  let str = "b5";
+  var na_pai = "b5";
+  let group_shoupai = {
+    anGang: ['t1'],
+    mingGang: ['t9'],
+    peng: ['t2','zh'],
+    shouPai: str.split(" ")
+  };
+  t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
+});
+test("胡五条，group非卡五星", function(t) {
+  let str = "zh zh b3 b4";
+  var na_pai = "b5";
+  let group_shoupai = {
+    anGang: ['t1'],
+    mingGang: ['t9'],
+    peng: ['t2'],
+    shouPai: str.split(" ")
+  };
+  t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
 });

@@ -18,3 +18,14 @@ import { MajiangAlgo } from "../../server_build/MajiangAlgo"
 // })
 
 
+test("卡五星", function(t) {
+    let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
+    let na_pai = "b5";
+    let group_shoupai = {
+      anGang: [],
+      mingGang: [],
+      peng: [],
+      shouPai: str.split(" ")
+    };
+    t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
+  });

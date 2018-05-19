@@ -10,6 +10,11 @@
       "problemMatcher": [
         "$tsc"
       ]
+    },
+    {
+      "label": "kawu",
+      "type":"shell",
+      "command":""
     }
   ]
 }

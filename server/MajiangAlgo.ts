@@ -310,8 +310,8 @@ export class MajiangAlgo {
         var newstr = result.join("");
         //去掉这两个将,item是这样的"b1b1","didi"
         newstr = newstr.replace(item, "");
-        if(this.is4ABC(newstr)){
-          is_hu =  true
+        if (this.is4ABC(newstr)) {
+          is_hu = true
         }
       })
     }
@@ -511,12 +511,14 @@ export class MajiangAlgo {
    * @param na_pai 这张牌是否是4，6中间的牌
    */
   public static HuisKaWuXing(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
-    // return this._HuisKaWuXing(group_shoupai.shouPai, na_pai);
-    return this._HuisKaWuXing(this.flat_shou_pai(group_shoupai), na_pai);
+    //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
+    let jijuhua = group_shoupai.anGang.length + group_shoupai.mingGang.length + group_shoupai.peng.length
+    // console.log(jijuhua);
+    return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
   }
 
-  /**带将的3ABC检测，貌似只是为卡五星服务！ */
-  private static _jiang3ABC(shou_pai: Array<Pai>) {
+  /**带将的1,2,3,4ABC检测，貌似只是为卡五星服务！ */
+  private static _jiangNABC(shou_pai: Array<Pai>, jijuhua: number) {
     let result = checkValidAndReturnArr(shou_pai)
     let allJiang = getAllJiangArr(result);
     let is_hu = false;
@@ -528,7 +530,28 @@ export class MajiangAlgo {
         var newstr = result.join("");
         //去掉这两个将,item是这样的"b1b1","didi"
         newstr = newstr.replace(jiang, "");
-        if(this.is3ABC(newstr)){
+        var caller: Function
+        //其实只需要检测3- jijuha, 因为在卡五星里面已经删除掉了带有卡5的一句话！
+        switch (jijuhua) {
+          case 3:
+            // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
+            if(_.isEmpty(newstr)){
+              is_hu = true
+            }
+            break;
+          case 2:
+            caller = this.isABCorAAA
+            break;
+          case 1:
+            caller = this.is2ABC
+            break;
+          case 0:
+            caller = this.is3ABC
+            break;
+          default:
+            throw new Error(`jijuha:${jijuhua}的值只能是0-3 `)
+        }
+        if (caller &&  caller.call(this, newstr)) {
           is_hu = true
         }
       })
@@ -536,7 +559,11 @@ export class MajiangAlgo {
     return is_hu
   }
 
-  private static _HuisKaWuXing(shou_pai: Array<Pai>, na_pai: Pai) {
+  private static _HuisKaWuXing(shou_pai: Array<Pai>, na_pai: Pai, jijuhua: number) {
+    //就卡五星来说，大于3句话就肯定不是卡五了，最多三句话！四句话就没办法胡卡五，只能听将！
+    if (jijuhua > 3) {
+      return false
+    }
     let result: Array<Pai> = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
@@ -557,10 +584,12 @@ export class MajiangAlgo {
           .remove(four)
           .remove(six)
           .sort();
-        return this._jiang3ABC(after_delete_kawa);
+        // console.log(after_delete_kawa);
+        return this._jiangNABC(after_delete_kawa, jijuhua);
+      } else {
+        return false
       }
     }
-    return false;
   }
 
   //只能重复两次，不能重复三次！
