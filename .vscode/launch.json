@@ -5,7 +5,7 @@
             "type": "node",
             "request": "launch",
             "name": "启动程序",
-            "program": "${workspaceFolder}/server_build/app.js",
+            "program": "${workspaceFolder}/server_build/server/app.js",
             "cwd": "${workspaceRoot}",
             // "preLaunchTask": "tsc",
             // "console": "internalConsole"
