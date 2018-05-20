@@ -126,6 +126,19 @@ test("仅屁胡 zh", function (t) {
   t.deepEqual(MajiangAlgo.HuWhatPai(str).all_hupai_typesCode, [config.HuisPihu])
   t.deepEqual(MajiangAlgo.HuWhatPai(str).all_hupai_zhang, ['zh'])
 })
+test("group仅屁胡 zh", function (t) {
+  let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6  zh";
+  let group_shoupai = {
+    anGang: [],
+    mingGang: [],
+    peng: ['fa'],
+    shouPai: checkValidAndReturnArr(str)
+  }
+  console.log(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_typesCode);
+  
+  t.deepEqual(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_typesCode, [config.HuisPihu])
+  t.deepEqual(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_zhang, ['zh'])
+})
 test("大小三元 b1 b4 fa", function (t) {
   let str = "b1 b1  b1 b2 b3 di di di zh zh zh fa fa";
   t.deepEqual(MajiangAlgo.HuWhatPai(str).all_hupai_typesCode, [config.HuisXiaoShanYuan, config.HuisDaShanYuan, config.HuisPihu])

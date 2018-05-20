@@ -28,15 +28,14 @@ import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/M
 //     t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
 //   });
 
-test("清一色 屁胡", t => {
-  let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9 b1 b2 b3 b4";
-  let na_pai = "b4";
+test("group仅屁胡 ", function (t) {
+  let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6  zh";
+  let na_pai = "zh"
   let group_shoupai = {
     anGang: [],
     mingGang: [],
-    peng: [],
+    peng: ['fa'],
     shouPai: checkValidAndReturnArr(str)
-  };
-  console.log("MajiangAlgo.HuPaiNames(group_shoupai, na_pai):",MajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-  t.deepEqual(MajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["清一色", "屁胡"]);
-});
+  }
+  t.is(MajiangAlgo.HuisYise(group_shoupai, na_pai), false)
+})

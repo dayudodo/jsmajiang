@@ -334,7 +334,12 @@ class MajiangAlgo {
         return is_hu;
     }
     static HuisQiDui(group_shoupai, na_pai) {
-        return this._HuisQiDui(group_shoupai.shouPai, na_pai);
+        if (this.getJijuhua(group_shoupai) > 1) {
+            return false;
+        }
+        else {
+            return this._HuisQiDui(group_shoupai.shouPai, na_pai);
+        }
     }
     static _HuisQiDui(shou_pai, na_pai) {
         //判断是否是七对
@@ -378,15 +383,14 @@ class MajiangAlgo {
             return MajiangAlgo._HuisYise(group_shoupai.shouPai, na_pai);
         }
         else {
-            let unionArr = group_shoupai.anGang
-                .concat(group_shoupai.mingGang)
-                .concat(group_shoupai.peng);
+            let unionArr = this.flat_shou_pai(group_shoupai);
             return this.isYise(unionArr) && this.HuisPihu(group_shoupai, na_pai);
         }
     }
     static isYise(arr) {
         let paiTypeMap = arr.map(item => item[0]);
-        let isUniq = new Set(paiTypeMap).size;
+        let typeSet = new Set(paiTypeMap);
+        let isUniq = typeSet.size;
         //不仅要是一色而且还得满足平胡
         return isUniq == 1;
     }
