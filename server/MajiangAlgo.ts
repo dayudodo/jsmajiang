@@ -38,7 +38,7 @@ Array.prototype.equalArrays = function (b) {
   return true; // Otherwise they are equal
 };
 
-function checkValidAndReturnArr(str) {
+export function checkValidAndReturnArr(str): Array<Pai> {
   if (!str || str.length == 0) {
     throw new Error("str is empty");
     //如果是数组，那么就直接返回，可能就是一套手牌，比如["b1","b2"...]
@@ -77,14 +77,12 @@ export class MajiangAlgo {
 可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
 */
 
-  static isAA(str) {
-    let result = checkValidAndReturnArr(str);
-    if (result.length != 2) {
-      throw new Error(`str${str} must have 2 values`);
+  static isAA(test_arr: Array<Pai>) {
+    if (test_arr.length != 2) {
+      throw new Error(`test_arr:  ${test_arr} must have 2 values`);
     }
-    //不支持Es6语法，奈何？
-    let s1 = result[0],
-      s2 = result[1];
+    let s1 = test_arr[0],
+      s2 = test_arr[1];
     return s1 == s2;
   }
 
@@ -132,8 +130,8 @@ export class MajiangAlgo {
       s3 = result[2];
     //判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
     let isABC =
-      s2[1] - 1 == s1[1] &&
-      s3[1] - 1 == s2[1] &&
+      parseInt(s2[1]) - 1 == parseInt(s1[1]) &&
+      parseInt(s3[1]) - 1 == parseInt(s2[1]) &&
       (s1[0] == s2[0] && s2[0] == s3[0]);
     return isABC;
   }
@@ -152,7 +150,7 @@ export class MajiangAlgo {
   static is2ABC(test_arr) {
     //like 123456 or 122334,233445这样的牌型
     let result = checkValidAndReturnArr(test_arr);
-    if(result.length < 6){
+    if (result.length < 6) {
       return false
     }
     if (result.length < 4) {
@@ -187,13 +185,18 @@ export class MajiangAlgo {
         return true;
       } else {
         //交换2,3 比如将122334中间的两个交换过来，再检查
-        startThree = [s1, s2, s4];
-        afterThree = [s3, s5, s6];
-        if (this.isABCorAAA(startThree) && this.isABCorAAA(afterThree)) {
+        let first3 = [s1, s2, s4];
+        let after3 = [s3, s5, s6];
+        if (this.isABCorAAA(first3) && this.isABCorAAA(after3)) {
           return true;
-        } else {
-          return false;
         }
+        //b4 b5 b5 b5 b5 b6 则也需要交换一下
+        first3 = [s1, s2, s6]
+        after3 = [s3, s4, s5]
+        if (this.isABCorAAA(first3) && this.isABCorAAA(after3)) {
+          return true;
+        }
+        return false
       }
       //如果是有杠的牌, 三种情况，二个杠， 前杠后ABC，前ABC后杠
     } else {
@@ -216,6 +219,9 @@ export class MajiangAlgo {
 
   static is3ABC(test_arr) {
     let result = checkValidAndReturnArr(test_arr);
+    if (result.length < 9) {
+      return false
+    }
     if (result.length < 8) {
       throw new Error(`test_arr: ${test_arr}必须大于或等于8`);
     }
@@ -258,8 +264,8 @@ export class MajiangAlgo {
 
   static is4ABC(test_arr) {
     let result = checkValidAndReturnArr(test_arr);
-    if (result.length < 12) {
-      throw new Error(`test_arr: ${test_arr} must large than 12 values`);
+    if (result.length < 9) {
+      throw new Error(`test_arr: ${test_arr} must large than 9 values`);
     }
     let startThree = result.slice(0, 3);
     let afterThree = result.slice(3, result.length);
@@ -292,13 +298,72 @@ export class MajiangAlgo {
 
   /**只要能胡，就应该是屁胡，包括七对！ */
   static HuisPihu(group_shoupai: ShoupaiConstuctor, na_pai?: Pai): boolean {
-    return this._HuisPihu(group_shoupai.shouPai, na_pai);
+    // return this._HuisPihu(group_shoupai.shouPai, na_pai);
+    let jijuhua = MajiangAlgo.getJijuhua(group_shoupai)
+    let result = checkValidAndReturnArr(group_shoupai.shouPai).concat(na_pai).sort()
+    if (jijuhua > 4) {
+      console.warn(`!!!会有超过4句话的牌？${group_shoupai}`)
+      return false
+    }
+    //如果是4句话，看最后一句是否是将，如果是，自然就是屁胡了。
+    if (jijuhua == 4) {
+      return this.isAA(result)
+    }
+    if (this.HuisQiDui(group_shoupai, na_pai)) {
+      return true;
+    }
+    let allJiang = getAllJiangArr(result);
+    let is_hu = false;
+    // console.log(allJiang)
+    //循环的目的是因为可能胡不止一张牌
+    if (allJiang) {
+      allJiang.forEach(jiang => {
+        // console.log(item)
+        var newstr = result.join("");
+        //去掉这两个将,item是这样的"b1b1","didi"
+        newstr = newstr.replace(jiang, "");
+        var caller: Function
+        //其实只需要检测3- jijuha, 因为在卡五星里面已经删除掉了带有卡5的一句话！
+        switch (jijuhua) {
+          case 3:
+            // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
+            caller = this.isABCorAAA
+            break;
+          case 2:
+            caller = this.is2ABC
+            break;
+          case 1:
+            caller = this.is3ABC
+            break;
+          case 0:
+            caller = this.is4ABC
+            break;
+          default:
+            throw new Error(`jijuha:${jijuhua}的值只能是0-3 `)
+        }
+        if (caller && caller.call(this, newstr)) {
+          is_hu = true
+        }
+      })
+    }
+    return is_hu
+    // return this._HuisPihu(this.flat_shou_pai(group_shoupai), na_pai);
+
   }
 
-  private static _HuisPihu(shou_pai: Array<Pai>, na_pai?: Pai) {
+  private static getJijuhua(group_shoupai: ShoupaiConstuctor) {
+    return group_shoupai.anGang.length + group_shoupai.mingGang.length + group_shoupai.peng.length;
+  }
+
+  /** 仅能用来检测4ABC的情况 */
+  static _HuisPihu(shou_pai: Array<Pai>, na_pai?: Pai) {
     let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
+    if (result.length < 14) {
+      // console.warn(`只能用来检测4ABC的情况，${shou_pai}`)
+      return false
+    }
     let allJiang = getAllJiangArr(result);
     let is_hu = false;
     let reg_four = /(..)\1\1\1/g;
@@ -389,45 +454,63 @@ export class MajiangAlgo {
   }
   /**是否是碰碰胡 */
   static HuisPengpeng(group_shoupai: ShoupaiConstuctor, na_pai: Pai): boolean {
+    let len = this.flat_shou_pai(group_shoupai).push(na_pai)
+    if (len < 14) {
+      throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
+    }
     return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
   }
 
+  /**管你几句话，只要是剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ */
   private static _HuisPengpeng(shou_pai: Array<Pai>, na_pai) {
     let result = checkValidAndReturnArr(shou_pai)
       .concat(na_pai)
       .sort();
-    if (result.length < 14) {
-      throw new Error(`str:${shou_pai} must larger than 14 values`);
-    }
     //把所有三个或四个相同的干掉，看最后剩下的是否是将
     let reg = /(..)\1\1\1?/g;
     let jiang = result.join("").replace(reg, "");
     if (jiang.length != 4) {
       return false;
     }
-    return this.isAA(jiang);
+    return this.isAA(checkValidAndReturnArr(jiang));
   }
 
-  /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
-  static HuWhatPai(shou_pai): hupaiConstructor {
-    let result = checkValidAndReturnArr(shou_pai);
+
+  static flat_shou_pai(group_shou_pai: ShoupaiConstuctor): Array<Pai> {
+    let real_shoupai = [];
+    group_shou_pai.anGang.forEach(pai => {
+      for (let i = 0; i < 4; i++) {
+        real_shoupai.push(pai);
+      }
+    });
+    group_shou_pai.mingGang.forEach(pai => {
+      for (let i = 0; i < 4; i++) {
+        real_shoupai.push(pai);
+      }
+    });
+    group_shou_pai.peng.forEach(pai => {
+      for (let i = 0; i < 3; i++) {
+        real_shoupai.push(pai);
+      }
+    });
+    real_shoupai = real_shoupai.concat(group_shou_pai.shouPai);
+    return real_shoupai.sort();
+  }
+  static HuWhatGroupPai(group_shoupai: ShoupaiConstuctor): hupaiConstructor {
     let hupai_dict = {};
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
-      let newShouPaiStr = result
+      let newShouPaiStr: string = this.flat_shou_pai(group_shoupai)
         .concat(single_pai)
         .sort()
         .join("");
-      // console.log(newstr)
       let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
       if (isFiveRepeat) {
         continue;
-        // console.log(newstr.match(/(..)\1\1\1\1/g))
-        // throw new Error('irregular Pai, record in database, maybe Hacker.')
-        //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
-      } else {
-        let hupai_typesCode = this.HupaiTypeCodeArr(result, single_pai);
+      }
+      else {
+        let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, single_pai);
         if (!_.isEmpty(hupai_typesCode)) {
           hupai_dict[single_pai] = hupai_typesCode;
         }
@@ -451,34 +534,49 @@ export class MajiangAlgo {
       hupai_dict: hupai_dict
     };
   }
-  static flat_shou_pai(group_shou_pai: ShoupaiConstuctor): Array<Pai> {
-    let real_shoupai = [];
-    group_shou_pai.anGang.forEach(pai => {
-      for (let i = 0; i < 4; i++) {
-        real_shoupai.push(pai);
+
+  /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
+  static HuWhatPai(shou_pai): hupaiConstructor {
+    let result: Array<Pai> = checkValidAndReturnArr(shou_pai);
+    let hupai_dict = {};
+
+    for (var i = 0; i < all_single_pai.length; i++) {
+      let single_pai = all_single_pai[i];
+      let newShouPaiStr: string = result
+        .concat(single_pai)
+        .sort()
+        .join("");
+      // console.log(newstr)
+      let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
+      if (isFiveRepeat) {
+        continue;
+        // console.log(newstr.match(/(..)\1\1\1\1/g))
+        // throw new Error('irregular Pai, record in database, maybe Hacker.')
+        //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
+      } else {
+        let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], shouPai: result }, single_pai);
+        if (!_.isEmpty(hupai_typesCode)) {
+          hupai_dict[single_pai] = hupai_typesCode;
+        }
       }
-    });
-    group_shou_pai.mingGang.forEach(pai => {
-      for (let i = 0; i < 4; i++) {
-        real_shoupai.push(pai);
-      }
-    });
-    group_shou_pai.peng.forEach(pai => {
-      for (let i = 0; i < 3; i++) {
-        real_shoupai.push(pai);
-      }
-    });
-    real_shoupai = real_shoupai.concat(group_shou_pai.shouPai);
-    return real_shoupai.sort();
-  }
-  static HuWhatGroupPai(group_shoupai: ShoupaiConstuctor): hupaiConstructor {
-    let onlyFlatShouPai = MajiangAlgo.isOnlyFlatShouPai(group_shoupai);
-    if (onlyFlatShouPai) {
-      return this.HuWhatPai(this.flat_shou_pai(group_shoupai));
     }
-    // else{
-    //   return this.HuisPihu(group_shoupai.shouPai)
-    // }
+    let all_hupai_zhang = _.keys(hupai_dict);
+    let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
+    let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
+    //如果hupai_data为空，sortBy也会返回空
+    //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
+    if (_.isEmpty(all_hupai_zhang)) {
+      return {
+        all_hupai_zhang: [],
+        all_hupai_typesCode: [],
+        hupai_dict: {}
+      };
+    }
+    return {
+      all_hupai_zhang: all_hupai_zhang.sort(),
+      all_hupai_typesCode: all_hupai_typesCode.sort(),
+      hupai_dict: hupai_dict
+    };
   }
   /**group手牌中只有手牌，anGang, mingGang, peng都为空 */
   private static isOnlyFlatShouPai(group_shoupai: ShoupaiConstuctor) {
@@ -539,7 +637,7 @@ export class MajiangAlgo {
         switch (jijuhua) {
           case 3:
             // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
-            if(_.isEmpty(newstr)){
+            if (_.isEmpty(newstr)) {
               is_hu = true
             }
             break;
@@ -555,7 +653,7 @@ export class MajiangAlgo {
           default:
             throw new Error(`jijuha:${jijuhua}的值只能是0-3 `)
         }
-        if (caller &&  caller.call(this, newstr)) {
+        if (caller && caller.call(this, newstr)) {
           is_hu = true
         }
       })
@@ -634,7 +732,7 @@ export class MajiangAlgo {
         ["di", "zhzhzh", "zhzhzhzh", "fafafa", "fafafafa"]
       ];
       let shouStr = result.join("");
-      console.log("shouStr: ",shouStr);
+      // console.log("shouStr: ",shouStr);
       let isXiao = false;
       xiaoSheet.forEach(item => {
         //只要判断是否有上面的三种即可！
@@ -702,7 +800,7 @@ export class MajiangAlgo {
   }
 
   //杠上开花，自己杠了个牌，然后胡了,要与玩家杠之后联系上。
-  static HuisGangShangKai(shou_pai, na_pai, isSelfGang) {
+  static _HuisGangShangKai(shou_pai, na_pai, isSelfGang) {
     //杠了之后才会去检测是否胡，还得检测是哪种胡！
     if (isSelfGang) {
       //还得知道是哪种胡！但肯定不会是七对类型的。返回的其实就应该是整个胡牌的情况，杠上开会在胡牌的基础上多算番
@@ -742,28 +840,31 @@ export class MajiangAlgo {
     if (this.HuisXiaoShanYuan(group_shoupai, na_pai)) {
       _huArr.push(config.HuisXiaoShanYuan);
     }
-    // if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
-    //   _huArr.push(config.HuisDaShanYuan);
-    // }
-    // if (this.HuisGangShangKai(str, na_pai)) {
+    if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
+      _huArr.push(config.HuisDaShanYuan);
+    }
+    // if (this.HuisGangShangKai(group_shoupai, na_pai)) {
     //   _huArr.push(config.HuisGangShangKai);
     // }
     // if (this.HuisGangShangPao(str, na_pai)) {
     //   _huArr.push(config.HuisGangShangPao);
     // }
-    // if (this.HuisPihu(group_shoupai, na_pai)) {
-    //   _huArr.push(config.HuisPihu);
-    // }
+    if (this.HuisPihu(group_shoupai, na_pai)) {
+      _huArr.push(config.HuisPihu);
+    }
     return _huArr;
   }
-  static HuPaiNames(str, na_pai) {
+  static HuPaiNames(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
     let _output = [];
-    this.HupaiTypeCodeArr(str, na_pai).forEach(item => {
+    // console.log(group_shoupai);
+    // console.log("this.HupaiTypeCodeArr(group_shoupai, na_pai):",this.HupaiTypeCodeArr(group_shoupai, na_pai));
+
+    this.HupaiTypeCodeArr(group_shoupai, na_pai).forEach(item => {
       _output.push(config.HuPaiSheet[item].name);
     });
     return _output;
   }
-  static HuPaiNamesFromArr(hupaicodeArr): Array<string> {
+  static HuPaiNamesFromArr(hupaicodeArr: Array<number>): Array<string> {
     return hupaicodeArr.map(item => {
       return config.HuPaiSheet[item].name;
     });
@@ -772,9 +873,6 @@ export class MajiangAlgo {
   static isDaHu(hupaicodeArr: Array<number>) {
     if (!hupaicodeArr) {
       return false;
-    }
-    if (!_.isArray(hupaicodeArr)) {
-      throw new Error(`hupaicodeArr必须是个数组，但：${hupaicodeArr}`);
     }
     if (
       hupaicodeArr.includes(config.HuisYise) ||

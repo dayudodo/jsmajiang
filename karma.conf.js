@@ -12,9 +12,9 @@ module.exports = function(config) {
       // 'tt.js',
       // {pattern: 'spec/firstTest.js', included: false}
       // 'spec/*.js'
-      'spec/tt.js',
-      'spec/reg_version.js',
-      'spec/firstTest.js'
+      'spec/hu_test/ja-one.js',
+      // 'spec/reg_version.js',
+      // 'spec/firstTest.js'
     ],
     // list of files to exclude
     exclude: [
@@ -22,6 +22,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+      'spec/**/*.js': ['babel']
     },
     // test results reporter to use
     // possible values: 'dots', 'progress'

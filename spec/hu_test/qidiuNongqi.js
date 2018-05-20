@@ -1,7 +1,5 @@
-//麻将算法的测试程序，里面也包括了胡牌的一些用例
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo";
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 // var Majiang = require("../server/Majiang");
 
 // 特殊胡

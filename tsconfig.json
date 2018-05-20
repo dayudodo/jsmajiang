@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
-        "rootDir":"./server",
+        "rootDir":"./",
         "outDir": "./server_build",
         "sourceMap": true,
         "typeRoots": [
@@ -14,13 +14,13 @@
         ]
     },
     "include": [
-        "./server/**/*.ts"
+        "./server/**/*.ts",
+        "./spec/**/*.ts"
     ],
 
     "exclude": [
         "server_build",
         "node_modules",
-        "client",
-        "spec"
+        "client"
     ]
 }

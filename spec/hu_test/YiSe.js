@@ -1,6 +1,5 @@
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo"
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 
 test("清一色false", function (t) {
   let str = "b1 b1 b1 b2 b2 b4 b4 b5 b5 b8  b7 b7 b7";

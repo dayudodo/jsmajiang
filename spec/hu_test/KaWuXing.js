@@ -1,7 +1,5 @@
-//麻将算法的测试程序，里面也包括了胡牌的一些用例
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo"
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 
 test("卡五星", function(t) {
   let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";

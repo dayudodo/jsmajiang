@@ -1,7 +1,5 @@
-//麻将算法的测试程序，里面也包括了胡牌的一些用例
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo"
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 // var Majiang = require("../server/Majiang");
 // var mj = new Majiang()
 test("应为将", function (t) {
@@ -109,7 +107,12 @@ test("4 should is2ABC 非杠", function (t) {
   let str = "b1 b2 b3 b3 b3 b3";
   t.is(MajiangAlgo.is2ABC(str), true);
 });
+test("4.0 should is2ABC 非杠", function (t) {
+  let str = "b4 b5 b5 b5 b5 b6";
+  t.is(MajiangAlgo.is2ABC(str), true);
+});
 
+//7张带杠的检测
 test("4.1 should is2ABC，前ABC，杠在后", function (t) {
   let str = "b1 b2 b3 t3 t3 t3 t3";
   t.is(MajiangAlgo.is2ABC(str), true);
@@ -222,28 +225,3 @@ test("不能碰di", function (t) {
   t.is(MajiangAlgo.canPeng(str, "b1"), false);
 });
 
-
-
-//哪种胡类型
-// test("屁胡", t => {
-//   let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6 fa fa fa zh ";
-//   let na_pai = "zh";
-//   t.deepEqual(MajiangAlgo.HuPaiNames(str, na_pai), ["屁胡"]);
-// });
-// test("清一色", t => {
-//   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9 b1 b2 b3 b4 ";
-//   let na_pai = "b4";
-//   t.deepEqual(MajiangAlgo.HuPaiNames(str, na_pai), ["清一色", "屁胡"]);
-// });
-// test("清一色碰碰", t => {
-//   let str = "b1 b1 b1 b2 b2 b2 b3 b3 b3 b4 b4 b4 b5 ";
-//   let na_pai = "b5";
-//   t.deepEqual(MajiangAlgo.HuPaiNames(str, na_pai), ["清一色", "碰碰胡", "屁胡"]);
-// });
-// test("清一色七对", t => {
-//   let str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b6 b6 b7 ";
-//   let na_pai = "b7";
-//   t.deepEqual(MajiangAlgo.HuPaiNames(str, na_pai), ["清一色", "七对", "屁胡"]);
-// });
-
-// });

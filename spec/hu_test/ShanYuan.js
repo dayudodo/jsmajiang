@@ -1,7 +1,5 @@
-//麻将算法的测试程序，里面也包括了胡牌的一些用例
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo";
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 // var Majiang = require("../server/Majiang");
 
 //repeatTwiceOnly是专门为小三元服务的，因为要判断是否只重复了二次，不能有三次的情况！
@@ -15,7 +13,7 @@ import { MajiangAlgo } from "../../server_build/MajiangAlgo";
 test("should 大三元", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh fa fa";
   let na_pai = "fa";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: [],
     mingGang: [],
     peng: [],
@@ -27,7 +25,7 @@ test("should 大三元", t => {
 test("should 大三元, 三元有杠", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh zh fa fa";
   let na_pai = "fa";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: [],
     mingGang: [],
     peng: [],
@@ -39,7 +37,7 @@ test("should 大三元, 三元有杠", t => {
 test("should 大三元", t => {
   let str = "fa fa b1 b1 b1 b2 b3 di di di zh zh zh ";
   let na_pai = "fa";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: [],
     mingGang: [],
     peng: [],
@@ -50,7 +48,7 @@ test("should 大三元", t => {
 test("should 小三元", t => {
   let str = "b1 b1 b1 b2 b3 di di di fa fa zh zh zh";
   let na_pai = "b1";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: [],
     mingGang: [],
     peng: [],
@@ -62,7 +60,7 @@ test("should 小三元", t => {
 test("group should 小三元", t => {
   let str = "fa b1 b1 b1 b2 b3 fa";
   let na_pai = "b1";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: ['zh'],
     mingGang: [],
     peng: ['di'],
@@ -74,7 +72,7 @@ test("group should 小三元", t => {
 test("should not 大小三元", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh t1 t1";
   let na_pai = "b1";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: [],
     mingGang: [],
     peng: [],
@@ -86,7 +84,7 @@ test("should not 大小三元", t => {
 test("should not 大小三元", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh t1 t1";
   let na_pai = "t1";
-      let group_shoupai = {
+  let group_shoupai = {
     anGang: [],
     mingGang: [],
     peng: [],

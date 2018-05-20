@@ -1,6 +1,5 @@
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo"
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 
 //is4ABC group
 test("is4ABC 12张牌", function (t) {

@@ -1,7 +1,5 @@
-
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo"
-
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 // test("三杠屁胡", function (t) {
 //   let str = " b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t1 t1 t3 t4 t5 zh";
 //   let na_pai = "zh";
@@ -18,14 +16,27 @@ import { MajiangAlgo } from "../../server_build/MajiangAlgo"
 // })
 
 
-test("卡五星", function(t) {
-    let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
-    let na_pai = "b5";
-    let group_shoupai = {
-      anGang: [],
-      mingGang: [],
-      peng: [],
-      shouPai: str.split(" ")
-    };
-    t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
-  });
+// test("卡五星", function(t) {
+//     let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
+//     let na_pai = "b5";
+//     let group_shoupai = {
+//       anGang: [],
+//       mingGang: [],
+//       peng: [],
+//       shouPai: str.split(" ")
+//     };
+//     t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
+//   });
+
+test("清一色 屁胡", t => {
+  let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9 b1 b2 b3 b4";
+  let na_pai = "b4";
+  let group_shoupai = {
+    anGang: [],
+    mingGang: [],
+    peng: [],
+    shouPai: checkValidAndReturnArr(str)
+  };
+  console.log("MajiangAlgo.HuPaiNames(group_shoupai, na_pai):",MajiangAlgo.HuPaiNames(group_shoupai, na_pai));
+  t.deepEqual(MajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["清一色", "屁胡"]);
+});

@@ -1,5 +1,5 @@
 import test from "ava";
-import { MajiangAlgo } from "../../server_build/MajiangAlgo"
+import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
 
 // describe('is3ABC group', function(t) {
 test("is3ABC 正规九张牌", function (t) {

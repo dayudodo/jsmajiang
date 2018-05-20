@@ -31,14 +31,10 @@ na_pai = "b7";
 console.log(MajiangAlgo.HuPaiNames(str, na_pai));
 console.log(MajiangAlgo.isDaHu(MajiangAlgo.HupaiTypeCodeArr(str, na_pai)));
 
-//[ '卡五星', '屁胡' ]
-str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
-na_pai = "b5";
-console.log(MajiangAlgo.HuPaiNames(str, na_pai));
-console.log(MajiangAlgo.isDaHu(MajiangAlgo.HupaiTypeCodeArr(str, na_pai)));
+
 
 //[ '七对', '龙七对' ], 奇怪，七对检测出屁胡，而龙七对则不会！
-str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9 ";
+str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9";
 na_pai = "t9";
 console.log(MajiangAlgo.HuPaiNames(str, na_pai))
 console.log(MajiangAlgo.isDaHu(MajiangAlgo.HupaiTypeCodeArr(str, na_pai)));
@@ -55,23 +51,3 @@ na_pai = "b1";
 console.log(MajiangAlgo.HuPaiNames(str, na_pai));
 console.log(MajiangAlgo.isDaHu(MajiangAlgo.HupaiTypeCodeArr(str, na_pai)));
 
-//胡什么牌及类型
-str = "fa b1 b1 b1 b2 b3 di di di zh zh zh fa ";
-console.dir(MajiangAlgo.HuWhatPai(str))
-
-//是大胡听牌
-str = "fa b1 b1 b1 b2 b3 di di di zh zh zh fa ";
-console.dir(MajiangAlgo.isDaHuTing(str))
-console.dir(MajiangAlgo.HuWhatPai(str).all_hupai_types)
-console.dir(MajiangAlgo.HuWhatPai(str).all_hupai_zhang)
-
-//不是大胡听牌，只是个屁胡
-str = "b1 b2 b3 b4 b5 b6 t4 t5 t6 fa fa fa zh ";
-console.dir(MajiangAlgo.HuWhatPai(str))
-console.dir(MajiangAlgo.HuWhatPai(str).all_hupai_types)
-console.log("是否是大胡听牌：",MajiangAlgo.isDaHuTing(str))
-
-//啥也不是，连屁胡都不是！
-str = "b1 b2 b3 b4 b7 b8 t4 t5 t8 fa fa fa zh ";
-console.dir(MajiangAlgo.HuWhatPai(str).all_hupai_types)
-console.log("是否是大胡听牌：",MajiangAlgo.isDaHuTing(str))
