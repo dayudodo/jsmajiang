@@ -56,6 +56,10 @@ test("is3ABC 十一张, 前后二杠 ", function (t) {
     let str = "b1 b1 b1 b1 t1 t2 t3 zh zh zh zh"
     t.is(MajiangAlgo.is3ABC(str), true);
 });
+test("is3ABC 十一张, 前后二杠false ", function (t) {
+    let str = "b1 b1 b1 b1 t1 t2 t4 zh zh zh zh"
+    t.is(MajiangAlgo.is3ABC(str), false);
+});
 test("is3ABC 十二张, 三杠 ", function (t) {
     let str = "b1 b1 b1 b1 t1 t1 t1 t1 zh zh zh zh"
     t.is(MajiangAlgo.is3ABC(str), true);

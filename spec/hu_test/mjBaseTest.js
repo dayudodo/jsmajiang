@@ -3,10 +3,10 @@ import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/M
 // var Majiang = require("../server/Majiang");
 // var mj = new Majiang()
 test("应为将", function (t) {
-  t.is(MajiangAlgo.isAA("b1 b1"), true);
+  t.is(MajiangAlgo.isAA(checkValidAndReturnArr("b1 b1")), true);
 });
 test("should将", function (t) {
-  t.is(MajiangAlgo.isAA("b1b1"), true);
+  t.is(MajiangAlgo.isAA(checkValidAndReturnArr("b1b1")), true);
 });
 test("should一句话", function (t) {
   t.is(MajiangAlgo._isAAA("b1 b1 b1"), true);
