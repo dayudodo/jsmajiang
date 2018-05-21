@@ -1,23 +1,24 @@
-import * as config from "./../config";
+import * as config from "./config";
 
 class Timer {
+  public allTimers;
   constructor() {
     this.allTimers = {};
   }
   //计时过后运行fn
-  run(fn, maxWaitTime = 2) {
+  run(fn: Function, maxWaitTime = 2) {
     if (typeof fn !== "function") {
       throw new Error("fn必须是个函数");
     }
     let timeout = setTimeout(() => {
       fn();
     }, maxWaitTime * 1000);
-    this.allTimers[fn] =  timeout
+    this.allTimers[fn.name] =  timeout
   }
   //取消某个函数引起的计时
   cancel(fn){
-    console.log(this.allTimers[fn])
-    clearTimeout(this.allTimers[fn])
+    console.log(this.allTimers[fn.name])
+    clearTimeout(this.allTimers[fn.name])
   }
 }
 

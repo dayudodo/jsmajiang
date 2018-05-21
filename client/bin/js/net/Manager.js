@@ -58,7 +58,23 @@ var mj;
                     [g_events.server_can_select, this.server_can_select],
                     [g_events.server_peng, this.server_peng],
                     [g_events.server_mingGang, this.server_mingGang],
+                    [g_events.server_liang, this.server_liang],
+                    [g_events.server_winner, this.server_winner],
                 ];
+            };
+            Manager.prototype.server_winner = function (server_message) {
+                console.log(server_message);
+            };
+            Manager.prototype.server_liang = function (server_message) {
+                // console.log(server_message);
+                var liangPlayer = server_message.liangPlayer;
+                //更新本地player数据
+                var localPlayer = Laya.room.players.find(function (p) { return p.user_id == liangPlayer.user_id; });
+                localPlayer.cloneValuesFrom(liangPlayer);
+                //更新UI中的显示
+                this.show_group_shoupai(localPlayer);
+                this.show_out(localPlayer);
+                //用户亮牌并不需要改变显示方向
             };
             Manager.prototype.server_mingGang = function (server_message) {
                 // console.log(server_message)

@@ -149,14 +149,19 @@ class Room {
         index = index == config.LIMIT_IN_ROOM ? 0 : index;
         return this.players.find(p => p.seat_index == index);
     }
-    /**差异化处理，和上一次的数据相比有没有发生变化 */
-    player_data_filter(socket, player) {
+    /**
+     *
+     * @param socket 哪个socket
+     * @param player 需要向哪个玩家发送消息
+     * @param ignore_filter 是否忽略filter
+     */
+    player_data_filter(socket, player, ignore_filter = false) {
         let player_data = {};
         player_1.Player.filter_properties.forEach(item => {
             player_data[item] = player[item];
         });
-        //是玩家本人的socket，返回详细的数据
-        if (player.socket == socket) {
+        //是玩家本人的socket，返回详细的数据，或者选择过滤，也会直接返回
+        if (player.socket == socket || ignore_filter) {
             return player_data;
         }
         else {
@@ -224,27 +229,36 @@ class Room {
         player.is_ting = true; //如果亮牌，肯定就是听了
         //玩家已经有决定，不再想了。
         player.is_thinking_tingliang = false;
+        //亮牌之后，需要显示此玩家的所有牌，除了暗杠！
+        this.other_players(player).forEach(p => {
+            p.socket.sendmsg({
+                type: g_events.server_liang,
+                liangPlayer: this.player_data_filter(socket, player, true)
+            });
+        });
     }
-    //听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。
+    /**听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。*/
     client_confirm_ting(socket) {
         let player = this.find_player_by(socket);
         player.is_ting = true;
         // player.hupai_zhang = player.temp_hupai_zhang;
         player.is_thinking_tingliang = false;
     }
-    //玩家选择胡牌
+    /**玩家选择胡牌*/
     client_confirm_hu(socket) {
         let player = this.find_player_by(socket);
-        let room_name = this.id;
-        if (player.canHu(player.received_pai)) {
+        //todo: 自摸，胡自己摸的牌！
+        //胡别人的打的牌
+        if (player.canHu(this.table_dapai)) {
             //告诉所有人哪个胡了
             // io.to(room_name).emit("server_winner", player.username, hupaiNames);
-            let typesCode = player.hupai_data.hupai_dict[player.received_pai];
+            let typesCode = player.hupai_data.hupai_dict[this.table_dapai];
             this.players.forEach(p => {
                 p.socket.sendmsg({
                     type: g_events.server_winner,
-                    user_id: player.user_id,
-                    hupai_typesCode: typesCode
+                    winner: this.player_data_filter(socket, player, true),
+                    hupai_typesCode: typesCode,
+                    hupai_names: MajiangAlgo_1.MajiangAlgo.HuPaiNamesFromArr(typesCode)
                 });
             });
             console.dir(player);
@@ -269,7 +283,7 @@ class Room {
     }
     /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
      * @param fromEnd 是否从最后发牌
-    */
+     */
     server_fa_pai(player, fromEnd = false) {
         let pai;
         if (fromEnd) {
@@ -289,7 +303,7 @@ class Room {
         this.fapai_to_who = player;
         //发牌给谁，谁就是当前玩家
         this.current_player = player;
-        player.received_pai = pai[0];
+        player.mo_pai = pai[0];
         this.table_fa_pai = pai[0];
         console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
         console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
@@ -390,7 +404,18 @@ class Room {
                 //todo:告诉其它人哪个是赢家或者是平局
             }
             else {
-                //todo: 看自己能否听牌！
+                //打完牌之后如果能胡，就可以亮，但是肯定不能胡自己打的牌，另外，亮了之后就不需要再亮了！
+                if (!player.is_liang) {
+                    if (player.canLiang()) {
+                        let isShowHu = false, isShowLiang = true, isShowGang = false, isShowPeng = false;
+                        player.socket.sendmsg({
+                            type: g_events.server_can_select,
+                            select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
+                        });
+                    }
+                }
+                //todo: 在玩家选择的时候服务器应该等待，但是如果有多个玩家在选择呢？比如这个打的牌别人可以碰或者杠？
+                //发牌肯定是不可以的，要等玩家选择完牌之后才能正常发牌！
                 //打牌之后自己也可以听、或者亮的！当然喽，不能胡自己打的牌。所以还是有可能出现三家都在听的情况！
                 let oplayers = this.other_players(player);
                 for (let item_player of oplayers) {
@@ -398,18 +423,26 @@ class Room {
                     let isShowHu = false, isShowLiang = false, isShowGang = false, isShowPeng = false;
                     //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
                     //流式处理，一次判断所有，然后结果发送给客户端
-                    //玩家能胡了就可以亮牌
-                    if (item_player.canHu(dapai_name)) {
-                        // canNormalFaPai = false;
-                        isShowLiang = true;
-                        console.log(`房间${this.id} 玩家${item_player.username}可以亮牌${dapai_name}`);
-                        //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
+                    //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
+                    if (!item_player.is_liang) {
+                        if (item_player.canHu(dapai_name)) {
+                            // canNormalFaPai = false;
+                            isShowLiang = true;
+                            console.log(`房间${this.id} 玩家${item_player.username}可以亮牌${dapai_name}`);
+                            //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
+                        }
                     }
-                    // 平胡不能胡，亮牌的才可以胡，或者玩家是大胡
-                    if (item_player.is_liang || item_player.isDaHu(dapai_name)) {
+                    //如果用户亮牌而且可以胡别人打的牌
+                    if (item_player.is_liang && item_player.canHu(dapai_name)) {
+                        isShowHu = true;
+                        console.log(`房间${this.id} 玩家${item_player.username}亮牌之后可以胡牌${dapai_name}`);
+                    }
+                    // 大胡也可以显示胡牌
+                    //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
+                    if (item_player.isDaHu(dapai_name)) {
                         // canNormalFaPai = false;
                         isShowHu = true;
-                        console.log(`房间${this.id} 玩家${item_player.username}可以胡牌${dapai_name}`);
+                        console.log(`房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`);
                         //todo: 等待20秒，过时发牌
                     }
                     if (item_player.canGang(dapai_name)) {
@@ -518,7 +551,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.fapai_gang();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.dapai_liang();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

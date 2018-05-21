@@ -62,12 +62,30 @@ module mj.net {
                 [g_events.server_can_select, this.server_can_select],
                 [g_events.server_peng, this.server_peng],
                 [g_events.server_mingGang, this.server_mingGang],
+                [g_events.server_liang, this.server_liang],
+                [g_events.server_winner, this.server_winner],
 
             ]
 
         }
-        public server_mingGang(server_message){
-                        // console.log(server_message)
+        public server_winner(server_message){
+            console.log(server_message);
+            
+        }
+        public server_liang(server_message) {
+            // console.log(server_message);
+            let { liangPlayer } = server_message
+            //更新本地player数据
+            let localPlayer = Laya.room.players.find(p => p.user_id == liangPlayer.user_id)
+            localPlayer.cloneValuesFrom(liangPlayer)
+            //更新UI中的显示
+            this.show_group_shoupai(localPlayer)
+            this.show_out(localPlayer)
+            //用户亮牌并不需要改变显示方向
+        }
+
+        public server_mingGang(server_message) {
+            // console.log(server_message)
             // return;
             //哪个人碰了牌，就更新那个人的手牌和打牌
             // let { player } = server_message
@@ -77,7 +95,7 @@ module mj.net {
                 let localPlayer = Laya.room.players.find(p => p.user_id == person.user_id)
                 localPlayer.cloneValuesFrom(person)
             });
-            let gangPlayer = Laya.room.players.find(p=>p.user_id == gangPlayer_user_id)
+            let gangPlayer = Laya.room.players.find(p => p.user_id == gangPlayer_user_id)
             // console.log(Laya.room.players)
             //更新UI中的显示
             this.show_group_shoupai(Laya.god_player)
@@ -202,7 +220,7 @@ module mj.net {
                 let localPlayer = Laya.room.players.find(p => p.user_id == person.user_id)
                 localPlayer.cloneValuesFrom(person)
             });
-            let pengPlayer = Laya.room.players.find(p=>p.user_id == pengPlayer_user_id)
+            let pengPlayer = Laya.room.players.find(p => p.user_id == pengPlayer_user_id)
             // console.log(Laya.room.players)
             //更新UI中的显示
             this.show_group_shoupai(Laya.god_player)
@@ -445,8 +463,8 @@ module mj.net {
             outSprite.visible = true
 
             //直接找到行和列替换成真正的打牌
-            player.arr_dapai.forEach((dapai,index) => {
-                let [line, row ] = player.coordinateOf(index)
+            player.arr_dapai.forEach((dapai, index) => {
+                let [line, row] = player.coordinateOf(index)
                 let lastValidSprite = outSprite.getChildAt(line).getChildAt(row) as Sprite
                 let paiImgSprite = lastValidSprite.getChildAt(0) as Image
                 if (player.ui_index == 3) {

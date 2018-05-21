@@ -12,7 +12,7 @@ class Player {
         this.east = false;
         /** 玩家在房间的座位号，也是加入房间的顺序号 */
         this.seat_index = null; //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
-        this._received_pai = null;
+        this._mo_pai = null;
         /**玩家打牌形成的数组 */
         this.arr_dapai = []; //打过的牌有哪些，断线后可以重新发送此数据
         /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
@@ -74,23 +74,24 @@ class Player {
             return false;
         }
     }
-    /**玩家收到的牌，保存到手牌及group手牌中 */
-    set received_pai(pai) {
-        this._received_pai = pai;
+    /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中 */
+    set mo_pai(pai) {
+        this._mo_pai = pai;
         this.group_shou_pai.shouPai.push(pai);
         this.group_shou_pai.shouPai.sort();
     }
-    get received_pai() {
-        return this._received_pai;
+    get mo_pai() {
+        return this._mo_pai;
     }
-    /**能否听牌 */
+    /**能否听牌，玩家没亮的时候，屁胡不能听牌！其它情况下是可以的！ */
     canTing() {
         return this.hupai_data.all_hupai_zhang.length > 0;
     }
-    // /**能亮否？ */
-    // canLiang(): boolean {
-    //   return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-    // }
+    /**能亮否？能胡就能亮？ */
+    canLiang() {
+        // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
+        return this.canTing();
+    }
     /**能碰吗？只能是手牌中的才能检测碰 */
     canPeng(pai) {
         return MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
@@ -139,7 +140,7 @@ class Player {
             throw new Error(`${this.username}打了张非法牌？${pai}`);
         }
         this.group_shou_pai.shouPai.sort();
-        this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+        this._mo_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
         this.calculateHu();
     }
     /**计算各种胡牌的状态 */

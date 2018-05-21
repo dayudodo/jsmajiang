@@ -1,5 +1,6 @@
 import * as config from "./config";
 import * as _ from "lodash";
+import { checkValidAndReturnArr } from "./MajiangAlgo";
 
 declare global {
   interface Array<T> {
@@ -17,36 +18,59 @@ Array.prototype.remove = function(val) {
   return this;
 };
 
-export class TablePaiManager{
-  constructor(){}
+export class TablePaiManager {
+  constructor() {}
   /**按顺序发牌 */
-  static fapai_sequence(): Array<Pai>{
-    return _.clone(config.all_pai)
+  static fapai_sequence(): Array<Pai> {
+    return _.clone(config.all_pai);
   }
 
   /**随机发牌 */
-  static fapai_random(): Array<Pai>{
-    return _.shuffle(_.clone(config.all_pai))
+  static fapai_random(): Array<Pai> {
+    return _.shuffle(_.clone(config.all_pai));
   }
   /**打牌就有人能杠 */
-  static fapai_gang(){
-    var allpais: Array<Pai> = TablePaiManager.fapai_random()
-    
-    var player1="b1 t1 t1 t3 t7 t8 t9 zh zh fa di di di".split(' ')
-    var player2="b1 b1 b1 b2 b3 b4 t1 t2 t4 t5 zh fa fa".split(' ')
-    var newPais = []
-    newPais = newPais.concat(player1)
-    newPais = newPais.concat(player2)
+  static fapai_gang() {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random();
+
+    var player1 = "b1 t1 t1 t3 t7 t8 t9 zh zh fa di di di".split(" ");
+    var player2 = "b1 b1 b1 b2 b3 b4 t1 t2 t4 t5 zh fa fa".split(" ");
+    var newPais = [];
+    newPais = newPais.concat(player1);
+    newPais = newPais.concat(player2);
     player1.forEach((pai, index) => {
-      allpais.remove(pai)
-      
+      allpais.remove(pai);
     });
     player2.forEach((pai, index) => {
-      allpais.remove(pai)
-      
+      allpais.remove(pai);
     });
-    newPais = newPais.concat(allpais)
-    return newPais
+    newPais = newPais.concat(allpais);
+    return newPais;
+  }
+  /**打算就能亮 */
+  static dapai_liang() {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random();
+
+    var player1 = "b1 b2 b3 b4 b5 b9 t4 t4 t6 t6 t6 di di".split(" ");
+    var player2 = "b1 b1 b1 b2 b3 b4 t1 t2 t3 t6 fa fa di".split(" ");
+    var player3 = "b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 di".split(" ");
+    var fa_pais = "t4".split(' ')
+    var newPais = [];
+    newPais = newPais.concat(player1);
+    newPais = newPais.concat(player2);
+    newPais = newPais.concat(player3);
+    newPais = newPais.concat(fa_pais);
+    player1.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    player2.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    fa_pais.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    newPais = newPais.concat(allpais);
+    return newPais;
   }
 }
 
