@@ -236,6 +236,10 @@ class Room {
                 liangPlayer: this.player_data_filter(socket, player, true)
             });
         });
+        //还没有发过牌呢，说明是刚开始游戏，庄家亮了。
+        if (_.isEmpty(this.table_fa_pai)) {
+            this.server_fa_pai(player);
+        }
     }
     /**听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。*/
     client_confirm_ting(socket) {
@@ -440,45 +444,45 @@ class Room {
         }
     }
     /**玩家是否能显示（胡、亮、杠、碰）的选择窗口 */
-    decideSelectShow(item_player, dapai_name) {
+    decideSelectShow(item_player, dapai_name = null) {
         let isShowHu = false, isShowLiang = false, isShowGang = false, isShowPeng = false;
         //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
         //流式处理，一次判断所有，然后结果发送给客户端
         //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
         if (!item_player.is_liang) {
-            if (item_player.canHu(dapai_name)) {
-                // canNormalFaPai = false;
+            if (item_player.canLiang()) {
                 isShowLiang = true;
-                console.log(`房间${this.id} 玩家${item_player.username}可以亮牌${dapai_name}`);
-                //如果有胡且亮牌，就可以胡，或者有大胡也可以胡
+                console.log(`房间${this.id} 玩家${item_player.username}可以亮牌`);
+                puts(item_player.hupai_data);
             }
         }
-        //如果用户亮牌而且可以胡别人打的牌
-        if (item_player.is_liang && item_player.canHu(dapai_name)) {
-            isShowHu = true;
-            console.log(`房间${this.id} 玩家${item_player.username}亮牌之后可以胡牌${dapai_name}`);
+        /**如果是用户打牌，才会下面的判断 */
+        if (dapai_name) {
+            //如果用户亮牌而且可以胡别人打的牌
+            if (item_player.is_liang && item_player.canHu(dapai_name)) {
+                isShowHu = true;
+                console.log(`房间${this.id} 玩家${item_player.username}亮牌之后可以胡牌${dapai_name}`);
+            }
+            // 大胡也可以显示胡牌
+            //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
+            if (item_player.isDaHu(dapai_name)) {
+                isShowHu = true;
+                console.log(`房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`);
+                //todo: 等待20秒，过时发牌
+            }
+            if (item_player.canGang(dapai_name)) {
+                isShowGang = true;
+                console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`);
+            }
+            if (item_player.canPeng(dapai_name)) {
+                isShowPeng = true;
+                console.log(`房间${this.id} 玩家${item_player.username}可以碰牌${dapai_name}`);
+            }
         }
-        // 大胡也可以显示胡牌
-        //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
-        if (item_player.isDaHu(dapai_name)) {
-            // canNormalFaPai = false;
-            isShowHu = true;
-            console.log(`房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`);
-            //todo: 等待20秒，过时发牌
-        }
-        if (item_player.canGang(dapai_name)) {
-            // canNormalFaPai = false;
-            isShowGang = true;
-            console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`);
-        }
-        if (item_player.canPeng(dapai_name)) {
-            isShowPeng = true;
-            console.log(`房间${this.id} 玩家${item_player.username}可以碰牌${dapai_name}`);
-        }
-        console.log(`房间${this.id} 玩家${item_player.username}的手牌为:`);
-        puts(item_player.group_shou_pai);
         let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
         if (canShowSelect) {
+            console.log(`房间${this.id} 玩家${item_player.username} 显示选择对话框，其手牌为:`);
+            puts(item_player.group_shou_pai);
             // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
             item_player.socket.sendmsg({
                 type: g_events.server_can_select,
@@ -577,8 +581,11 @@ class Room {
             if (p == this.dong_jia) {
                 //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
                 this.sendGroupShouPaiOf(p);
+                let canShowSelect = this.decideSelectShow(p);
                 //todo: 开始游戏不考虑东家会听牌的情况，
-                this.server_fa_pai(p);
+                if (!canShowSelect) {
+                    this.server_fa_pai(p);
+                }
                 this.current_player = p;
                 //给自己发个消息，服务器发的啥牌
                 //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
@@ -586,7 +593,7 @@ class Room {
             else {
                 //非东家，接收到牌即可
                 this.sendGroupShouPaiOf(p);
-                // let ting_liangCode = this.judge_ting(p);
+                this.decideSelectShow(p);
             }
         });
     }
