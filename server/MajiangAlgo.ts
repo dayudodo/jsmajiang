@@ -38,7 +38,7 @@ Array.prototype.equalArrays = function (b) {
   return true; // Otherwise they are equal
 };
 
-export function checkValidAndReturnArr(str): Array<Pai> {
+export function getArr(str): Array<Pai> {
   if (!str || str.length == 0) {
     throw new Error("str is empty");
     //如果是数组，那么就直接返回，可能就是一套手牌，比如["b1","b2"...]
@@ -87,7 +87,7 @@ export class MajiangAlgo {
   }
 
   private static _isAAA(test_arr) {
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length != 3) {
       throw new Error(`test_arr: ${test_arr} 必须等于3`);
     }
@@ -99,7 +99,7 @@ export class MajiangAlgo {
   }
 
   private static _is4A(test_arr) {
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length != 4) {
       throw new Error(`test_arr: ${test_arr}必须等于4`);
     }
@@ -121,7 +121,7 @@ export class MajiangAlgo {
   // }
 
   static isABC(test_arr) {
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length < 3) {
       throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
     }
@@ -137,7 +137,7 @@ export class MajiangAlgo {
   }
 
   static isABCorAAA(test_arr) {
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length == 3) {
       return (this._isAAA(test_arr) || this.isABC(test_arr))
     }
@@ -149,7 +149,7 @@ export class MajiangAlgo {
   /**是否是2句话，最复杂！ */
   static is2ABC(test_arr) {
     //like 123456 or 122334,233445这样的牌型
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length < 6) {
       return false
     }
@@ -218,7 +218,7 @@ export class MajiangAlgo {
   }
 
   static is3ABC(test_arr) {
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length < 9) {
       return false
     }
@@ -263,7 +263,7 @@ export class MajiangAlgo {
   }
 
   static is4ABC(test_arr) {
-    let result = checkValidAndReturnArr(test_arr);
+    let result = getArr(test_arr);
     if (result.length < 9) {
       throw new Error(`test_arr: ${test_arr} must large than 9 values`);
     }
@@ -300,7 +300,7 @@ export class MajiangAlgo {
   static HuisPihu(group_shoupai: ShoupaiConstuctor, na_pai?: Pai): boolean {
     // return this._HuisPihu(group_shoupai.shouPai, na_pai);
     let jijuhua = MajiangAlgo.getJijuhua(group_shoupai)
-    let result = checkValidAndReturnArr(group_shoupai.shouPai).concat(na_pai).sort()
+    let result = getArr(group_shoupai.shouPai).concat(na_pai).sort()
     if (jijuhua > 4) {
       console.warn(`!!!会有超过4句话的牌？${group_shoupai}`)
       return false
@@ -357,7 +357,7 @@ export class MajiangAlgo {
 
   /** 仅能用来检测4ABC的情况 */
   static _HuisPihu(shou_pai: Array<Pai>, na_pai?: Pai) {
-    let result = checkValidAndReturnArr(shou_pai)
+    let result = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 14) {
@@ -397,7 +397,7 @@ export class MajiangAlgo {
 
   static _HuisQiDui(shou_pai: Array<Pai>, na_pai: Pai) {
     //判断是否是七对
-    let result = checkValidAndReturnArr(shou_pai)
+    let result = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 13) {
@@ -415,7 +415,7 @@ export class MajiangAlgo {
     return true;
   }
   static HuisNongQiDui(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
-    let result = checkValidAndReturnArr(group_shoupai.shouPai)
+    let result = getArr(group_shoupai.shouPai)
       .concat(na_pai)
       .sort();
     if (result.length < 13) {
@@ -446,7 +446,7 @@ export class MajiangAlgo {
     return isUniq == 1;
   }
   private static _HuisYise(shou_pai: Array<Pai>, na_pai) {
-    let result = checkValidAndReturnArr(shou_pai)
+    let result = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     // if (result.length < 14) {
@@ -466,7 +466,7 @@ export class MajiangAlgo {
 
   /**管你几句话，只要是剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ */
   private static _HuisPengpeng(shou_pai: Array<Pai>, na_pai) {
-    let result = checkValidAndReturnArr(shou_pai)
+    let result = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     //把所有三个或四个相同的干掉，看最后剩下的是否是将
@@ -475,7 +475,7 @@ export class MajiangAlgo {
     if (jiang.length != 4) {
       return false;
     }
-    return this.isAA(checkValidAndReturnArr(jiang));
+    return this.isAA(getArr(jiang));
   }
 
 
@@ -540,7 +540,7 @@ export class MajiangAlgo {
 
   /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
   static HuWhatPai(shou_pai): hupaiConstructor {
-    let result: Array<Pai> = checkValidAndReturnArr(shou_pai);
+    let result: Array<Pai> = getArr(shou_pai);
     let hupai_dict = {};
 
     for (var i = 0; i < all_single_pai.length; i++) {
@@ -624,7 +624,7 @@ export class MajiangAlgo {
 
   /**带将的1,2,3,4ABC检测，貌似只是为卡五星服务！ */
   private static _jiangNABC(shou_pai: Array<Pai>, jijuhua: number) {
-    let result = checkValidAndReturnArr(shou_pai)
+    let result = getArr(shou_pai)
     let allJiang = getAllJiangArr(result);
     let is_hu = false;
     // console.log(allJiang)
@@ -669,7 +669,7 @@ export class MajiangAlgo {
     if (jijuhua > 3) {
       return false
     }
-    let result: Array<Pai> = checkValidAndReturnArr(shou_pai)
+    let result: Array<Pai> = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     // if (result.length < 14) {
@@ -717,7 +717,7 @@ export class MajiangAlgo {
   }
   static _HuisXiaoShanYuan(shou_pai: Array<Pai>, na_pai: Pai) {
     //
-    let result: Array<Pai> = checkValidAndReturnArr(shou_pai)
+    let result: Array<Pai> = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 14) {
@@ -771,7 +771,7 @@ export class MajiangAlgo {
   }
   static _HuisDaShanYuan(shou_pai: Array<Pai>, na_pai: Pai): boolean {
     //
-    let result: Array<Pai> = checkValidAndReturnArr(shou_pai)
+    let result: Array<Pai> = getArr(shou_pai)
       .concat(na_pai)
       .sort();
     if (result.length < 14) {
@@ -894,7 +894,7 @@ export class MajiangAlgo {
   /**能碰吗？ */
   static canPeng(shouPai: Array<Pai>, pai: Pai) {
     //貌似会改变以前的数组值，所以得克隆一份来进行检测
-    let result = _.clone(checkValidAndReturnArr(shouPai));
+    let result = _.clone(getArr(shouPai));
     let newstrArr = result
       .concat(pai)
       .sort()
@@ -907,7 +907,7 @@ export class MajiangAlgo {
     if (typeof pai != "string") {
       throw new Error(`pai must be a string`);
     }
-    let result = checkValidAndReturnArr(shouPai);
+    let result = getArr(shouPai);
     let newstr = result
       .concat(pai)
       .sort()

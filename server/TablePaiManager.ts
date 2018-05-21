@@ -1,6 +1,6 @@
 import * as config from "./config";
 import * as _ from "lodash";
-import { checkValidAndReturnArr } from "./MajiangAlgo";
+import { getArr } from "./MajiangAlgo";
 
 declare global {
   interface Array<T> {
@@ -28,6 +28,24 @@ export class TablePaiManager {
   /**随机发牌 */
   static fapai_random(): Array<Pai> {
     return _.shuffle(_.clone(config.all_pai));
+  }
+  /**七对放炮 */
+  static qidiu_ting() {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random();
+
+    var player1 = getArr("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di")
+    var player2 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 b9")
+    var newPais = [];
+    newPais = newPais.concat(player1);
+    newPais = newPais.concat(player2);
+    player1.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    player2.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    newPais = newPais.concat(allpais);
+    return newPais;
   }
   /**打牌就有人能杠 */
   static fapai_gang() {

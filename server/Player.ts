@@ -64,6 +64,8 @@ export class Player {
   public is_liang = false;
   /**玩家是否选择听牌，只有大胡的时候才能听牌！*/
   public is_ting = false;
+  /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
+  public is_zimo = false;
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
   public is_thinking_tingliang = false;
 

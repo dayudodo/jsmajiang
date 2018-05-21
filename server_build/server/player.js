@@ -19,6 +19,8 @@ class Player {
         this.is_liang = false;
         /**玩家是否选择听牌，只有大胡的时候才能听牌！*/
         this.is_ting = false;
+        /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
+        this.is_zimo = false;
         //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
         this.is_thinking_tingliang = false;
         /**玩家放碰、杠的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
