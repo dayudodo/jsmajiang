@@ -1,5 +1,5 @@
 import test from "ava";
-import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
+import { MajiangAlgo, getArr } from "../../server_build/server/MajiangAlgo";
 // var Majiang = require("../server/Majiang");
 
 //repeatTwiceOnly是专门为小三元服务的，因为要判断是否只重复了二次，不能有三次的情况！
@@ -17,7 +17,7 @@ test("should 大三元", t => {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
@@ -29,7 +29,7 @@ test("should 大三元, 三元有杠", t => {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
@@ -41,7 +41,7 @@ test("should 大三元", t => {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
 });
@@ -52,7 +52,7 @@ test("should 小三元", t => {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), true);
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
@@ -64,7 +64,7 @@ test("group should 小三元", t => {
     anGang: ['zh'],
     mingGang: [],
     peng: ['di'],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), true);
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
@@ -76,7 +76,7 @@ test("should not 大小三元", t => {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
@@ -88,7 +88,7 @@ test("should not 大小三元", t => {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
   t.is(MajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);

@@ -1,5 +1,5 @@
 import test from "ava";
-import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
+import { MajiangAlgo, getArr } from "../../server_build/server/MajiangAlgo";
 
 // 屁胡
 test("普通屁胡", function (t) {
@@ -62,7 +62,7 @@ test("屁胡", function (t) {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: checkValidAndReturnArr(str)
+    selfPeng:[], shouPai: getArr(str)
   };
   // console.log(MajiangAlgo.HuPaiNames(group_shoupai, na_pai));
   t.is(MajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
@@ -74,7 +74,7 @@ test("屁胡1杠5张false", function (t) {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: checkValidAndReturnArr(str)
+    selfPeng:[], shouPai: getArr(str)
   };
   // console.log(MajiangAlgo.HuPaiNames(group_shoupai, na_pai));
   t.is(MajiangAlgo.HuisPihu(group_shoupai, na_pai), false);
@@ -86,7 +86,7 @@ test("group单杠屁胡，其中四张连续并非杠", function (t) {
     anGang: ['b1'],
     mingGang: [],
     peng: [],
-    shouPai: checkValidAndReturnArr(str)
+    selfPeng:[], shouPai: getArr(str)
   }
   t.is(MajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
 });
@@ -97,7 +97,7 @@ test("group不是清一色", function (t) {
     anGang: ['b1'],
     mingGang: [],
     peng: ['b5', 'b2'],
-    shouPai: str.split(' ')
+    selfPeng:[], shouPai: str.split(' ')
   }
   //b1 b1 b1 b1 b2 b2 b2 b3 b4 b5 b5 b5 b7 b8 b9
   // t.is(MajiangAlgo._HuisPihu(MajiangAlgo.flat_shou_pai(grou_shoupai)),true)
@@ -109,7 +109,7 @@ test("flat可胡，group不能", function (t) {
     anGang: [],
     mingGang: ['b1'],
     peng: ['fa', 'b2'],
-    shouPai: ['b3', 'b4', 't4','t5']
+    selfPeng:[], shouPai: ['b3', 'b4', 't4','t5']
   }
   //b1 b1 b1 b1 b2 b2   b2 b3 b4   t3 t4 t5   fa fa fa fa
   t.is(MajiangAlgo._HuisPihu(MajiangAlgo.flat_shou_pai(group_shoupai), na_pai),true)
@@ -123,7 +123,7 @@ test("屁胡 胡将", function (t) {
     anGang: ['b1'],
     mingGang: ['t1'],
     peng: ['b5', 'b2'],
-    shouPai: str.split(' ')
+    selfPeng:[], shouPai: str.split(' ')
   }
   t.is(MajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
 });

@@ -937,8 +937,10 @@ export class MajiangAlgo {
       return true;
     }
     if (isLiang) {
+      //如果亮牌了那么碰里面包括摸牌，说明是个擦炮！
       if (group_shoupai.peng.includes(mo_pai)) {
         return true;
+        //没有亮牌的时候，如果你是碰的牌，那么别人打的牌是不能杠的！
       } else {
         return false;
       }

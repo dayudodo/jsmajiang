@@ -1,5 +1,5 @@
 import test from "ava";
-import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
+import { MajiangAlgo, getArr } from "../../server_build/server/MajiangAlgo";
 // test("三杠屁胡", function (t) {
 //   let str = " b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t1 t1 t3 t4 t5 zh";
 //   let na_pai = "zh";
@@ -23,7 +23,7 @@ import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/M
 //       anGang: [],
 //       mingGang: [],
 //       peng: [],
-//       shouPai: str.split(" ")
+//       selfPeng:[], shouPai: str.split(" ")
 //     };
 //     t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
 //   });
@@ -35,7 +35,7 @@ test("group仅屁胡 ", function (t) {
     anGang: [],
     mingGang: [],
     peng: ['fa'],
-    shouPai: checkValidAndReturnArr(str)
+    selfPeng:[], shouPai: getArr(str)
   }
   t.is(MajiangAlgo.HuisYise(group_shoupai, na_pai), false)
 })

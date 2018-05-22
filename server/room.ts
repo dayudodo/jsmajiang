@@ -529,7 +529,8 @@ export class Room {
         puts(item_player.hupai_data);
       }
     }
-    /**如果是用户打牌，才会下面的判断 */
+
+    /**如果是用户打牌，才会下面的判断，也就是说dapai_name有值时是别人在打牌！ */
     if (dapai_name) {
       //如果用户亮牌而且可以胡别人打的牌
       if (item_player.is_liang && item_player.canHu(dapai_name)) {

@@ -1,5 +1,5 @@
 import test from "ava";
-import { MajiangAlgo, checkValidAndReturnArr } from "../../server_build/server/MajiangAlgo";
+import { MajiangAlgo, getArr } from "../../server_build/server/MajiangAlgo";
 // var Majiang = require("../server/Majiang");
 
 // 特殊胡
@@ -10,7 +10,7 @@ test("七对", function(t) {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisQiDui(group_shoupai, na_pai), true);
 });
@@ -21,7 +21,7 @@ test("龙七对true", function(t) {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisNongQiDui(group_shoupai, na_pai), true);
 });
@@ -32,7 +32,7 @@ test("清一色并龙七对", function(t) {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisYise(group_shoupai, na_pai), true);
   t.is(MajiangAlgo.HuisNongQiDui(group_shoupai, na_pai), true);
@@ -45,7 +45,7 @@ test("非七对", function(t) {
     anGang: [],
     mingGang: [],
     peng: [],
-    shouPai: str.split(" ")
+    selfPeng:[], shouPai: str.split(" ")
   };
   t.is(MajiangAlgo.HuisQiDui(group_shoupai, na_pai), false);
 });
