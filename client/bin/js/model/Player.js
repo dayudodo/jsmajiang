@@ -8,6 +8,7 @@ var mj;
                 this.group_shou_pai = {
                     anGang: [],
                     mingGang: [],
+                    selfPeng: [],
                     peng: [],
                     shouPai: []
                 };

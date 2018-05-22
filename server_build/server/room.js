@@ -26,7 +26,7 @@ class Room {
         //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
         this.can_receive_confirm = false;
         /** 服务器当前发的牌 */
-        this.table_fa_pai = null;
+        // public table_fa_pai: Pai = null;
         /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
         this.table_dapai = null;
         /**发牌给哪个玩家 */
@@ -149,6 +149,10 @@ class Room {
         index = index == config.LIMIT_IN_ROOM ? 0 : index;
         return this.players.find(p => p.seat_index == index);
     }
+    /**没有玩家摸牌 */
+    no_player_mopai() {
+        this.players.every(p => p.mo_pai == null);
+    }
     /**
      *
      * @param socket 哪个socket
@@ -161,7 +165,7 @@ class Room {
             player_data[item] = player[item];
         });
         //是玩家本人的socket，返回详细的数据，或者选择过滤，也会直接返回
-        if (player.socket == socket || ignore_filter) {
+        if (ignore_filter || player.socket == socket) {
             return player_data;
         }
         else {
@@ -190,7 +194,13 @@ class Room {
         //给每个人都要发出全部玩家的更新数据，这样最方便！
         this.players.forEach(person => {
             let players = this.players.map(p => {
-                return this.player_data_filter(person.socket, p);
+                //如果玩家已经亮牌，显示其所有牌！
+                if (p.is_liang) {
+                    return this.player_data_filter(person.socket, p, true);
+                }
+                else {
+                    return this.player_data_filter(person.socket, p);
+                }
             });
             person.socket.sendmsg({
                 type: g_events.server_peng,
@@ -211,7 +221,13 @@ class Room {
         //给每个人都要发出全部玩家的更新数据，这样最方便！
         this.players.forEach(person => {
             let players = this.players.map(p => {
-                return this.player_data_filter(person.socket, p);
+                //如果玩家已经亮牌，显示其所有牌！
+                if (p.is_liang) {
+                    return this.player_data_filter(person.socket, p, true);
+                }
+                else {
+                    return this.player_data_filter(person.socket, p);
+                }
             });
             person.socket.sendmsg({
                 type: g_events.server_mingGang,
@@ -237,7 +253,7 @@ class Room {
             });
         });
         //还没有发过牌呢，说明是刚开始游戏，庄家亮了。
-        if (_.isEmpty(this.table_fa_pai)) {
+        if (this.no_player_mopai()) {
             this.server_fa_pai(player);
         }
     }
@@ -284,6 +300,10 @@ class Room {
         if (isPlayerNormalDapai) {
             this.server_fa_pai(this.next_player);
         }
+        //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
+        if (this.no_player_mopai()) {
+            this.server_fa_pai(this.next_player);
+        }
     }
     /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
      * @param fromEnd 是否从最后发牌
@@ -308,13 +328,13 @@ class Room {
         //发牌给谁，谁就是当前玩家
         this.current_player = player;
         player.mo_pai = pai[0];
-        this.table_fa_pai = pai[0];
-        console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
+        // this.table_fa_pai = pai[0];
+        console.log("服务器发牌 %s 给：%s", player.mo_pai, player.username);
         console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
         // player.socket.emit("server_table_fapai", pai);
         player.socket.sendmsg({
             type: g_events.server_table_fa_pai,
-            pai: this.table_fa_pai
+            pai: player.mo_pai
         });
         //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
         this.other_players(player).forEach(p => {
@@ -581,11 +601,10 @@ class Room {
             if (p == this.dong_jia) {
                 //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
                 this.sendGroupShouPaiOf(p);
-                let canShowSelect = this.decideSelectShow(p);
-                //todo: 开始游戏不考虑东家会听牌的情况，
-                if (!canShowSelect) {
-                    this.server_fa_pai(p);
-                }
+                //不管东家会不会胡，都是需要发牌的！
+                this.server_fa_pai(p);
+                //而且还要看庄家能否天胡！
+                this.decideSelectShow(p);
                 this.current_player = p;
                 //给自己发个消息，服务器发的啥牌
                 //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。

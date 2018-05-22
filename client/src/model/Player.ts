@@ -1,10 +1,13 @@
 module mj.model {
+
     /**手牌组，根据这些来进行手牌的显示 */
-    interface ShoupaiConstuctor {
+    export interface ShoupaiConstuctor {
         anGang: Array<Pai>;
         /**暗杠计数 */
         anGangCount?: number;
         mingGang: Array<Pai>;
+        selfPeng:Array<Pai>;
+        selfPengCount?: number;
         peng: Array<Pai>;
         /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
         shouPai: Array<Pai>;
@@ -27,6 +30,7 @@ module mj.model {
         public group_shou_pai: ShoupaiConstuctor = {
             anGang: [],
             mingGang: [],
+            selfPeng:[],
             peng: [],
             shouPai: []
         }

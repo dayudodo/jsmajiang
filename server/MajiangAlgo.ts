@@ -20,14 +20,14 @@ declare global {
   }
 }
 
-Array.prototype.remove = function (val) {
+Array.prototype.remove = function(val) {
   var index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
   }
   return this;
 };
-Array.prototype.equalArrays = function (b) {
+Array.prototype.equalArrays = function(b) {
   if (this.length != b.length) return false; // Different-size arrays not equal
   for (
     var i = 0;
@@ -139,7 +139,7 @@ export class MajiangAlgo {
   static isABCorAAA(test_arr) {
     let result = getArr(test_arr);
     if (result.length == 3) {
-      return (this._isAAA(test_arr) || this.isABC(test_arr))
+      return this._isAAA(test_arr) || this.isABC(test_arr);
     }
     if (result.length == 4) {
       return this._is4A(test_arr);
@@ -151,7 +151,7 @@ export class MajiangAlgo {
     //like 123456 or 122334,233445这样的牌型
     let result = getArr(test_arr);
     if (result.length < 6) {
-      return false
+      return false;
     }
     if (result.length < 4) {
       //为啥不是6呢？因为在3ABC里面有可能会出现fa fa fa t1 t2 t3 t4 t5 t6这样的情况
@@ -191,12 +191,12 @@ export class MajiangAlgo {
           return true;
         }
         //b4 b5 b5 b5 b5 b6 则也需要交换一下
-        first3 = [s1, s2, s6]
-        after3 = [s3, s4, s5]
+        first3 = [s1, s2, s6];
+        after3 = [s3, s4, s5];
         if (this.isABCorAAA(first3) && this.isABCorAAA(after3)) {
           return true;
         }
-        return false
+        return false;
       }
       //如果是有杠的牌, 三种情况，二个杠， 前杠后ABC，前ABC后杠
     } else {
@@ -212,7 +212,6 @@ export class MajiangAlgo {
         // console.log("beforeThree,endThree ", beforeThree, endThree)
         return true;
       }
-
     }
     return false;
   }
@@ -220,46 +219,46 @@ export class MajiangAlgo {
   static is3ABC(test_arr) {
     let result = getArr(test_arr);
     if (result.length < 9) {
-      return false
+      return false;
     }
     if (result.length < 8) {
       throw new Error(`test_arr: ${test_arr}必须大于或等于8`);
     }
-    if (result.length > 13) { //有可能是3杠
+    if (result.length > 13) {
+      //有可能是3杠
       throw new Error(`test_arr: ${test_arr}必须小于或等于12`);
     }
     //前三
     let startThree = result.slice(0, 3);
     let afterThree = result.slice(3, result.length);
     //前四
-    let startFour = result.slice(0, 4)
-    let afterFour = result.slice(4, result.length)
-
+    let startFour = result.slice(0, 4);
+    let afterFour = result.slice(4, result.length);
 
     //后三
     let beforeThree = result.slice(0, result.length - 3);
     let lastThree = result.slice(result.length - 3, result.length);
     //后四
-    let beforeFour = result.slice(0, result.length - 4)
-    let lastFour = result.slice(result.length - 4, result.length)
+    let beforeFour = result.slice(0, result.length - 4);
+    let lastFour = result.slice(result.length - 4, result.length);
 
     if (this.isABCorAAA(startThree) && this.is2ABC(afterThree)) {
       // console.log("startThree, afterThree ", startThree, afterThree);
-      return true
+      return true;
     }
     if (this.isABCorAAA(startFour) && this.is2ABC(afterFour)) {
       // console.log("startFour, afterFour ", startFour, afterFour);
-      return true
+      return true;
     }
     if (this.is2ABC(beforeThree) && this.isABCorAAA(lastThree)) {
       // console.log("beforeThree, lastThree ", beforeThree, lastThree);
-      return true
+      return true;
     }
     if (this.is2ABC(beforeFour) && this.isABCorAAA(lastFour)) {
       // console.log("beforeFour, lastFour ", beforeFour, lastFour);
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
   static is4ABC(test_arr) {
@@ -272,42 +271,44 @@ export class MajiangAlgo {
     //取出后三个和前面的几张牌
     // let beforeThree = result.slice(0, result.length - 3);
     // let lastThree = result.slice(result.length - 3, result.length);
-    let startFour = result.slice(0, 4)
-    let afterFour = result.slice(4, result.length)
+    let startFour = result.slice(0, 4);
+    let afterFour = result.slice(4, result.length);
     if (this.isABCorAAA(startThree) && this.is3ABC(afterThree)) {
-      return true
+      return true;
     }
     if (this.isABCorAAA(startFour) && this.is3ABC(afterFour)) {
-      return true
+      return true;
     }
 
     //前6和后6的算法
     let startSix = result.slice(0, 6);
-    let afterSix = result.slice(6, result.length)
+    let afterSix = result.slice(6, result.length);
     if (this.is2ABC(startSix) && this.is2ABC(afterSix)) {
-      return true
+      return true;
     }
-    let beforeSix = result.slice(0, result.length - 6)
-    let endSix = result.slice(result.length - 6, result.length)
+    let beforeSix = result.slice(0, result.length - 6);
+    let endSix = result.slice(result.length - 6, result.length);
     if (this.is2ABC(beforeSix) && this.is2ABC(endSix)) {
-      return true
+      return true;
     }
 
-    return false
+    return false;
   }
 
   /**只要能胡，就应该是屁胡，包括七对！ */
   static HuisPihu(group_shoupai: ShoupaiConstuctor, na_pai?: Pai): boolean {
     // return this._HuisPihu(group_shoupai.shouPai, na_pai);
-    let jijuhua = MajiangAlgo.getJijuhua(group_shoupai)
-    let result = getArr(group_shoupai.shouPai).concat(na_pai).sort()
+    let jijuhua = MajiangAlgo.getJijuhua(group_shoupai);
+    let result = getArr(group_shoupai.shouPai)
+      .concat(na_pai)
+      .sort();
     if (jijuhua > 4) {
-      console.warn(`!!!会有超过4句话的牌？${group_shoupai}`)
-      return false
+      console.warn(`!!!会有超过4句话的牌？${group_shoupai}`);
+      return false;
     }
     //如果是4句话，看最后一句是否是将，如果是，自然就是屁胡了。
     if (jijuhua == 4) {
-      return this.isAA(result)
+      return this.isAA(result);
     }
     if (this.HuisQiDui(group_shoupai, na_pai)) {
       return true;
@@ -322,37 +323,40 @@ export class MajiangAlgo {
         var newstr = result.join("");
         //去掉这两个将,item是这样的"b1b1","didi"
         newstr = newstr.replace(jiang, "");
-        var caller: Function
+        var caller: Function;
         //其实只需要检测3- jijuha, 因为在卡五星里面已经删除掉了带有卡5的一句话！
         switch (jijuhua) {
           case 3:
             // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
-            caller = this.isABCorAAA
+            caller = this.isABCorAAA;
             break;
           case 2:
-            caller = this.is2ABC
+            caller = this.is2ABC;
             break;
           case 1:
-            caller = this.is3ABC
+            caller = this.is3ABC;
             break;
           case 0:
-            caller = this.is4ABC
+            caller = this.is4ABC;
             break;
           default:
-            throw new Error(`jijuha:${jijuhua}的值只能是0-3 `)
+            throw new Error(`jijuha:${jijuhua}的值只能是0-3 `);
         }
         if (caller && caller.call(this, newstr)) {
-          is_hu = true
+          is_hu = true;
         }
-      })
+      });
     }
-    return is_hu
+    return is_hu;
     // return this._HuisPihu(this.flat_shou_pai(group_shoupai), na_pai);
-
   }
 
   private static getJijuhua(group_shoupai: ShoupaiConstuctor) {
-    return group_shoupai.anGang.length + group_shoupai.mingGang.length + group_shoupai.peng.length;
+    return (
+      group_shoupai.anGang.length +
+      group_shoupai.mingGang.length +
+      group_shoupai.peng.length
+    );
   }
 
   /** 仅能用来检测4ABC的情况 */
@@ -362,7 +366,7 @@ export class MajiangAlgo {
       .sort();
     if (result.length < 14) {
       // console.warn(`只能用来检测4ABC的情况，${shou_pai}`)
-      return false
+      return false;
     }
     let allJiang = getAllJiangArr(result);
     let is_hu = false;
@@ -380,16 +384,16 @@ export class MajiangAlgo {
         //去掉这两个将,item是这样的"b1b1","didi"
         newstr = newstr.replace(item, "");
         if (this.is4ABC(newstr)) {
-          is_hu = true
+          is_hu = true;
         }
-      })
+      });
     }
-    return is_hu
+    return is_hu;
   }
 
   static HuisQiDui(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
     if (this.getJijuhua(group_shoupai) > 1) {
-      return false
+      return false;
     } else {
       return this._HuisQiDui(group_shoupai.shouPai, na_pai);
     }
@@ -434,13 +438,13 @@ export class MajiangAlgo {
     if (MajiangAlgo.isOnlyFlatShouPai(group_shoupai)) {
       return MajiangAlgo._HuisYise(group_shoupai.shouPai, na_pai);
     } else {
-      let unionArr = this.flat_shou_pai(group_shoupai)
+      let unionArr = this.flat_shou_pai(group_shoupai);
       return this.isYise(unionArr) && this.HuisPihu(group_shoupai, na_pai);
     }
   }
   private static isYise(arr: Array<Pai>): boolean {
     let paiTypeMap = arr.map(item => item[0]);
-    let typeSet = new Set(paiTypeMap)
+    let typeSet = new Set(paiTypeMap);
     let isUniq = typeSet.size;
     //不仅要是一色而且还得满足平胡
     return isUniq == 1;
@@ -457,7 +461,7 @@ export class MajiangAlgo {
   }
   /**是否是碰碰胡 */
   static HuisPengpeng(group_shoupai: ShoupaiConstuctor, na_pai: Pai): boolean {
-    let len = this.flat_shou_pai(group_shoupai).push(na_pai)
+    let len = this.flat_shou_pai(group_shoupai).push(na_pai);
     if (len < 14) {
       throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
     }
@@ -477,8 +481,7 @@ export class MajiangAlgo {
     }
     return this.isAA(getArr(jiang));
   }
-
-
+/**平手牌，指13张牌 */
   static flat_shou_pai(group_shou_pai: ShoupaiConstuctor): Array<Pai> {
     let real_shoupai = [];
     group_shou_pai.anGang.forEach(pai => {
@@ -499,6 +502,7 @@ export class MajiangAlgo {
     real_shoupai = real_shoupai.concat(group_shou_pai.shouPai);
     return real_shoupai.sort();
   }
+  /**group手牌胡哪些牌 */
   static HuWhatGroupPai(group_shoupai: ShoupaiConstuctor): hupaiConstructor {
     let hupai_dict = {};
 
@@ -511,8 +515,7 @@ export class MajiangAlgo {
       let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
       if (isFiveRepeat) {
         continue;
-      }
-      else {
+      } else {
         let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, single_pai);
         if (!_.isEmpty(hupai_typesCode)) {
           hupai_dict[single_pai] = hupai_typesCode;
@@ -557,7 +560,10 @@ export class MajiangAlgo {
         // throw new Error('irregular Pai, record in database, maybe Hacker.')
         //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
       } else {
-        let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], shouPai: result }, single_pai);
+        let hupai_typesCode = this.HupaiTypeCodeArr(
+          { anGang: [], mingGang: [], peng: [], shouPai: result },
+          single_pai
+        );
         if (!_.isEmpty(hupai_typesCode)) {
           hupai_dict[single_pai] = hupai_typesCode;
         }
@@ -617,14 +623,17 @@ export class MajiangAlgo {
    */
   public static HuisKaWuXing(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
     //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
-    let jijuhua = group_shoupai.anGang.length + group_shoupai.mingGang.length + group_shoupai.peng.length
+    let jijuhua =
+      group_shoupai.anGang.length +
+      group_shoupai.mingGang.length +
+      group_shoupai.peng.length;
     // console.log(jijuhua);
     return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
   }
 
   /**带将的1,2,3,4ABC检测，貌似只是为卡五星服务！ */
   private static _jiangNABC(shou_pai: Array<Pai>, jijuhua: number) {
-    let result = getArr(shou_pai)
+    let result = getArr(shou_pai);
     let allJiang = getAllJiangArr(result);
     let is_hu = false;
     // console.log(allJiang)
@@ -635,39 +644,43 @@ export class MajiangAlgo {
         var newstr = result.join("");
         //去掉这两个将,item是这样的"b1b1","didi"
         newstr = newstr.replace(jiang, "");
-        var caller: Function
+        var caller: Function;
         //其实只需要检测3- jijuha, 因为在卡五星里面已经删除掉了带有卡5的一句话！
         switch (jijuhua) {
           case 3:
             // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
             if (_.isEmpty(newstr)) {
-              is_hu = true
+              is_hu = true;
             }
             break;
           case 2:
-            caller = this.isABCorAAA
+            caller = this.isABCorAAA;
             break;
           case 1:
-            caller = this.is2ABC
+            caller = this.is2ABC;
             break;
           case 0:
-            caller = this.is3ABC
+            caller = this.is3ABC;
             break;
           default:
-            throw new Error(`jijuha:${jijuhua}的值只能是0-3 `)
+            throw new Error(`jijuha:${jijuhua}的值只能是0-3 `);
         }
         if (caller && caller.call(this, newstr)) {
-          is_hu = true
+          is_hu = true;
         }
-      })
+      });
     }
-    return is_hu
+    return is_hu;
   }
 
-  private static _HuisKaWuXing(shou_pai: Array<Pai>, na_pai: Pai, jijuhua: number) {
+  private static _HuisKaWuXing(
+    shou_pai: Array<Pai>,
+    na_pai: Pai,
+    jijuhua: number
+  ) {
     //就卡五星来说，大于3句话就肯定不是卡五了，最多三句话！四句话就没办法胡卡五，只能听将！
     if (jijuhua > 3) {
-      return false
+      return false;
     }
     let result: Array<Pai> = getArr(shou_pai)
       .concat(na_pai)
@@ -692,7 +705,7 @@ export class MajiangAlgo {
         // console.log(after_delete_kawa);
         return this._jiangNABC(after_delete_kawa, jijuhua);
       } else {
-        return false
+        return false;
       }
     }
   }
@@ -892,14 +905,14 @@ export class MajiangAlgo {
   }
 
   /**能碰吗？ */
-  static canPeng(shouPai: Array<Pai>, pai: Pai) {
+  static canPeng(shouPai: Array<Pai>, na_pai: Pai) {
     //貌似会改变以前的数组值，所以得克隆一份来进行检测
     let result = _.clone(getArr(shouPai));
     let newstrArr = result
-      .concat(pai)
+      .concat(na_pai)
       .sort()
       .join("");
-    let paiThreeTimesReg = new RegExp(`(${pai})\\1\\1`);
+    let paiThreeTimesReg = new RegExp(`(${na_pai})\\1\\1`);
     return paiThreeTimesReg.test(newstrArr.replace(/\s+/g, ""));
   }
   /**能杠吗？ */

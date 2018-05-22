@@ -104,7 +104,7 @@ class MajiangAlgo {
     static isABCorAAA(test_arr) {
         let result = getArr(test_arr);
         if (result.length == 3) {
-            return (this._isAAA(test_arr) || this.isABC(test_arr));
+            return this._isAAA(test_arr) || this.isABC(test_arr);
         }
         if (result.length == 4) {
             return this._is4A(test_arr);
@@ -182,7 +182,8 @@ class MajiangAlgo {
         if (result.length < 8) {
             throw new Error(`test_arr: ${test_arr}必须大于或等于8`);
         }
-        if (result.length > 13) { //有可能是3杠
+        if (result.length > 13) {
+            //有可能是3杠
             throw new Error(`test_arr: ${test_arr}必须小于或等于12`);
         }
         //前三
@@ -250,7 +251,9 @@ class MajiangAlgo {
     static HuisPihu(group_shoupai, na_pai) {
         // return this._HuisPihu(group_shoupai.shouPai, na_pai);
         let jijuhua = MajiangAlgo.getJijuhua(group_shoupai);
-        let result = getArr(group_shoupai.shouPai).concat(na_pai).sort();
+        let result = getArr(group_shoupai.shouPai)
+            .concat(na_pai)
+            .sort();
         if (jijuhua > 4) {
             console.warn(`!!!会有超过4句话的牌？${group_shoupai}`);
             return false;
@@ -300,7 +303,9 @@ class MajiangAlgo {
         // return this._HuisPihu(this.flat_shou_pai(group_shoupai), na_pai);
     }
     static getJijuhua(group_shoupai) {
-        return group_shoupai.anGang.length + group_shoupai.mingGang.length + group_shoupai.peng.length;
+        return (group_shoupai.anGang.length +
+            group_shoupai.mingGang.length +
+            group_shoupai.peng.length);
     }
     /** 仅能用来检测4ABC的情况 */
     static _HuisPihu(shou_pai, na_pai) {
@@ -425,6 +430,7 @@ class MajiangAlgo {
         }
         return this.isAA(getArr(jiang));
     }
+    /**平手牌，指13张牌 */
     static flat_shou_pai(group_shou_pai) {
         let real_shoupai = [];
         group_shou_pai.anGang.forEach(pai => {
@@ -445,6 +451,7 @@ class MajiangAlgo {
         real_shoupai = real_shoupai.concat(group_shou_pai.shouPai);
         return real_shoupai.sort();
     }
+    /**group手牌胡哪些牌 */
     static HuWhatGroupPai(group_shoupai) {
         let hupai_dict = {};
         for (var i = 0; i < all_single_pai.length; i++) {
@@ -555,7 +562,9 @@ class MajiangAlgo {
      */
     static HuisKaWuXing(group_shoupai, na_pai) {
         //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
-        let jijuhua = group_shoupai.anGang.length + group_shoupai.mingGang.length + group_shoupai.peng.length;
+        let jijuhua = group_shoupai.anGang.length +
+            group_shoupai.mingGang.length +
+            group_shoupai.peng.length;
         // console.log(jijuhua);
         return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
     }
@@ -812,14 +821,14 @@ class MajiangAlgo {
         return false;
     }
     /**能碰吗？ */
-    static canPeng(shouPai, pai) {
+    static canPeng(shouPai, na_pai) {
         //貌似会改变以前的数组值，所以得克隆一份来进行检测
         let result = _.clone(getArr(shouPai));
         let newstrArr = result
-            .concat(pai)
+            .concat(na_pai)
             .sort()
             .join("");
-        let paiThreeTimesReg = new RegExp(`(${pai})\\1\\1`);
+        let paiThreeTimesReg = new RegExp(`(${na_pai})\\1\\1`);
         return paiThreeTimesReg.test(newstrArr.replace(/\s+/g, ""));
     }
     /**能杠吗？ */

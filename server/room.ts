@@ -12,7 +12,12 @@ let room_valid_names = ["ange", "jack", "rose"];
 declare global {
   /**在console中输出一个对象的全部内容 */
   function puts(o: any): void;
-  interface SelectConstructor { isShowHu: boolean; isShowLiang: boolean; isShowGang: boolean; isShowPeng: boolean; }
+  interface SelectConstructor {
+    isShowHu: boolean;
+    isShowLiang: boolean;
+    isShowGang: boolean;
+    isShowPeng: boolean;
+  }
 }
 
 function puts(obj) {
@@ -32,7 +37,7 @@ export class Room {
   //todo: 是否接受用户的吃、碰，服务器在计时器，过时就不会等待用户确认信息了！
   public can_receive_confirm = false;
   /** 服务器当前发的牌 */
-  public table_fa_pai: Pai = null;
+  // public table_fa_pai: Pai = null;
   /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
   public table_dapai: Pai = null;
   /**发牌给哪个玩家 */
@@ -42,6 +47,7 @@ export class Room {
 
   //计时器
   public room_clock = null;
+
   constructor() {
     // 房间新建之后，就会拥有个id了
     this.id = Room.getId();
@@ -108,7 +114,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function (item) {
+    _.remove(this.players, function(item) {
       return item.socket.id == socket.id;
     });
   }
@@ -160,6 +166,10 @@ export class Room {
     index = index == config.LIMIT_IN_ROOM ? 0 : index;
     return this.players.find(p => p.seat_index == index);
   }
+  /**没有玩家摸牌 */
+  private no_player_mopai() {
+    this.players.every(p => p.mo_pai == null);
+  }
   /**
    *
    * @param socket 哪个socket
@@ -172,7 +182,7 @@ export class Room {
       player_data[item] = player[item];
     });
     //是玩家本人的socket，返回详细的数据，或者选择过滤，也会直接返回
-    if (player.socket == socket || ignore_filter) {
+    if (ignore_filter || player.socket == socket) {
       return player_data;
     } else {
       //暗杠只有数量，但是不显示具体的内容
@@ -202,7 +212,12 @@ export class Room {
     //给每个人都要发出全部玩家的更新数据，这样最方便！
     this.players.forEach(person => {
       let players = this.players.map(p => {
-        return this.player_data_filter(person.socket, p);
+        //如果玩家已经亮牌，显示其所有牌！
+        if (p.is_liang) {
+          return this.player_data_filter(person.socket, p, true);
+        } else {
+          return this.player_data_filter(person.socket, p);
+        }
       });
       person.socket.sendmsg({
         type: g_events.server_peng,
@@ -224,7 +239,12 @@ export class Room {
     //给每个人都要发出全部玩家的更新数据，这样最方便！
     this.players.forEach(person => {
       let players = this.players.map(p => {
-        return this.player_data_filter(person.socket, p);
+        //如果玩家已经亮牌，显示其所有牌！
+        if (p.is_liang) {
+          return this.player_data_filter(person.socket, p, true);
+        } else {
+          return this.player_data_filter(person.socket, p);
+        }
       });
       person.socket.sendmsg({
         type: g_events.server_mingGang,
@@ -251,8 +271,8 @@ export class Room {
       });
     });
     //还没有发过牌呢，说明是刚开始游戏，庄家亮了。
-    if(_.isEmpty(this.table_fa_pai)){
-      this.server_fa_pai(player)
+    if (this.no_player_mopai()) {
+      this.server_fa_pai(player);
     }
   }
   /**听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。*/
@@ -298,6 +318,11 @@ export class Room {
     if (isPlayerNormalDapai) {
       this.server_fa_pai(this.next_player);
     }
+    //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
+
+    if (this.no_player_mopai()) {
+      this.server_fa_pai(this.next_player);
+    }
   }
 
   /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
@@ -323,14 +348,14 @@ export class Room {
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
     player.mo_pai = pai[0];
-    this.table_fa_pai = pai[0];
+    // this.table_fa_pai = pai[0];
 
-    console.log("服务器发牌 %s 给：%s", this.table_fa_pai, player.username);
+    console.log("服务器发牌 %s 给：%s", player.mo_pai, player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
     // player.socket.emit("server_table_fapai", pai);
     player.socket.sendmsg({
       type: g_events.server_table_fa_pai,
-      pai: this.table_fa_pai
+      pai: player.mo_pai
     });
     //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
     this.other_players(player).forEach(p => {
@@ -453,7 +478,10 @@ export class Room {
         let oplayers = this.other_players(player);
         for (let item_player of oplayers) {
           //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
-          let canShowSelect: boolean = this.decideSelectShow(item_player, dapai_name);
+          let canShowSelect: boolean = this.decideSelectShow(
+            item_player,
+            dapai_name
+          );
           if (canShowSelect) {
             canNormalFaPai = false;
           }
@@ -473,8 +501,14 @@ export class Room {
     }
   }
   /**玩家是否能显示（胡、亮、杠、碰）的选择窗口 */
-  private decideSelectShow(item_player: Player, dapai_name: Pai = null): boolean {
-    let isShowHu: boolean = false, isShowLiang: boolean = false, isShowGang: boolean = false, isShowPeng: boolean = false;
+  private decideSelectShow(
+    item_player: Player,
+    dapai_name: Pai = null
+  ): boolean {
+    let isShowHu: boolean = false,
+      isShowLiang: boolean = false,
+      isShowGang: boolean = false,
+      isShowPeng: boolean = false;
     //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
@@ -482,8 +516,7 @@ export class Room {
       if (item_player.canLiang()) {
         isShowLiang = true;
         console.log(`房间${this.id} 玩家${item_player.username}可以亮牌`);
-        puts(item_player.hupai_data)
-        
+        puts(item_player.hupai_data);
       }
     }
     /**如果是用户打牌，才会下面的判断 */
@@ -491,29 +524,40 @@ export class Room {
       //如果用户亮牌而且可以胡别人打的牌
       if (item_player.is_liang && item_player.canHu(dapai_name)) {
         isShowHu = true;
-        console.log(`房间${this.id} 玩家${item_player.username}亮牌之后可以胡牌${dapai_name}`);
+        console.log(
+          `房间${this.id} 玩家${
+            item_player.username
+          }亮牌之后可以胡牌${dapai_name}`
+        );
       }
       // 大胡也可以显示胡牌
       //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
       if (item_player.isDaHu(dapai_name)) {
         isShowHu = true;
-        console.log(`房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`);
+        console.log(
+          `房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`
+        );
         //todo: 等待20秒，过时发牌
       }
       if (item_player.canGang(dapai_name)) {
         isShowGang = true;
-        console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`);
+        console.log(
+          `房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`
+        );
       }
       if (item_player.canPeng(dapai_name)) {
         isShowPeng = true;
-        console.log(`房间${this.id} 玩家${item_player.username}可以碰牌${dapai_name}`);
+        console.log(
+          `房间${this.id} 玩家${item_player.username}可以碰牌${dapai_name}`
+        );
       }
     }
 
-    let canShowSelect =
-      isShowHu || isShowLiang || isShowGang || isShowPeng;
+    let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
     if (canShowSelect) {
-      console.log(`房间${this.id} 玩家${item_player.username} 显示选择对话框，其手牌为:`);
+      console.log(
+        `房间${this.id} 玩家${item_player.username} 显示选择对话框，其手牌为:`
+      );
       puts(item_player.group_shou_pai);
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       item_player.socket.sendmsg({
@@ -521,7 +565,7 @@ export class Room {
         select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
       });
     }
-    return canShowSelect
+    return canShowSelect;
   }
 
   /**
@@ -619,18 +663,17 @@ export class Room {
       if (p == this.dong_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         this.sendGroupShouPaiOf(p);
-        let canShowSelect = this.decideSelectShow(p)
-        //todo: 开始游戏不考虑东家会听牌的情况，
-        if(!canShowSelect){
-          this.server_fa_pai(p);
-        }
+        //不管东家会不会胡，都是需要发牌的！
+        this.server_fa_pai(p);
+        //而且还要看庄家能否天胡！
+        this.decideSelectShow(p);
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
       } else {
         //非东家，接收到牌即可
         this.sendGroupShouPaiOf(p);
-        this.decideSelectShow(p)
+        this.decideSelectShow(p);
       }
     });
   }

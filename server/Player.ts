@@ -150,7 +150,7 @@ export class Player {
     // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
     return this.canTing()
   }
-  /**能碰吗？只能是手牌中的才能检测碰 */
+  /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
   canPeng(pai: Pai): boolean {
     return MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
   }
@@ -161,7 +161,7 @@ export class Player {
 
   confirm_peng(pai: Pai) {
     this.group_shou_pai.peng.push(pai);
-    //首先从手牌中删除二张牌
+    //从手牌中删除二张牌
     for (let i = 0; i < 2; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai);
     }
@@ -206,7 +206,7 @@ export class Player {
   calculateHu() {
     let shoupai_changed = true;
     if (shoupai_changed) {
-      this.hupai_data = MajiangAlgo.HuWhatPai(this.flat_shou_pai);
+      this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);
     }
   }
 }

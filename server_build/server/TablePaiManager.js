@@ -37,7 +37,24 @@ class TablePaiManager {
         newPais = newPais.concat(allpais);
         return newPais;
     }
-    /**打牌就有人能杠 */
+    /**碰了打牌之后能亮 */
+    static penggang_da_liang() {
+        var allpais = TablePaiManager.fapai_random();
+        var player1 = "b1 t1 t1 t3 t7 t8 t9 zh zh fa di di di".split(" ");
+        var player2 = "b1 b1 b7 b8 b9 t1 t2 t3 t4 t5 t6 fa fa".split(" ");
+        var newPais = [];
+        newPais = newPais.concat(player1);
+        newPais = newPais.concat(player2);
+        player1.forEach((pai, index) => {
+            allpais.remove(pai);
+        });
+        player2.forEach((pai, index) => {
+            allpais.remove(pai);
+        });
+        newPais = newPais.concat(allpais);
+        return newPais;
+    }
+    /**庄家打牌就有人能杠 */
     static fapai_gang() {
         var allpais = TablePaiManager.fapai_random();
         var player1 = "b1 t1 t1 t3 t7 t8 t9 zh zh fa di di di".split(" ");
@@ -54,7 +71,7 @@ class TablePaiManager {
         newPais = newPais.concat(allpais);
         return newPais;
     }
-    /**打算就能亮 */
+    /**庄家打牌就能亮 */
     static dapai_liang() {
         var allpais = TablePaiManager.fapai_random();
         var player1 = "b1 b2 b3 b4 b5 b9 t4 t4 t6 t6 t6 di di".split(" ");
