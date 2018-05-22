@@ -679,20 +679,20 @@ module mj.net {
             }
             //for test
 
-            Laya.god_player.ui_index = 0
-            Laya.god_player.group_shou_pai = {
-                // anGang: ["zh"],
-                anGang: [],
-                anGangCount: 0,
-                mingGang: ["fa"],
-                peng: ['t1'],
-                selfPeng: [],
-                selfPengCount: 1,
-                // shouPai: "b1 b2 b3 t4".split(" ")
-                shouPai: [],
-                shouPaiCount: 4
-            }
-            this.show_group_shoupai(Laya.god_player)
+            // Laya.god_player.ui_index = 0
+            // Laya.god_player.group_shou_pai = {
+            //     // anGang: ["zh"],
+            //     anGang: [],
+            //     anGangCount: 0,
+            //     mingGang: ["fa"],
+            //     peng: ['t1'],
+            //     selfPeng: [],
+            //     selfPengCount: 1,
+            //     // shouPai: "b1 b2 b3 t4".split(" ")
+            //     shouPai: [],
+            //     shouPaiCount: 4
+            // }
+            // this.show_group_shoupai(Laya.god_player)
 
 
             //end test

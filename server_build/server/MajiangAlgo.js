@@ -302,9 +302,11 @@ class MajiangAlgo {
         return is_hu;
         // return this._HuisPihu(this.flat_shou_pai(group_shoupai), na_pai);
     }
+    /**统计group手牌中已经碰、杠的几句话 */
     static getJijuhua(group_shoupai) {
         return (group_shoupai.anGang.length +
             group_shoupai.mingGang.length +
+            group_shoupai.selfPeng.length +
             group_shoupai.peng.length);
     }
     /** 仅能用来检测4ABC的情况 */
@@ -448,6 +450,11 @@ class MajiangAlgo {
                 real_shoupai.push(pai);
             }
         });
+        group_shou_pai.selfPeng.forEach(pai => {
+            for (let i = 0; i < 3; i++) {
+                real_shoupai.push(pai);
+            }
+        });
         real_shoupai = real_shoupai.concat(group_shou_pai.shouPai);
         return real_shoupai.sort();
     }
@@ -508,7 +515,7 @@ class MajiangAlgo {
                 //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
             }
             else {
-                let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], shouPai: result }, single_pai);
+                let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: result }, single_pai);
                 if (!_.isEmpty(hupai_typesCode)) {
                     hupai_dict[single_pai] = hupai_typesCode;
                 }
@@ -536,6 +543,7 @@ class MajiangAlgo {
     static isOnlyFlatShouPai(group_shoupai) {
         return (group_shoupai.anGang.length == 0 &&
             group_shoupai.mingGang.length == 0 &&
+            group_shoupai.selfPeng.length == 0 &&
             group_shoupai.peng.length == 0);
     }
     // static all_hupai_zhang(shou_pai) {
@@ -562,9 +570,7 @@ class MajiangAlgo {
      */
     static HuisKaWuXing(group_shoupai, na_pai) {
         //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
-        let jijuhua = group_shoupai.anGang.length +
-            group_shoupai.mingGang.length +
-            group_shoupai.peng.length;
+        let jijuhua = this.getJijuhua(group_shoupai);
         // console.log(jijuhua);
         return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
     }
@@ -821,7 +827,11 @@ class MajiangAlgo {
         return false;
     }
     /**能碰吗？ */
-    static canPeng(shouPai, na_pai) {
+    static canPeng(shouPai, na_pai, isLiang) {
+        //如果玩家已经亮牌，就不再检测手牌里面是否能碰了！
+        if (isLiang) {
+            return false;
+        }
         //貌似会改变以前的数组值，所以得克隆一份来进行检测
         let result = _.clone(getArr(shouPai));
         let newstrArr = result
@@ -832,10 +842,7 @@ class MajiangAlgo {
         return paiThreeTimesReg.test(newstrArr.replace(/\s+/g, ""));
     }
     /**能杠吗？ */
-    static canGang(shouPai, pai) {
-        if (typeof pai != "string") {
-            throw new Error(`pai must be a string`);
-        }
+    static _canGang(shouPai, pai) {
         let result = getArr(shouPai);
         let newstr = result
             .concat(pai)
@@ -843,6 +850,25 @@ class MajiangAlgo {
             .join("");
         let paiFourTimesReg = new RegExp(`(${pai})\\1\\1\\1`);
         return paiFourTimesReg.test(newstr.replace(/\s+/g, ""));
+    }
+    /**group牌能杠吗？ */
+    static canGang(group_shoupai, pai, isLiang, mo_pai) {
+        //如果直接用flat_shou_pai来进行判断，其实还是有问题的，比如玩家碰了b1, 但是手牌里面还有1个是用于另一手牌！
+        // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
+        if (group_shoupai.selfPeng.includes(pai)) {
+            return true;
+        }
+        if (isLiang) {
+            if (group_shoupai.peng.includes(mo_pai)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return MajiangAlgo._canGang(group_shoupai.shouPai, pai);
+        }
     }
 }
 exports.MajiangAlgo = MajiangAlgo;

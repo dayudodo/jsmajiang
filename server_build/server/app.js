@@ -197,6 +197,7 @@ function client_testlogin(client_message, socket) {
             anGang: [],
             mingGang: [],
             peng: [],
+            selfPeng: [],
             shouPai: []
         },
         socket: socket,

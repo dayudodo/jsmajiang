@@ -96,11 +96,12 @@ class Player {
     }
     /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
     canPeng(pai) {
-        return MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai);
+        return MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai, this.is_liang);
     }
     /**能杠吗？分碰了之后杠还是本来就有三张牌！最简单的自然是使用flat_shou_pai */
     canGang(pai) {
-        return MajiangAlgo_1.MajiangAlgo.canGang(this.flat_shou_pai, pai);
+        //能否杠还能分你是自摸碰还是求人碰，selfPeng是可以随便杠的，但是求人碰则得自己摸牌才能杠！
+        return MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, this.mo_pai);
     }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);
@@ -131,6 +132,15 @@ class Player {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.anGang.push(pai);
+        this.group_shou_pai.shouPai.sort();
+    }
+    /**确定自碰牌杠 */
+    confirm_selfPengGang(pai) {
+        //首先从手牌中删除三张牌，变成peng: pai
+        for (var i = 0; i < 3; i++) {
+            this.delete_pai(this.group_shou_pai.shouPai, pai);
+        }
+        this.group_shou_pai.selfPeng.push(pai);
         this.group_shou_pai.shouPai.sort();
     }
     /**  从玩家手牌中删除pai并计算胡牌*/

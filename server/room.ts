@@ -189,10 +189,15 @@ export class Room {
       let filterd_group = {};
       filterd_group["anGang"] = [];
       filterd_group["anGangCount"] = player.group_shou_pai.anGang.length;
-      filterd_group["mingGang"] = player.group_shou_pai.mingGang;
-      filterd_group["peng"] = player.group_shou_pai.peng;
+
+      filterd_group["selfPeng"] = [];
+      filterd_group["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+
       filterd_group["shouPai"] = [];
       filterd_group["shouPaiCount"] = player.group_shou_pai.shouPai.length;
+      //只有明杠和碰会显示在其它人那儿！
+      filterd_group["mingGang"] = player.group_shou_pai.mingGang;
+      filterd_group["peng"] = player.group_shou_pai.peng;
 
       player_data["group_shou_pai"] = filterd_group;
       //返回过滤的数据
@@ -348,7 +353,12 @@ export class Room {
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
     player.mo_pai = pai[0];
-    // this.table_fa_pai = pai[0];
+    //摸牌后其实是需要重新计算胡的！因为牌已经变化了！
+    // player.calculateHu()
+    //todo: 摸牌之后还需要看玩家能否杠！碰其实是求人碰。发牌之后玩家还有可能自摸呢！
+    //但是会有一个问题，玩家自己摸 的牌也能吃？这就不是吃了！
+    this.decideSelectShow(player)
+
 
     console.log("服务器发牌 %s 给：%s", player.mo_pai, player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
@@ -624,6 +634,8 @@ export class Room {
       let newGroup = _.clone(group_shouPai);
       newGroup.anGang = [];
       newGroup.anGangCount = group_shouPai.anGang.length;
+      newGroup.selfPeng = [];
+      newGroup.selfPengCount = group_shouPai.selfPeng.length;
       newGroup.shouPai = [];
       newGroup.shouPaiCount = group_shouPai.shouPai.length;
       return newGroup;
@@ -665,8 +677,8 @@ export class Room {
         this.sendGroupShouPaiOf(p);
         //不管东家会不会胡，都是需要发牌的！
         this.server_fa_pai(p);
-        //而且还要看庄家能否天胡！
-        this.decideSelectShow(p);
+        //而且还要看庄家能否天胡！发牌里面会有selectShow!
+        // this.decideSelectShow(p);
         this.current_player = p;
         //给自己发个消息，服务器发的啥牌
         //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
@@ -686,6 +698,7 @@ export class Room {
         anGang: [],
         mingGang: [],
         peng: [],
+        selfPeng: [],
         shouPai: []
       };
       p.ready = false;

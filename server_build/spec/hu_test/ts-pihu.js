@@ -60,6 +60,7 @@ ava_1.default("group不是清一色", function (t) {
     let group_shoupai = {
         anGang: ['b1'],
         mingGang: [],
+        selfPeng: [],
         peng: ['b5', 'b2'],
         shouPai: str.split(' ')
     };
@@ -72,6 +73,7 @@ ava_1.default("flat可胡，group不能", function (t) {
     let group_shoupai = {
         anGang: [],
         mingGang: ['b1'],
+        selfPeng: [],
         peng: ['fa', 'b2'],
         shouPai: ['b3', 'b4', 't4', 't5']
     };
@@ -86,6 +88,7 @@ ava_1.default("屁胡 胡将", function (t) {
         anGang: ['b1'],
         mingGang: ['t1'],
         peng: ['b5', 'b2'],
+        selfPeng: [],
         shouPai: str.split(' ')
     };
     t.is(MajiangAlgo_1.MajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
