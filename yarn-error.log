@@ -1,17 +1,17 @@
 Arguments: 
-  /usr/local/Cellar/node/8.8.1/bin/node /usr/local/bin/yarn add --global create-react-app
+  C:\Program Files\nodejs\node.exe C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js global install ava
 
 PATH: 
-  /Library/Application Support/GoodSync:/Users/ange/trans2017:/Users/ange/Desktop/android-sdk-macosx/build-tools:/Users/ange/Desktop/android-sdk-macosx/platform-tools:/Library/Application Support/GoodSync:/Users/ange/Desktop/android-sdk-macosx/tools:/Users/ange/.rvm/gems/ruby-2.4.1/bin:/Users/ange/.rvm/gems/ruby-2.4.1@global/bin:/Users/ange/.rvm/rubies/ruby-2.4.1/bin:/Library/Application Support/GoodSync:/Users/ange/trans2017:/Users/ange/Desktop/android-sdk-macosx/build-tools:/Users/ange/Desktop/android-sdk-macosx/platform-tools:/Library/Application Support/GoodSync:/Users/ange/Desktop/android-sdk-macosx/tools:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/Users/ange/.rvm/bin:/Users/ange/.rvm/bin
+  C:\Users\Administrator\bin;D:\Program Files\Git\mingw64\bin;D:\Program Files\Git\usr\local\bin;D:\Program Files\Git\usr\bin;D:\Program Files\Git\usr\bin;D:\Program Files\Git\mingw64\bin;D:\Program Files\Git\usr\bin;C:\Users\Administrator\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\libnvvp;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.1\libnvvp;D:\Program Files\ImageMagick-7.0.5-Q16;D:\program files\graphicsmagick-1.3.25-q8;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files (x86)\Heroku\bin;C:\Program Files (x86)\git\cmd;C:\Users\Administrator\.dnx\bin;C:\Program Files\Microsoft DNX\Dnvm;C:\HashiCorp\Vagrant\bin;C:\DevKit\bin;C:\Devkit;C:\Ruby21\bin;C:\Program Files\nodejs;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\Administrator\.dnx\bin;C:\Program Files\Microsoft DNX\Dnvm;C:\Program Files (x86)\Autodesk\Backburner;C:\Program Files\Common Files\Autodesk Shared;C:\Program Files\Calibre2;D:\Documents\Visual Studio 2015\Projects\speak\speak\bin\Debug;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit;D:\Program Files\Git\cmd;C:\Users\Administrator\AppData\Local\Programs\Python\Python36\Scripts;C:\Users\Administrator\AppData\Local\Programs\Python\Python36;C:\Users\Administrator\AppData\Local\Programs\Python\Launcher;C:\Users\Administrator\AppData\Roaming\npm;C:\python27;C:\Program Files\Sublime Text 3;D:\js_stack\ffmpeg\bin;C:\Users\Administrator\AppData\Local\.meteor;D:\Program Files\Java\jdk1.7.0_79\bin;D:\Android\sdk\tools;D:\Android\sdk\platform-tools;C:\Program Files (x86)\MSBuild\14.0\Bin;D:\Program Files\Microsoft VS Code\bin;D:\Program Files (x86)\Egret\Egret Wing 3\bin;D:\Program Files\Git\usr\bin\vendor_perl;D:\Program Files\Git\usr\bin\core_perl
 
 Yarn version: 
   1.5.1
 
 Node version: 
-  8.8.1
+  8.9.4
 
 Platform: 
-  darwin x64
+  win32 x64
 
 npm manifest: 
   {
@@ -22,7 +22,8 @@ npm manifest:
     "scripts": {
       "w": "webpack --watch",
       "b": "webpack",
-      "start": "babel-node server/app.js",
+      "start": "node server_build/server/app.js",
+      "dev": "node server_build/app.js",
       "test": "karma start karma.conf.js",
       "j": "jasmine spec/majiangTest.js",
       "a": "ava"
@@ -30,14 +31,17 @@ npm manifest:
     "author": "",
     "license": "ISC",
     "dependencies": {
+      "@types/express": "^4.11.1",
+      "@types/lodash": "^4.14.108",
+      "@types/ws": "^4.0.2",
       "chalk": "^2.3.2",
       "eslint": "^4.18.2",
       "express": "^4.16.2",
       "react": "^15.2.0",
       "react-dom": "^15.2.0",
-      "react-route": "^1.0.3",
       "react-router": "^2.5.2",
-      "socket.io": "^1.7.4"
+      "socket.io": "^1.7.4",
+      "ws": "^5.1.1"
     },
     "devDependencies": {
       "ava": "^0.25.0",
@@ -49,22 +53,25 @@ npm manifest:
       "babel-preset-react": "^6.5.0",
       "babel-preset-stage-1": "^6.5.0",
       "babel-register": "^6.26.0",
+      "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
       "jasmine": "^3.1.0",
       "jasmine-core": "^2.4.1",
       "jest": "^22.4.2",
       "karma": "^1.7.1",
+      "karma-babel-preprocessor": "^7.0.0",
       "karma-chrome-launcher": "^2.2.0",
       "karma-coverage": "latest",
       "karma-jasmine": "^1.1.1",
       "karma-requirejs": "^1.1.0",
       "requirejs": "^2.3.2",
+      "typescript": "^2.8.3",
       "webpack": "^4.1.1",
       "webpack-cli": "^2.0.12",
       "webpack-dev-server": "^3.1.1"
     },
     "ava": {
       "files": [
-        "spec/ava_majiangTest.js"
+        "server_build/spec/hu_test/*.js"
       ],
       "require": [
         "babel-register"
@@ -148,6 +155,64 @@ Lockfile:
   "@sindresorhus/is@^0.7.0":
     version "0.7.0"
     resolved "http://registry.npm.taobao.org/@sindresorhus/is/download/@sindresorhus/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
+  
+  "@types/body-parser@*":
+    version "1.17.0"
+    resolved "http://registry.npm.taobao.org/@types/body-parser/download/@types/body-parser-1.17.0.tgz#9f5c9d9bd04bb54be32d5eb9fc0d8c974e6cf58c"
+    dependencies:
+      "@types/connect" "*"
+      "@types/node" "*"
+  
+  "@types/connect@*":
+    version "3.4.32"
+    resolved "http://registry.npm.taobao.org/@types/connect/download/@types/connect-3.4.32.tgz#aa0e9616b9435ccad02bc52b5b454ffc2c70ba28"
+    dependencies:
+      "@types/node" "*"
+  
+  "@types/events@*":
+    version "1.2.0"
+    resolved "http://registry.npm.taobao.org/@types/events/download/@types/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
+  
+  "@types/express-serve-static-core@*":
+    version "4.11.1"
+    resolved "http://registry.npm.taobao.org/@types/express-serve-static-core/download/@types/express-serve-static-core-4.11.1.tgz#f6f7212382d59b19d696677bcaa48a37280f5d45"
+    dependencies:
+      "@types/events" "*"
+      "@types/node" "*"
+  
+  "@types/express@^4.11.1":
+    version "4.11.1"
+    resolved "http://registry.npm.taobao.org/@types/express/download/@types/express-4.11.1.tgz#f99663b3ab32d04cb11db612ef5dd7933f75465b"
+    dependencies:
+      "@types/body-parser" "*"
+      "@types/express-serve-static-core" "*"
+      "@types/serve-static" "*"
+  
+  "@types/lodash@^4.14.108":
+    version "4.14.108"
+    resolved "http://registry.npm.taobao.org/@types/lodash/download/@types/lodash-4.14.108.tgz#02656af3add2e5b3174f830862c47421c00ef817"
+  
+  "@types/mime@*":
+    version "2.0.0"
+    resolved "http://registry.npm.taobao.org/@types/mime/download/@types/mime-2.0.0.tgz#5a7306e367c539b9f6543499de8dd519fac37a8b"
+  
+  "@types/node@*":
+    version "9.6.6"
+    resolved "http://registry.npm.taobao.org/@types/node/download/@types/node-9.6.6.tgz#439b91f9caf3983cad2eef1e11f6bedcbf9431d2"
+  
+  "@types/serve-static@*":
+    version "1.13.1"
+    resolved "http://registry.npm.taobao.org/@types/serve-static/download/@types/serve-static-1.13.1.tgz#1d2801fa635d274cd97d4ec07e26b21b44127492"
+    dependencies:
+      "@types/express-serve-static-core" "*"
+      "@types/mime" "*"
+  
+  "@types/ws@^4.0.2":
+    version "4.0.2"
+    resolved "http://registry.npm.taobao.org/@types/ws/download/@types/ws-4.0.2.tgz#b29037627dd7ba31ec49a4f1584840422efb856f"
+    dependencies:
+      "@types/events" "*"
+      "@types/node" "*"
   
   abab@^1.0.4:
     version "1.0.4"
@@ -2008,7 +2073,7 @@ Lockfile:
     version "1.1.2"
     resolved "http://registry.npm.taobao.org/component-emitter/download/component-emitter-1.1.2.tgz#296594f2753daa63996d2af08d15a95116c9aec3"
   
-  component-emitter@1.2.1, component-emitter@^1.2.0, component-emitter@^1.2.1:
+  component-emitter@1.2.1, component-emitter@^1.2.1:
     version "1.2.1"
     resolved "http://registry.npm.taobao.org/component-emitter/download/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
   
@@ -4872,6 +4937,10 @@ Lockfile:
       json-schema "0.2.3"
       verror "1.10.0"
   
+  karma-babel-preprocessor@^7.0.0:
+    version "7.0.0"
+    resolved "http://registry.npm.taobao.org/karma-babel-preprocessor/download/karma-babel-preprocessor-7.0.0.tgz#18756d818f97a5e88f91902674cd9130177a8dce"
+  
   karma-chrome-launcher@^2.2.0:
     version "2.2.0"
     resolved "http://registry.npm.taobao.org/karma-chrome-launcher/download/karma-chrome-launcher-2.2.0.tgz#cf1b9d07136cc18fe239327d24654c3dbc368acf"
@@ -5698,10 +5767,6 @@ Lockfile:
     version "4.1.0"
     resolved "http://registry.npm.taobao.org/object-assign/download/object-assign-4.1.0.tgz#7a3b3d0e98063d43f4c03f2e8ae6cd51a86883a0"
   
-  object-assign@^3.0.0:
-    version "3.0.0"
-    resolved "http://registry.npm.taobao.org/object-assign/download/object-assign-3.0.0.tgz#9bedd5ca0897949bca47e7ff408062d549f587f2"
-  
   object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
     version "4.1.1"
     resolved "http://registry.npm.taobao.org/object-assign/download/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
@@ -6077,12 +6142,6 @@ Lockfile:
     version "0.1.7"
     resolved "http://registry.npm.taobao.org/path-to-regexp/download/path-to-regexp-0.1.7.tgz#df604178005f522f15eb4490e7247a1bfaa67f8c"
   
-  path-to-regexp@^1.2.0:
-    version "1.7.0"
-    resolved "http://registry.npm.taobao.org/path-to-regexp/download/path-to-regexp-1.7.0.tgz#59fde0f435badacba103a84e9d3bc64e96b9937d"
-    dependencies:
-      isarray "0.0.1"
-  
   path-type@^1.0.0:
     version "1.1.0"
     resolved "http://registry.npm.taobao.org/path-type/download/path-type-1.1.0.tgz#59c44f7ee491da704da415da5a4070ba4f8fe441"
@@ -6410,14 +6469,6 @@ Lockfile:
       loose-envify "^1.1.0"
       object-assign "^4.1.0"
       prop-types "^15.5.10"
-  
-  react-route@^1.0.3:
-    version "1.0.3"
-    resolved "http://registry.npm.taobao.org/react-route/download/react-route-1.0.3.tgz#44220aa1c7f17a5af91f11cfc256e6ad4fbd535d"
-    dependencies:
-      component-emitter "^1.2.0"
-      object-assign "^3.0.0"
-      path-to-regexp "^1.2.0"
   
   react-router@^2.5.2:
     version "2.8.1"
@@ -7714,6 +7765,10 @@ Lockfile:
     version "0.0.6"
     resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   
+  typescript@^2.8.3:
+    version "2.8.3"
+    resolved "http://registry.npm.taobao.org/typescript/download/typescript-2.8.3.tgz#5d817f9b6f31bb871835f4edf0089f21abe6c170"
+  
   ua-parser-js@^0.7.9:
     version "0.7.17"
     resolved "http://registry.npm.taobao.org/ua-parser-js/download/ua-parser-js-0.7.17.tgz#e9ec5f9498b9ec910e7ae3ac626a805c4d09ecac"
@@ -8307,6 +8362,12 @@ Lockfile:
       async-limiter "~1.0.0"
       safe-buffer "~5.1.0"
   
+  ws@^5.1.1:
+    version "5.1.1"
+    resolved "http://registry.npm.taobao.org/ws/download/ws-5.1.1.tgz#1d43704689711ac1942fd2f283e38f825c4b8b95"
+    dependencies:
+      async-limiter "~1.0.0"
+  
   ws@~1.1.5:
     version "1.1.5"
     resolved "http://registry.npm.taobao.org/ws/download/ws-1.1.5.tgz#cbd9e6e75e09fc5d2c90015f21f0c40875e0dd51"
@@ -8484,14 +8545,14 @@ Lockfile:
       yeoman-environment "^2.0.5"
 
 Trace: 
-  Error: Missing list of packages to add to your project.
-      at new MessageError (/usr/local/lib/node_modules/yarn/lib/cli.js:186:110)
-      at Object.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:40587:13)
+  Error: Invalid subcommand. Try "add, bin, dir, ls, list, remove, upgrade, upgrade-interactive"
+      at new MessageError (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:186:110)
+      at Object.<anonymous> (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:30362:59)
       at Generator.next (<anonymous>)
-      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:98:30)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:116:14
+      at step (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:98:30)
+      at C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:116:14
       at new Promise (<anonymous>)
-      at new F (/usr/local/lib/node_modules/yarn/lib/cli.js:23451:28)
-      at Object.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:95:12)
-      at Object.run (/usr/local/lib/node_modules/yarn/lib/cli.js:40599:19)
-      at run (/usr/local/lib/node_modules/yarn/lib/cli.js:89113:20)
+      at new F (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:23451:28)
+      at Object.<anonymous> (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:95:12)
+      at Object.run (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:30366:19)
+      at run (C:\Users\Administrator\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:89113:20)

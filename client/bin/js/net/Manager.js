@@ -59,7 +59,7 @@ var mj;
                     [g_events.server_peng, this.server_peng],
                     [g_events.server_mingGang, this.server_mingGang],
                     [g_events.server_liang, this.server_liang],
-                    [g_events.server_winner, this.server_winner],
+                    [g_events.server_winner, this.server_winner]
                 ];
             };
             Manager.prototype.server_winner = function (server_message) {
@@ -132,7 +132,10 @@ var mj;
                         var clonePengSprite = LayaUtils.clone(_this.gameTable["peng" + player.ui_index]);
                         for (var i = 0; i < clonePengSprite.numChildren; i++) {
                             var imgSprite = clonePengSprite._childs[i];
-                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(pengPai) : PaiConverter.skinOfCe(pengPai));
+                            imgSprite.getChildAt(0).skin =
+                                player.ui_index == 3
+                                    ? PaiConverter.skinOfZheng(pengPai)
+                                    : PaiConverter.skinOfCe(pengPai);
                         }
                         if (player.ui_index == 3) {
                             clonePengSprite.x = player.shouPai_start_index * x_one_pai_width;
@@ -156,7 +159,10 @@ var mj;
                         var clonemingGangSprite = LayaUtils.clone(_this.gameTable["mingGang" + player.ui_index]);
                         for (var i = 0; i < clonemingGangSprite.numChildren; i++) {
                             var imgSprite = clonemingGangSprite._childs[i];
-                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(mingGangPai) : PaiConverter.skinOfCe(mingGangPai));
+                            imgSprite.getChildAt(0).skin =
+                                player.ui_index == 3
+                                    ? PaiConverter.skinOfZheng(mingGangPai)
+                                    : PaiConverter.skinOfCe(mingGangPai);
                         }
                         if (player.ui_index == 3) {
                             clonemingGangSprite.x = player.shouPai_start_index * x_one_pai_width;
@@ -181,7 +187,10 @@ var mj;
                         //自碰牌呢在godplayer这儿显示的其实是手牌的图！其它玩家显示的是ce的图
                         for (var i = 0; i < cloneSelfPengSprite.numChildren; i++) {
                             var imgSprite = cloneSelfPengSprite._childs[i];
-                            imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfShou(selfPengPai) : PaiConverter.skinOfCe(selfPengPai));
+                            imgSprite.getChildAt(0).skin =
+                                player.ui_index == 3
+                                    ? PaiConverter.skinOfShou(selfPengPai)
+                                    : PaiConverter.skinOfCe(selfPengPai);
                         }
                         if (player.ui_index == 3) {
                             cloneSelfPengSprite.x = player.shouPai_start_index * x_one_pai_width;
@@ -219,7 +228,10 @@ var mj;
                         var cloneanGangSprite = LayaUtils.clone(_this.gameTable["anGang" + player.ui_index]);
                         //暗杠特殊的是只需要显示一张牌
                         var imgSprite = cloneanGangSprite._childs[3];
-                        imgSprite.getChildAt(0).skin = (player.ui_index == 3 ? PaiConverter.skinOfZheng(anGangPai) : PaiConverter.skinOfCe(anGangPai));
+                        imgSprite.getChildAt(0).skin =
+                            player.ui_index == 3
+                                ? PaiConverter.skinOfZheng(anGangPai)
+                                : PaiConverter.skinOfCe(anGangPai);
                         if (player.ui_index == 3) {
                             cloneanGangSprite.x = player.shouPai_start_index * x_one_pai_width;
                         }
@@ -275,13 +287,18 @@ var mj;
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
                 var opt = new OptDialogScene();
-                opt.showPlayerSelect({ isShowHu: isShowHu, isShowLiang: isShowLiang, isShowGang: isShowGang, isShowPeng: isShowPeng });
+                opt.showPlayerSelect({
+                    isShowHu: isShowHu,
+                    isShowLiang: isShowLiang,
+                    isShowGang: isShowGang,
+                    isShowPeng: isShowPeng
+                });
                 laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
                 this.gameTable.addChild(opt);
                 opt.popup();
             };
             Manager.prototype.server_gameover = function (server_message) {
-                console.log('server_gameover');
+                console.log("server_gameover");
             };
             Manager.prototype.server_dapai_other = function (server_message) {
                 var username = server_message.username, user_id = server_message.user_id, pai_name = server_message.pai_name;
@@ -323,7 +340,7 @@ var mj;
                     _this.hideDirection(p);
                 });
                 this.show_direction(player.ui_index);
-                //todo: replace this.gameTable.Num0.skin 
+                //todo: replace this.gameTable.Num0.skin
                 this.gameTable.showSkinOfCountDown(config.MAX_WAIT_TIME);
                 this.countdownOneSecond = setInterval(function () {
                     _this.waitTime--;
@@ -331,7 +348,7 @@ var mj;
                     if (0 == _this.waitTime) {
                         clearInterval(_this.countdownOneSecond);
                         //自动打牌只有本玩家才有的功能，其它玩家显示倒计时仅仅是显示而已。
-                        if ((player == Laya.god_player) && _this.auto_dapai) {
+                        if (player == Laya.god_player && _this.auto_dapai) {
                             _this.socket.sendmsg({
                                 type: g_events.client_da_pai,
                                 pai: Laya.god_player.received_pai
@@ -394,7 +411,7 @@ var mj;
                 // let all_pais: Array<string> = shou_pai
                 var shouPai_urls = PaiConverter.ToShouArray(group_shou_pai.shouPai);
                 var one_shou_pai_width = gameTable.shou3.width;
-                var posiX = (one_shou_pai_width * player.shouPai_start_index) + config.X_GAP;
+                var posiX = one_shou_pai_width * player.shouPai_start_index + config.X_GAP;
                 gameTable.shouPai3.visible = true;
                 var _loop_1 = function (index) {
                     var url = shouPai_urls[index];
@@ -446,7 +463,8 @@ var mj;
                     //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
                     newPaiSprite.y += this.offsetY;
                     // this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
-                    gameTable.shou3.x = (one_shou_pai_width * Laya.god_player.shouPai_start_index) + config.X_GAP; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+                    gameTable.shou3.x =
+                        one_shou_pai_width * Laya.god_player.shouPai_start_index + config.X_GAP; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
                     this.destroyAllPaiCloneSprites();
                     this.show_god_player_shoupai(Laya.god_player);
                 }
@@ -466,7 +484,7 @@ var mj;
                     changePaiSprite.destroy(true);
                     //真正的牌面是个Image,而且是二级子！
                     // let changeImg = changePai.getChildAt(0).getChildAt(0) as Image
-                    // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}` 
+                    // changeImg.skin =  `ui/majiang/${all_pai_urls[index]}`
                 });
                 this.clonePaiSpriteArray = [];
             };
@@ -504,7 +522,7 @@ var mj;
                 gameTable["shouPai" + player.ui_index].visible = true;
                 var cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
                 //手牌显示的起码坐标Y
-                var start_posiY = (cePaiHeight * player.shouPai_start_index) + config.Y_GAP;
+                var start_posiY = cePaiHeight * player.shouPai_start_index + config.Y_GAP;
                 var show_oneShou = function (url, posiY) {
                     gameTable["testImageShoupai" + player.ui_index].skin = url;
                     gameTable["test_shoupai" + player.ui_index].y = posiY;
@@ -521,7 +539,8 @@ var mj;
                         start_posiY += cePaiHeight;
                     }
                 }
-                else { //只显示背景！
+                else {
+                    //只显示背景！
                     for (var index = 0; index < group_shou_pai.shouPaiCount; index++) {
                         show_oneShou(config.BACK_URL, start_posiY);
                         start_posiY += cePaiHeight;
@@ -673,13 +692,13 @@ var mj;
                 // console.log(otherPlayers);
                 //todo: 没效率，粗暴的刷新用户头像数据
                 var leftPlayer = Laya.room.left_player;
-                console.log('leftPlayer:', leftPlayer);
+                console.log("leftPlayer:", leftPlayer);
                 if (leftPlayer) {
                     //显示左玩家的信息
                     this.showHead(gameTable, leftPlayer);
                 }
                 var rightPlayer = Laya.room.right_player;
-                console.log('rightPlayer:', rightPlayer);
+                console.log("rightPlayer:", rightPlayer);
                 if (rightPlayer) {
                     //显示右玩家的信息
                     this.showHead(gameTable, rightPlayer);

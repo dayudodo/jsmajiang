@@ -114,7 +114,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -299,26 +299,36 @@ export class Room {
   /**玩家选择胡牌*/
   client_confirm_hu(socket) {
     let player = this.find_player_by(socket);
-    //todo: 自摸，胡自己摸的牌！
-
-    //胡别人的打的牌
-    if (player.canHu(this.table_dapai)) {
-      //告诉所有人哪个胡了
-      // io.to(room_name).emit("server_winner", player.username, hupaiNames);
-      let typesCode = player.hupai_data.hupai_dict[this.table_dapai];
-      this.players.forEach(p => {
-        p.socket.sendmsg({
-          type: g_events.server_winner,
-          winner: this.player_data_filter(socket, player, true),
-          hupai_typesCode: typesCode,
-          hupai_names: MajiangAlgo.HuPaiNamesFromArr(typesCode)
-        });
-      });
-      console.dir(player);
-    } else {
-      `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
-    }
+    //自摸，胡自己摸的牌！
+    if (player.mo_pai && player.canHu(player.mo_pai)) {
+      player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisZiMo)
+      //自摸是OK了，但是杠上花怎么办？还需要知道用户上一次的操作是扛才行！是否保存一个用户操作的数组呢？
+      //并且扛牌是可以自己摸也可以求人！记录用户操作倒是对历史回放有一定帮助。
+      this.sendWinnerMsg(player, player.mo_pai)
+    } else
+      //胡别人的打的牌
+      if (player.canHu(this.table_dapai)) {
+        this.sendWinnerMsg(player, this.table_dapai);
+        console.dir(player);
+      } else {
+        `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
+      }
   }
+  private sendWinnerMsg(player: Player, hupaiZhang: Pai) {
+    let typesCode = player.hupai_data.hupai_dict[hupaiZhang];
+    if(player.is_liang){
+     typesCode.push(config.HuisLiangDao)
+    }
+    this.players.forEach(p => {
+      p.socket.sendmsg({
+        type: g_events.server_winner,
+        winner: this.player_data_filter(player.socket, player, true),
+        hupai_typesCode: typesCode,
+        hupai_names: MajiangAlgo.HuPaiNamesFromArr(typesCode)
+      });
+    });
+  }
+
   //玩家选择放弃，给下一家发牌
   client_confirm_guo(socket) {
     //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
@@ -679,7 +689,7 @@ export class Room {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //仅供测试用
-    this.cloneTablePais = TablePaiManager.zhuang_mopai_gang();
+    this.cloneTablePais = TablePaiManager.zhuang_mopai_hu();
     //开始给所有人发牌，并给东家多发一张
     if (!this.dong_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));

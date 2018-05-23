@@ -70,6 +70,7 @@ export const HuPaiSheet = [
   { type: "HuisZiMo", name: "自摸", score: 1 },
   { type: "HuisMingSiGui", name: "明四归", score: 1 },
   { type: "HuisAnSiGui", name: "暗四归", score: 1 },
+  { type: "HuisLiangDao", name: "亮倒", score: 1 },
 ];
 
 // var output = "";
@@ -105,4 +106,6 @@ export const HuisZiMo = 10;
 export const HuisMingSiGui = 11;
 /**和上面的区别是三张牌不是碰的，是自己手起的，然后还胡这张牌 */
 export const HuisAnSiGui = 12;
+/**亮倒 */
+export const HuisLiangDao = 13;
 //end自动生成代码

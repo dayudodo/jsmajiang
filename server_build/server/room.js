@@ -280,25 +280,36 @@ class Room {
     /**玩家选择胡牌*/
     client_confirm_hu(socket) {
         let player = this.find_player_by(socket);
-        //todo: 自摸，胡自己摸的牌！
+        //自摸，胡自己摸的牌！
+        if (player.mo_pai && player.canHu(player.mo_pai)) {
+            player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisZiMo);
+            //自摸是OK了，但是杠上花怎么办？还需要知道用户上一次的操作是扛才行！是否保存一个用户操作的数组呢？
+            //并且扛牌是可以自己摸也可以求人！记录用户操作倒是对历史回放有一定帮助。
+            this.sendWinnerMsg(player, player.mo_pai);
+        }
+        else 
         //胡别人的打的牌
         if (player.canHu(this.table_dapai)) {
-            //告诉所有人哪个胡了
-            // io.to(room_name).emit("server_winner", player.username, hupaiNames);
-            let typesCode = player.hupai_data.hupai_dict[this.table_dapai];
-            this.players.forEach(p => {
-                p.socket.sendmsg({
-                    type: g_events.server_winner,
-                    winner: this.player_data_filter(socket, player, true),
-                    hupai_typesCode: typesCode,
-                    hupai_names: MajiangAlgo_1.MajiangAlgo.HuPaiNamesFromArr(typesCode)
-                });
-            });
+            this.sendWinnerMsg(player, this.table_dapai);
             console.dir(player);
         }
         else {
             `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
         }
+    }
+    sendWinnerMsg(player, hupaiZhang) {
+        let typesCode = player.hupai_data.hupai_dict[hupaiZhang];
+        if (player.is_liang) {
+            typesCode.push(config.HuisLiangDao);
+        }
+        this.players.forEach(p => {
+            p.socket.sendmsg({
+                type: g_events.server_winner,
+                winner: this.player_data_filter(player.socket, player, true),
+                hupai_typesCode: typesCode,
+                hupai_names: MajiangAlgo_1.MajiangAlgo.HuPaiNamesFromArr(typesCode)
+            });
+        });
     }
     //玩家选择放弃，给下一家发牌
     client_confirm_guo(socket) {
@@ -635,7 +646,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.zhuang_mopai_gang();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.zhuang_mopai_hu();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

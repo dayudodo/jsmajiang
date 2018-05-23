@@ -29,6 +29,35 @@ export class TablePaiManager {
   static fapai_random(): Array<Pai> {
     return _.shuffle(_.clone(config.all_pai));
   }
+  /**庄家摸牌能天胡*/
+  static zhuang_mopai_hu() {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random();
+
+    var player1 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa")
+    var player2 = getArr("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di")
+    var player3 = getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9")
+    //发牌需要有个顺序，不能使用getArr
+    var fa_pais = "t2 di".split(" ")
+    var newPais = [];
+    newPais = newPais.concat(player1);
+    newPais = newPais.concat(player2);
+    newPais = newPais.concat(player3);
+    newPais = newPais.concat(fa_pais);
+    player1.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    player2.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    player3.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    fa_pais.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    newPais = newPais.concat(allpais);
+    return newPais;
+  }
   /**庄家摸牌能杠*/
   static zhuang_mopai_gang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
