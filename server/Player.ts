@@ -178,7 +178,8 @@ export class Player {
       this.group_shou_pai.peng.remove(pai)
       //如果是手牌里面杠的，删除这三张牌！
     }else{
-      for (var i = 0; i < 3; i++) {
+      //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
+      for (var i = 0; i < 4; i++) {
         this.delete_pai(this.group_shou_pai.shouPai, pai);
       }
       this.group_shou_pai.shouPai.sort()
