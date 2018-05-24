@@ -55,6 +55,8 @@ export const CountDownInterval = 1000; //碰、杠牌倒数的时间间隔,单�
 export const IS_TING = 1;
 export const IS_LIANG = 2;
 
+
+
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 export const HuPaiSheet = [
   { type: "HuisYise", name: "清一色", score: 1 },
@@ -72,6 +74,15 @@ export const HuPaiSheet = [
   { type: "HuisAnSiGui", name: "暗四归", score: 1 },
   { type: "HuisLiangDao", name: "亮倒", score: 1 },
 ];
+
+/**放杠 */
+export const FangGang = "FangGang"
+/**放杠上杠 */
+export const FangGangShangGang = "FangGangShangGang"
+/**放屁胡炮 */
+export const FangPihuPao = "FangPihuPao"
+/**放大胡炮 */
+export const FangDaHuPao = "FangDaHuPao"
 
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {

@@ -23,11 +23,15 @@ class Player {
         this.is_zimo = false;
         //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
         this.is_thinking_tingliang = false;
-        /**玩家放碰、杠的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
-        this.fang = {
-            gang: [{ pai: "", user_id: "" }],
-            peng: [{ pai: "", user_id: "" }]
-        };
+        // /** 杠摸牌，用于检测杠上花 */
+        // public gang_mopai = false;
+        /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
+        this.fangpai_data = [
+        // {type: config.FangGang, pai:''},
+        // {type: config.FangGangShangGang, pai:''},
+        // {type: config.FangPihuPao, pai:''},
+        // {type: config.FangDaHuPao, pai:''}
+        ];
         /**收到哪个的碰、杠，user_id：哪个玩家放的牌 */
         this.shou = {
             gang: [{ pai: "", user_id: "" }],
@@ -154,6 +158,7 @@ class Player {
         }
         this.group_shou_pai.shouPai.sort();
         this._mo_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+        // this.gang_mopai = false; //打牌之后就不再是杠摸牌了。
         this.calculateHu();
     }
     /**计算各种胡牌的状态 */

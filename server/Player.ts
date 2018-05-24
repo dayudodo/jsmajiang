@@ -11,14 +11,14 @@ declare global {
     /**暗杠计数 */
     anGangCount?: number;
     mingGang: Array<Pai>;
-    selfPeng:Array<Pai>;
+    selfPeng: Array<Pai>;
     selfPengCount?: number;
     peng: Array<Pai>;
     /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
     shouPai: Array<Pai>;
     /**手牌计数 */
     shouPaiCount?: number;
-}
+  }
   /**玩家状态，做为玩家可以操作的唯一证据！ */
   enum playerStatus {
     can_dapai,
@@ -28,6 +28,7 @@ declare global {
     can_liang,
     can_hu
   }
+
 }
 
 export class Player {
@@ -70,12 +71,16 @@ export class Player {
   public is_zimo = false;
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
   public is_thinking_tingliang = false;
+  // /** 杠摸牌，用于检测杠上花 */
+  // public gang_mopai = false;
 
-  /**玩家放碰、杠的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
-  public fang = {
-    gang: [{ pai: "", user_id: "" }],
-    peng: [{ pai: "", user_id: "" }]
-  };
+  /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
+  public fangpai_data = [
+    // {type: config.FangGang, pai:''},
+    // {type: config.FangGangShangGang, pai:''},
+    // {type: config.FangPihuPao, pai:''},
+    // {type: config.FangDaHuPao, pai:''}
+  ]
   /**收到哪个的碰、杠，user_id：哪个玩家放的牌 */
   public shou = {
     gang: [{ pai: "", user_id: "" }],
@@ -96,7 +101,7 @@ export class Player {
   /**所有胡牌相关的数据都在这儿了 */
   public hupai_data: hupaiConstructor;
   /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
-  public can_status: playerStatus
+  public can_status: playerStatus;
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
@@ -121,7 +126,7 @@ export class Player {
 
   /** 玩家手牌数组，从group_shou_pai中生成 */
   get flat_shou_pai(): Array<Pai> {
-    return  MajiangAlgo.flat_shou_pai(this.group_shou_pai)
+    return MajiangAlgo.flat_shou_pai(this.group_shou_pai);
   }
   /** 从牌数组中删除一张牌 */
   private delete_pai(arr: Array<Pai>, pai: Pai): boolean {
@@ -138,7 +143,7 @@ export class Player {
   set mo_pai(pai: Pai) {
     this._mo_pai = pai;
     this.group_shou_pai.shouPai.push(pai);
-    this.group_shou_pai.shouPai.sort()
+    this.group_shou_pai.shouPai.sort();
   }
   get mo_pai() {
     return this._mo_pai;
@@ -150,7 +155,7 @@ export class Player {
   /**能亮否？能胡就能亮？ */
   canLiang(): boolean {
     // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-    return this.canTing()
+    return this.canTing();
   }
   /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
   canPeng(pai: Pai): boolean {
@@ -159,7 +164,7 @@ export class Player {
   /**能杠吗？分碰了之后杠还是本来就有三张牌！最简单的自然是使用flat_shou_pai */
   canGang(pai: Pai): boolean {
     //能否杠还能分你是自摸碰还是求人碰，selfPeng是可以随便杠的，但是求人碰则得自己摸牌才能杠！
-    return MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, this.mo_pai)
+    return MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, this.mo_pai);
   }
 
   confirm_peng(pai: Pai) {
@@ -168,21 +173,21 @@ export class Player {
     for (let i = 0; i < 2; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai);
     }
-    this.group_shou_pai.shouPai.sort()
+    this.group_shou_pai.shouPai.sort();
   }
   //确定杠肯定就是明杠！暗杠不需要检测，是由玩家来选择的！
-  confirm_mingGang(pai:Pai){
-    this.group_shou_pai.mingGang.push(pai)
+  confirm_mingGang(pai: Pai) {
+    this.group_shou_pai.mingGang.push(pai);
     //如果是碰了之后杠，需要删除这张碰牌
-    if(this.group_shou_pai.peng.includes(pai)){
-      this.group_shou_pai.peng.remove(pai)
+    if (this.group_shou_pai.peng.includes(pai)) {
+      this.group_shou_pai.peng.remove(pai);
       //如果是手牌里面杠的，删除这三张牌！
-    }else{
+    } else {
       //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
       for (var i = 0; i < 4; i++) {
         this.delete_pai(this.group_shou_pai.shouPai, pai);
       }
-      this.group_shou_pai.shouPai.sort()
+      this.group_shou_pai.shouPai.sort();
     }
   }
 
@@ -193,7 +198,7 @@ export class Player {
     }
 
     this.group_shou_pai.anGang.push(pai);
-    this.group_shou_pai.shouPai.sort()
+    this.group_shou_pai.shouPai.sort();
   }
   /**确定自碰牌杠 */
   confirm_selfPengGang(pai: Pai) {
@@ -203,7 +208,7 @@ export class Player {
     }
 
     this.group_shou_pai.selfPeng.push(pai);
-    this.group_shou_pai.shouPai.sort()
+    this.group_shou_pai.shouPai.sort();
   }
   /**  从玩家手牌中删除pai并计算胡牌*/
   da_pai(pai: Pai) {
@@ -212,8 +217,9 @@ export class Player {
     } else {
       throw new Error(`${this.username}打了张非法牌？${pai}`);
     }
-    this.group_shou_pai.shouPai.sort()
+    this.group_shou_pai.shouPai.sort();
     this._mo_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+    // this.gang_mopai = false; //打牌之后就不再是杠摸牌了。
     this.calculateHu();
   }
   /**计算各种胡牌的状态 */

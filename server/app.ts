@@ -33,7 +33,7 @@ var eventsHandler: Array<[String, Function]> = [
   [g_events.client_player_ready, client_player_ready],
   [g_events.client_da_pai, client_da_pai],
   [g_events.client_confirm_hu, client_confirm_hu],
-  [g_events.client_confirm_ting, client_confirm_ting],
+  // [g_events.client_confirm_ting, client_confirm_ting],
   [g_events.client_confirm_liang, client_confirm_liang],
   [g_events.client_confirm_mingGang, client_confirm_mingGang],
   [g_events.client_confirm_peng, client_confirm_peng],
@@ -51,11 +51,11 @@ function client_confirm_hu(client_message, socket) {
   console.log(`房间:${room.id} 用户:${player.username} 选择胡牌`);
   room.client_confirm_hu(socket);
 }
-function client_confirm_ting(client_message, socket) {
-  let { player, room } = confirmInit(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 选择听牌`);
-  room.client_confirm_ting(socket);
-}
+// function client_confirm_ting(client_message, socket) {
+//   let { player, room } = confirmInit(socket);
+//   console.log(`房间:${room.id} 用户:${player.username} 选择听牌`);
+//   room.client_confirm_ting(socket);
+// }
 function client_confirm_liang(client_message, socket) {
   let { player, room } = confirmInit(socket);
   console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
