@@ -294,6 +294,9 @@ class MajiangAlgo {
                     default:
                         throw new Error(`jijuha:${jijuhua}的值只能是0-3 `);
                 }
+                // if(jiang == "b1b1"){
+                //   console.log(getArr(newstr));
+                // }
                 if (caller && caller.call(this, newstr)) {
                     is_hu = true;
                 }
@@ -463,11 +466,12 @@ class MajiangAlgo {
         let hupai_dict = {};
         for (var i = 0; i < all_single_pai.length; i++) {
             let single_pai = all_single_pai[i];
-            let newShouPaiStr = this.flat_shou_pai(group_shoupai)
+            let newShouPai = this.flat_shou_pai(group_shoupai)
                 .concat(single_pai)
-                .sort()
-                .join("");
-            let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
+                .sort();
+            // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
+            let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
+            // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
             if (isFiveRepeat) {
                 continue;
             }
@@ -502,12 +506,11 @@ class MajiangAlgo {
         let hupai_dict = {};
         for (var i = 0; i < all_single_pai.length; i++) {
             let single_pai = all_single_pai[i];
-            let newShouPaiStr = result
+            let newShouPai = result
                 .concat(single_pai)
-                .sort()
-                .join("");
+                .sort();
             // console.log(newstr)
-            let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
+            let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
             if (isFiveRepeat) {
                 continue;
                 // console.log(newstr.match(/(..)\1\1\1\1/g))
@@ -560,11 +563,6 @@ class MajiangAlgo {
     //   });
     //   return _.uniq(arr1);
     // }
-    static isDaHuTing(shou_pai) {
-        let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_typesCode;
-        // return _.some(hupai_data, item => this.isDaHu(item));
-        return this.isDaHu(all_hupai_types);
-    }
     /**是否是卡五星
      * @param na_pai 这张牌是否是4，6中间的牌
      */
@@ -761,6 +759,37 @@ class MajiangAlgo {
         }
         return false;
     }
+    /**明四归 */
+    static HuisMingSiGui(group_shou_pai, na_pai) {
+        if (this.HuisPihu(group_shou_pai, na_pai)) {
+            if (group_shou_pai.peng.includes(na_pai)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    static exist3A(shou_pai, pai_name) {
+        return shou_pai.filter(pai => pai == pai_name).length === 3;
+    }
+    /**暗四归 */
+    static HuisAnSiGui(group_shou_pai, na_pai) {
+        if (this.HuisPihu(group_shou_pai, na_pai)) {
+            if (group_shou_pai.selfPeng.includes(na_pai) || this.exist3A(group_shou_pai.shouPai, na_pai)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
     /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
     static HupaiTypeCodeArr(group_shoupai, na_pai) {
         let _huArr = [];
@@ -784,6 +813,12 @@ class MajiangAlgo {
         }
         if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
             _huArr.push(config.HuisDaShanYuan);
+        }
+        if (this.HuisMingSiGui(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisMingSiGui);
+        }
+        if (this.HuisAnSiGui(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisAnSiGui);
         }
         // if (this.HuisGangShangKai(group_shoupai, na_pai)) {
         //   _huArr.push(config.HuisGangShangKai);
@@ -821,7 +856,9 @@ class MajiangAlgo {
             hupaicodeArr.includes(config.HuisNongQiDui) ||
             hupaicodeArr.includes(config.HuisPengpeng) ||
             hupaicodeArr.includes(config.HuisXiaoShanYuan) ||
-            hupaicodeArr.includes(config.HuisDaShanYuan)) {
+            hupaicodeArr.includes(config.HuisDaShanYuan) ||
+            hupaicodeArr.includes(config.HuisMingSiGui) ||
+            hupaicodeArr.includes(config.HuisAnSiGui)) {
             return true;
         }
         return false;

@@ -302,3 +302,11 @@ test("group胡2，3饼", function(t) {
   };
   t.deepEqual(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_zhang, ["b2", "b3"]);
 });
+test("group胡1,4条", function(t) {
+  let group_shoupai = { anGang: [],
+      mingGang: [],
+      peng: [ 't1' ],
+      selfPeng: [],
+      shouPai: [ 'b1', 'b1', 't2', 't3', 't6', 't7', 't8', 'zh', 'zh', 'zh' ] }
+  t.deepEqual(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_zhang, ["t1", "t4"]);
+});

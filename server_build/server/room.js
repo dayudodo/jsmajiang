@@ -395,6 +395,12 @@ class Room {
         if (player.is_liang) {
             typesCode.push(config.HuisLiangDao);
         }
+        // //明四归，胡的是外面已经碰了的牌
+        // if(player.group_shou_pai.peng.includes(hupaiZhang)){
+        //   typesCode.push(config.HuisMingSiGui)
+        // }else if(player.group_shou_pai.selfPeng.includes(hupaiZhang) || player.isAnSiGui(hupaiZhang) ){
+        //   typesCode.push(config.HuisAnSiGui)
+        // }
         this.players.forEach(p => {
             p.socket.sendmsg({
                 type: g_events.server_winner,
@@ -748,7 +754,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.playe3_gangshangGang();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player2_mingSiGui();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

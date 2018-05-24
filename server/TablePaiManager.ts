@@ -29,7 +29,30 @@ export class TablePaiManager {
   static fapai_random(): Array<Pai> {
     return _.shuffle(_.clone(config.all_pai));
   }
-  /**玩家2杠上花*/
+ 
+  static player2_mingSiGui() {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random();
+
+    var player1 = getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+    var player2 = getArr("b1 b1 b9 t1 t1 t2 t3 t6 t7 t8 zh zh zh");
+    var player3 = getArr("b1 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
+    var newPais = [];
+    newPais = newPais.concat(player1);
+    newPais = newPais.concat(player2);
+    newPais = newPais.concat(player3);
+    // newPais = newPais.concat(fa_pais);
+    player1.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    player2.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    player3.forEach((pai, index) => {
+      allpais.remove(pai);
+    });
+    newPais = newPais.concat(allpais);
+    return newPais;
+  }
   static playe3_gangshangGang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 

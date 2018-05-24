@@ -20,14 +20,14 @@ declare global {
   }
 }
 
-Array.prototype.remove = function(val) {
+Array.prototype.remove = function (val) {
   var index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
   }
   return this;
 };
-Array.prototype.equalArrays = function(b) {
+Array.prototype.equalArrays = function (b) {
   if (this.length != b.length) return false; // Different-size arrays not equal
   for (
     var i = 0;
@@ -67,7 +67,9 @@ declare global {
     all_hupai_typesCode: Array<number>;
     /**所有的胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。*/
     all_hupai_zhang: Array<Pai>;
-    /**胡牌字典，哪个牌是什么胡，如果为空自然是没胡喽。 */
+    /**胡牌字典，哪个牌是什么胡，如果为空自然是没胡喽。
+     * 内部数据类似于：hupai_dict['b1'] = [0,9]，表明是胡b1,并且还是七对，屁胡
+     */
     hupai_dict: {};
   }
 }
@@ -296,7 +298,7 @@ export class MajiangAlgo {
   }
 
   /**只要能胡，就应该是屁胡，包括七对！ */
-  static HuisPihu(group_shoupai: ShoupaiConstuctor, na_pai?: Pai): boolean {
+  static HuisPihu(group_shoupai: GroupConstructor, na_pai?: Pai): boolean {
     // return this._HuisPihu(group_shoupai.shouPai, na_pai);
     let jijuhua = MajiangAlgo.getJijuhua(group_shoupai);
     let result = getArr(group_shoupai.shouPai)
@@ -342,6 +344,9 @@ export class MajiangAlgo {
           default:
             throw new Error(`jijuha:${jijuhua}的值只能是0-3 `);
         }
+        // if(jiang == "b1b1"){
+        //   console.log(getArr(newstr));
+        // }
         if (caller && caller.call(this, newstr)) {
           is_hu = true;
         }
@@ -351,7 +356,7 @@ export class MajiangAlgo {
     // return this._HuisPihu(this.flat_shou_pai(group_shoupai), na_pai);
   }
   /**统计group手牌中已经碰、杠的几句话 */
-  private static getJijuhua(group_shoupai: ShoupaiConstuctor) {
+  private static getJijuhua(group_shoupai: GroupConstructor) {
     return (
       group_shoupai.anGang.length +
       group_shoupai.mingGang.length +
@@ -392,7 +397,7 @@ export class MajiangAlgo {
     return is_hu;
   }
 
-  static HuisQiDui(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
+  static HuisQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
     if (this.getJijuhua(group_shoupai) > 1) {
       return false;
     } else {
@@ -419,7 +424,7 @@ export class MajiangAlgo {
     }
     return true;
   }
-  static HuisNongQiDui(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
+  static HuisNongQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
     let result = getArr(group_shoupai.shouPai)
       .concat(na_pai)
       .sort();
@@ -435,7 +440,7 @@ export class MajiangAlgo {
     }
   }
   /**是否是清一色屁胡，而七对的清一色需要使用isYise! */
-  static HuisYise(group_shoupai: ShoupaiConstuctor, na_pai: Pai): boolean {
+  static HuisYise(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
     if (MajiangAlgo.isOnlyFlatShouPai(group_shoupai)) {
       return MajiangAlgo._HuisYise(group_shoupai.shouPai, na_pai);
     } else {
@@ -461,7 +466,7 @@ export class MajiangAlgo {
     return this.isYise(result) && this._HuisPihu(shou_pai, na_pai);
   }
   /**是否是碰碰胡 */
-  static HuisPengpeng(group_shoupai: ShoupaiConstuctor, na_pai: Pai): boolean {
+  static HuisPengpeng(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
     let len = this.flat_shou_pai(group_shoupai).push(na_pai);
     if (len < 14) {
       throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
@@ -483,7 +488,7 @@ export class MajiangAlgo {
     return this.isAA(getArr(jiang));
   }
   /**平手牌，指13张牌 */
-  static flat_shou_pai(group_shou_pai: ShoupaiConstuctor): Array<Pai> {
+  static flat_shou_pai(group_shou_pai: GroupConstructor): Array<Pai> {
     let real_shoupai = [];
     group_shou_pai.anGang.forEach(pai => {
       for (let i = 0; i < 4; i++) {
@@ -510,16 +515,18 @@ export class MajiangAlgo {
     return real_shoupai.sort();
   }
   /**group手牌胡哪些牌 */
-  static HuWhatGroupPai(group_shoupai: ShoupaiConstuctor): hupaiConstructor {
+  static HuWhatGroupPai(group_shoupai: GroupConstructor): hupaiConstructor {
     let hupai_dict = {};
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
-      let newShouPaiStr: string = this.flat_shou_pai(group_shoupai)
+      let newShouPai: Array<Pai> = this.flat_shou_pai(group_shoupai)
         .concat(single_pai)
         .sort()
-        .join("");
-      let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
+
+      // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
+      let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5
+      // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
       if (isFiveRepeat) {
         continue;
       } else {
@@ -555,12 +562,12 @@ export class MajiangAlgo {
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
-      let newShouPaiStr: string = result
+      let newShouPai: Array<Pai> = result
         .concat(single_pai)
         .sort()
-        .join("");
+
       // console.log(newstr)
-      let isFiveRepeat = /(..)\1\1\1\1/g.test(newShouPaiStr);
+      let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5
       if (isFiveRepeat) {
         continue;
         // console.log(newstr.match(/(..)\1\1\1\1/g))
@@ -595,7 +602,7 @@ export class MajiangAlgo {
     };
   }
   /**group手牌中只有手牌，anGang, mingGang, peng都为空 */
-  private static isOnlyFlatShouPai(group_shoupai: ShoupaiConstuctor) {
+  private static isOnlyFlatShouPai(group_shoupai: GroupConstructor) {
     return (
       group_shoupai.anGang.length == 0 &&
       group_shoupai.mingGang.length == 0 &&
@@ -620,16 +627,10 @@ export class MajiangAlgo {
   //   return _.uniq(arr1);
   // }
 
-  static isDaHuTing(shou_pai) {
-    let all_hupai_types = this.HuWhatPai(shou_pai).all_hupai_typesCode;
-    // return _.some(hupai_data, item => this.isDaHu(item));
-    return this.isDaHu(all_hupai_types);
-  }
-
   /**是否是卡五星
    * @param na_pai 这张牌是否是4，6中间的牌
    */
-  public static HuisKaWuXing(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
+  public static HuisKaWuXing(group_shoupai: GroupConstructor, na_pai: Pai) {
     //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
     let jijuhua = this.getJijuhua(group_shoupai);
     // console.log(jijuhua);
@@ -726,7 +727,7 @@ export class MajiangAlgo {
   /**是否是小三元
    * 小三元是zh, fa, di中有一对将，其它为刻子，比如zh zh, fa fa fa, di di di。。。就是小三元了
    */
-  static HuisXiaoShanYuan(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
+  static HuisXiaoShanYuan(group_shoupai: GroupConstructor, na_pai: Pai) {
     return this._HuisXiaoShanYuan(this.flat_shou_pai(group_shoupai), na_pai);
   }
   static _HuisXiaoShanYuan(shou_pai: Array<Pai>, na_pai: Pai) {
@@ -777,7 +778,7 @@ export class MajiangAlgo {
   /**只判断三个即可，这也包括了四个的情况！
    * 大三元其实最好判断了，三个一样的zh,fa,di检测即可！
    */
-  static HuisDaShanYuan(group_shoupai: ShoupaiConstuctor, na_pai: Pai): boolean {
+  static HuisDaShanYuan(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
     return this._HuisDaShanYuan(this.flat_shou_pai(group_shoupai), na_pai);
   }
   static _HuisDaShanYuan(shou_pai: Array<Pai>, na_pai: Pai): boolean {
@@ -829,9 +830,36 @@ export class MajiangAlgo {
     }
     return false;
   }
+  /**明四归 */
+  static HuisMingSiGui(group_shou_pai: GroupConstructor, na_pai: Pai) {
+    if (this.HuisPihu(group_shou_pai, na_pai)) {
+      if (group_shou_pai.peng.includes(na_pai)) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
+  static exist3A(shou_pai:Array<Pai>, pai_name: Pai){
+    return shou_pai.filter(pai=>pai == pai_name).length === 3
+  }
+  /**暗四归 */
+  static HuisAnSiGui(group_shou_pai: GroupConstructor, na_pai: Pai) {
+    if (this.HuisPihu(group_shou_pai, na_pai)) {
+      if (group_shou_pai.selfPeng.includes(na_pai) || this.exist3A(group_shou_pai.shouPai, na_pai)) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
 
   /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
-  static HupaiTypeCodeArr(group_shoupai: ShoupaiConstuctor, na_pai: Pai): Array<number> {
+  static HupaiTypeCodeArr(group_shoupai: GroupConstructor, na_pai: Pai): Array<number> {
     let _huArr = [];
     if (this.HuisYise(group_shoupai, na_pai)) {
       _huArr.push(config.HuisYise);
@@ -854,6 +882,12 @@ export class MajiangAlgo {
     if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
       _huArr.push(config.HuisDaShanYuan);
     }
+    if (this.HuisMingSiGui(group_shoupai, na_pai)) {
+      _huArr.push(config.HuisMingSiGui);
+    }
+    if (this.HuisAnSiGui(group_shoupai, na_pai)) {
+      _huArr.push(config.HuisAnSiGui);
+    }
     // if (this.HuisGangShangKai(group_shoupai, na_pai)) {
     //   _huArr.push(config.HuisGangShangKai);
     // }
@@ -865,7 +899,7 @@ export class MajiangAlgo {
     }
     return _huArr;
   }
-  static HuPaiNames(group_shoupai: ShoupaiConstuctor, na_pai: Pai) {
+  static HuPaiNames(group_shoupai: GroupConstructor, na_pai: Pai) {
     let _output = [];
     // console.log(group_shoupai);
     // console.log("this.HupaiTypeCodeArr(group_shoupai, na_pai):",this.HupaiTypeCodeArr(group_shoupai, na_pai));
@@ -892,7 +926,9 @@ export class MajiangAlgo {
       hupaicodeArr.includes(config.HuisNongQiDui) ||
       hupaicodeArr.includes(config.HuisPengpeng) ||
       hupaicodeArr.includes(config.HuisXiaoShanYuan) ||
-      hupaicodeArr.includes(config.HuisDaShanYuan)
+      hupaicodeArr.includes(config.HuisDaShanYuan) ||
+      hupaicodeArr.includes(config.HuisMingSiGui) ||
+      hupaicodeArr.includes(config.HuisAnSiGui) 
     ) {
       return true;
     }
@@ -926,7 +962,7 @@ export class MajiangAlgo {
   }
   /**group牌能杠吗？ */
   static canGang(
-    group_shoupai: ShoupaiConstuctor,
+    group_shoupai: GroupConstructor,
     pai: Pai,
     isLiang: boolean,
     mo_pai: Pai

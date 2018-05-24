@@ -52,10 +52,10 @@ declare global {
     self?: boolean;
   }
 }
-
 function puts(obj) {
   console.log(util.inspect(obj));
 }
+
 
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
 export class Room {
@@ -166,7 +166,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -174,11 +174,11 @@ export class Room {
     return this.players.find(item => item.socket == socket);
   }
   /**某玩家的所有操作 */
-  public OperationsOf(player:Player){
+  public OperationsOf(player: Player) {
     return this.operation_sequence.filter(item => item.who === player)
   }
   /**玩家player的前step次操作 */
-  public front_operation(player:Player, step: number): Operation {
+  public front_operation(player: Player, step: number): Operation {
     let p_operations = this.OperationsOf(player);
     if (p_operations[p_operations.length - step]) {
       return p_operations[p_operations.length - step];
@@ -327,7 +327,7 @@ export class Room {
       //纪录玩家放了一杠，扣钱！还得判断下打牌玩家打牌之前是否杠牌了, 杠家其实是前三步，第一步杠，第二步摸，第三步才是打牌！
       let gangShangGang = false
       let prev3_operation = this.front_operation(this.daPai_player, 3)
-      if(prev3_operation){
+      if (prev3_operation) {
         gangShangGang = (prev3_operation.action === Operate.gang)
       }
       if (gangShangGang) {
@@ -428,6 +428,13 @@ export class Room {
     if (player.is_liang) {
       typesCode.push(config.HuisLiangDao);
     }
+    // //明四归，胡的是外面已经碰了的牌
+    // if(player.group_shou_pai.peng.includes(hupaiZhang)){
+    //   typesCode.push(config.HuisMingSiGui)
+    // }else if(player.group_shou_pai.selfPeng.includes(hupaiZhang) || player.isAnSiGui(hupaiZhang) ){
+    //   typesCode.push(config.HuisAnSiGui)
+    // }
+
     this.players.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_winner,
@@ -480,7 +487,7 @@ export class Room {
     this.fapai_to_who = player;
     //发牌给谁，谁就是当前玩家
     this.current_player = player;
-    
+
     this.operation_sequence.push({
       who: player,
       action: Operate.mo,
@@ -703,7 +710,7 @@ export class Room {
       }
       // 大胡也可以显示胡牌
       //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
-      if (item_player.isDaHu(dapai_name)) {
+      if (item_player.isDaHu(dapai_name)  ) {
         isShowHu = true;
         console.log(`房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`);
         //todo: 等待20秒，过时发牌
@@ -776,7 +783,7 @@ export class Room {
   /**过滤grou_shou_pai,
    * @param ignore_filter 是否忽略此过滤器，用户选择亮牌，就不再需要过滤了。
    */
-  filter_group(group_shouPai: ShoupaiConstuctor, ignore_filter: boolean = false) {
+  filter_group(group_shouPai: GroupConstructor, ignore_filter: boolean = false) {
     if (ignore_filter) {
       return group_shouPai;
     } else {
@@ -806,7 +813,7 @@ export class Room {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //仅供测试用
-    this.cloneTablePais = TablePaiManager.playe3_gangshangGang();
+    this.cloneTablePais = TablePaiManager.player2_mingSiGui();
     //开始给所有人发牌，并给东家多发一张
     if (!this.dong_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));

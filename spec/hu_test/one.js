@@ -27,15 +27,15 @@ import { MajiangAlgo, getArr } from "../../server_build/server/MajiangAlgo";
 //     };
 //     t.is(MajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
 //   });
-
-test("group仅屁胡 ", function (t) {
-  let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6  zh";
-  let na_pai = "zh"
+test("group清一色胡b5 杠掉后false", function(t) {
+  let str = "b1 b2 b2 b3 b3 b4 b4 b6 b7 b7";
   let group_shoupai = {
     anGang: [],
-    mingGang: [],
-    peng: ['fa'],
-    selfPeng:[], shouPai: getArr(str)
-  }
-  t.is(MajiangAlgo.HuisYise(group_shoupai, na_pai), false)
-})
+    mingGang: ["b5"],
+    peng: [],
+    selfPeng: [],
+    shouPai: getArr(str)
+  };
+  t.deepEqual(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_typesCode, []);
+  t.deepEqual(MajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_zhang, []);
+});

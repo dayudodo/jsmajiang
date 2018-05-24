@@ -1,6 +1,7 @@
 import * as util from "util";
 
 declare global {
+
   interface Array<T> {
     /** 复制一个数组*/
     repeat(o: number): T[];
@@ -21,7 +22,7 @@ declare global {
 
 
 if (!Array.prototype.repeat) {
-  Array.prototype.repeat = function(times) {
+  Array.prototype.repeat = function (times) {
     var result = [];
     for (var i = 0; i < times; i++) {
       this.map(item => {
@@ -33,7 +34,7 @@ if (!Array.prototype.repeat) {
 }
 
 var WebSocket = require("ws");
-WebSocket.prototype.sendmsg = function(msg) {
+WebSocket.prototype.sendmsg = function (msg) {
   this.send(JSON.stringify(msg));
 };
 

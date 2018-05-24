@@ -6,7 +6,7 @@ import { MajiangAlgo } from "./MajiangAlgo";
 
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
-  interface ShoupaiConstuctor {
+  interface GroupConstructor {
     anGang: Array<Pai>;
     /**暗杠计数 */
     anGangCount?: number;
@@ -97,7 +97,7 @@ export class Player {
   /**放炮数量，8局为一次？需要合在一起进行计算，但是每一次的计算放哪儿呢？ */
   public count_fangPao = 0;
   /**玩家手牌组，包括有几个杠、几个碰 */
-  public group_shou_pai: ShoupaiConstuctor;
+  public group_shou_pai: GroupConstructor;
   /**所有胡牌相关的数据都在这儿了 */
   public hupai_data: hupaiConstructor;
   /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
@@ -109,6 +109,11 @@ export class Player {
     this.socket = socket;
     this.username = username;
     this.user_id = user_id;
+  }
+  /**是否是暗四归，在group手牌中存在3张相同的牌 */
+  isAnSiGui(pai_name: Pai):boolean{
+   let countPai = this.group_shou_pai.shouPai.filter(pai=>pai == pai_name)
+    return countPai.length === 3
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
@@ -148,14 +153,14 @@ export class Player {
   get mo_pai() {
     return this._mo_pai;
   }
-  /**能否听牌，玩家没亮的时候，屁胡不能听牌！其它情况下是可以的！ */
-  canTing(): boolean {
-    return this.hupai_data.all_hupai_zhang.length > 0;
-  }
+  // /**能否听牌，玩家没亮的时候，屁胡不能听牌！其它情况下是可以的！ */
+  // canTing(): boolean {
+  //   return this.hupai_data.all_hupai_zhang.length > 0;
+  // }
   /**能亮否？能胡就能亮？ */
   canLiang(): boolean {
     // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-    return this.canTing();
+    return this.hupai_data.all_hupai_zhang.length > 0
   }
   /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
   canPeng(pai: Pai): boolean {

@@ -52,6 +52,11 @@ class Player {
         this.username = username;
         this.user_id = user_id;
     }
+    /**是否是暗四归，在group手牌中存在3张相同的牌 */
+    isAnSiGui(pai_name) {
+        let countPai = this.group_shou_pai.shouPai.filter(pai => pai == pai_name);
+        return countPai.length === 3;
+    }
     /**能否胡pai_name */
     canHu(pai_name) {
         if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
@@ -89,14 +94,14 @@ class Player {
     get mo_pai() {
         return this._mo_pai;
     }
-    /**能否听牌，玩家没亮的时候，屁胡不能听牌！其它情况下是可以的！ */
-    canTing() {
-        return this.hupai_data.all_hupai_zhang.length > 0;
-    }
+    // /**能否听牌，玩家没亮的时候，屁胡不能听牌！其它情况下是可以的！ */
+    // canTing(): boolean {
+    //   return this.hupai_data.all_hupai_zhang.length > 0;
+    // }
     /**能亮否？能胡就能亮？ */
     canLiang() {
         // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-        return this.canTing();
+        return this.hupai_data.all_hupai_zhang.length > 0;
     }
     /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
     canPeng(pai) {
