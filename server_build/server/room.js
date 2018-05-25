@@ -345,7 +345,7 @@ class Room {
     client_confirm_liang(socket) {
         let player = this.find_player_by(socket);
         player.is_liang = true;
-        player.is_ting = true; //如果亮牌，肯定就是听了
+        // player.is_ting = true; //如果亮牌，肯定就是听了
         //玩家已经有决定，不再想了。
         player.is_thinking_tingliang = false;
         //亮牌之后，需要显示此玩家的所有牌，除了暗杠！
@@ -372,6 +372,7 @@ class Room {
         let player = this.find_player_by(socket);
         //自摸，胡自己摸的牌！
         if (player.mo_pai && player.canHu(player.mo_pai)) {
+            player.hupai_zhang = player.mo_pai;
             player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisZiMo);
             //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
             if (this.front_operation(player, 2).action == Operate.gang) {
@@ -383,8 +384,16 @@ class Room {
         }
         //胡别人的打的牌
         else if (player.canHu(this.table_dapai)) {
+            player.hupai_zhang = this.table_dapai;
+            //记录放炮者
+            let fangType = player.isDaHu(this.table_dapai) ? config.FangDaHuPao : config.FangPihuPao;
+            this.daPai_player.fangpai_data.push({
+                type: fangType,
+                pai: this.table_dapai
+            });
             this.sendWinnerMsg(player, this.table_dapai);
-            console.dir(player);
+            // console.dir(player);
+            console.dir(this.daPai_player.fangpai_data);
         }
         else {
             `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
@@ -443,8 +452,9 @@ class Room {
             throw new Error(chalk_1.default.red(`room.pai中无可用牌了`));
         }
         //看用户的状态，如果快要胡牌了，发牌还不太一样！不需要用户再操作了！
-        if (player.is_liang || player.is_ting) {
-            console.log(`${player.username}已经听或者亮牌，服务器直接发牌，或者胡`);
+        if (player.is_liang) {
+            console.log(`${player.username}已经亮牌，服务器直接发牌，或者胡`);
+            //todo: 命令客户端自动打牌及胡牌
         }
         //房间记录发牌给谁，以便分析哪个玩家拿牌了但是没有打，说明在等待其它玩家！
         this.fapai_to_who = player;
@@ -476,39 +486,6 @@ class Room {
         //发牌之后还要看玩家能否胡以及胡什么！
         //todo: 应该返回牌字符串，而非一个元素的数组！使用ts的静态类型不容易出bug
         return pai[0];
-    }
-    judge_ting(player) {
-        let statusCode = -1; //状态返回码，是听还是亮！
-        let { all_hupai_zhang, all_hupai_typesCode } = player.hupai_data;
-        //亮牌是只要能胡就可以亮，屁胡的时候是不能听牌的！但是在客户端这样写总是有很多的重复！如何合并？
-        if (all_hupai_typesCode) {
-            console.log(`${player.username}可以亮牌`);
-            statusCode = config.IS_LIANG;
-            //胡牌张保存到临时的胡牌张中，等待玩家确认！
-            // player.temp_hupai_zhang = all_hupai_zhang;
-            //服务器记录玩家在想
-            player.is_thinking_tingliang = true;
-            //如果用户没亮牌，才会发送你可以亮牌了！
-            if (!player.is_liang) {
-                // player.socket.emit("server_canLiang");
-            }
-        }
-        console.dir(all_hupai_typesCode);
-        //只有在可以大胡的时候才能够听牌
-        if (all_hupai_typesCode && MajiangAlgo_1.MajiangAlgo.isDaHu(all_hupai_typesCode)) {
-            //todo: 服务器应该在这儿等一会儿，等人家选择好，不然在决定听的时候有人已经打牌了，听牌玩家不要骂娘！
-            //不过呢，nodejs对于时间函数貌似开销比较大，怎么办？第一手不让胡是不可能的。
-            // this.room_should_wait(config.MaxWaitTime)
-            console.log(`${player.username}可以听牌`);
-            statusCode = config.IS_TING;
-            // player.temp_hupai_zhang = all_hupai_zhang;
-            player.is_thinking_tingliang = true;
-            //如果用户没有听牌，才会发送这个消息，不然啥也不做！
-            if (!player.is_ting) {
-                // player.socket.emit("server_canTing");
-            }
-        }
-        return statusCode;
     }
     //用户杠了之后需要摸一张牌
     gang_mo_pai(player) {
@@ -754,7 +731,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player2_mingSiGui();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player2_anSiGui();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

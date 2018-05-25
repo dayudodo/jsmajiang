@@ -65,8 +65,6 @@ export class Player {
 
   /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
   public is_liang = false;
-  /**玩家是否选择听牌，只有大胡的时候才能听牌！*/
-  public is_ting = false;
   /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
   public is_zimo = false;
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
@@ -100,6 +98,8 @@ export class Player {
   public group_shou_pai: GroupConstructor;
   /**所有胡牌相关的数据都在这儿了 */
   public hupai_data: hupaiConstructor;
+  /**最后胡的是哪张牌 */
+  public hupai_zhang: Pai = null;
   /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
   public can_status: playerStatus;
 

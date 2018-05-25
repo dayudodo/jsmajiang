@@ -17,8 +17,6 @@ class Player {
         this.arr_dapai = []; //打过的牌有哪些，断线后可以重新发送此数据
         /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
         this.is_liang = false;
-        /**玩家是否选择听牌，只有大胡的时候才能听牌！*/
-        this.is_ting = false;
         /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
         this.is_zimo = false;
         //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
@@ -47,6 +45,8 @@ class Player {
         this.count_zimo = 0;
         /**放炮数量，8局为一次？需要合在一起进行计算，但是每一次的计算放哪儿呢？ */
         this.count_fangPao = 0;
+        /**最后胡的是哪张牌 */
+        this.hupai_zhang = null;
         this.group_shou_pai = group_shou_pai;
         this.socket = socket;
         this.username = username;
