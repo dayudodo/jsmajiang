@@ -67,7 +67,7 @@ namespace mj.net {
     }
     /**服务器确认god_player可以打牌了，并不需要啥数据，只是个消息通知 */
     public server_can_dapai(server_message) {
-      Laya.god_player.can_dapai = true
+      Laya.god_player.can_dapai = true;
     }
     public server_winner(server_message) {
       console.log(server_message);

@@ -116,8 +116,9 @@ class Player {
     }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);
-        //从手牌中删除二张牌
-        for (let i = 0; i < 2; i++) {
+        //从手牌中删除三张牌，因为把别人的牌当成是mo_pai加入了手牌！
+        //这样的话其它玩家liang, guo之后就知道碰玩家是摸牌的人了！
+        for (let i = 0; i < 3; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.shouPai.sort();

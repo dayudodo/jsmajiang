@@ -249,12 +249,17 @@ class Room {
         pengPlayer.is_thinking = false;
         //碰之后打牌玩家的打牌就跑到碰玩家手中了
         let dapai = this.daPai_player.arr_dapai.pop();
+        //碰也相当于是碰玩家也摸了张牌！
+        pengPlayer.mo_pai = dapai;
         //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
         pengPlayer.confirm_peng(dapai);
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = pengPlayer;
         pengPlayer.can_dapai = true;
-        pengPlayer.socket.sendmsg({ type: g_events.server_can_dapai });
+        if (this.all_players_normal()) {
+            console.log(chalk_1.default.green(`玩家们正常，碰家：${pengPlayer.username}可以打牌`));
+            pengPlayer.socket.sendmsg({ type: g_events.server_can_dapai });
+        }
         //给每个人都要发出全部玩家的更新数据，这样最方便！
         this.players.forEach(person => {
             let players = this.players.map(p => {
@@ -352,6 +357,18 @@ class Room {
         //杠玩家记录下此次发牌，以便进行杠上花的检测，有打牌之后为false
         // gangPlayer.gang_mopai = true;
     }
+    /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
+    decide_fapai() {
+        if (this.all_players_normal()) {
+            //都正常且没人摸牌的情况下才能发牌
+            if (this.no_player_mopai()) {
+                this.server_fa_pai(this.next_player);
+            }
+            //这时候才能够告诉摸牌的人你可以打牌
+            let moPlayer = this.players.find(p => p.mo_pai != null);
+            this.decide_can_dapai(moPlayer);
+        }
+    }
     /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
     client_confirm_liang(socket) {
         let player = this.find_player_by(socket);
@@ -366,14 +383,34 @@ class Room {
                 liangPlayer: this.player_data_filter(socket, player, true)
             });
         });
+        this.operation_sequence.push({
+            who: player,
+            action: Operate.liang
+        });
         //还没有发过牌呢，说明是刚开始游戏，庄家亮了。
         //此判断还能防止两家都亮的情况，如果有人摸了牌，就算你亮牌也不会有啥影响，保证只有一个人手里面有摸牌！
         //仅仅依靠最后一个是打牌来进行发牌是不对的，如果遇上了一人打牌后 有人可亮，有人可碰，还没有碰呢，你亮了，结果就发牌了！
         //所以还需要啥呢？没人在思考状态！或者说是正常的状态下！并且有人打牌了，才可以发牌！
-        let last_op = this.last_Operation();
-        if (last_op && last_op.action == Operate.da) {
-            this.server_fa_pai(this.next_player);
-        }
+        this.decide_fapai();
+    }
+    //玩家选择放弃，给下一家发牌
+    client_confirm_guo(socket) {
+        //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
+        let player = this.find_player_by(socket);
+        //玩家有决定了，状态改变
+        player.is_thinking = false;
+        //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
+        //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
+        //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
+        // let isPlayerNormalDapai = this.fapai_to_who === this.daPai_player;
+        // if (isPlayerNormalDapai) {
+        //   this.server_fa_pai(this.next_player);
+        // }
+        //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
+        // if (this.no_player_mopai()) {
+        //   this.server_fa_pai(this.next_player);
+        // }
+        this.decide_fapai();
     }
     /**玩家选择胡牌*/
     client_confirm_hu(socket) {
@@ -429,28 +466,6 @@ class Room {
             });
         });
     }
-    //玩家选择放弃，给下一家发牌
-    client_confirm_guo(socket) {
-        //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
-        let player = this.find_player_by(socket);
-        //玩家有决定了，状态改变
-        player.is_thinking = false;
-        //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
-        //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
-        //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
-        let isPlayerNormalDapai = this.fapai_to_who === this.daPai_player;
-        if (isPlayerNormalDapai) {
-            this.server_fa_pai(this.next_player);
-        }
-        //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
-        // if (this.no_player_mopai()) {
-        //   this.server_fa_pai(this.next_player);
-        // }
-        let last_op = this.last_Operation();
-        if (last_op && last_op.action == Operate.da) {
-            this.server_fa_pai(this.next_player);
-        }
-    }
     /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
      * @param fromEnd 是否从最后发牌
      */
@@ -490,9 +505,6 @@ class Room {
             type: g_events.server_table_fa_pai,
             pai: player.mo_pai
         });
-        //还需要告诉玩家你可以打牌了
-        player.can_dapai = true;
-        player.socket.sendmsg({ type: g_events.server_can_dapai });
         //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
         this.other_players(player).forEach(p => {
             p.socket.sendmsg({
@@ -500,9 +512,16 @@ class Room {
                 user_id: player.user_id
             });
         });
-        //发牌之后还要看玩家能否胡以及胡什么！
-        //todo: 应该返回牌字符串，而非一个元素的数组！使用ts的静态类型不容易出bug
+        this.decide_can_dapai(player);
         return pai[0];
+    }
+    /**决定玩家是否可以打牌 */
+    decide_can_dapai(player) {
+        player.can_dapai = true;
+        if (this.all_players_normal()) {
+            console.log(chalk_1.default.green(`玩家们正常，${player.username}可以打牌`));
+            player.socket.sendmsg({ type: g_events.server_can_dapai });
+        }
     }
     //用户杠了之后需要摸一张牌
     gang_mo_pai(player) {
@@ -522,7 +541,7 @@ class Room {
         player.socket.emit("server_table_fapai", pai);
         return pai;
     }
-    /**所有玩家处于正常状态*/
+    /**所有玩家处于正常状态，指不是碰、杠、亮选择状态的时候*/
     all_players_normal() {
         return this.players.every(p => p.is_thinking === false);
     }
@@ -530,7 +549,9 @@ class Room {
     client_da_pai(socket, dapai_name) {
         let player = this.find_player_by(socket);
         if (!player.can_dapai) {
-            throw new Error(`房间${this.id} 玩家${player.username} 强制打牌，抓住！！！！`);
+            // throw new Error();
+            console.log(chalk_1.default.red(`房间${this.id} 玩家${player.username} 强制打牌，抓住！！！！`));
+            return;
         }
         //能否正常给下一家发牌
         let canNormalFaPai = true;
@@ -602,7 +623,8 @@ class Room {
             console.log(chalk_1.default.red(`有玩家在思考中，${player.username}不能打牌`));
         }
     }
-    /**发牌后决定玩家是否能显示（胡、杠）的选择窗口 */
+    /**发牌后决定玩家是否能显示（胡、杠）的选择窗口。
+     *  与其它玩家选择有所不同，碰不会检测，因为你不能碰自己打的牌！ */
     decideFaPaiSelectShow(item_player, mo_pai) {
         let isShowHu = false, isShowLiang = false, isShowGang = false, isShowPeng = false;
         //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
@@ -760,7 +782,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.fapai_random();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player23_liangTest();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));
@@ -780,7 +802,7 @@ class Room {
             if (p == this.dong_jia) {
                 //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
                 //不管东家会不会胡，都是需要发牌的！
-                this.server_fa_pai(p);
+                // this.server_fa_pai(p);
             }
             else {
                 //测试一下如何显示其它两家的牌，应该在发牌之后，因为这时候牌算是发完了，不然没牌的时候你显示个屁哟。
@@ -789,6 +811,7 @@ class Room {
                 this.decideSelectShow(p);
             }
         });
+        this.server_fa_pai(this.dong_jia);
     }
     //游戏结束后重新开始游戏！
     restart_game() {
