@@ -145,8 +145,8 @@ class Room {
     OperationsOf(player) {
         return this.operation_sequence.filter(item => item.who === player);
     }
-    /**玩家player的前step次操作 */
-    front_operation(player, step) {
+    /**玩家player的前step次操作，限定玩家，以免有其它玩家的操作干扰 */
+    front_operationOf(player, step) {
         let p_operations = this.OperationsOf(player);
         if (p_operations[p_operations.length - step]) {
             return p_operations[p_operations.length - step];
@@ -309,7 +309,7 @@ class Room {
             });
             //纪录玩家放了一杠，扣钱！还得判断下打牌玩家打牌之前是否杠牌了, 杠家其实是前三步，第一步杠，第二步摸，第三步才是打牌！
             let gangShangGang = false;
-            let prev3_operation = this.front_operation(this.daPai_player, 3);
+            let prev3_operation = this.front_operationOf(this.daPai_player, 3);
             if (prev3_operation) {
                 gangShangGang = prev3_operation.action === Operate.gang;
             }
@@ -402,14 +402,7 @@ class Room {
         //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
         //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
         //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
-        // let isPlayerNormalDapai = this.fapai_to_who === this.daPai_player;
-        // if (isPlayerNormalDapai) {
-        //   this.server_fa_pai(this.next_player);
-        // }
         //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
-        // if (this.no_player_mopai()) {
-        //   this.server_fa_pai(this.next_player);
-        // }
         this.decide_fapai();
     }
     /**玩家选择胡牌*/
@@ -421,7 +414,7 @@ class Room {
             player.hupai_zhang = player.mo_pai;
             player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisZiMo);
             //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
-            let prev2_operation = this.front_operation(player, 2);
+            let prev2_operation = this.front_operationOf(player, 2);
             if (prev2_operation && prev2_operation.action == Operate.gang) {
                 player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisGangShangKai);
             }
@@ -782,7 +775,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player23_liangTest();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.qidiu_ting();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

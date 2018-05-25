@@ -21,6 +21,19 @@ var mj;
                 _this.socket = Laya.client.socket;
                 return _this;
             }
+            OptDialogScene.prototype.show_liang = function () {
+                //改变的肯定是god_player的手牌显示
+                var gameTable = Laya.gameTable;
+                //但是需要把三个相同的给标记出来，让用户选择到底哪些不需要亮牌！也就是选择需要隐藏的牌
+                //可能有多个，因为玩家是碰碰胡，而碰碰胡是可以杠的。
+                //三个一起进行标记，同时上移或者下移， 上移的就是选中的
+                //取消所有的按钮事件！
+                // gameTable.clon
+                this.socket.sendmsg({
+                    type: g_events.client_confirm_liang,
+                    pais: []
+                });
+            };
             OptDialogScene.prototype.showPlayerSelect = function (_a) {
                 var _this = this;
                 var isShowHu = _a.isShowHu, isShowLiang = _a.isShowLiang, isShowGang = _a.isShowGang, isShowPeng = _a.isShowPeng;
@@ -34,11 +47,10 @@ var mj;
                 });
                 this.initButton(this.liang, isShowLiang, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u4EAE");
-                    _this.socket.sendmsg({
-                        type: g_events.client_confirm_liang
-                    });
                     _this.close();
                     _this.removeSelf();
+                    //亮牌有所不同的是其还需要改变桌面的显示
+                    _this.show_liang();
                 });
                 this.initButton(this.gang, isShowGang, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u6760");

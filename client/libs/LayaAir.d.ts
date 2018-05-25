@@ -31814,6 +31814,10 @@ declare class Laya3D {
  * <code>Laya</code> 是全局对象的引用入口集。
  */
 declare class Laya {
+    /**全局唯一socket */
+    static socket: Laya.Socket
+    /**管理者 */
+    static manager: mj.net.Manager
     /**全局唯一的牌桌 */
     static gameTable: mj.scene.GameTableScene
     /**玩家所在房间 */

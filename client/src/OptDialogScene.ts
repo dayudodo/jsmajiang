@@ -14,6 +14,19 @@ module mj.scene {
             super()
             this.socket = Laya.client.socket
         }
+        public show_liang(){
+            //改变的肯定是god_player的手牌显示
+            let gameTable = Laya.gameTable
+            //但是需要把三个相同的给标记出来，让用户选择到底哪些不需要亮牌！也就是选择需要隐藏的牌
+            //可能有多个，因为玩家是碰碰胡，而碰碰胡是可以杠的。
+            //三个一起进行标记，同时上移或者下移， 上移的就是选中的
+            //取消所有的按钮事件！
+            // gameTable.clon
+                this.socket.sendmsg({
+                    type: g_events.client_confirm_liang,
+                    pais:[]
+                })
+        }
         public showPlayerSelect({isShowHu, isShowLiang, isShowGang, isShowPeng}) {
 
             this.initButton(this.hu, isShowHu, () => {
@@ -26,11 +39,10 @@ module mj.scene {
             })
             this.initButton(this.liang, isShowLiang, () => {
                 console.log(`用户选择亮`);
-                this.socket.sendmsg({
-                    type: g_events.client_confirm_liang
-                })
                 this.close()
                 this.removeSelf()
+                //亮牌有所不同的是其还需要改变桌面的显示
+                this.show_liang()
             })
             this.initButton(this.gang, isShowGang, () => {
                 console.log(`用户选择杠`);
