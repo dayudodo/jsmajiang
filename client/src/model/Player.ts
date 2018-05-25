@@ -54,6 +54,8 @@ module mj.model {
         public shouPaiCount
         /**玩家group手牌中的暗杠数量 */
         public anGangCount
+        /**玩家能否打牌 */
+        public can_dapai: boolean = false
 
         constructor() { }
 

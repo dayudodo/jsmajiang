@@ -32,4 +32,5 @@ exports.server_liang = "server_liang";
 exports.server_gameover = "server_gameover";
 exports.server_winner = "server_winner";
 exports.server_can_select = "server_can_select";
+exports.server_can_dapai = "server_can_dapai";
 //# sourceMappingURL=events.js.map

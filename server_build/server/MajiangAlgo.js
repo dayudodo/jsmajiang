@@ -820,12 +820,6 @@ class MajiangAlgo {
         if (this.HuisAnSiGui(group_shoupai, na_pai)) {
             _huArr.push(config.HuisAnSiGui);
         }
-        // if (this.HuisGangShangKai(group_shoupai, na_pai)) {
-        //   _huArr.push(config.HuisGangShangKai);
-        // }
-        // if (this.HuisGangShangPao(str, na_pai)) {
-        //   _huArr.push(config.HuisGangShangPao);
-        // }
         if (this.HuisPihu(group_shoupai, na_pai)) {
             _huArr.push(config.HuisPihu);
         }

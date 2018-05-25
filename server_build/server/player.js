@@ -20,7 +20,7 @@ class Player {
         /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
         this.is_zimo = false;
         //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
-        this.is_thinking_tingliang = false;
+        this.is_thinking = false;
         // /** 杠摸牌，用于检测杠上花 */
         // public gang_mopai = false;
         /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
@@ -47,6 +47,8 @@ class Player {
         this.count_fangPao = 0;
         /**最后胡的是哪张牌 */
         this.hupai_zhang = null;
+        /**能打牌了 */
+        this.can_dapai = false;
         this.group_shou_pai = group_shou_pai;
         this.socket = socket;
         this.username = username;

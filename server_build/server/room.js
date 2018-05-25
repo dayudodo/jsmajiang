@@ -13,19 +13,19 @@ let room_valid_names = ["ange", "jack", "rose"];
 var Operate;
 (function (Operate) {
     /**用户摸牌 */
-    Operate[Operate["mo"] = 0] = "mo";
+    Operate["mo"] = "mo";
     /**用户打牌 */
-    Operate[Operate["da"] = 1] = "da";
+    Operate["da"] = "da";
     /**用户碰牌 */
-    Operate[Operate["peng"] = 2] = "peng";
+    Operate["peng"] = "peng";
     /**用户杠牌 */
-    Operate[Operate["gang"] = 3] = "gang";
+    Operate["gang"] = "gang";
     /**用户胡牌 */
-    Operate[Operate["hu"] = 4] = "hu";
+    Operate["hu"] = "hu";
     /**用户亮牌 */
-    Operate[Operate["liang"] = 5] = "liang";
+    Operate["liang"] = "liang";
     /**用户过牌 */
-    Operate[Operate["guo"] = 6] = "guo";
+    Operate["guo"] = "guo";
 })(Operate || (Operate = {}));
 function puts(obj) {
     console.log(util.inspect(obj));
@@ -155,6 +155,10 @@ class Room {
             return null;
         }
     }
+    /**最后 一个操作 */
+    last_Operation() {
+        return _.last(this.operation_sequence);
+    }
     //玩家们是否都已经准备好开始游戏
     get all_ready() {
         let player_ready_count = this.players.filter(item => item.ready).length;
@@ -180,6 +184,10 @@ class Room {
         //最后通过座位号来找到玩家,而不是数组序号,更不容易出错，哪怕是players数组乱序也不要紧
         return this.players.find(p => p.seat_index == next_index);
     }
+    /**胡牌玩家 */
+    get hupai_player() {
+        return this.players.find(p => p.hupai_zhang != null);
+    }
     //除了person外的其它玩家们
     other_players(person) {
         // console.log("查找本玩家%s的其它玩家", person.username);
@@ -201,7 +209,7 @@ class Room {
     }
     /**没有玩家摸牌 */
     no_player_mopai() {
-        this.players.every(p => p.mo_pai == null);
+        return this.players.every(p => p.mo_pai == null);
     }
     /**
      *
@@ -238,12 +246,15 @@ class Room {
     /**玩家选择碰牌，或者是超时自动跳过！*/
     client_confirm_peng(socket) {
         let pengPlayer = this.find_player_by(socket);
+        pengPlayer.is_thinking = false;
         //碰之后打牌玩家的打牌就跑到碰玩家手中了
         let dapai = this.daPai_player.arr_dapai.pop();
         //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
         pengPlayer.confirm_peng(dapai);
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = pengPlayer;
+        pengPlayer.can_dapai = true;
+        pengPlayer.socket.sendmsg({ type: g_events.server_can_dapai });
         //给每个人都要发出全部玩家的更新数据，这样最方便！
         this.players.forEach(person => {
             let players = this.players.map(p => {
@@ -265,9 +276,9 @@ class Room {
     /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
     client_confirm_mingGang(socket) {
         let gangPlayer = this.find_player_by(socket);
+        gangPlayer.is_thinking = false;
         let gangPai;
         /**自己扛 */
-        // return
         let selfGang = this.fapai_to_who === gangPlayer;
         if (selfGang) {
             gangPai = gangPlayer.mo_pai;
@@ -295,7 +306,7 @@ class Room {
             let gangShangGang = false;
             let prev3_operation = this.front_operation(this.daPai_player, 3);
             if (prev3_operation) {
-                gangShangGang = (prev3_operation.action === Operate.gang);
+                gangShangGang = prev3_operation.action === Operate.gang;
             }
             if (gangShangGang) {
                 this.daPai_player.fangpai_data.push({
@@ -309,11 +320,11 @@ class Room {
                     pai: gangPai
                 });
             }
-            console.log('====================================');
+            console.log("====================================");
             // puts(this.OperationsOf(this.daPai_player))
             console.log(`${this.daPai_player.username} fangpai_data:`);
             puts(this.daPai_player.fangpai_data);
-            console.log('====================================');
+            console.log("====================================");
         }
         //在杠玩家的group_shou_pai.peng中添加此dapai
         gangPlayer.confirm_mingGang(gangPai);
@@ -347,7 +358,7 @@ class Room {
         player.is_liang = true;
         // player.is_ting = true; //如果亮牌，肯定就是听了
         //玩家已经有决定，不再想了。
-        player.is_thinking_tingliang = false;
+        player.is_thinking = false;
         //亮牌之后，需要显示此玩家的所有牌，除了暗杠！
         this.other_players(player).forEach(p => {
             p.socket.sendmsg({
@@ -356,26 +367,25 @@ class Room {
             });
         });
         //还没有发过牌呢，说明是刚开始游戏，庄家亮了。
-        if (this.no_player_mopai()) {
-            this.server_fa_pai(player);
+        //此判断还能防止两家都亮的情况，如果有人摸了牌，就算你亮牌也不会有啥影响，保证只有一个人手里面有摸牌！
+        //仅仅依靠最后一个是打牌来进行发牌是不对的，如果遇上了一人打牌后 有人可亮，有人可碰，还没有碰呢，你亮了，结果就发牌了！
+        //所以还需要啥呢？没人在思考状态！或者说是正常的状态下！并且有人打牌了，才可以发牌！
+        let last_op = this.last_Operation();
+        if (last_op && last_op.action == Operate.da) {
+            this.server_fa_pai(this.next_player);
         }
     }
-    /**听牌之后没啥客户端的事儿了！只需要给客户端显示信息，现阶段就是让客户端显示个听菜单而已。*/
-    // client_confirm_ting(socket) {
-    //   let player = this.find_player_by(socket);
-    //   player.is_ting = true;
-    //   // player.hupai_zhang = player.temp_hupai_zhang;
-    //   player.is_thinking_tingliang = false;
-    // }
     /**玩家选择胡牌*/
     client_confirm_hu(socket) {
         let player = this.find_player_by(socket);
+        // player.is_thinking = false //已经胡了还记录个啥思考呢？
         //自摸，胡自己摸的牌！
         if (player.mo_pai && player.canHu(player.mo_pai)) {
             player.hupai_zhang = player.mo_pai;
             player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisZiMo);
             //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
-            if (this.front_operation(player, 2).action == Operate.gang) {
+            let prev2_operation = this.front_operation(player, 2);
+            if (prev2_operation && prev2_operation.action == Operate.gang) {
                 player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisGangShangKai);
             }
             puts(this.operation_sequence);
@@ -392,7 +402,7 @@ class Room {
                 pai: this.table_dapai
             });
             this.sendWinnerMsg(player, this.table_dapai);
-            // console.dir(player);
+            console.dir(this.hupai_player);
             console.dir(this.daPai_player.fangpai_data);
         }
         else {
@@ -424,7 +434,7 @@ class Room {
         //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
         let player = this.find_player_by(socket);
         //玩家有决定了，状态改变
-        player.is_thinking_tingliang = false;
+        player.is_thinking = false;
         //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
         //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
         //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
@@ -433,7 +443,11 @@ class Room {
             this.server_fa_pai(this.next_player);
         }
         //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
-        if (this.no_player_mopai()) {
+        // if (this.no_player_mopai()) {
+        //   this.server_fa_pai(this.next_player);
+        // }
+        let last_op = this.last_Operation();
+        if (last_op && last_op.action == Operate.da) {
             this.server_fa_pai(this.next_player);
         }
     }
@@ -476,6 +490,9 @@ class Room {
             type: g_events.server_table_fa_pai,
             pai: player.mo_pai
         });
+        //还需要告诉玩家你可以打牌了
+        player.can_dapai = true;
+        player.socket.sendmsg({ type: g_events.server_can_dapai });
         //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
         this.other_players(player).forEach(p => {
             p.socket.sendmsg({
@@ -505,18 +522,26 @@ class Room {
         player.socket.emit("server_table_fapai", pai);
         return pai;
     }
+    /**所有玩家处于正常状态*/
+    all_players_normal() {
+        return this.players.every(p => p.is_thinking === false);
+    }
     /**玩家所在socket打牌pai*/
     client_da_pai(socket, dapai_name) {
         let player = this.find_player_by(socket);
+        if (!player.can_dapai) {
+            throw new Error(`房间${this.id} 玩家${player.username} 强制打牌，抓住！！！！`);
+        }
         //能否正常给下一家发牌
         let canNormalFaPai = true;
         //记录下哪个在打牌
         this.daPai_player = player;
         /**没有用户在选择操作胡、杠、碰、过、亮 */
-        let noPlayerSelecting = this.players.every(p => p.is_thinking_tingliang === false);
-        if (noPlayerSelecting) {
+        if (this.all_players_normal()) {
             //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
             player.da_pai(dapai_name);
+            //打牌后不能再打牌！
+            player.can_dapai = false;
             //记录此玩家的打牌操作
             this.operation_sequence.push({
                 who: player,
@@ -559,6 +584,7 @@ class Room {
                     //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
                     let canShowSelect = this.decideSelectShow(item_player, dapai_name);
                     if (canShowSelect) {
+                        item_player.is_thinking = true;
                         canNormalFaPai = false;
                     }
                 }
@@ -600,6 +626,8 @@ class Room {
         }
         let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
         if (canShowSelect) {
+            //表示玩家正在 想
+            item_player.is_thinking = true;
             console.log(`房间${this.id} 玩家${item_player.username} 显示选择对话框，其手牌为:`);
             puts(item_player.group_shou_pai);
             // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
@@ -648,6 +676,7 @@ class Room {
         }
         let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
         if (canShowSelect) {
+            item_player.is_thinking = true;
             console.log(`房间${this.id} 玩家${item_player.username} 显示选择对话框，其手牌为:`);
             puts(item_player.group_shou_pai);
             // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
@@ -731,7 +760,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player2_anSiGui();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.fapai_random();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

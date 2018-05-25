@@ -25,6 +25,8 @@ var mj;
                 this.ui_index = null;
                 /** 手牌从哪个位置开始 */
                 this.shouPai_start_index = 0;
+                /**玩家能否打牌 */
+                this.can_dapai = false;
             }
             Player.prototype.cloneValuesFrom = function (p2) {
                 var _this = this;

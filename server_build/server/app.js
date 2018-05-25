@@ -184,6 +184,8 @@ function client_create_room(client_message, socket) {
         conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
         console.log(`${conn.player.username}创建了房间${owner_room.id}, seat_index: ${conn.player.seat_index}`);
         conn.room.player_enter_room(socket);
+        //todo: 供调试用
+        global.room = conn.room;
     }
 }
 function client_testlogin(client_message, socket) {

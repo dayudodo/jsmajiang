@@ -68,7 +68,7 @@ export class Player {
   /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
   public is_zimo = false;
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
-  public is_thinking_tingliang = false;
+  public is_thinking = false;
   // /** 杠摸牌，用于检测杠上花 */
   // public gang_mopai = false;
 
@@ -102,6 +102,8 @@ export class Player {
   public hupai_zhang: Pai = null;
   /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
   public can_status: playerStatus;
+  /**能打牌了 */
+  public can_dapai: boolean =  false;
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {

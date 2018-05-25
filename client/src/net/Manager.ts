@@ -61,8 +61,13 @@ namespace mj.net {
         [g_events.server_peng, this.server_peng],
         [g_events.server_mingGang, this.server_mingGang],
         [g_events.server_liang, this.server_liang],
-        [g_events.server_winner, this.server_winner]
+        [g_events.server_winner, this.server_winner],
+        [g_events.server_can_dapai, this.server_can_dapai],
       ];
+    }
+    /**服务器确认god_player可以打牌了，并不需要啥数据，只是个消息通知 */
+    public server_can_dapai(server_message) {
+      Laya.god_player.can_dapai = true
     }
     public server_winner(server_message) {
       console.log(server_message);
@@ -351,6 +356,7 @@ namespace mj.net {
     private server_dapai(server_message) {
       let { pai_name } = server_message;
       console.log(`服务器确认你已打牌 ${pai_name}`);
+      
     }
     /**显示当前index的方向三角形，UI中的三角形以direction开头 */
     private show_direction(index: number = config.GOD_INDEX) {
@@ -462,23 +468,24 @@ namespace mj.net {
         //为新建的牌sprite创建点击处理函数
         newPaiSprite.on(Laya.Event.CLICK, this, () => {
           // 如果用户已经打过牌了那么就不能再打，防止出现多次打牌的情况，服务器其实也应该有相应的判断！不然黑死你。
-          // if (Laya.god_player.received_pai) {
-          if (true) {
-            // 如果两次点击同一张牌，应该打出去
-            this.handleClonePaiSpriteClick(
-              newPaiSprite,
-              group_shou_pai.shouPai,
-              index,
-              false,
-              player.shouPai_start_index
-            );
-          }
+          // if (Laya.god_player.can_dapai) {
+          // if (true) {
+          // 如果两次点击同一张牌，应该打出去
+          this.handleClonePaiSpriteClick(
+            newPaiSprite,
+            group_shou_pai.shouPai,
+            index,
+            false,
+            player.shouPai_start_index
+          );
+          // }
         });
         this.clonePaiSpriteArray.push(newPaiSprite); //通过shouPai3来获取所有生成的牌呢有点儿小麻烦，所以自己保存好！
         gameTable.shouPai3.addChild(newPaiSprite);
         posiX += one_shou_pai_width;
       }
     }
+
     private hideDirection(player: Player) {
       this.gameTable["direction" + player.ui_index].visible = false;
     }
@@ -489,39 +496,43 @@ namespace mj.net {
       is_server_faPai: boolean = false,
       start_index
     ) {
-      let { gameTable } = this;
-      let one_shou_pai_width = gameTable.shou3.width;
-      // 如果两次点击同一张牌，应该打出去
-      if (this.prevSelectedPai === newPaiSprite) {
-        let daPai: Pai = shou_pai[index];
-        console.log(`用户选择打牌${daPai}`);
-        this.socket.sendmsg({
-          type: g_events.client_da_pai,
-          pai: daPai
-        });
-        Laya.god_player.da_pai(daPai);
-        //不仅这牌要记录要玩家那儿，还要记录在当前房间中！表示这张牌已经可以显示出来了。
-        Laya.room.table_dapai = daPai;
+      if (Laya.god_player.can_dapai) {
+        let { gameTable } = this;
+        let one_shou_pai_width = gameTable.shou3.width;
+        // 如果两次点击同一张牌，应该打出去
+        if (this.prevSelectedPai === newPaiSprite) {
+          let daPai: Pai = shou_pai[index];
+          console.log(`用户选择打牌${daPai}`);
+          this.socket.sendmsg({
+            type: g_events.client_da_pai,
+            pai: daPai
+          });
+          Laya.god_player.da_pai(daPai);
+          //打牌之后就不能再打牌了！
+          Laya.god_player.can_dapai = false
+          //不仅这牌要记录要玩家那儿，还要记录在当前房间中！表示这张牌已经可以显示出来了。
+          Laya.room.table_dapai = daPai;
 
-        this.show_out(Laya.god_player);
-        //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
-        this.hideDirection(Laya.god_player);
-        // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
-        //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
-        //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
-        newPaiSprite.y += this.offsetY;
-        // this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
-        gameTable.shou3.x =
-          one_shou_pai_width * Laya.god_player.shouPai_start_index + config.X_GAP; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
-        this.destroyAllPaiCloneSprites();
-        this.show_god_player_shoupai(Laya.god_player);
-      } else {
-        //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
-        if (this.prevSelectedPai) {
-          this.prevSelectedPai.y = this.prevSelectedPai.y + this.offsetY;
+          this.show_out(Laya.god_player);
+          //牌打出后，界面需要更新的不少，方向需要隐藏掉，以便显示其它，感觉倒计时的可能会一直在，毕竟你打牌，别人打牌都是需要等待的！
+          this.hideDirection(Laya.god_player);
+          // console.log(`打过的牌used_pai:${Laya.god_player.used_pai}`);
+          //todo: 这样写肯定变成了一个递归，内存占用会比较大吧，如何写成真正的纯函数？
+          //打出去之后ui做相应的处理，刷新玩家的手牌，打的牌位置还得还原！
+          newPaiSprite.y += this.offsetY;
+          // this.gameTable.shou3.x = this.clonePaiSpriteArray[0].x; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+          gameTable.shou3.x =
+            one_shou_pai_width * Laya.god_player.shouPai_start_index + config.X_GAP; //需要还原下，不然一开始的显示位置就是错的，毕竟这个值在不断的变化！
+          this.destroyAllPaiCloneSprites();
+          this.show_god_player_shoupai(Laya.god_player);
+        } else {
+          //点击了不同的牌，首先把前一个选择的牌降低，回到原来的位置
+          if (this.prevSelectedPai) {
+            this.prevSelectedPai.y = this.prevSelectedPai.y + this.offsetY;
+          }
+          this.prevSelectedPai = newPaiSprite;
+          newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
         }
-        this.prevSelectedPai = newPaiSprite;
-        newPaiSprite.y = newPaiSprite.y - this.offsetY; //将当前牌提高！
       }
     }
 
@@ -581,7 +592,7 @@ namespace mj.net {
       let cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
       //手牌显示的起码坐标Y
       let start_posiY = cePaiHeight * player.shouPai_start_index + config.Y_GAP;
-      let show_oneShou = function(url, posiY) {
+      let show_oneShou = function (url, posiY) {
         gameTable["testImageShoupai" + player.ui_index].skin = url;
         gameTable["test_shoupai" + player.ui_index].y = posiY;
         let newPai = LayaUtils.clone(

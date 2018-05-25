@@ -32,5 +32,6 @@ var g_events;
     g_events.server_gameover = "server_gameover";
     g_events.server_winner = "server_winner";
     g_events.server_can_select = "server_can_select";
+    g_events.server_can_dapai = "server_can_dapai";
 })(g_events || (g_events = {}));
 //# sourceMappingURL=g_events.js.map

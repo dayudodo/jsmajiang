@@ -11,6 +11,13 @@ import chalk from "chalk";
 import * as g_events from "./events";
 const app = express();
 
+declare global {
+  namespace NodeJS {
+      interface Global {
+          room: Room
+      }
+  }
+}
 //initialize a simple http server
 const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
@@ -197,6 +204,8 @@ function client_create_room(client_message, socket) {
       }`
     );
     conn.room.player_enter_room(socket);
+    //todo: 供调试用
+    global.room = conn.room
   }
 }
 

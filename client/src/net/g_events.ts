@@ -37,6 +37,7 @@ module g_events{
   export const server_winner = "server_winner";
 
   export const server_can_select = "server_can_select";
+  export const server_can_dapai = "server_can_dapai";
 
 
 
