@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const _ = require("lodash");
 const MajiangAlgo_1 = require("./MajiangAlgo");
 class Player {
     //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
@@ -53,6 +54,17 @@ class Player {
         this.socket = socket;
         this.username = username;
         this.user_id = user_id;
+    }
+    /**返回group手牌中数量为3的牌！ */
+    PaiArr3A() {
+        let result = _.countBy(this.group_shou_pai.shouPai);
+        let output = [];
+        for (const key in result) {
+            if (result[key] == 3) {
+                output.push(key);
+            }
+        }
+        return output;
     }
     /**是否是暗四归，在group手牌中存在3张相同的牌 */
     isAnSiGui(pai_name) {

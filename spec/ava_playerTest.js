@@ -1,5 +1,5 @@
 import test from "ava";
-import { Player } from "../server_build/player";
+import { Player } from "../server_build/server/player";
 
 var player;
 
@@ -9,17 +9,36 @@ test.beforeEach(t => {
       anGang: ["b1"],
       mingGang: ["b2"],
       peng: ["t1"],
+      selfPeng:[],
       shouPai: ["zh", "zh", "t7", "t8", "t9"]
     }
   });
 });
 
+
+
+test("应该有两个可以隐藏的3牌", function(t) {
+  player = new Player({
+    group_shou_pai: {
+      anGang: ["b1"],
+      mingGang: [],
+      peng: [],
+      selfPeng:[],
+      shouPai: ["b2","b2","b2","t1","t1","t1","zh", "zh", "t7", "t8", "t9"]
+    }
+  });
+  t.deepEqual(
+    player.PaiArr3A(),
+    ["b2","t1"]
+  );
+});
 test("group中shouPai不空之边界检查", function(t) {
   player = new Player({
     group_shou_pai: {
       anGang: [],
       mingGang: [],
       peng: [],
+      selfPeng:[],
       shouPai: "b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t1 t7 t8 t9 zh zh".split(" ")
     }
   });
@@ -100,6 +119,7 @@ test("打牌之后能否大胡", function(t) {
       anGang: [],
       mingGang: [],
       peng: [],
+      selfPeng:[],
       shouPai: "b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t7 t7 t8 t8".split(" ")
     }
   });
@@ -108,12 +128,3 @@ test("打牌之后能否大胡", function(t) {
   t.is(player.isDaHu("zh"), false)
 
 });
-test("打牌之后能否听", function(t) {
-  player.da_pai("t9");
-  let canting = player.canTing()
-  t.is(canting, true)
-  player.da_pai('t8')
-  canting = player.canTing()
-  t.is(canting, false)
-});
-

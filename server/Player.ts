@@ -112,6 +112,17 @@ export class Player {
     this.username = username;
     this.user_id = user_id;
   }
+  /**返回group手牌中数量为3的牌！ */
+  PaiArr3A(){
+    let result = _.countBy(this.group_shou_pai.shouPai)
+    let output =[]
+    for (const key in result) {
+      if(result[key] == 3){
+        output.push(key)
+      }
+    }
+    return output
+  }
   /**是否是暗四归，在group手牌中存在3张相同的牌 */
   isAnSiGui(pai_name: Pai):boolean{
    let countPai = this.group_shou_pai.shouPai.filter(pai=>pai == pai_name)

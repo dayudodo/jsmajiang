@@ -412,11 +412,15 @@ export class Room {
     // player.is_ting = true; //如果亮牌，肯定就是听了
     //玩家已经有决定，不再想了。
     player.is_thinking = false;
+    //计算玩家哪些牌可以不亮！只需要算手牌里面的即可！
+    let canHidePais = player.PaiArr3A()
+
     //亮牌之后，需要显示此玩家的所有牌，除了暗杠！
     this.other_players(player).forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_liang,
-        liangPlayer: this.player_data_filter(socket, player, true)
+        liangPlayer: this.player_data_filter(socket, player, true),
+        canHidePais: canHidePais
       });
     });
     this.operation_sequence.push({
