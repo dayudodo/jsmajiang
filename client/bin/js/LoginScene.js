@@ -29,6 +29,13 @@ var mj;
                 if (socket.connected) {
                     socket.sendmsg(msg);
                 }
+                else {
+                    var closeDialogue_1 = new scene.DialogScene("啥情况？服务器开小差了，无法连接", function () {
+                        closeDialogue_1.close();
+                    });
+                    closeDialogue_1.popup();
+                    Laya.stage.addChild(closeDialogue_1);
+                }
             };
             return LoginScene;
         }(ui.test.LoginUI));

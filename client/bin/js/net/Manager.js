@@ -120,7 +120,8 @@ var mj;
             };
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
-                var opt = new OptDialogScene();
+                var canHidePais = server_message.canHidePais;
+                var opt = new OptDialogScene(canHidePais);
                 opt.showPlayerSelect({
                     isShowHu: isShowHu,
                     isShowLiang: isShowLiang,
@@ -269,20 +270,22 @@ var mj;
                     gameTable.showHead(gameTable, rightPlayer);
                 }
                 //for test
-                // Laya.god_player.ui_index = 0
-                // Laya.god_player.group_shou_pai = {
-                //     // anGang: ["zh"],
-                //     anGang: [],
-                //     anGangCount: 0,
-                //     mingGang: ["fa"],
-                //     peng: ['t1'],
-                //     selfPeng: [],
-                //     selfPengCount: 1,
-                //     // shouPai: "b1 b2 b3 t4".split(" ")
-                //     shouPai: [],
-                //     shouPaiCount: 4
-                // }
-                // gameTable.show_group_shoupai(Laya.god_player)
+                Laya.god_player.ui_index = 3;
+                Laya.god_player.group_shou_pai = {
+                    // anGang: ["zh"],
+                    anGang: [],
+                    anGangCount: 0,
+                    mingGang: ["fa"],
+                    peng: [],
+                    selfPeng: [],
+                    selfPengCount: 1,
+                    shouPai: "t1 t1 t1 b1 b2 b3 t4".split(" ")
+                    // shouPai: [],
+                    // shouPaiCount: 4
+                };
+                var opt = new OptDialogScene(['t1']);
+                gameTable.show_group_shoupai(Laya.god_player);
+                opt.show_liang();
                 //end test
                 Laya.stage.addChild(gameTable);
             };
@@ -332,6 +335,7 @@ var mj;
                     player.score = person.score;
                     Laya.room.players.push(player);
                 });
+                //玩家进入房间后开始初始化gameTableScene并成为全局变量Laya.gameTable
                 this.open_gameTable(server_message);
             };
             Manager.prototype.server_no_such_room = function () {

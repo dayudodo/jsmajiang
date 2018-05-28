@@ -112,7 +112,7 @@ export class Player {
     this.username = username;
     this.user_id = user_id;
   }
-  /**返回group手牌中数量为3的牌！ */
+  /**返回group手牌中出现3次的牌！ */
   PaiArr3A(){
     let result = _.countBy(this.group_shou_pai.shouPai)
     let output =[]

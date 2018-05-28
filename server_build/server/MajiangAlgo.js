@@ -344,6 +344,7 @@ class MajiangAlgo {
         return is_hu;
     }
     static HuisQiDui(group_shoupai, na_pai) {
+        //杠过、碰过都不可能再算是七对，也就是门清
         if (this.getJijuhua(group_shoupai) > 1) {
             return false;
         }

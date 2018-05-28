@@ -9,10 +9,7 @@ module mj.scene {
             this.agreeCheck.selected = true //默认就接受协议
             //todo: 调试其中就不需要啥微信，只有一个测试登录。
             this.weixinLoginBtn.visible = false
-
             this.testLoginBtn.on(Laya.Event.CLICK, this, this.loginClicked)
-
-
         }
 
         loginClicked(): void {
@@ -21,10 +18,13 @@ module mj.scene {
             var socket = Laya.client.socket
             if (socket.connected) {
                 socket.sendmsg(msg)
-            } 
+            } else {
+                let closeDialogue = new DialogScene("啥情况？服务器开小差了，无法连接", () => {
+                    closeDialogue.close()
+                });
+                closeDialogue.popup();
+                Laya.stage.addChild(closeDialogue);
+            }
         }
-
-
     }
-
 }

@@ -623,17 +623,20 @@ class Room {
      *  与其它玩家选择有所不同，碰不会检测，因为你不能碰自己打的牌！ */
     decideFaPaiSelectShow(item_player, mo_pai) {
         let isShowHu = false, isShowLiang = false, isShowGang = false, isShowPeng = false;
+        /**客户端亮之后可以隐藏的牌*/
+        let canHidePais = [];
         //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
         //流式处理，一次判断所有，然后结果发送给客户端
         //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
         if (!item_player.is_liang) {
             if (item_player.canLiang()) {
+                canHidePais = item_player.PaiArr3A();
                 isShowLiang = true;
                 console.log(`房间${this.id} 玩家${item_player.username}可以亮牌`);
                 puts(item_player.hupai_data);
             }
-            //没亮的时候呢可以杠，碰就不需要再去检测了
         }
+        //没亮的时候呢可以杠，碰就不需要再去检测了
         if (item_player.canGang(mo_pai)) {
             isShowGang = true;
             console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${mo_pai}`);
@@ -651,7 +654,8 @@ class Room {
             // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
             item_player.socket.sendmsg({
                 type: g_events.server_can_select,
-                select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
+                select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng],
+                canHidePais: canHidePais
             });
         }
         return canShowSelect;
@@ -659,12 +663,14 @@ class Room {
     /**玩家是否能显示（胡、亮、杠、碰）的选择窗口 */
     decideSelectShow(item_player, dapai_name = null) {
         let isShowHu = false, isShowLiang = false, isShowGang = false, isShowPeng = false;
-        //todo: 玩家选择听或者亮之后就不再需要检测胡牌了，重复计算
+        /**客户端亮之后可以隐藏的牌*/
+        let canHidePais = [];
         //流式处理，一次判断所有，然后结果发送给客户端
         //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
         if (!item_player.is_liang) {
             if (item_player.canLiang()) {
                 isShowLiang = true;
+                canHidePais = item_player.PaiArr3A();
                 console.log(`房间${this.id} 玩家${item_player.username}可以亮牌`);
                 puts(item_player.hupai_data);
             }
@@ -700,7 +706,8 @@ class Room {
             // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
             item_player.socket.sendmsg({
                 type: g_events.server_can_select,
-                select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
+                select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng],
+                canHidePais: canHidePais
             });
         }
         return canShowSelect;

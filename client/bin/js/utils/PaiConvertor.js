@@ -41,6 +41,9 @@ var mj;
             PaiConvertor.skinOfShou = function (str) {
                 return "ui/majiang/" + this.ToShou(str);
             };
+            PaiConvertor.skinOfShouBack = function () {
+                return "ui/majiang/zheng_an.png";
+            };
             /** 打出牌的样子，以zheng开头的图形 */
             PaiConvertor.skinOfZheng = function (str) {
                 return "ui/majiang/" + this.ToZheng(str);

@@ -19,9 +19,10 @@ var mj;
                 _this.contentText.wordWrap = true;
                 _this.contentText.text = message;
                 _this.cancelBtn.on(Laya.Event.CLICK, _this, _this.close);
-                _this.confirmBtn.on(Laya.Event.CLICK, _this, confirmClicked && _this.reconnect);
+                _this.confirmBtn.on(Laya.Event.CLICK, _this, confirmClicked);
                 return _this;
             }
+            //重新连接
             DialogScene.prototype.reconnect = function () {
                 window.location.reload();
             };

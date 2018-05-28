@@ -398,6 +398,7 @@ export class MajiangAlgo {
   }
 
   static HuisQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
+    //杠过、碰过都不可能再算是七对，也就是门清
     if (this.getJijuhua(group_shoupai) > 1) {
       return false;
     } else {

@@ -150,7 +150,7 @@ module mj.scene {
                     player.shouPai_start_index = player.shouPai_start_index + 3;
                 });
             } else {
-                /**有几组暗杠，就显示几组背面，背面图UI中已经有就不再需要赋值了 */
+                /**side_player显示其背面，selfPenghide3其实只是为了写批量隐藏时方便，不起作用！*/
                 for (var i = 0; i < groupShou.selfPengCount; i++) {
                     let cloneselfPengHideSprite = LayaUtils.clone(
                         this["selfPengHide" + player.ui_index]

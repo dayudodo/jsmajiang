@@ -136,9 +136,11 @@ namespace mj.net {
       //重新计时并改变方向
       gameTable.show_count_down(pengPlayer);
     }
+
     public server_can_select(server_message) {
       let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt;
-      let opt = new OptDialogScene();
+      let canHidePais: Array<Pai> = server_message.canHidePais
+      let opt = new OptDialogScene(canHidePais);
       opt.showPlayerSelect({
         isShowHu: isShowHu,
         isShowLiang: isShowLiang,
@@ -149,6 +151,7 @@ namespace mj.net {
       this.gameTable.addChild(opt);
       opt.popup();
     }
+
     private server_gameover(server_message) {
       console.log("server_gameover");
     }
@@ -299,20 +302,23 @@ namespace mj.net {
       }
       //for test
 
-      // Laya.god_player.ui_index = 0
-      // Laya.god_player.group_shou_pai = {
-      //     // anGang: ["zh"],
-      //     anGang: [],
-      //     anGangCount: 0,
-      //     mingGang: ["fa"],
-      //     peng: ['t1'],
-      //     selfPeng: [],
-      //     selfPengCount: 1,
-      //     // shouPai: "b1 b2 b3 t4".split(" ")
-      //     shouPai: [],
-      //     shouPaiCount: 4
-      // }
-      // gameTable.show_group_shoupai(Laya.god_player)
+      Laya.god_player.ui_index = 3
+      Laya.god_player.group_shou_pai = {
+          // anGang: ["zh"],
+          anGang: [],
+          anGangCount: 0,
+          mingGang: ["fa"],
+          peng: [],
+          selfPeng: [],
+          selfPengCount: 1,
+          shouPai: "t1 t1 t1 b1 b2 b3 t4".split(" ")
+          // shouPai: [],
+          // shouPaiCount: 4
+      }
+      let opt = new OptDialogScene(['t1'])
+
+      gameTable.show_group_shoupai(Laya.god_player)
+      opt.show_liang()
 
       //end test
       Laya.stage.addChild(gameTable);
@@ -376,6 +382,7 @@ namespace mj.net {
         player.score = person.score;
         Laya.room.players.push(player);
       });
+      //玩家进入房间后开始初始化gameTableScene并成为全局变量Laya.gameTable
       this.open_gameTable(server_message);
     }
 

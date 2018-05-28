@@ -38,6 +38,9 @@ namespace mj.utils {
     static skinOfShou(str: string): string {
       return `ui/majiang/${this.ToShou(str)}`
     }
+    static skinOfShouBack():string{
+      return `ui/majiang/zheng_an.png`
+    }
     /** 打出牌的样子，以zheng开头的图形 */
     static skinOfZheng(str: string): string {
       return `ui/majiang/${this.ToZheng(str)}`
