@@ -69,7 +69,7 @@ namespace mj.net {
     }
     public server_liang(server_message) {
       // console.log(server_message);
-      let {gameTable} = Laya
+      let { gameTable } = Laya
       let { liangPlayer } = server_message;
       //更新本地player数据
       let localPlayer = Laya.room.players.find(p => p.user_id == liangPlayer.user_id);
@@ -107,9 +107,9 @@ namespace mj.net {
       gameTable.show_count_down(gangPlayer);
     }
 
-    
 
-    
+
+
 
     /** 其他人碰了牌 */
     public server_peng(server_message) {
@@ -171,9 +171,9 @@ namespace mj.net {
     private server_dapai(server_message) {
       let { pai_name } = server_message;
       console.log(`服务器确认你已打牌 ${pai_name}`);
-      
+
     }
-    
+
 
     private server_table_fa_pai_other(server_message) {
       let { user_id } = server_message;
@@ -188,7 +188,7 @@ namespace mj.net {
       let pai: string = server_message.pai;
       Laya.god_player.received_pai = pai;
       //显示服务器发过来的牌
-      this.gameTable.show_fapai( pai);
+      this.gameTable.show_fapai(pai);
     }
 
 
@@ -246,7 +246,7 @@ namespace mj.net {
       Laya.stage.destroyChildren();
       Laya.stage.addChild(home);
     }
-   
+
     /** 用户创建房间、加入房间后打开gameTable */
     private open_gameTable(server_message: any) {
       Laya.stage.destroyChildren();
@@ -305,18 +305,18 @@ namespace mj.net {
 
       Laya.god_player.ui_index = 3
       Laya.god_player.group_shou_pai = {
-          // anGang: ["zh"],
-          anGang: [],
-          anGangCount: 0,
-          mingGang: ["fa"],
-          peng: [],
-          selfPeng: [],
-          // selfPengCount: 1,
-          shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
-          // shouPai: [],
-          // shouPaiCount: 4
+        // anGang: ["zh"],
+        anGang: [],
+        anGangCount: 0,
+        mingGang: ["fa"],
+        peng: [],
+        selfPeng: [],
+        // selfPengCount: 1,
+        shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
+        // shouPai: [],
+        // shouPaiCount: 4
       }
-      this.opt = new OptDialogScene(['t1','b1'])
+      this.opt = new OptDialogScene(['t1', 'b1'])
 
       gameTable.show_group_shoupai(Laya.god_player)
       this.opt.showPlayerSelect({
@@ -363,7 +363,7 @@ namespace mj.net {
         this.gameTable.showHead(gameTable, rightPlayer);
       }
     }
-    
+
 
     //玩家成功加入房间
     private server_player_enter_room(server_message: any) {

@@ -247,13 +247,21 @@ export class Room {
    * @param player 需要向哪个玩家发送消息
    * @param ignore_filter 是否忽略filter
    */
-  public player_data_filter(socket, player, ignore_filter: boolean = false) {
+  public player_data_filter(socket, player, ignore_filter = false) {
     let player_data = {};
     Player.filter_properties.forEach(item => {
       player_data[item] = player[item];
     });
-    //是玩家本人的socket，返回详细的数据，或者选择过滤，也会直接返回
-    if (ignore_filter || player.socket == socket) {
+    if (ignore_filter) {
+      //是玩家本人的socket，返回所有的数据
+      if( player.socket == socket){
+        //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
+      }else{
+        let filterd_group = {};
+        filterd_group["selfPeng"] = [];
+        filterd_group["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+        player_data["group_shou_pai"] = filterd_group;
+      }
       return player_data;
     } else {
       //暗杠只有数量，但是不显示具体的内容
@@ -423,15 +431,13 @@ export class Room {
     // player.is_ting = true; //如果亮牌，肯定就是听了
     //玩家已经有决定，不再想了。
     player.is_thinking = false;
-    //计算玩家哪些牌可以不亮！只需要算手牌里面的即可！
-    let canHidePais = player.PaiArr3A();
 
     //亮牌之后，需要显示此玩家的所有牌，除了暗杠及自碰牌！
-    this.other_players(player).forEach(p => {
+    this.players.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_liang,
-        liangPlayer: this.player_data_filter(socket, player, true),
-        canHidePais: canHidePais
+        liangPlayer: this.player_data_filter(socket, p, true),
+        
       });
     });
     this.operation_sequence.push({
