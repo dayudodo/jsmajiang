@@ -1,6 +1,6 @@
 namespace mj.net {
   import GameTableScene = mj.scene.GameTableScene;
-  import PaiConverter = mj.utils.PaiConvertor;
+  import PaiConverter = mj.utils.PaiConverter;
   import LayaUtils = mj.utils.LayaUtils;
   import Sprite = laya.display.Sprite;
   import DialogScene = mj.scene.DialogScene;
@@ -14,6 +14,7 @@ namespace mj.net {
     public byte: Laya.Byte;
     public eventsHandler: Array<any>;
     public gameTable: GameTableScene;
+    public opt: OptDialogScene
 
     constructor() {
       this.connect();
@@ -310,17 +311,23 @@ namespace mj.net {
           mingGang: ["fa"],
           peng: [],
           selfPeng: [],
-          selfPengCount: 1,
-          shouPai: "t1 t1 t1 b1 b2 b3 t4".split(" ")
+          // selfPengCount: 1,
+          shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
           // shouPai: [],
           // shouPaiCount: 4
       }
-      let opt = new OptDialogScene(['t1'])
+      this.opt = new OptDialogScene(['t1','b1'])
 
       gameTable.show_group_shoupai(Laya.god_player)
-      opt.show_liang()
-
+      this.opt.showPlayerSelect({
+        isShowHu: false,
+        isShowLiang: true,
+        isShowGang: false,
+        isShowPeng: false
+      });
+      this.opt.popup()
       //end test
+
       Laya.stage.addChild(gameTable);
     }
 

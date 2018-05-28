@@ -21,6 +21,6 @@
     "exclude": [
         "server_build",
         "node_modules",
-        "client"
+        "client/**/*"
     ]
 }

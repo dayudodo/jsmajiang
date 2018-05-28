@@ -211,7 +211,7 @@ export class Player {
   }
 
   confirm_anGang(pai: Pai) {
-    //首先从手牌中删除三张牌，变成peng: pai
+    //首先从手牌中删除三张牌
     for (var i = 0; i < 3; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai);
     }
@@ -219,13 +219,12 @@ export class Player {
     this.group_shou_pai.anGang.push(pai);
     this.group_shou_pai.shouPai.sort();
   }
-  /**确定自碰牌杠 */
-  confirm_selfPengGang(pai: Pai) {
-    //首先从手牌中删除三张牌，变成peng: pai
+
+  /**确定自碰牌，将pai从shouPai中移动到selfPeng之中！ */
+  confirm_selfPeng(pai: Pai) {
     for (var i = 0; i < 3; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai);
     }
-
     this.group_shou_pai.selfPeng.push(pai);
     this.group_shou_pai.shouPai.sort();
   }

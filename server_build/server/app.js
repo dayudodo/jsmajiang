@@ -56,7 +56,7 @@ function client_confirm_hu(client_message, socket) {
 function client_confirm_liang(client_message, socket) {
     let { player, room } = confirmInit(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
-    room.client_confirm_liang(socket);
+    room.client_confirm_liang(client_message, socket);
 }
 function client_confirm_mingGang(client_message, socket) {
     let { player, room } = confirmInit(socket);

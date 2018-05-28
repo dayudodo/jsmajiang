@@ -3,7 +3,7 @@ module mj.scene {
     import Sprite = laya.display.Sprite;
     import Image = Laya.Image;
     import ShoupaiConstuctor = mj.model.ShoupaiConstuctor;
-    import PaiConverter = mj.utils.PaiConvertor;
+    import PaiConverter = mj.utils.PaiConverter;
     import LayaUtils = mj.utils.LayaUtils;
 
     export class GameTableScene extends ui.test.GameTableUI {
@@ -12,7 +12,7 @@ module mj.scene {
         /** 方向指向自己的手牌数组，还能添加服务器的发牌 */
         public clonePaiSpriteArray: Sprite[] = [];
         /**玩家手牌点击后上下的偏移量 */
-        private ClickOffsetY = 40;
+        public ClickOffsetY = 40;
         private prevSelectedPai: Sprite = null;
         /**是否在计时结束后自动打牌，测试时使用 */
 
@@ -151,20 +151,23 @@ module mj.scene {
                 });
             } else {
                 /**side_player显示其背面，selfPenghide3其实只是为了写批量隐藏时方便，不起作用！*/
-                for (var i = 0; i < groupShou.selfPengCount; i++) {
-                    let cloneselfPengHideSprite = LayaUtils.clone(
-                        this["selfPengHide" + player.ui_index]
-                    ) as Sprite;
-                    //有anGangCount的肯定就是左右玩家了，不可能会是god player!
-                    cloneselfPengHideSprite.y = player.shouPai_start_index * y_one_pai_height;
-                    cloneselfPengHideSprite.visible = true;
-                    cloneselfPengHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                    this["shouPai" + player.ui_index].addChild(cloneselfPengHideSprite);
-                    player.ui_clone_arr.push(cloneselfPengHideSprite);
-                    player.shouPai_start_index = player.shouPai_start_index + 3;
+                if (player.seat_index != 3) {
+                    for (var i = 0; i < groupShou.selfPengCount; i++) {
+                        let cloneselfPengHideSprite = LayaUtils.clone(
+                            this["selfPengHide" + player.ui_index]
+                        ) as Sprite;
+                        //有selfPengCount的肯定就是左右玩家了，不可能会是god player!
+                        cloneselfPengHideSprite.y = player.shouPai_start_index * y_one_pai_height;
+                        cloneselfPengHideSprite.visible = true;
+                        cloneselfPengHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
+                        this["shouPai" + player.ui_index].addChild(cloneselfPengHideSprite);
+                        player.ui_clone_arr.push(cloneselfPengHideSprite);
+                        player.shouPai_start_index = player.shouPai_start_index + 3;
+                    }
                 }
             }
         }
+        /**显示暗杠组 */
         private showAnGang(
             groupShou: ShoupaiConstuctor,
             player: Player,
@@ -411,7 +414,7 @@ module mj.scene {
             let cePaiHeight = 60; //应该是内部牌的高度，外部的话还有边，按说应该换成真正牌图形的高度
             //手牌显示的起码坐标Y
             let start_posiY = cePaiHeight * player.shouPai_start_index + config.Y_GAP;
-            let show_oneShou =  (url, posiY) =>{
+            let show_oneShou = (url, posiY) => {
                 this["testImageShoupai" + player.ui_index].skin = url;
                 this["test_shoupai" + player.ui_index].y = posiY;
                 let newPai = LayaUtils.clone(

@@ -9,7 +9,7 @@ namespace mj.utils {
   var N_TIAO = [9, 10, 11, 12, 13, 14, 15, 16, 17];
   var N_ZHIPAI = [31, 32, 33];
 
-  export class PaiConvertor {
+  export class PaiConverter {
     //转换b1到11， t1到22，
     static ToNumber(str: string): number {
       let index = BING.indexOf(str);

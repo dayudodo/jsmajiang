@@ -406,8 +406,19 @@ export class Room {
   }
 
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
-  client_confirm_liang(socket) {
+  client_confirm_liang(client_message, socket) {
     let player = this.find_player_by(socket);
+    let selectedPais: Array<Pai> = client_message.selectedPais.sort()
+    let rightSelectPais = player.PaiArr3A()
+    //所有的牌都应该在PaiArr3A之中，安全检测
+    let normalSelect = selectedPais.every(pai=> rightSelectPais.includes(pai))
+    if(normalSelect){
+      selectedPais.forEach(pai=>{
+        player.confirm_selfPeng(pai)
+      })
+    }else{
+      console.warn(`用户亮牌后选择${selectedPais}不在服务器的正常选择中：${rightSelectPais}`)
+    }
     player.is_liang = true;
     // player.is_ting = true; //如果亮牌，肯定就是听了
     //玩家已经有决定，不再想了。
@@ -415,7 +426,7 @@ export class Room {
     //计算玩家哪些牌可以不亮！只需要算手牌里面的即可！
     let canHidePais = player.PaiArr3A();
 
-    //亮牌之后，需要显示此玩家的所有牌，除了暗杠！
+    //亮牌之后，需要显示此玩家的所有牌，除了暗杠及自碰牌！
     this.other_players(player).forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_liang,

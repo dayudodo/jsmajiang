@@ -12,7 +12,7 @@ var mj;
 (function (mj) {
     var scene;
     (function (scene) {
-        var PaiConverter = mj.utils.PaiConvertor;
+        var PaiConverter = mj.utils.PaiConverter;
         var LayaUtils = mj.utils.LayaUtils;
         var GameTableScene = /** @class */ (function (_super) {
             __extends(GameTableScene, _super);
@@ -147,18 +147,21 @@ var mj;
                 }
                 else {
                     /**side_player显示其背面，selfPenghide3其实只是为了写批量隐藏时方便，不起作用！*/
-                    for (var i = 0; i < groupShou.selfPengCount; i++) {
-                        var cloneselfPengHideSprite = LayaUtils.clone(this["selfPengHide" + player.ui_index]);
-                        //有anGangCount的肯定就是左右玩家了，不可能会是god player!
-                        cloneselfPengHideSprite.y = player.shouPai_start_index * y_one_pai_height;
-                        cloneselfPengHideSprite.visible = true;
-                        cloneselfPengHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                        this["shouPai" + player.ui_index].addChild(cloneselfPengHideSprite);
-                        player.ui_clone_arr.push(cloneselfPengHideSprite);
-                        player.shouPai_start_index = player.shouPai_start_index + 3;
+                    if (player.seat_index != 3) {
+                        for (var i = 0; i < groupShou.selfPengCount; i++) {
+                            var cloneselfPengHideSprite = LayaUtils.clone(this["selfPengHide" + player.ui_index]);
+                            //有selfPengCount的肯定就是左右玩家了，不可能会是god player!
+                            cloneselfPengHideSprite.y = player.shouPai_start_index * y_one_pai_height;
+                            cloneselfPengHideSprite.visible = true;
+                            cloneselfPengHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
+                            this["shouPai" + player.ui_index].addChild(cloneselfPengHideSprite);
+                            player.ui_clone_arr.push(cloneselfPengHideSprite);
+                            player.shouPai_start_index = player.shouPai_start_index + 3;
+                        }
                     }
                 }
             };
+            /**显示暗杠组 */
             GameTableScene.prototype.showAnGang = function (groupShou, player, x_one_pai_width, y_one_pai_height) {
                 var _this = this;
                 if (groupShou.anGang.length > 0) {
