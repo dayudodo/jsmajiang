@@ -59,12 +59,13 @@ var mj;
                 //todo: 显示结算界面
             };
             Manager.prototype.server_liang = function (server_message) {
-                // console.log(server_message);
+                console.log("server_liang:", server_message);
                 var gameTable = Laya.gameTable;
                 var liangPlayer = server_message.liangPlayer;
                 //更新本地player数据
                 var localPlayer = Laya.room.players.find(function (p) { return p.user_id == liangPlayer.user_id; });
                 localPlayer.cloneValuesFrom(liangPlayer);
+                console.log("localPlayer:", localPlayer);
                 //更新UI中的显示
                 gameTable.show_group_shoupai(localPlayer);
                 gameTable.show_out(localPlayer);
@@ -121,16 +122,16 @@ var mj;
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
                 var canHidePais = server_message.canHidePais;
-                var opt = new OptDialogScene(canHidePais);
-                opt.showPlayerSelect({
+                this.opt = new OptDialogScene(canHidePais);
+                this.opt.showPlayerSelect({
                     isShowHu: isShowHu,
                     isShowLiang: isShowLiang,
                     isShowGang: isShowGang,
                     isShowPeng: isShowPeng
                 });
                 laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
-                this.gameTable.addChild(opt);
-                opt.popup();
+                // this.gameTable.addChild(this.opt);
+                this.opt.popup();
             };
             Manager.prototype.server_gameover = function (server_message) {
                 console.log("server_gameover");
@@ -270,28 +271,28 @@ var mj;
                     gameTable.showHead(gameTable, rightPlayer);
                 }
                 //for test
-                Laya.god_player.ui_index = 3;
-                Laya.god_player.group_shou_pai = {
-                    // anGang: ["zh"],
-                    anGang: [],
-                    anGangCount: 0,
-                    mingGang: ["fa"],
-                    peng: [],
-                    selfPeng: [],
-                    // selfPengCount: 1,
-                    shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
-                    // shouPai: [],
-                    // shouPaiCount: 4
-                };
-                this.opt = new OptDialogScene(['t1', 'b1']);
-                gameTable.show_group_shoupai(Laya.god_player);
-                this.opt.showPlayerSelect({
-                    isShowHu: false,
-                    isShowLiang: true,
-                    isShowGang: false,
-                    isShowPeng: false
-                });
-                this.opt.popup();
+                // Laya.god_player.ui_index = 3
+                // Laya.god_player.group_shou_pai = {
+                //   // anGang: ["zh"],
+                //   anGang: [],
+                //   anGangCount: 0,
+                //   mingGang: ["fa"],
+                //   peng: [],
+                //   selfPeng: [],
+                //   // selfPengCount: 1,
+                //   shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
+                //   // shouPai: [],
+                //   // shouPaiCount: 4
+                // }
+                // this.opt = new OptDialogScene(['t1', 'b1'])
+                // gameTable.show_group_shoupai(Laya.god_player)
+                // this.opt.showPlayerSelect({
+                //   isShowHu: false,
+                //   isShowLiang: true,
+                //   isShowGang: false,
+                //   isShowPeng: false
+                // });
+                // this.opt.popup()
                 //end test
                 Laya.stage.addChild(gameTable);
             };

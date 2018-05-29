@@ -220,34 +220,32 @@ class Room {
     player_data_filter(socket, player, ignore_filter = false) {
         let player_data = {};
         player_1.Player.filter_properties.forEach(item => {
-            player_data[item] = player[item];
+            player_data[item] = _.clone(player[item]);
         });
-        if (ignore_filter) {
-            //是玩家本人的socket，返回所有的数据
-            if (player.socket == socket) {
-                //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
-            }
-            else {
-                let filterd_group = {};
-                filterd_group["selfPeng"] = [];
-                filterd_group["selfPengCount"] = player.group_shou_pai.selfPeng.length;
-                player_data["group_shou_pai"] = filterd_group;
-            }
+        //是玩家本人的socket，返回所有的数据
+        if (player.socket == socket) {
             return player_data;
+        }
+        else if (ignore_filter) {
+            //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
+            player_data["group_shou_pai"]["selfPeng"] = [];
+            player_data["group_shou_pai"]["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+            return player_data;
+            //不是god_player, 也没有忽略过滤器，就全过滤！
         }
         else {
             //暗杠只有数量，但是不显示具体的内容
-            let filterd_group = {};
-            filterd_group["anGang"] = [];
-            filterd_group["anGangCount"] = player.group_shou_pai.anGang.length;
-            filterd_group["selfPeng"] = [];
-            filterd_group["selfPengCount"] = player.group_shou_pai.selfPeng.length;
-            filterd_group["shouPai"] = [];
-            filterd_group["shouPaiCount"] = player.group_shou_pai.shouPai.length;
+            let shou_pai = player_data["group_shou_pai"];
+            shou_pai["anGang"] = [];
+            shou_pai["anGangCount"] = player.group_shou_pai.anGang.length;
+            shou_pai["selfPeng"] = [];
+            shou_pai["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+            shou_pai["shouPai"] = [];
+            shou_pai["shouPaiCount"] = player.group_shou_pai.shouPai.length;
             //只有明杠和碰会显示在其它人那儿！
-            filterd_group["mingGang"] = player.group_shou_pai.mingGang;
-            filterd_group["peng"] = player.group_shou_pai.peng;
-            player_data["group_shou_pai"] = filterd_group;
+            shou_pai["mingGang"] = player.group_shou_pai.mingGang;
+            shou_pai["peng"] = player.group_shou_pai.peng;
+            // player_data["group_shou_pai"] = shou_pai;
             //返回过滤的数据
             return player_data;
         }
@@ -344,7 +342,7 @@ class Room {
         gangPlayer.confirm_mingGang(gangPai);
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = gangPlayer;
-        //给每个人都要发出全部玩家的更新数据，这样最方便！
+        //给每个人都要发出全部玩家的更新数据，这样最方便！简单粗暴
         this.players.forEach(person => {
             let players = this.players.map(p => {
                 //如果玩家已经亮牌，显示其所有牌！
@@ -401,7 +399,7 @@ class Room {
         this.players.forEach(p => {
             p.socket.sendmsg({
                 type: g_events.server_liang,
-                liangPlayer: this.player_data_filter(socket, p, true),
+                liangPlayer: this.player_data_filter(p.socket, player, true)
             });
         });
         this.operation_sequence.push({
@@ -803,7 +801,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //仅供测试用
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.qidiu_ting();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player23_liangTest();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

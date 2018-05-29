@@ -19,7 +19,7 @@ var mj;
                 var _this = _super.call(this) || this;
                 /**点击数组，用于判断哪些已经选中 */
                 _this.clickedPais = {};
-                _this.canHidePais = canHidePais;
+                _this.canHidePais = canHidePais ? canHidePais : [];
                 _this.show_liang();
                 _this.okBtn.on(Laya.Event.CLICK, _this, function () {
                     _this.selectedPais = Object.keys(_this.clickedPais);
@@ -28,11 +28,14 @@ var mj;
                         type: g_events.client_confirm_liang,
                         selectedPais: _this.selectedPais
                     });
+                    _this.close();
+                    _this.removeSelf();
                 });
                 return _this;
             }
             LianSelectScene.prototype.show_liang = function () {
                 var _this = this;
+                //设定半透明的遮罩效果。
                 laya.ui.Dialog.manager.maskLayer.alpha = 0.5;
                 //弹出隐藏牌的对话框
                 //改变的肯定是god_player的手牌显示

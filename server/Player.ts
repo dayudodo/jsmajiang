@@ -28,20 +28,11 @@ declare global {
     can_liang,
     can_hu
   }
-
 }
 
 export class Player {
-  /**可以返回到客户端的玩家属性值 */
-  static filter_properties = [
-    "username",
-    "user_id",
-    "seat_index",
-    "group_shou_pai",
-    "arr_dapai",
-    "is_liang",
-    "is_ting"
-  ];
+  /**可以返回到客户端的玩家属性数组 */
+  static filter_properties = ["username", "user_id", "seat_index", "group_shou_pai", "arr_dapai", "is_liang"];
 
   //初始化第一手牌，肯定是有13张
   // this.room = null
@@ -78,7 +69,7 @@ export class Player {
     // {type: config.FangGangShangGang, pai:''},
     // {type: config.FangPihuPao, pai:''},
     // {type: config.FangDaHuPao, pai:''}
-  ]
+  ];
   /**收到哪个的碰、杠，user_id：哪个玩家放的牌 */
   public shou = {
     gang: [{ pai: "", user_id: "" }],
@@ -103,7 +94,7 @@ export class Player {
   /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
   public can_status: playerStatus;
   /**能打牌了 */
-  public can_dapai: boolean =  false;
+  public can_dapai: boolean = false;
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
@@ -113,20 +104,20 @@ export class Player {
     this.user_id = user_id;
   }
   /**返回group手牌中出现3次的牌！ */
-  PaiArr3A(){
-    let result = _.countBy(this.group_shou_pai.shouPai)
-    let output =[]
+  PaiArr3A() {
+    let result = _.countBy(this.group_shou_pai.shouPai);
+    let output = [];
     for (const key in result) {
-      if(result[key] == 3){
-        output.push(key)
+      if (result[key] == 3) {
+        output.push(key);
       }
     }
-    return output
+    return output;
   }
   /**是否是暗四归，在group手牌中存在3张相同的牌 */
-  isAnSiGui(pai_name: Pai):boolean{
-   let countPai = this.group_shou_pai.shouPai.filter(pai=>pai == pai_name)
-    return countPai.length === 3
+  isAnSiGui(pai_name: Pai): boolean {
+    let countPai = this.group_shou_pai.shouPai.filter(pai => pai == pai_name);
+    return countPai.length === 3;
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
@@ -173,7 +164,7 @@ export class Player {
   /**能亮否？能胡就能亮？ */
   canLiang(): boolean {
     // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-    return this.hupai_data.all_hupai_zhang.length > 0
+    return this.hupai_data.all_hupai_zhang.length > 0;
   }
   /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
   canPeng(pai: Pai): boolean {
@@ -194,28 +185,29 @@ export class Player {
     }
     this.group_shou_pai.shouPai.sort();
   }
-  //确定杠肯定就是明杠！暗杠不需要检测，是由玩家来选择的！
+  /**杠别人的牌是明杠 */
   confirm_mingGang(pai: Pai) {
     this.group_shou_pai.mingGang.push(pai);
+    //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
     //如果是碰了之后杠，需要删除这张碰牌
-    if (this.group_shou_pai.peng.includes(pai)) {
-      this.group_shou_pai.peng.remove(pai);
-      //如果是手牌里面杠的，删除这三张牌！
-    } else {
-      //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
-      for (var i = 0; i < 4; i++) {
-        this.delete_pai(this.group_shou_pai.shouPai, pai);
-      }
-      this.group_shou_pai.shouPai.sort();
-    }
-  }
-
-  confirm_anGang(pai: Pai) {
-    //首先从手牌中删除三张牌
-    for (var i = 0; i < 3; i++) {
+    this.group_shou_pai.peng.remove(pai);
+    //包括亮牌中的selfPeng
+    this.group_shou_pai.selfPeng.remove(pai);
+    //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
+    //不过自己摸牌其实是属于暗杠的范围了
+    for (var i = 0; i < 4; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai);
     }
+    this.group_shou_pai.shouPai.sort();
+  }
 
+  /**自己摸的牌就是暗杠了*/
+  confirm_anGang(pai: Pai) {
+    //首先从手牌中删除四！张牌，
+    // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
+    for (var i = 0; i < 4; i++) {
+      this.delete_pai(this.group_shou_pai.shouPai, pai);
+    }
     this.group_shou_pai.anGang.push(pai);
     this.group_shou_pai.shouPai.sort();
   }

@@ -26,9 +26,13 @@ module mj.scene {
         public showPlayerSelect({isShowHu, isShowLiang, isShowGang, isShowPeng}) {
             this.initButton(this.liang, isShowLiang, () => {
                 console.log(`用户选择亮`);
-                //弹出选择3A牌的对话框
-                this.liangSelectOpt = new LiangSelect(this.canHidePais)
-                this.liangSelectOpt.popup()
+                //弹出选择3A牌的对话框，设定为全局是为了方便调试！
+                //另外，没有需要隐藏的牌就不用再去显示了
+                if (this.canHidePais && this.canHidePais.length > 0) {
+                    this.liangSelectOpt = new LiangSelect(this.canHidePais)
+                    //popup才会有遮罩效果，show不行
+                    this.liangSelectOpt.popup()
+                }
                 //显示完毕把自己干掉
                 this.close()
                 this.removeSelf()

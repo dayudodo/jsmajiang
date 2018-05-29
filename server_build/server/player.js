@@ -135,25 +135,26 @@ class Player {
         }
         this.group_shou_pai.shouPai.sort();
     }
-    //确定杠肯定就是明杠！暗杠不需要检测，是由玩家来选择的！
+    /**杠别人的牌是明杠 */
     confirm_mingGang(pai) {
         this.group_shou_pai.mingGang.push(pai);
+        //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
         //如果是碰了之后杠，需要删除这张碰牌
-        if (this.group_shou_pai.peng.includes(pai)) {
-            this.group_shou_pai.peng.remove(pai);
-            //如果是手牌里面杠的，删除这三张牌！
+        this.group_shou_pai.peng.remove(pai);
+        //包括亮牌中的selfPeng
+        this.group_shou_pai.selfPeng.remove(pai);
+        //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
+        //不过自己摸牌其实是属于暗杠的范围了
+        for (var i = 0; i < 4; i++) {
+            this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
-        else {
-            //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
-            for (var i = 0; i < 4; i++) {
-                this.delete_pai(this.group_shou_pai.shouPai, pai);
-            }
-            this.group_shou_pai.shouPai.sort();
-        }
+        this.group_shou_pai.shouPai.sort();
     }
+    /**自己摸的牌就是暗杠了*/
     confirm_anGang(pai) {
-        //首先从手牌中删除三张牌
-        for (var i = 0; i < 3; i++) {
+        //首先从手牌中删除四！张牌，
+        // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
+        for (var i = 0; i < 4; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.anGang.push(pai);
@@ -188,15 +189,7 @@ class Player {
         }
     }
 }
-/**可以返回到客户端的玩家属性值 */
-Player.filter_properties = [
-    "username",
-    "user_id",
-    "seat_index",
-    "group_shou_pai",
-    "arr_dapai",
-    "is_liang",
-    "is_ting"
-];
+/**可以返回到客户端的玩家属性数组 */
+Player.filter_properties = ["username", "user_id", "seat_index", "group_shou_pai", "arr_dapai", "is_liang"];
 exports.Player = Player;
 //# sourceMappingURL=player.js.map

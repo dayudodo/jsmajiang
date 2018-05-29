@@ -68,12 +68,14 @@ namespace mj.net {
       //todo: 显示结算界面
     }
     public server_liang(server_message) {
-      // console.log(server_message);
+      console.log("server_liang:",server_message);
       let { gameTable } = Laya
       let { liangPlayer } = server_message;
       //更新本地player数据
       let localPlayer = Laya.room.players.find(p => p.user_id == liangPlayer.user_id);
       localPlayer.cloneValuesFrom(liangPlayer);
+      console.log("localPlayer:", localPlayer);
+      
       //更新UI中的显示
       gameTable.show_group_shoupai(localPlayer);
       gameTable.show_out(localPlayer);
@@ -141,16 +143,16 @@ namespace mj.net {
     public server_can_select(server_message) {
       let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt;
       let canHidePais: Array<Pai> = server_message.canHidePais
-      let opt = new OptDialogScene(canHidePais);
-      opt.showPlayerSelect({
+      this.opt = new OptDialogScene(canHidePais);
+      this.opt.showPlayerSelect({
         isShowHu: isShowHu,
         isShowLiang: isShowLiang,
         isShowGang: isShowGang,
         isShowPeng: isShowPeng
       });
       laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
-      this.gameTable.addChild(opt);
-      opt.popup();
+      // this.gameTable.addChild(this.opt);
+      this.opt.popup();
     }
 
     private server_gameover(server_message) {
@@ -303,29 +305,29 @@ namespace mj.net {
       }
       //for test
 
-      Laya.god_player.ui_index = 3
-      Laya.god_player.group_shou_pai = {
-        // anGang: ["zh"],
-        anGang: [],
-        anGangCount: 0,
-        mingGang: ["fa"],
-        peng: [],
-        selfPeng: [],
-        // selfPengCount: 1,
-        shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
-        // shouPai: [],
-        // shouPaiCount: 4
-      }
-      this.opt = new OptDialogScene(['t1', 'b1'])
+      // Laya.god_player.ui_index = 3
+      // Laya.god_player.group_shou_pai = {
+      //   // anGang: ["zh"],
+      //   anGang: [],
+      //   anGangCount: 0,
+      //   mingGang: ["fa"],
+      //   peng: [],
+      //   selfPeng: [],
+      //   // selfPengCount: 1,
+      //   shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
+      //   // shouPai: [],
+      //   // shouPaiCount: 4
+      // }
+      // this.opt = new OptDialogScene(['t1', 'b1'])
 
-      gameTable.show_group_shoupai(Laya.god_player)
-      this.opt.showPlayerSelect({
-        isShowHu: false,
-        isShowLiang: true,
-        isShowGang: false,
-        isShowPeng: false
-      });
-      this.opt.popup()
+      // gameTable.show_group_shoupai(Laya.god_player)
+      // this.opt.showPlayerSelect({
+      //   isShowHu: false,
+      //   isShowLiang: true,
+      //   isShowGang: false,
+      //   isShowPeng: false
+      // });
+      // this.opt.popup()
       //end test
 
       Laya.stage.addChild(gameTable);

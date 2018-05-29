@@ -2,7 +2,7 @@ module mj.scene {
     import Sprite = laya.display.Sprite;
     export class LianSelectScene extends ui.test.LiangSelectUI {
         /**可以隐藏的牌 */
-        public canHidePais: Array<Pai>
+        public canHidePais: Array<Pai> 
         /**点击数组，用于判断哪些已经选中 */
         public clickedPais = {}
         /**玩家选择了哪些牌隐藏 */
@@ -10,7 +10,7 @@ module mj.scene {
 
         constructor(canHidePais) {
             super()
-            this.canHidePais = canHidePais
+            this.canHidePais = canHidePais? canHidePais: []
             this.show_liang()
             this.okBtn.on(Laya.Event.CLICK, this, () => {
                 this.selectedPais = Object.keys(this.clickedPais)
@@ -19,9 +19,12 @@ module mj.scene {
                     type: g_events.client_confirm_liang,
                     selectedPais: this.selectedPais
                 })
+                this.close()
+                this.removeSelf();
             })
         }
         public show_liang() {
+            //设定半透明的遮罩效果。
             laya.ui.Dialog.manager.maskLayer.alpha = 0.5
             //弹出隐藏牌的对话框
 

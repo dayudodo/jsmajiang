@@ -28,9 +28,13 @@ var mj;
                 var isShowHu = _a.isShowHu, isShowLiang = _a.isShowLiang, isShowGang = _a.isShowGang, isShowPeng = _a.isShowPeng;
                 this.initButton(this.liang, isShowLiang, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u4EAE");
-                    //弹出选择3A牌的对话框
-                    _this.liangSelectOpt = new LiangSelect(_this.canHidePais);
-                    _this.liangSelectOpt.popup();
+                    //弹出选择3A牌的对话框，设定为全局是为了方便调试！
+                    //另外，没有需要隐藏的牌就不用再去显示了
+                    if (_this.canHidePais && _this.canHidePais.length > 0) {
+                        _this.liangSelectOpt = new LiangSelect(_this.canHidePais);
+                        //popup才会有遮罩效果，show不行
+                        _this.liangSelectOpt.popup();
+                    }
                     //显示完毕把自己干掉
                     _this.close();
                     _this.removeSelf();

@@ -247,38 +247,36 @@ export class Room {
    * @param player 需要向哪个玩家发送消息
    * @param ignore_filter 是否忽略filter
    */
-  public player_data_filter(socket, player, ignore_filter = false) {
+  public player_data_filter(socket, player: Player, ignore_filter = false) {
     let player_data = {};
     Player.filter_properties.forEach(item => {
-      player_data[item] = player[item];
+      player_data[item] = _.clone(player[item]);
     });
-    if (ignore_filter) {
-      //是玩家本人的socket，返回所有的数据
-      if( player.socket == socket){
-        //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
-      }else{
-        let filterd_group = {};
-        filterd_group["selfPeng"] = [];
-        filterd_group["selfPengCount"] = player.group_shou_pai.selfPeng.length;
-        player_data["group_shou_pai"] = filterd_group;
-      }
+    //是玩家本人的socket，返回所有的数据
+    if (player.socket == socket) {
       return player_data;
+    } else if (ignore_filter) {
+      //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
+      player_data["group_shou_pai"]["selfPeng"] = [];
+      player_data["group_shou_pai"]["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+      return player_data
+      //不是god_player, 也没有忽略过滤器，就全过滤！
     } else {
       //暗杠只有数量，但是不显示具体的内容
-      let filterd_group = {};
-      filterd_group["anGang"] = [];
-      filterd_group["anGangCount"] = player.group_shou_pai.anGang.length;
+      let shou_pai = player_data["group_shou_pai"];
+      shou_pai["anGang"] = [];
+      shou_pai["anGangCount"] = player.group_shou_pai.anGang.length;
 
-      filterd_group["selfPeng"] = [];
-      filterd_group["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+      shou_pai["selfPeng"] = [];
+      shou_pai["selfPengCount"] = player.group_shou_pai.selfPeng.length;
 
-      filterd_group["shouPai"] = [];
-      filterd_group["shouPaiCount"] = player.group_shou_pai.shouPai.length;
+      shou_pai["shouPai"] = [];
+      shou_pai["shouPaiCount"] = player.group_shou_pai.shouPai.length;
       //只有明杠和碰会显示在其它人那儿！
-      filterd_group["mingGang"] = player.group_shou_pai.mingGang;
-      filterd_group["peng"] = player.group_shou_pai.peng;
+      shou_pai["mingGang"] = player.group_shou_pai.mingGang;
+      shou_pai["peng"] = player.group_shou_pai.peng;
 
-      player_data["group_shou_pai"] = filterd_group;
+      // player_data["group_shou_pai"] = shou_pai;
       //返回过滤的数据
       return player_data;
     }
@@ -377,7 +375,7 @@ export class Room {
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
     this.current_player = gangPlayer;
 
-    //给每个人都要发出全部玩家的更新数据，这样最方便！
+    //给每个人都要发出全部玩家的更新数据，这样最方便！简单粗暴
     this.players.forEach(person => {
       let players = this.players.map(p => {
         //如果玩家已经亮牌，显示其所有牌！
@@ -416,16 +414,16 @@ export class Room {
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, socket) {
     let player = this.find_player_by(socket);
-    let selectedPais: Array<Pai> = client_message.selectedPais.sort()
-    let rightSelectPais = player.PaiArr3A()
+    let selectedPais: Array<Pai> = client_message.selectedPais.sort();
+    let rightSelectPais = player.PaiArr3A();
     //所有的牌都应该在PaiArr3A之中，安全检测
-    let normalSelect = selectedPais.every(pai=> rightSelectPais.includes(pai))
-    if(normalSelect){
-      selectedPais.forEach(pai=>{
-        player.confirm_selfPeng(pai)
-      })
-    }else{
-      console.warn(`用户亮牌后选择${selectedPais}不在服务器的正常选择中：${rightSelectPais}`)
+    let normalSelect = selectedPais.every(pai => rightSelectPais.includes(pai));
+    if (normalSelect) {
+      selectedPais.forEach(pai => {
+        player.confirm_selfPeng(pai);
+      });
+    } else {
+      console.warn(`用户亮牌后选择${selectedPais}不在服务器的正常选择中：${rightSelectPais}`);
     }
     player.is_liang = true;
     // player.is_ting = true; //如果亮牌，肯定就是听了
@@ -436,8 +434,7 @@ export class Room {
     this.players.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_liang,
-        liangPlayer: this.player_data_filter(socket, p, true),
-        
+        liangPlayer: this.player_data_filter(p.socket, player, true)
       });
     });
     this.operation_sequence.push({
@@ -704,7 +701,7 @@ export class Room {
         puts(item_player.hupai_data);
       }
     }
-    
+
     //没亮的时候呢可以杠，碰就不需要再去检测了
     if (item_player.canGang(mo_pai)) {
       isShowGang = true;
@@ -736,14 +733,14 @@ export class Room {
       isShowLiang: boolean = false,
       isShowGang: boolean = false,
       isShowPeng: boolean = false;
-      /**客户端亮之后可以隐藏的牌*/
+    /**客户端亮之后可以隐藏的牌*/
     let canHidePais: Array<Pai> = [];
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
     if (!item_player.is_liang) {
       if (item_player.canLiang()) {
         isShowLiang = true;
-        canHidePais = item_player.PaiArr3A()
+        canHidePais = item_player.PaiArr3A();
         console.log(`房间${this.id} 玩家${item_player.username}可以亮牌`);
         puts(item_player.hupai_data);
       }
@@ -863,7 +860,7 @@ export class Room {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //仅供测试用
-    this.cloneTablePais = TablePaiManager.qidiu_ting();
+    this.cloneTablePais = TablePaiManager.player23_liangTest();
     //开始给所有人发牌，并给东家多发一张
     if (!this.dong_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));
