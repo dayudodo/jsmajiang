@@ -35,6 +35,12 @@ var mj;
                         //popup才会有遮罩效果，show不行
                         _this.liangSelectOpt.popup();
                     }
+                    else {
+                        // 如果没有需要隐藏的牌，还得自己处理消息发送
+                        Laya.socket.sendmsg({
+                            type: g_events.client_confirm_liang
+                        });
+                    }
                     //显示完毕把自己干掉
                     _this.close();
                     _this.removeSelf();

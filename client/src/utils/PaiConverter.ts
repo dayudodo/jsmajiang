@@ -28,36 +28,36 @@ namespace mj.utils {
         throw new Error(`错误的参数${str}`);
       }
     }
-    static ToShou(str: string): string {
-      return `shou_${this.ToNumber(str)}.png`;
+    static ToShou(pai_name: Pai): string {
+      return `shou_${this.ToNumber(pai_name)}.png`;
     }
     /**
      * 返回类似于ui/majiang/shou_??.png的字符串，用于替换麻将牌的显示
      * @param str 
      */
-    static skinOfShou(str: string): string {
-      return `ui/majiang/${this.ToShou(str)}`
+    static skinOfShou(pai_name: Pai): string {
+      return `ui/majiang/${this.ToShou(pai_name)}`
     }
     static skinOfShouBack():string{
       return `ui/majiang/zheng_an.png`
     }
     /** 打出牌的样子，以zheng开头的图形 */
-    static skinOfZheng(str: string): string {
-      return `ui/majiang/${this.ToZheng(str)}`
+    static skinOfZheng(pai_name: Pai): string {
+      return `ui/majiang/${this.ToZheng(pai_name)}`
     }
     /** 别家打出牌的样子，以ce开头的图形 */
-    static skinOfCe(str: string): string {
-      return `ui/majiang/${this.ToCe(str)}`
+    static skinOfCe(pai_name: Pai): string {
+      return `ui/majiang/${this.ToCe(pai_name)}`
     }
-    static ToZheng(str: string): string {
-      return `zheng_${this.ToNumber(str)}.png`;
+    static ToZheng(pai_name: Pai): string {
+      return `zheng_${this.ToNumber(pai_name)}.png`;
     }
     /**
      * 转化成左右风格的牌面（牌是横着的），以ce开头的图片
      * @param str 
      */
-    static ToCe(str: string): string {
-      return `ce_${this.ToNumber(str)}.png`;
+    static ToCe(pai_name: Pai): string {
+      return `ce_${this.ToNumber(pai_name)}.png`;
     }
 
     /** 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串 */

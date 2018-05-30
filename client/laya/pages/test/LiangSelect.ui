@@ -2,7 +2,7 @@
     "x":0,
     "type":"Dialog",
     "selectedBox":1,
-    "selecteID":6,
+    "selecteID":5,
     "props":{"width":1920,"sceneColor":"#000000","height":1080},
     "nodeParent":-1,
     "label":"Dialog",
@@ -28,7 +28,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":675,"x":543,"width":427,"text":"请选择需要杠的牌","overflow":"hidden","height":72,"fontSize":50,"color":"#ffffff","bold":true},
+            "props":{"y":675,"x":543,"width":460,"text":"请选择要隐藏的杠牌","overflow":"hidden","height":72,"fontSize":50,"color":"#ffffff","bold":true},
             "nodeParent":1,
             "label":"Label",
             "isOpen":true,

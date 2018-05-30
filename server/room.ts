@@ -259,7 +259,7 @@ export class Room {
       //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
       player_data["group_shou_pai"]["selfPeng"] = [];
       player_data["group_shou_pai"]["selfPengCount"] = player.group_shou_pai.selfPeng.length;
-      return player_data
+      return player_data;
       //不是god_player, 也没有忽略过滤器，就全过滤！
     } else {
       //暗杠只有数量，但是不显示具体的内容
@@ -414,17 +414,20 @@ export class Room {
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, socket) {
     let player = this.find_player_by(socket);
-    let selectedPais: Array<Pai> = client_message.selectedPais.sort();
-    let rightSelectPais = player.PaiArr3A();
-    //所有的牌都应该在PaiArr3A之中，安全检测
-    let normalSelect = selectedPais.every(pai => rightSelectPais.includes(pai));
-    if (normalSelect) {
-      selectedPais.forEach(pai => {
-        player.confirm_selfPeng(pai);
-      });
-    } else {
-      console.warn(`用户亮牌后选择${selectedPais}不在服务器的正常选择中：${rightSelectPais}`);
+    if (client_message.selectedPais) {
+      let selectedPais: Array<Pai> = client_message.selectedPais.sort();
+      let rightSelectPais = player.PaiArr3A();
+      //所有的牌都应该在PaiArr3A之中，安全检测
+      let normalSelect = selectedPais.every(pai => rightSelectPais.includes(pai));
+      if (normalSelect) {
+        selectedPais.forEach(pai => {
+          player.confirm_selfPeng(pai);
+        });
+      } else {
+        console.warn(`用户亮牌后选择${selectedPais}不在服务器的正常选择中：${rightSelectPais}`);
+      }
     }
+
     player.is_liang = true;
     // player.is_ting = true; //如果亮牌，肯定就是听了
     //玩家已经有决定，不再想了。
@@ -860,7 +863,7 @@ export class Room {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //仅供测试用
-    this.cloneTablePais = TablePaiManager.player23_liangTest();
+    this.cloneTablePais = TablePaiManager.player2_anSiGui();
     //开始给所有人发牌，并给东家多发一张
     if (!this.dong_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));

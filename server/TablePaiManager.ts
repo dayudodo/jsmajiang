@@ -276,7 +276,7 @@ export class TablePaiManager {
   static dapai_liang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = "b1 b2 b3 b4 b5 b9 t4 t4 t6 t6 t6 di di".split(" ");
+    var player1 = "b1 b2 b3 b4 b5 b9 t4 t4 t6 t7 t8 di di".split(" ");
     var player2 = "b1 b1 b1 b2 b3 b4 t1 t2 t3 t6 fa fa di".split(" ");
     var player3 = "b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 di".split(" ");
     var fa_pais = "t4".split(" ");

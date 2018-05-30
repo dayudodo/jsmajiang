@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":38,
-    "selecteID":98,
+    "selectedBox":4,
+    "selecteID":197,
     "props":{"width":1285,"text":"-100","sceneColor":"#ffffff","height":774},
     "nodeParent":-1,
     "label":"View",
@@ -10,13 +10,6 @@
     "isDirectory":true,
     "isAniNode":true,
     "hasChild":true,
-    "frames":[
-        {
-            "type":1,
-            "props":{"width":1920,"sceneColor":"#ffffff","height":1080},
-            "frame":0,
-            "__InPool":false
-        }],
     "compId":1,
     "child":[
         {
@@ -29,13 +22,6 @@
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
-            "frames":[
-                {
-                    "type":1,
-                    "props":{},
-                    "frame":0,
-                    "__InPool":false
-                }],
             "compId":38,
             "child":[
                 {
@@ -44,159 +30,14 @@
                     "props":{"y":24.999999999999996,"x":27.000000000000167,"width":1227,"var":"shouPai3","scaleY":1,"scaleX":1,"height":172},
                     "nodeParent":38,
                     "label":"Sprite(shouPai3)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
-                    "frames":[
-                        {
-                            "type":1,
-                            "props":{"y":838,"x":54.99999999999999,"width":1227,"var":"shouPai3","scaleY":1.4,"scaleX":1.4,"height":172},
-                            "frame":0,
-                            "__InPool":false
-                        }],
                     "compId":4,
                     "child":[
                         {
-                            "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":250,"var":"chi3","height":128},
-                            "nodeParent":4,
-                            "label":"Sprite(chi3)",
-                            "isOpen":false,
-                            "isDirectory":true,
-                            "isAniNode":true,
-                            "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"y":26,"x":0,"width":250,"var":"chi3","height":128},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
-                            "compId":5,
-                            "child":[
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
-                                    "nodeParent":5,
-                                    "label":"Image",
-                                    "isOpen":{
-
-                                    },
-                                    "isDirectory":true,
-                                    "isAniNode":true,
-                                    "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
-                                    "compId":6,
-                                    "child":[
-                                        {
-                                            "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                            "nodeParent":6,
-                                            "label":"Image",
-                                            "isDirectory":false,
-                                            "isAniNode":true,
-                                            "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
-                                            "compId":7,
-                                            "child":[
-                                                ]
-                                        }]
-                                },
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},
-                                    "nodeParent":5,
-                                    "label":"Image",
-                                    "isOpen":{
-
-                                    },
-                                    "isDirectory":true,
-                                    "isAniNode":true,
-                                    "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
-                                    "compId":8,
-                                    "child":[
-                                        {
-                                            "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_32.png"},
-                                            "nodeParent":8,
-                                            "label":"Image",
-                                            "isDirectory":false,
-                                            "isAniNode":true,
-                                            "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_32.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
-                                            "compId":9,
-                                            "child":[
-                                                ]
-                                        }]
-                                },
-                                {
-                                    "type":"Image",
-                                    "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},
-                                    "nodeParent":5,
-                                    "label":"Image",
-                                    "isOpen":{
-
-                                    },
-                                    "isDirectory":true,
-                                    "isAniNode":true,
-                                    "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
-                                    "compId":10,
-                                    "child":[
-                                        {
-                                            "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                            "nodeParent":10,
-                                            "label":"Image",
-                                            "isDirectory":false,
-                                            "isAniNode":true,
-                                            "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
-                                            "compId":11,
-                                            "child":[
-                                                ]
-                                        }]
-                                }]
-                        },
-                        {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":508,"width":250,"var":"anGangHide3","height":128},
                             "nodeParent":4,
@@ -205,13 +46,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"y":26,"x":508,"width":250,"var":"anGangHide3","height":128},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":12,
                             "child":[
                                 {
@@ -222,13 +56,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":13,
                                     "child":[
                                         ]
@@ -241,13 +68,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":14,
                                     "child":[
                                         ]
@@ -260,13 +80,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":15,
                                     "child":[
                                         ]
@@ -279,19 +92,13 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":16,
                                     "child":[
                                         ]
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":760,"width":248,"var":"mingGang3","height":128},
                             "nodeParent":4,
@@ -300,13 +107,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"y":26,"x":760,"width":248,"var":"mingGang3","height":128},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":17,
                             "child":[
                                 {
@@ -320,13 +120,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":18,
                                     "child":[
                                         {
@@ -337,13 +130,6 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":19,
                                             "child":[
                                                 ]
@@ -360,13 +146,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":83,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":20,
                                     "child":[
                                         {
@@ -377,13 +156,6 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":21,
                                             "child":[
                                                 ]
@@ -400,13 +172,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":166,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":22,
                                     "child":[
                                         {
@@ -417,13 +182,6 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":23,
                                             "child":[
                                                 ]
@@ -440,13 +198,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":-31,"x":83,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":24,
                                     "child":[
                                         {
@@ -457,13 +208,6 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":25,
                                             "child":[
                                                 ]
@@ -471,6 +215,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":26,"x":254,"width":250,"var":"anGang3","height":128},
                             "nodeParent":4,
@@ -479,13 +224,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"y":26,"x":254,"width":250,"var":"anGang3","height":128},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":26,
                             "child":[
                                 {
@@ -496,13 +234,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":27,
                                     "child":[
                                         ]
@@ -515,13 +246,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":28,
                                     "child":[
                                         ]
@@ -534,13 +258,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":29,
                                     "child":[
                                         ]
@@ -556,13 +273,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":30,
                                     "child":[
                                         {
@@ -573,13 +283,6 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":31,
                                             "child":[
                                                 ]
@@ -587,6 +290,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":1031,"width":82,"var":"shou3","pivotY":-26,"height":128},
                             "nodeParent":4,
@@ -595,13 +299,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"y":0,"x":1031,"width":82,"var":"shou3","pivotY":-26,"height":128},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":32,
                             "child":[
                                 {
@@ -615,13 +312,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":33,
                                     "child":[
                                         {
@@ -632,13 +322,6 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/shou_32.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":34,
                                             "child":[
                                                 ]
@@ -646,6 +329,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Sprite",
                             "props":{"y":0,"x":1144,"width":82,"var":"fa3","pivotY":-26,"height":128},
                             "nodeParent":4,
@@ -654,13 +338,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"y":0,"x":1144,"width":82,"var":"fa3","pivotY":-26,"height":128},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":35,
                             "child":[
                                 {
@@ -674,13 +351,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":36,
                                     "child":[
                                         {
@@ -691,18 +361,97 @@
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/shou_0.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":37,
                                             "child":[
                                                 ]
                                         }]
                                 }]
+                        },
+                        {
+                            "x":45,
+                            "type":"Sprite",
+                            "props":{"y":26,"x":0,"width":250,"var":"peng3","height":128},
+                            "nodeParent":4,
+                            "label":"Sprite(peng3)",
+                            "isOpen":false,
+                            "isDirectory":true,
+                            "isAniNode":true,
+                            "hasChild":true,
+                            "compId":197,
+                            "child":[
+                                {
+                                    "type":"Image",
+                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
+                                    "nodeParent":197,
+                                    "label":"Image",
+                                    "isOpen":false,
+                                    "isDirectory":true,
+                                    "isAniNode":true,
+                                    "hasChild":true,
+                                    "compId":198,
+                                    "child":[
+                                        {
+                                            "type":"Image",
+                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
+                                            "nodeParent":198,
+                                            "label":"Image",
+                                            "isDirectory":false,
+                                            "isAniNode":true,
+                                            "hasChild":false,
+                                            "compId":199,
+                                            "child":[
+                                                ]
+                                        }]
+                                },
+                                {
+                                    "type":"Image",
+                                    "props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},
+                                    "nodeParent":197,
+                                    "label":"Image",
+                                    "isOpen":false,
+                                    "isDirectory":true,
+                                    "isAniNode":true,
+                                    "hasChild":true,
+                                    "compId":200,
+                                    "child":[
+                                        {
+                                            "type":"Image",
+                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
+                                            "nodeParent":200,
+                                            "label":"Image",
+                                            "isDirectory":false,
+                                            "isAniNode":true,
+                                            "hasChild":false,
+                                            "compId":201,
+                                            "child":[
+                                                ]
+                                        }]
+                                },
+                                {
+                                    "type":"Image",
+                                    "props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},
+                                    "nodeParent":197,
+                                    "label":"Image",
+                                    "isOpen":null,
+                                    "isDirectory":true,
+                                    "isAniNode":true,
+                                    "hasChild":true,
+                                    "compId":202,
+                                    "child":[
+                                        {
+                                            "type":"Image",
+                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
+                                            "nodeParent":202,
+                                            "label":"Image",
+                                            "isDirectory":false,
+                                            "isAniNode":true,
+                                            "hasChild":false,
+                                            "compId":203,
+                                            "child":[
+                                                ]
+                                        }]
+                                }],
+                            "$HIDDEN":false
                         }],
                     "$LOCKED":false
                 },
@@ -716,13 +465,6 @@
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
-                    "frames":[
-                        {
-                            "type":1,
-                            "props":{},
-                            "frame":0,
-                            "__InPool":false
-                        }],
                     "compId":45,
                     "child":[
                         {
@@ -733,13 +475,6 @@
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"text":"label"},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":42,
                             "child":[
                                 ]
@@ -752,13 +487,6 @@
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"text":"label"},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":40,
                             "child":[
                                 ]
@@ -772,13 +500,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":46,
                             "child":[
                                 {
@@ -789,13 +510,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":44,
                                     "child":[
                                         ]
@@ -808,13 +522,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"text"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":60,
                                     "child":[
                                         ]
@@ -829,13 +536,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":92,
                             "child":[
                                 {
@@ -847,13 +547,6 @@
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":70,
                                     "child":[
                                         {
@@ -865,13 +558,6 @@
                                             "isDirectory":true,
                                             "isAniNode":true,
                                             "hasChild":true,
-                                            "frames":[
-                                                {
-                                                    "type":1,
-                                                    "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},
-                                                    "frame":0,
-                                                    "__InPool":false
-                                                }],
                                             "compId":62,
                                             "child":[
                                                 {
@@ -882,13 +568,6 @@
                                                     "isDirectory":false,
                                                     "isAniNode":true,
                                                     "hasChild":false,
-                                                    "frames":[
-                                                        {
-                                                            "type":1,
-                                                            "props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"},
-                                                            "frame":0,
-                                                            "__InPool":false
-                                                        }],
                                                     "compId":63,
                                                     "child":[
                                                         ]
@@ -903,13 +582,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":68,
                                     "child":[
                                         ]
@@ -922,13 +594,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":91,
                                     "child":[
                                         ]
@@ -941,13 +606,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":94,
                                     "child":[
                                         ]
@@ -965,13 +623,6 @@
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
-                    "frames":[
-                        {
-                            "type":1,
-                            "props":{},
-                            "frame":0,
-                            "__InPool":false
-                        }],
                     "compId":93,
                     "child":[
                         {
@@ -983,13 +634,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":52,
                             "child":[
                                 {
@@ -1001,13 +645,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":43,
                                     "child":[
                                         ],
@@ -1022,13 +659,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":47,
                                     "child":[
                                         ]
@@ -1044,13 +674,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":54,
                             "child":[
                                 {
@@ -1062,13 +685,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":55,
                                     "child":[
                                         ],
@@ -1083,13 +699,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":56,
                                     "child":[
                                         ]
@@ -1105,13 +714,6 @@
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":57,
                             "child":[
                                 {
@@ -1123,13 +725,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":58,
                                     "child":[
                                         ],
@@ -1144,13 +739,6 @@
                                     "isDirectory":false,
                                     "isAniNode":true,
                                     "hasChild":false,
-                                    "frames":[
-                                        {
-                                            "type":1,
-                                            "props":{"text":"label"},
-                                            "frame":0,
-                                            "__InPool":false
-                                        }],
                                     "compId":59,
                                     "child":[
                                         ]
@@ -1168,13 +756,6 @@
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
-                    "frames":[
-                        {
-                            "type":1,
-                            "props":{"text":"label"},
-                            "frame":0,
-                            "__InPool":false
-                        }],
                     "compId":98,
                     "child":[
                         {
@@ -1187,13 +768,6 @@
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
-                            "frames":[
-                                {
-                                    "type":1,
-                                    "props":{"text":"label"},
-                                    "frame":0,
-                                    "__InPool":false
-                                }],
                             "compId":99,
                             "child":[
                                 ],
@@ -1214,13 +788,6 @@
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
-            "frames":[
-                {
-                    "type":1,
-                    "props":{"y":529,"x":854,"skin":"ui/game/result_title_bg.png"},
-                    "frame":0,
-                    "__InPool":false
-                }],
             "compId":2,
             "child":[
                 {
@@ -1232,13 +799,6 @@
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
-                    "frames":[
-                        {
-                            "type":1,
-                            "props":{"y":460,"x":878,"skin":"ui/game/result_title_win.png"},
-                            "frame":0,
-                            "__InPool":false
-                        }],
                     "compId":3,
                     "child":[
                         ]

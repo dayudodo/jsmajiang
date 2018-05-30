@@ -57,6 +57,7 @@ var mj;
             Manager.prototype.server_winner = function (server_message) {
                 console.log(server_message);
                 //todo: 显示结算界面
+                this.gameTable.show_winner(server_message);
             };
             Manager.prototype.server_liang = function (server_message) {
                 console.log("server_liang:", server_message);
@@ -139,14 +140,16 @@ var mj;
             Manager.prototype.server_dapai_other = function (server_message) {
                 var username = server_message.username, user_id = server_message.user_id, pai_name = server_message.pai_name;
                 console.log(username + ", id: " + user_id + " \u6253\u724C" + pai_name);
-                var player = Laya.room.players.find(function (p) { return p.user_id == user_id; });
+                var dapaiPlayer = Laya.room.players.find(function (p) { return p.user_id == user_id; });
                 //记录下打牌玩家
-                Laya.room.dapai_player = player;
+                Laya.room.dapai_player = dapaiPlayer;
                 //还要记录下其它玩家打过啥牌，以便有人碰杠的话删除之
-                player.received_pai = pai_name;
-                player.da_pai(pai_name);
+                dapaiPlayer.received_pai = pai_name;
+                dapaiPlayer.da_pai(pai_name);
                 //牌打出去之后才能显示出来！
-                this.gameTable.show_out(player);
+                this.gameTable.show_out(dapaiPlayer);
+                //还要显示出打牌的大张
+                this.gameTable.show_dapai(dapaiPlayer, pai_name);
             };
             Manager.prototype.server_dapai = function (server_message) {
                 var pai_name = server_message.pai_name;
@@ -248,11 +251,13 @@ var mj;
                 gameTable.leftPaiCountSprite.visible = false;
                 //解散房间不显示
                 gameTable.waitSprite.visible = false;
-                //当前打牌不显示
-                gameTable.movieSprite.visible = false;
+                //当前大打牌不显示
+                gameTable.daPaiSprite.visible = false;
                 //听牌不显示
                 gameTable.tingPaiSprite.visible = false;
                 gameTable.userHeadOffline3.visible = false;
+                //胡口不显示
+                gameTable.lb_hukou.visible = false;
                 //设置为自动开始
                 if (gameTable.isAutoStart.selected) {
                     // console.log('本玩家准备好游戏了。。。');

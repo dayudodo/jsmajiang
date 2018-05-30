@@ -6,6 +6,7 @@ module mj.scene {
     import PaiConverter = mj.utils.PaiConverter;
     import LayaUtils = mj.utils.LayaUtils;
 
+
     export class GameTableScene extends ui.test.GameTableUI {
         public socket: Laya.Socket;
         public auto_dapai = false;
@@ -19,6 +20,28 @@ module mj.scene {
         constructor() {
             super()
             this.socket = Laya.socket
+
+
+        }
+        show_winner(server_message) {
+
+        }
+        show_dapai(player: Player, pai_name: Pai) {
+            //首先隐藏所有的dapai
+            this.daPaiSprite.visible = true
+            this.daPai0.visible = false
+            this.daPai1.visible = false
+            this.daPai2.visible = false
+            this.daPai3.visible = false
+
+            let whoDaPai = this["daPai" + player.ui_index]
+            whoDaPai.getChildAt(0).getChildAt(0).skin = PaiConverter.skinOfZheng(pai_name)
+            whoDaPai.visible = true
+            //5秒后消失
+            Laya.timer.once(5 * 1000, this, () => {
+                this["daPai" + player.ui_index].visible = false
+            })
+
         }
         showSkinOfCountDown(twonumber: number) {
             [this.Num1.skin, this.Num0.skin] = PaiConverter.CountDownNumSkin(twonumber)

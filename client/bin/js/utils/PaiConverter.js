@@ -31,36 +31,36 @@ var mj;
                     throw new Error("\u9519\u8BEF\u7684\u53C2\u6570" + str);
                 }
             };
-            PaiConverter.ToShou = function (str) {
-                return "shou_" + this.ToNumber(str) + ".png";
+            PaiConverter.ToShou = function (pai_name) {
+                return "shou_" + this.ToNumber(pai_name) + ".png";
             };
             /**
              * 返回类似于ui/majiang/shou_??.png的字符串，用于替换麻将牌的显示
              * @param str
              */
-            PaiConverter.skinOfShou = function (str) {
-                return "ui/majiang/" + this.ToShou(str);
+            PaiConverter.skinOfShou = function (pai_name) {
+                return "ui/majiang/" + this.ToShou(pai_name);
             };
             PaiConverter.skinOfShouBack = function () {
                 return "ui/majiang/zheng_an.png";
             };
             /** 打出牌的样子，以zheng开头的图形 */
-            PaiConverter.skinOfZheng = function (str) {
-                return "ui/majiang/" + this.ToZheng(str);
+            PaiConverter.skinOfZheng = function (pai_name) {
+                return "ui/majiang/" + this.ToZheng(pai_name);
             };
             /** 别家打出牌的样子，以ce开头的图形 */
-            PaiConverter.skinOfCe = function (str) {
-                return "ui/majiang/" + this.ToCe(str);
+            PaiConverter.skinOfCe = function (pai_name) {
+                return "ui/majiang/" + this.ToCe(pai_name);
             };
-            PaiConverter.ToZheng = function (str) {
-                return "zheng_" + this.ToNumber(str) + ".png";
+            PaiConverter.ToZheng = function (pai_name) {
+                return "zheng_" + this.ToNumber(pai_name) + ".png";
             };
             /**
              * 转化成左右风格的牌面（牌是横着的），以ce开头的图片
              * @param str
              */
-            PaiConverter.ToCe = function (str) {
-                return "ce_" + this.ToNumber(str) + ".png";
+            PaiConverter.ToCe = function (pai_name) {
+                return "ce_" + this.ToNumber(pai_name) + ".png";
             };
             /** 转换类似于zh,fa的字符串到shou_31.png, shou_32.png的字符串 */
             PaiConverter.ToShouArray = function (all_pais) {

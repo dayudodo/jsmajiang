@@ -34,6 +34,24 @@ var mj;
                 _this.socket = Laya.socket;
                 return _this;
             }
+            GameTableScene.prototype.show_winner = function (server_message) {
+            };
+            GameTableScene.prototype.show_dapai = function (player, pai_name) {
+                var _this = this;
+                //首先隐藏所有的dapai
+                this.daPaiSprite.visible = true;
+                this.daPai0.visible = false;
+                this.daPai1.visible = false;
+                this.daPai2.visible = false;
+                this.daPai3.visible = false;
+                var whoDaPai = this["daPai" + player.ui_index];
+                whoDaPai.getChildAt(0).getChildAt(0).skin = PaiConverter.skinOfZheng(pai_name);
+                whoDaPai.visible = true;
+                //5秒后消失
+                Laya.timer.once(5 * 1000, this, function () {
+                    _this["daPai" + player.ui_index].visible = false;
+                });
+            };
             GameTableScene.prototype.showSkinOfCountDown = function (twonumber) {
                 _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
                 var _a;
