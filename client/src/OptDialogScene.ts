@@ -25,19 +25,12 @@ module mj.scene {
 
         public showPlayerSelect({isShowHu, isShowLiang, isShowGang, isShowPeng}) {
             this.initButton(this.liang, isShowLiang, () => {
-                console.log(`用户选择亮`);
+                console.log(`god_player我选择亮`);
+                Laya.god_player.is_liang = true
                 //弹出选择3A牌的对话框，设定为全局是为了方便调试！
                 //另外，没有需要隐藏的牌就不用再去显示了
-                if (this.canHidePais && this.canHidePais.length > 0) {
-                    this.liangSelectOpt = new LiangSelect(this.canHidePais)
-                    //popup才会有遮罩效果，show不行
-                    this.liangSelectOpt.popup()
-                } else {
-                    // 如果没有需要隐藏的牌，还得自己处理消息发送
-                    Laya.socket.sendmsg({
-                        type: g_events.client_confirm_liang
-                    })
-                }
+                this.liangSelectOpt = new LiangSelect(this.canHidePais)
+                this.liangSelectOpt.decidePopup()
                 //显示完毕把自己干掉
                 this.close()
                 this.removeSelf()

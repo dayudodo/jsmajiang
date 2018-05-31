@@ -69,14 +69,14 @@ namespace mj.net {
       this.gameTable.show_winner(server_message)
     }
     public server_liang(server_message) {
-      console.log("server_liang:",server_message);
+      console.log("server_liang:", server_message);
       let { gameTable } = Laya
       let { liangPlayer } = server_message;
       //更新本地player数据
       let localPlayer = Laya.room.players.find(p => p.user_id == liangPlayer.user_id);
       localPlayer.cloneValuesFrom(liangPlayer);
       console.log("localPlayer:", localPlayer);
-      
+
       //更新UI中的显示
       gameTable.show_group_shoupai(localPlayer);
       gameTable.show_out(localPlayer);
@@ -176,6 +176,7 @@ namespace mj.net {
 
     private server_dapai(server_message) {
       let { pai_name } = server_message;
+      this.gameTable.show_dapai(Laya.god_player, pai_name)
       console.log(`服务器确认你已打牌 ${pai_name}`);
 
     }
@@ -286,7 +287,12 @@ namespace mj.net {
       //解散房间不显示
       gameTable.waitSprite.visible = false;
       //当前大打牌不显示
-      gameTable.daPaiSprite.visible = false;
+      //首先隐藏所有的daPaiSprite
+      gameTable.daPaiSprite.visible = true
+      gameTable.daPai0.visible = false
+      gameTable.daPai1.visible = false
+      gameTable.daPai2.visible = false
+      gameTable.daPai3.visible = false
       //听牌不显示
       gameTable.tingPaiSprite.visible = false;
       gameTable.userHeadOffline3.visible = false;

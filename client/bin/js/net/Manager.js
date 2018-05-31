@@ -153,6 +153,7 @@ var mj;
             };
             Manager.prototype.server_dapai = function (server_message) {
                 var pai_name = server_message.pai_name;
+                this.gameTable.show_dapai(Laya.god_player, pai_name);
                 console.log("\u670D\u52A1\u5668\u786E\u8BA4\u4F60\u5DF2\u6253\u724C " + pai_name);
             };
             Manager.prototype.server_table_fa_pai_other = function (server_message) {
@@ -252,7 +253,12 @@ var mj;
                 //解散房间不显示
                 gameTable.waitSprite.visible = false;
                 //当前大打牌不显示
-                gameTable.daPaiSprite.visible = false;
+                //首先隐藏所有的daPaiSprite
+                gameTable.daPaiSprite.visible = true;
+                gameTable.daPai0.visible = false;
+                gameTable.daPai1.visible = false;
+                gameTable.daPai2.visible = false;
+                gameTable.daPai3.visible = false;
                 //听牌不显示
                 gameTable.tingPaiSprite.visible = false;
                 gameTable.userHeadOffline3.visible = false;

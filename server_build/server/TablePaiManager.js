@@ -43,6 +43,7 @@ class TablePaiManager {
         newPais = newPais.concat(allpais);
         return newPais;
     }
+    /**除了暗四归，还能检测亮牌 */
     static player2_anSiGui() {
         var allpais = TablePaiManager.fapai_random();
         var player1 = MajiangAlgo_1.getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");

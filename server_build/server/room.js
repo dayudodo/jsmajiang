@@ -379,7 +379,8 @@ class Room {
     /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
     client_confirm_liang(client_message, socket) {
         let player = this.find_player_by(socket);
-        if (client_message.selectedPais) {
+        //如果selectedPais有效
+        if (client_message.selectedPais && client_message.selectedPais.length > 0) {
             let selectedPais = client_message.selectedPais.sort();
             let rightSelectPais = player.PaiArr3A();
             //所有的牌都应该在PaiArr3A之中，安全检测

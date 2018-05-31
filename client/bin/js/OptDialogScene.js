@@ -27,20 +27,12 @@ var mj;
                 var _this = this;
                 var isShowHu = _a.isShowHu, isShowLiang = _a.isShowLiang, isShowGang = _a.isShowGang, isShowPeng = _a.isShowPeng;
                 this.initButton(this.liang, isShowLiang, function () {
-                    console.log("\u7528\u6237\u9009\u62E9\u4EAE");
+                    console.log("god_player\u6211\u9009\u62E9\u4EAE");
+                    Laya.god_player.is_liang = true;
                     //弹出选择3A牌的对话框，设定为全局是为了方便调试！
                     //另外，没有需要隐藏的牌就不用再去显示了
-                    if (_this.canHidePais && _this.canHidePais.length > 0) {
-                        _this.liangSelectOpt = new LiangSelect(_this.canHidePais);
-                        //popup才会有遮罩效果，show不行
-                        _this.liangSelectOpt.popup();
-                    }
-                    else {
-                        // 如果没有需要隐藏的牌，还得自己处理消息发送
-                        Laya.socket.sendmsg({
-                            type: g_events.client_confirm_liang
-                        });
-                    }
+                    _this.liangSelectOpt = new LiangSelect(_this.canHidePais);
+                    _this.liangSelectOpt.decidePopup();
                     //显示完毕把自己干掉
                     _this.close();
                     _this.removeSelf();

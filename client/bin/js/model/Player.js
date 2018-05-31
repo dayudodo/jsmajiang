@@ -27,6 +27,8 @@ var mj;
                 this.shouPai_start_index = 0;
                 /**玩家能否打牌 */
                 this.can_dapai = false;
+                /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
+                this.is_liang = false;
             }
             Player.prototype.cloneValuesFrom = function (p2) {
                 var _this = this;

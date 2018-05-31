@@ -37,13 +37,13 @@ var mj;
             GameTableScene.prototype.show_winner = function (server_message) {
             };
             GameTableScene.prototype.show_dapai = function (player, pai_name) {
-                var _this = this;
                 //首先隐藏所有的dapai
-                this.daPaiSprite.visible = true;
-                this.daPai0.visible = false;
-                this.daPai1.visible = false;
-                this.daPai2.visible = false;
-                this.daPai3.visible = false;
+                // this.daPaiSprite.visible = true
+                // this.daPai0.visible = false
+                // this.daPai1.visible = false
+                // this.daPai2.visible = false
+                // this.daPai3.visible = false
+                var _this = this;
                 var whoDaPai = this["daPai" + player.ui_index];
                 whoDaPai.getChildAt(0).getChildAt(0).skin = PaiConverter.skinOfZheng(pai_name);
                 whoDaPai.visible = true;
@@ -340,6 +340,7 @@ var mj;
                     }
                 }
             };
+            /**显示服务器发过来的牌！ */
             GameTableScene.prototype.show_fapai = function (pai) {
                 var _this = this;
                 this.fa3Image.skin = PaiConverter.skinOfShou(pai);

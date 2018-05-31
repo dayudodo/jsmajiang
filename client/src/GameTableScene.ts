@@ -28,11 +28,11 @@ module mj.scene {
         }
         show_dapai(player: Player, pai_name: Pai) {
             //首先隐藏所有的dapai
-            this.daPaiSprite.visible = true
-            this.daPai0.visible = false
-            this.daPai1.visible = false
-            this.daPai2.visible = false
-            this.daPai3.visible = false
+            // this.daPaiSprite.visible = true
+            // this.daPai0.visible = false
+            // this.daPai1.visible = false
+            // this.daPai2.visible = false
+            // this.daPai3.visible = false
 
             let whoDaPai = this["daPai" + player.ui_index]
             whoDaPai.getChildAt(0).getChildAt(0).skin = PaiConverter.skinOfZheng(pai_name)
@@ -369,6 +369,7 @@ module mj.scene {
             }
         }
 
+        /**显示服务器发过来的牌！ */
         public show_fapai(pai: string) {
             this.fa3Image.skin = PaiConverter.skinOfShou(pai);
             let newFa3Sprite = LayaUtils.clone(this.fa3) as Sprite;

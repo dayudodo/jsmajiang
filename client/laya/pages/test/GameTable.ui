@@ -2,7 +2,7 @@
     "x":0,
     "type":"View",
     "selectedBox":1257,
-    "selecteID":1254,
+    "selecteID":1248,
     "referenceLines":null,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
@@ -5555,7 +5555,7 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":547,"x":888,"width":82,"var":"daPai3","scaleY":1.6,"scaleX":1.6,"height":128},
+                    "props":{"y":616,"x":929,"width":82,"var":"daPai3","scaleY":1.6,"scaleX":1.6,"height":128},
                     "nodeParent":1257,
                     "label":"Sprite(daPai3)",
                     "isOpen":false,
@@ -5594,7 +5594,7 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":418,"x":1225,"width":82,"var":"daPai2","scaleY":1.6,"scaleX":1.6,"height":128},
+                    "props":{"y":390,"x":1320,"width":82,"var":"daPai2","scaleY":1.6,"scaleX":1.6,"height":128},
                     "nodeParent":1257,
                     "label":"Sprite(daPai2)",
                     "isOpen":null,
@@ -5630,7 +5630,7 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":290,"x":885,"width":82,"var":"daPai1","scaleY":1.6,"scaleX":1.6,"height":128},
+                    "props":{"y":153,"x":928,"width":82,"var":"daPai1","scaleY":1.6,"scaleX":1.6,"height":128},
                     "nodeParent":1257,
                     "label":"Sprite(daPai1)",
                     "isOpen":null,
@@ -5666,7 +5666,7 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":418,"x":568,"width":82,"var":"daPai0","scaleY":1.6,"scaleX":1.6,"height":128},
+                    "props":{"y":393,"x":527,"width":82,"var":"daPai0","scaleY":1.6,"scaleX":1.6,"height":128},
                     "nodeParent":1257,
                     "label":"Sprite(daPai0)",
                     "isOpen":null,

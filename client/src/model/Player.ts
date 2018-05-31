@@ -6,7 +6,7 @@ module mj.model {
         /**暗杠计数 */
         anGangCount?: number;
         mingGang: Array<Pai>;
-        selfPeng:Array<Pai>;
+        selfPeng: Array<Pai>;
         selfPengCount?: number;
         peng: Array<Pai>;
         /** 剩余的牌，也可能会有3连续牌，说明没有遇到碰牌 */
@@ -30,7 +30,7 @@ module mj.model {
         public group_shou_pai: ShoupaiConstuctor = {
             anGang: [],
             mingGang: [],
-            selfPeng:[],
+            selfPeng: [],
             peng: [],
             shouPai: []
         }
@@ -56,11 +56,13 @@ module mj.model {
         public anGangCount
         /**玩家能否打牌 */
         public can_dapai: boolean = false
+        /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
+        public is_liang = false;
 
         constructor() { }
 
-        cloneValuesFrom(p2){
-            Player.filter_properties.forEach(prop=>{
+        cloneValuesFrom(p2) {
+            Player.filter_properties.forEach(prop => {
                 this[prop] = p2[prop]
             })
         }

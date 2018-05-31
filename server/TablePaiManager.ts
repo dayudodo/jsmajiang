@@ -53,6 +53,7 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais);
     return newPais;
   }
+  /**除了暗四归，还能检测亮牌 */
   static player2_anSiGui() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 

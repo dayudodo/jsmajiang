@@ -2,28 +2,52 @@ module mj.scene {
     import Sprite = laya.display.Sprite;
     export class LianSelectScene extends ui.test.LiangSelectUI {
         /**可以隐藏的牌 */
-        public canHidePais: Array<Pai> 
+        public canHidePais: Array<Pai>
         /**点击数组，用于判断哪些已经选中 */
         public clickedPais = {}
         /**玩家选择了哪些牌隐藏 */
-        public selectedPais
+        public selectedPais: Array<Pai>
 
         constructor(canHidePais) {
             super()
-            this.canHidePais = canHidePais? canHidePais: []
-            this.show_liang()
-            this.okBtn.on(Laya.Event.CLICK, this, () => {
-                this.selectedPais = Object.keys(this.clickedPais)
-                // console.log(this.selectedPais);
-                Laya.socket.sendmsg({
-                    type: g_events.client_confirm_liang,
-                    selectedPais: this.selectedPais
+            this.canHidePais = canHidePais
+
+        }
+
+        public decidePopup() {
+            if (this.canHidePais && this.canHidePais.length > 0) {
+                this.show_liangSelect()
+                this.popup()
+                this.okBtn.on(Laya.Event.CLICK, this, () => {
+                    this.sendSelectedPais()
+                    this.close()
+                    this.removeSelf();
                 })
-                this.close()
-                this.removeSelf();
+            }else{
+                this.cancelAllClonePaiClicked()
+                this.sendSelectedPais()
+            }
+        }
+
+        public sendSelectedPais() {
+            this.selectedPais = Object.keys(this.clickedPais)
+            // console.log(this.selectedPais);
+            Laya.socket.sendmsg({
+                type: g_events.client_confirm_liang,
+                selectedPais: this.selectedPais
             })
         }
-        public show_liang() {
+
+        public cancelAllClonePaiClicked() {
+            Laya.gameTable.clonePaiSpriteArray.forEach(paiSprite => {
+                // 所有手牌事件不再响应，因为亮牌之后这些牌都不需要点击了！奇怪，为啥不能加参数呢？
+                paiSprite.offAll()
+                //然后再决定把哪三个绑定为一体，再去添加新的点击事件处理。这些可以选择的牌应该由服务器来告诉我，在发送你可以亮的时候计算出来！
+            })
+        }
+
+        /**显示godPlayer中亮牌选择 */
+        public show_liangSelect() {
             //设定半透明的遮罩效果。
             laya.ui.Dialog.manager.maskLayer.alpha = 0.5
             //弹出隐藏牌的对话框
@@ -36,11 +60,7 @@ module mj.scene {
             //但是需要把三个相同的给标记出来，让用户选择到底哪些不需要亮牌！也就是选择需要隐藏的牌
             //可能有多个，因为玩家是碰碰胡，而碰碰胡是可以杠的。
             //取消所有的按钮事件！
-            gameTable.clonePaiSpriteArray.forEach(paiSprite => {
-                // 所有手牌事件不再响应，因为亮牌之后这些牌都不需要点击了！
-                paiSprite.offAll(Laya.Event.CLICK)
-                //然后再决定把哪三个绑定为一体，再去添加新的点击事件处理。这些可以选择的牌应该由服务器来告诉我，在发送你可以亮的时候计算出来！
-            })
+            this.cancelAllClonePaiClicked()
             //能够隐藏的牌由服务器传递过来参数canHidePais
             this.canHidePais.forEach(pai => {
                 //新建sprite，将三个添加进来。
