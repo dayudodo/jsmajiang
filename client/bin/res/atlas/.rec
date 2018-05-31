@@ -1,4 +1,5 @@
 D .
+R A0A9CD05 .DS_Store
 D audio
 R 02D7606B bgm1.mp3
 R 5318EAB6 bgm2.mp3
@@ -220,8 +221,8 @@ P 5F29EE63 opt_liang.png
 P DE695BF7 opt_peng.png
 P 034D36C5 peng.png
 P BAADB4F4 result_title_bg.png
+P 498CEF16 result_title_draw.png
 P 60D92101 result_title_lost.png
-P 498CEF16 result_title_nor.png
 P 9C426669 result_title_win.png
 P 761738CA right.png
 P BDD97A1B room_info_bg.png
