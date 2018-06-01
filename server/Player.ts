@@ -103,6 +103,10 @@ export class Player {
     this.username = username;
     this.user_id = user_id;
   }
+  /**是否放炮 */
+  get is_fangpao() {
+    return this.fangpai_data.some(item => item.type == config.FangDaHuPao || item.type == config.FangPihuPao);
+  }
   /**返回group手牌中出现3次的牌！ */
   PaiArr3A() {
     let result = _.countBy(this.group_shou_pai.shouPai);

@@ -60,9 +60,7 @@ module ui.test {
         
             super.createChildren();
             this.createView(ui.test.CreateOptUI.uiView);
-
         }
-
     }
 }
 
@@ -78,16 +76,14 @@ module ui.test {
 		public cancelBtn:Laya.Button;
 		public confirmBtn:Laya.Button;
 
-        public static  uiView:any ={"type":"Dialog","props":{"width":702,"text":"提示信息111","labelPadding":"0,0,5,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":true,"label":"确定","height":543},"child":[{"type":"Sprite","props":{"y":0,"x":0,"width":702,"var":"mainSprite","height":543},"child":[{"type":"Image","props":{"y":0,"x":0,"width":702,"var":"bg","skin":"base/dialog_bg.png","height":543}},{"type":"Image","props":{"y":27,"x":96.00000000000004,"var":"icon1","skin":"base/dialog_icon.png","mouseEnabled":true}},{"type":"Image","props":{"y":28,"x":611,"var":"icon2","skin":"base/dialog_icon.png","scaleX":-1,"mouseEnabled":true}},{"type":"Sprite","props":{"y":96,"x":90,"width":525,"var":"contentSprite","height":307},"child":[{"type":"Text","props":{"y":-1,"x":-7,"width":530,"var":"contentText","text":"提示信息","height":294,"fontSize":48,"align":"center"}}]},{"type":"Sprite","props":{"y":417,"x":0,"width":702,"var":"buttonSprite","height":89},"child":[{"type":"Button","props":{"y":0,"x":27,"width":300,"var":"cancelBtn","skin":"base/btn_normal.png","labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":"true","label":"取消","height":95}},{"type":"Button","props":{"y":0,"x":373,"width":300,"var":"confirmBtn","skin":"base/btn_danger.png","labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":"true","label":"确定","height":95}}]}]}]};
+        public static  uiView:any ={"type":"Dialog","props":{"width":702,"text":"提示信息111","labelPadding":"0,0,5,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":true,"label":"确定","height":543},"child":[{"type":"Sprite","props":{"y":0,"x":0,"width":702,"var":"mainSprite","height":543},"child":[{"type":"Image","props":{"y":0,"x":0,"width":702,"var":"bg","skin":"base/dialog_bg.png","height":543}},{"type":"Image","props":{"y":27,"x":96.00000000000004,"var":"icon1","skin":"base/dialog_icon.png","mouseEnabled":true}},{"type":"Image","props":{"y":28,"x":611,"var":"icon2","skin":"base/dialog_icon.png","scaleX":-1,"mouseEnabled":true}},{"type":"Sprite","props":{"y":96,"x":90,"width":525,"var":"contentSprite","height":307},"child":[{"type":"Text","props":{"y":-1,"x":-7,"width":530,"var":"contentText","text":"提示信息","height":294,"fontSize":"48","align":"center"}}]},{"type":"Sprite","props":{"y":417,"x":0,"width":702,"var":"buttonSprite","height":89},"child":[{"type":"Button","props":{"y":0,"x":27,"width":300,"var":"cancelBtn","skin":"base/btn_normal.png","labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":"true","label":"取消","height":95}},{"type":"Button","props":{"y":0,"x":373,"width":300,"var":"confirmBtn","skin":"base/btn_danger.png","labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":"true","label":"确定","height":95}}]}]}]};
         constructor(){ super()}
         createChildren():void {
         			View.regComponent("Text",laya.display.Text);
 
             super.createChildren();
             this.createView(ui.test.DialogUI.uiView);
-
         }
-
     }
 }
 
@@ -246,9 +242,7 @@ module ui.test {
         
             super.createChildren();
             this.createView(ui.test.JoinRoomUI.uiView);
-
         }
-
     }
 }
 
@@ -281,9 +275,7 @@ module ui.test {
         
             super.createChildren();
             this.createView(ui.test.LoadingUI.uiView);
-
         }
-
     }
 }
 
@@ -305,9 +297,7 @@ module ui.test {
 
             super.createChildren();
             this.createView(ui.test.LoginUI.uiView);
-
         }
-
     }
 }
 
@@ -337,16 +327,14 @@ module ui.test {
 		public newNoticeSprite:Laya.Sprite;
 		public newNotice:laya.display.Text;
 
-        public static  uiView:any ={"type":"View","props":{"text":"ID:3213124"},"child":[{"type":"Sprite","props":{"y":0,"x":3,"width":1920,"var":"bg","height":1080},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"mainBg","skin":"ui/home/bg.jpg"}},{"type":"Image","props":{"y":217,"x":96,"width":419,"skin":"ui/home/mm.png","height":865}}]},{"type":"Sprite","props":{"y":0,"x":3,"width":1920,"var":"mainSprite","height":1080},"child":[{"type":"Sprite","props":{"y":9,"x":126,"width":370,"var":"userHead","scaleY":1.3,"scaleX":1.3,"height":168},"child":[{"type":"Sprite","props":{"y":12,"x":14,"width":530,"var":"userHeadOut","scaleY":0.25,"scaleX":0.25,"height":534},"child":[{"type":"Image","props":{"y":2,"x":-2,"width":133,"skin":"ui/game/user_head_bg.png","scaleY":4,"scaleX":4,"height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"var":"userHeadMask","skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"var":"userHeadIconOut","height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]}]},{"type":"Sprite","props":{"y":19.00000000000002,"x":145.00000000000006,"width":219.99999999999983,"var":"addFangkaSprite","mouseThrough":false,"mouseEnabled":true,"height":121.99999999999997},"child":[{"type":"Text","props":{"y":46.000000000000036,"x":-1.0000000000000568,"width":204,"var":"userId","text":"ID:7777777","height":35,"fontSize":30,"color":"#ffcc01","align":"center"}},{"type":"Image","props":{"y":80.99999999999994,"x":5,"skin":"ui/game/gold_bg.png"}},{"type":"Text","props":{"y":84,"x":3,"width":183,"var":"gold","text":"房卡:888888","height":35,"fontSize":28,"color":"#ffcc01","align":"center"}},{"type":"Text","props":{"y":0,"x":0,"width":195,"var":"userName","text":"用户名称","height":46,"fontSize":40,"color":"#ffcc01","align":"center"}},{"type":"Button","props":{"y":76.99999999999997,"x":174.99999999999983,"var":"addBtn","skin":"ui/home/btn_add_gold.png"}}]}]},{"type":"Sprite","props":{"y":215.00000000000003,"x":476.99999999999983,"var":"notice"},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"noticeBg","skin":"ui/home/notice_bg.png"}},{"type":"Image","props":{"y":5,"x":3,"skin":"ui/home/notice_icon.png"}},{"type":"Label","props":{"y":12,"x":111,"width":897,"var":"noticeLabel","text":"我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯","overflow":"hidden","height":40,"fontSize":40,"color":"#ffcc01","bold":false,"align":"left"}}]},{"type":"Sprite","props":{"y":352.25,"x":726},"child":[{"type":"Button","props":{"y":0,"x":0,"width":531,"var":"createBtn","skin":"ui/home/btn_create.png","height":595}},{"type":"Button","props":{"y":0,"x":554.0000000000002,"width":531,"var":"joinBtn","skin":"ui/home/btn_join.png","height":595}}]},{"type":"Button","props":{"y":16,"x":1384,"width":120,"var":"quitBtn","stateNum":1,"skin":"base/quit.png","sizeGrid":"121,0,0,0","labelSize":40,"labelPadding":"50,0,0,0","labelColors":"#ffffff","label":"退出","height":150}},{"type":"Button","props":{"y":13,"x":1523,"width":120,"var":"settingBtn","stateNum":1,"skin":"base/shezhi.png","sizeGrid":"121,0,0,0","labelSize":40,"labelPadding":"50,0,0,0","labelColors":"#ffffff","label":"设置","height":150}},{"type":"Button","props":{"y":16,"x":1662,"width":120,"var":"historyBtn","stateNum":1,"skin":"base/history.png","sizeGrid":"121,0,0,0","labelSize":40,"labelPadding":"50,0,0,0","labelColors":"#ffffff","label":"战绩","height":150}},{"type":"Sprite","props":{"y":316,"x":104,"var":"newNoticeSprite"},"child":[{"type":"Image","props":{"y":0,"x":0,"width":373,"skin":"base/dialog_bg.png","scaleY":1.5,"scaleX":1.5,"height":445,"alpha":0.7}},{"type":"Text","props":{"y":56,"x":133,"width":278,"text":"健康游戏公告","height":56,"fontSize":50,"color":"#ffffff","alpha":0.8}},{"type":"Text","props":{"y":149,"x":72,"wordWrap":true,"width":414,"var":"newNotice","text":"健康游戏公告","height":442,"fontSize":50,"color":"#000000","alpha":0.8}}]},{"type":"Text","props":{"y":1035,"x":7,"wordWrap":true,"width":1920,"text":"抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防上当受骗。","fontSize":35,"color":"#ffffff","alpha":0.5,"align":"center"}},{"type":"Text","props":{"y":988,"x":7,"wordWrap":true,"width":1920,"text":"适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。","fontSize":35,"color":"#ffffff","alpha":0.5,"align":"center"}}]}]};
+        public static  uiView:any ={"type":"View","props":{"text":"ID:3213124"},"child":[{"type":"Sprite","props":{"y":0,"x":3,"width":1920,"var":"bg","height":1080},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"mainBg","skin":"ui/home/bg.jpg"}},{"type":"Image","props":{"y":217,"x":96,"width":419,"skin":"ui/home/mm.png","height":865}}]},{"type":"Sprite","props":{"y":0,"x":3,"width":1920,"var":"mainSprite","height":1080},"child":[{"type":"Sprite","props":{"y":9,"x":126,"width":370,"var":"userHead","scaleY":1.3,"scaleX":1.3,"height":168},"child":[{"type":"Sprite","props":{"y":12,"x":14,"width":530,"var":"userHeadOut","scaleY":0.25,"scaleX":0.25,"height":534},"child":[{"type":"Image","props":{"y":2,"x":-2,"width":133,"skin":"ui/game/user_head_bg.png","scaleY":4,"scaleX":4,"height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"var":"userHeadMask","skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"var":"userHeadIconOut","height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]}]},{"type":"Sprite","props":{"y":19.00000000000002,"x":145.00000000000006,"width":219.99999999999983,"var":"addFangkaSprite","mouseThrough":false,"mouseEnabled":true,"height":121.99999999999997},"child":[{"type":"Text","props":{"y":46.000000000000036,"x":-1.0000000000000568,"width":204,"var":"userId","text":"ID:7777777","height":35,"fontSize":30,"color":"#ffcc01","align":"center"}},{"type":"Image","props":{"y":80.99999999999994,"x":5,"skin":"ui/game/gold_bg.png"}},{"type":"Text","props":{"y":84,"x":3,"width":183,"var":"gold","text":"房卡:888888","height":35,"fontSize":28,"color":"#ffcc01","align":"center"}},{"type":"Text","props":{"y":0,"x":0,"width":195,"var":"userName","text":"用户名称","height":46,"fontSize":40,"color":"#ffcc01","align":"center"}},{"type":"Button","props":{"y":76.99999999999997,"x":174.99999999999983,"var":"addBtn","skin":"ui/home/btn_add_gold.png"}}]}]},{"type":"Sprite","props":{"y":215.00000000000003,"x":476.99999999999983,"var":"notice"},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"noticeBg","skin":"ui/home/notice_bg.png"}},{"type":"Image","props":{"y":5,"x":3,"skin":"ui/home/notice_icon.png"}},{"type":"Label","props":{"y":12,"x":111,"width":897,"var":"noticeLabel","text":"我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯我是跑马灯","overflow":"hidden","height":40,"fontSize":40,"color":"#ffcc01","bold":false,"align":"left"}}]},{"type":"Sprite","props":{"y":352.25,"x":726},"child":[{"type":"Button","props":{"y":0,"x":0,"width":531,"var":"createBtn","skin":"ui/home/btn_create.png","height":595}},{"type":"Button","props":{"y":0,"x":554.0000000000002,"width":531,"var":"joinBtn","skin":"ui/home/btn_join.png","height":595}}]},{"type":"Button","props":{"y":16,"x":1384,"width":120,"var":"quitBtn","stateNum":"1","skin":"base/quit.png","sizeGrid":"121,0,0,0","labelSize":40,"labelPadding":"50,0,0,0","labelColors":"#ffffff","label":"退出","height":150}},{"type":"Button","props":{"y":13,"x":1523,"width":120,"var":"settingBtn","stateNum":"1","skin":"base/shezhi.png","sizeGrid":"121,0,0,0","labelSize":40,"labelPadding":"50,0,0,0","labelColors":"#ffffff","label":"设置","height":150}},{"type":"Button","props":{"y":16,"x":1662,"width":120,"var":"historyBtn","stateNum":"1","skin":"base/history.png","sizeGrid":"121,0,0,0","labelSize":40,"labelPadding":"50,0,0,0","labelColors":"#ffffff","label":"战绩","height":150}},{"type":"Sprite","props":{"y":316,"x":104,"var":"newNoticeSprite"},"child":[{"type":"Image","props":{"y":0,"x":0,"width":373,"skin":"base/dialog_bg.png","scaleY":1.5,"scaleX":1.5,"height":445,"alpha":0.7}},{"type":"Text","props":{"y":56,"x":133,"width":278,"text":"健康游戏公告","height":56,"fontSize":"50","color":"#ffffff","alpha":0.8}},{"type":"Text","props":{"y":149,"x":72,"wordWrap":true,"width":414,"var":"newNotice","text":"健康游戏公告","height":442,"fontSize":"50","color":"#000000","alpha":0.8}}]},{"type":"Text","props":{"y":1035,"x":7,"wordWrap":true,"width":1920,"text":"抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防上当受骗。","fontSize":"35","color":"#ffffff","alpha":0.5,"align":"center"}},{"type":"Text","props":{"y":988,"x":7,"wordWrap":true,"width":1920,"text":"适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。","fontSize":"35","color":"#ffffff","alpha":0.5,"align":"center"}}]}]};
         constructor(){ super()}
         createChildren():void {
         			View.regComponent("Text",laya.display.Text);
 
             super.createChildren();
             this.createView(ui.test.MainUI.uiView);
-
         }
-
     }
 }
 
@@ -388,9 +376,7 @@ module ui.test {
         
             super.createChildren();
             this.createView(ui.test.PhoneDialogUI.uiView);
-
         }
-
     }
 }
 
@@ -406,9 +392,7 @@ module ui.test {
         
             super.createChildren();
             this.createView(ui.test.RoomHistoryListUI.uiView);
-
         }
-
     }
 }
 
@@ -420,16 +404,14 @@ module ui.test {
 		public yinxiaoCheckbox:Laya.CheckBox;
 		public yinyueCheckbox:Laya.CheckBox;
 
-        public static  uiView:any ={"type":"View","props":{"y":0,"x":0,"width":896,"text":"手机号：","label":"下一步","height":241},"child":[{"type":"Sprite","props":{"y":0,"x":0,"width":896,"var":"mainSprite","height":241},"child":[{"type":"Sprite","props":{"y":0,"x":0,"scaleY":1.2,"scaleX":1.2},"child":[{"type":"HSlider","props":{"y":23.999999999999982,"x":166.99999999999997,"var":"yinxiaoSlider","value":50,"skin":"base/hslider.png","scaleY":1.5,"scaleX":1.5}},{"type":"HSlider","props":{"y":113.00000000000001,"x":166.99999999999997,"var":"yinyueSlider","value":50,"skin":"base/hslider.png","scaleY":1.5,"scaleX":1.5}},{"type":"Text","props":{"y":30.999999999999996,"x":44.00000000000001,"width":91,"text":"音效","fontSize":48,"color":"#cd5216","bold":true}},{"type":"CheckBox","props":{"y":19.000000000000004,"x":626,"var":"yinxiaoCheckbox","stateNum":2,"skin":"base/volume.png","scaleY":1.5,"scaleX":1.5}},{"type":"CheckBox","props":{"y":103,"x":626,"var":"yinyueCheckbox","stateNum":2,"skin":"base/volume.png","scaleY":1.5,"scaleX":1.5}},{"type":"Text","props":{"y":125,"x":46.00000000000004,"width":91,"text":"音乐","fontSize":48,"color":"#cd5216","bold":true}}]}]}]};
+        public static  uiView:any ={"type":"View","props":{"y":0,"x":0,"width":896,"text":"手机号：","label":"下一步","height":241},"child":[{"type":"Sprite","props":{"y":0,"x":0,"width":896,"var":"mainSprite","height":241},"child":[{"type":"Sprite","props":{"y":0,"x":0,"scaleY":1.2,"scaleX":1.2},"child":[{"type":"HSlider","props":{"y":23.999999999999982,"x":166.99999999999997,"var":"yinxiaoSlider","value":50,"skin":"base/hslider.png","scaleY":1.5,"scaleX":1.5}},{"type":"HSlider","props":{"y":113.00000000000001,"x":166.99999999999997,"var":"yinyueSlider","value":50,"skin":"base/hslider.png","scaleY":1.5,"scaleX":1.5}},{"type":"Text","props":{"y":30.999999999999996,"x":44.00000000000001,"width":91,"text":"音效","fontSize":"48","color":"#cd5216","bold":true}},{"type":"CheckBox","props":{"y":19.000000000000004,"x":626,"var":"yinxiaoCheckbox","stateNum":"2","skin":"base/volume.png","scaleY":1.5,"scaleX":1.5}},{"type":"CheckBox","props":{"y":103,"x":626,"var":"yinyueCheckbox","stateNum":"2","skin":"base/volume.png","scaleY":1.5,"scaleX":1.5}},{"type":"Text","props":{"y":125,"x":46.00000000000004,"width":91,"text":"音乐","fontSize":"48","color":"#cd5216","bold":true}}]}]}]};
         constructor(){ super()}
         createChildren():void {
         			View.regComponent("Text",laya.display.Text);
 
             super.createChildren();
             this.createView(ui.test.SettingDialogUI.uiView);
-
         }
-
     }
 }
 
@@ -444,9 +426,7 @@ module ui.test {
         
             super.createChildren();
             this.createView(ui.test.TestLoginUI.uiView);
-
         }
-
     }
 }
 
@@ -464,16 +444,14 @@ module ui.test {
 		public userInfo1:Laya.Box;
 		public userInfo2:Laya.Box;
 
-        public static  uiView:any ={"type":"View","props":{"y":0,"x":0,"width":731,"text":"距你：10公里","label":"下一步","height":650},"child":[{"type":"Sprite","props":{"y":0,"x":0,"width":731,"var":"mainSprite","height":674},"child":[{"type":"Sprite","props":{"y":66,"x":154.5,"width":422,"var":"userHead","height":168},"child":[{"type":"Sprite","props":{"y":-30,"x":-20,"scaleY":0.4,"scaleX":0.4},"child":[{"type":"Image","props":{"y":2,"x":-2,"width":133,"skin":"ui/game/user_head_bg.png","scaleY":4,"scaleX":4,"height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"var":"userHeadMask","skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"var":"userHeadIconOut","height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]},{"type":"Sprite","props":{"y":38,"x":550,"scaleY":3,"scaleX":3},"child":[{"type":"Text","props":{"y":65.15384615384613,"width":208,"var":"userId","text":"ID:7777777","height":35,"fontSize":30,"color":"#573a1e","align":"center"}},{"type":"Text","props":{"y":1.1538461538460965,"width":208,"var":"userName","text":"用户名称","height":46,"fontSize":40,"color":"#573a1e","align":"center"}},{"type":"Text","props":{"y":117.15384615384616,"width":208,"var":"ip","text":"IP:192.168.3.2","height":35,"fontSize":30,"color":"#573a1e","align":"center"}}]}]}]},{"type":"Box","props":{"y":289,"x":54,"width":623,"var":"userInfo0","height":120},"child":[{"type":"Image","props":{"y":0,"x":618,"width":3,"skin":"base/line_vertical.png","rotation":90,"height":620}},{"type":"Text","props":{"y":31.5,"x":6,"width":246,"text":"小草：","name":"name","height":57,"fontSize":50,"color":"#000000","align":"left"}},{"type":"Text","props":{"y":62,"x":214,"width":433,"text":"距你：10公里","name":"distance","fontSize":42,"color":"#cd5216","align":"center"}},{"type":"Text","props":{"y":11,"x":216,"width":433,"text":"IP:192.168.3.2","name":"ip","fontSize":42,"color":"#cd5216","align":"center"}}]},{"type":"Box","props":{"y":415,"x":54,"width":623,"var":"userInfo1","height":120},"child":[{"type":"Image","props":{"y":0,"x":618,"width":3,"skin":"base/line_vertical.png","rotation":90,"height":620}},{"type":"Text","props":{"y":31.5,"x":6,"width":246,"text":"小草：","name":"name","height":57,"fontSize":50,"color":"#000000","align":"left"}},{"type":"Text","props":{"y":62,"x":214,"width":433,"text":"距你：10公里","name":"distance","fontSize":42,"color":"#cd5216","align":"center"}},{"type":"Text","props":{"y":11,"x":216,"width":433,"text":"IP:192.168.3.2","name":"ip","fontSize":42,"color":"#cd5216","align":"center"}}]},{"type":"Box","props":{"y":541,"x":54,"width":623,"var":"userInfo2","height":120},"child":[{"type":"Image","props":{"y":0,"x":618,"width":3,"skin":"base/line_vertical.png","rotation":90,"height":620}},{"type":"Text","props":{"y":31.5,"x":6,"width":246,"text":"小草：","name":"name","height":57,"fontSize":50,"color":"#000000","align":"left"}},{"type":"Text","props":{"y":62,"x":214,"width":433,"text":"距你：10公里","name":"distance","fontSize":42,"color":"#cd5216","align":"center"}},{"type":"Text","props":{"y":11,"x":216,"width":433,"text":"IP:192.168.3.2","name":"ip","fontSize":42,"color":"#cd5216","align":"center"}}]}]}]};
+        public static  uiView:any ={"type":"View","props":{"y":0,"x":0,"width":731,"text":"距你：10公里","label":"下一步","height":650},"child":[{"type":"Sprite","props":{"y":0,"x":0,"width":731,"var":"mainSprite","height":674},"child":[{"type":"Sprite","props":{"y":66,"x":154.5,"width":422,"var":"userHead","height":168},"child":[{"type":"Sprite","props":{"y":-30,"x":-20,"scaleY":0.4,"scaleX":0.4},"child":[{"type":"Image","props":{"y":2,"x":-2,"width":133,"skin":"ui/game/user_head_bg.png","scaleY":4,"scaleX":4,"height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"var":"userHeadMask","skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"var":"userHeadIconOut","height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]},{"type":"Sprite","props":{"y":38,"x":550,"scaleY":3,"scaleX":3},"child":[{"type":"Text","props":{"y":65.15384615384613,"width":208,"var":"userId","text":"ID:7777777","height":35,"fontSize":30,"color":"#573a1e","align":"center"}},{"type":"Text","props":{"y":1.1538461538460965,"width":208,"var":"userName","text":"用户名称","height":46,"fontSize":40,"color":"#573a1e","align":"center"}},{"type":"Text","props":{"y":117.15384615384616,"width":208,"var":"ip","text":"IP:192.168.3.2","height":35,"fontSize":30,"color":"#573a1e","align":"center"}}]}]}]},{"type":"Box","props":{"y":289,"x":54,"width":623,"var":"userInfo0","height":120},"child":[{"type":"Image","props":{"y":0,"x":618,"width":3,"skin":"base/line_vertical.png","rotation":90,"height":620}},{"type":"Text","props":{"y":31.5,"x":6,"width":246,"text":"小草：","name":"name","height":57,"fontSize":"50","color":"#000000","align":"left"}},{"type":"Text","props":{"y":62,"x":214,"width":433,"text":"距你：10公里","name":"distance","fontSize":"42","color":"#cd5216","align":"center"}},{"type":"Text","props":{"y":11,"x":216,"width":433,"text":"IP:192.168.3.2","name":"ip","fontSize":"42","color":"#cd5216","align":"center"}}]},{"type":"Box","props":{"y":415,"x":54,"width":623,"var":"userInfo1","height":120},"child":[{"type":"Image","props":{"y":0,"x":618,"width":3,"skin":"base/line_vertical.png","rotation":90,"height":620}},{"type":"Text","props":{"y":31.5,"x":6,"width":246,"text":"小草：","name":"name","height":57,"fontSize":"50","color":"#000000","align":"left"}},{"type":"Text","props":{"y":62,"x":214,"width":433,"text":"距你：10公里","name":"distance","fontSize":"42","color":"#cd5216","align":"center"}},{"type":"Text","props":{"y":11,"x":216,"width":433,"text":"IP:192.168.3.2","name":"ip","fontSize":"42","color":"#cd5216","align":"center"}}]},{"type":"Box","props":{"y":541,"x":54,"width":623,"var":"userInfo2","height":120},"child":[{"type":"Image","props":{"y":0,"x":618,"width":3,"skin":"base/line_vertical.png","rotation":90,"height":620}},{"type":"Text","props":{"y":31.5,"x":6,"width":246,"text":"小草：","name":"name","height":57,"fontSize":"50","color":"#000000","align":"left"}},{"type":"Text","props":{"y":62,"x":214,"width":433,"text":"距你：10公里","name":"distance","fontSize":"42","color":"#cd5216","align":"center"}},{"type":"Text","props":{"y":11,"x":216,"width":433,"text":"IP:192.168.3.2","name":"ip","fontSize":"42","color":"#cd5216","align":"center"}}]}]}]};
         constructor(){ super()}
         createChildren():void {
         			View.regComponent("Text",laya.display.Text);
 
             super.createChildren();
             this.createView(ui.test.UserDialogUI.uiView);
-
         }
-
     }
 }
 
@@ -482,26 +460,30 @@ module ui.test {
 		public main:Laya.Image;
 		public text:laya.display.Text;
 
-        public static  uiView:any ={"type":"Dialog","props":{"width":314,"height":263},"child":[{"type":"Image","props":{"y":0,"x":0,"width":314,"var":"main","skin":"base/wait_bg.png","height":263,"alpha":1},"child":[{"type":"Text","props":{"y":204,"x":17,"width":281,"var":"text","text":"正在加载","height":33,"fontSize":30,"color":"#ffffff","align":"center"}}]}]};
+        public static  uiView:any ={"type":"Dialog","props":{"width":314,"height":263},"child":[{"type":"Image","props":{"y":0,"x":0,"width":314,"var":"main","skin":"base/wait_bg.png","height":263,"alpha":1},"child":[{"type":"Text","props":{"y":204,"x":17,"width":281,"var":"text","text":"正在加载","height":33,"fontSize":"30","color":"#ffffff","align":"center"}}]}]};
         constructor(){ super()}
         createChildren():void {
         			View.regComponent("Text",laya.display.Text);
 
             super.createChildren();
             this.createView(ui.test.WaitUI.uiView);
-
         }
-
     }
 }
 
 module ui.test {
-    export class winnerUI extends View {
+    export class WinnerUI extends View {
 		public backImage:Laya.Image;
+		public resultLine3:Laya.Sprite;
+		public userHead3:Laya.Sprite;
+		public userHeadMask3:Laya.Image;
+		public userHeadIconOut3:Laya.Sprite;
+		public userHeadIcon3:Laya.Image;
+		public zhuang3:Laya.Image;
+		public userName3:laya.display.Text;
 		public shouPai3:Laya.Sprite;
 		public peng3:Laya.Sprite;
 		public selfPeng3:Laya.Sprite;
-		public selfPengHide3:Laya.Sprite;
 		public anGangHide3:Laya.Sprite;
 		public mingGang3:Laya.Sprite;
 		public anGang3:Laya.Sprite;
@@ -509,20 +491,49 @@ module ui.test {
 		public skin_shoupai3:Laya.Image;
 		public fa3:Laya.Sprite;
 		public fa3Image:Laya.Image;
+		public hupaiNames3:Laya.Label;
+		public score3:Laya.Label;
+		public img_huOrLose3:Laya.Image;
+		public resultLine0:Laya.Sprite;
 		public userHead0:Laya.Sprite;
-		public userHeadMask0:Laya.Image;
-		public userHeadIconOut0:Laya.Sprite;
 		public userHeadIcon0:Laya.Image;
-		public userName0:laya.display.Text;
 		public zhuang0:Laya.Image;
+		public userName0:laya.display.Text;
+		public shouPai0:Laya.Sprite;
+		public peng0:Laya.Sprite;
+		public selfPeng0:Laya.Sprite;
+		public anGangHide0:Laya.Sprite;
+		public mingGang0:Laya.Sprite;
+		public anGang0:Laya.Sprite;
+		public fa0:Laya.Sprite;
+		public hupaiNames0:Laya.Label;
+		public score0:Laya.Label;
+		public img_huOrLose0:Laya.Image;
+		public resultLine1:Laya.Sprite;
+		public userHead1:Laya.Sprite;
+		public userHeadIcon1:Laya.Image;
+		public userName1:laya.display.Text;
+		public shouPai1:Laya.Sprite;
+		public peng1:Laya.Sprite;
+		public selfPeng1:Laya.Sprite;
+		public anGangHide1:Laya.Sprite;
+		public mingGang1:Laya.Sprite;
+		public anGang1:Laya.Sprite;
+		public shou1:Laya.Sprite;
+		public fa1:Laya.Sprite;
+		public hupaiNames1:Laya.Label;
+		public score1:Laya.Label;
+		public img_huOrLose1:Laya.Image;
+		public btn_left:Laya.Button;
+		public btn_restart:Laya.Button;
 
-        public static  uiView:any ={"type":"View","props":{"width":1920,"height":1080},"child":[{"type":"Image","props":{"y":0,"x":0,"width":1920,"var":"backImage","skin":"ui/game/bg.png","sizeGrid":"150,150,150,150,1","height":1080}},{"type":"Image","props":{"y":422,"x":748,"skin":"ui/game/result_title_bg.png"},"child":[{"type":"Image","props":{"y":-10,"x":104,"skin":"ui/game/result_title_win.png"}}]},{"type":"Sprite","props":{"y":96,"x":381,"width":1324,"var":"shouPai3","height":172},"child":[{"type":"Sprite","props":{"y":26,"x":0,"width":250,"var":"peng3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":250,"var":"selfPeng3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]}]},{"type":"Sprite","props":{"y":36,"x":10,"width":250,"var":"selfPengHide3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"}},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/shou_bg.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/shou_bg.png"}}]},{"type":"Sprite","props":{"y":26,"x":508,"width":250,"var":"anGangHide3","height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}}]},{"type":"Sprite","props":{"y":26,"x":760,"width":248,"var":"mingGang3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":166,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":-31,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":254,"width":270,"var":"anGang3","pivotX":0,"height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":82,"var":"shou3","name":"shou3pai","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png","name":"skin_pai"}}]}]},{"type":"Sprite","props":{"y":0,"x":1200,"width":82,"var":"fa3","pivotY":-26,"height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"fa3Image","skin":"ui/majiang/shou_0.png"}}]}]}]},{"type":"Sprite","props":{"y":39,"x":90,"width":147,"var":"userHead0","scaleY":1.3,"scaleX":1.3,"height":216},"child":[{"type":"Image","props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"var":"userHeadMask0","skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"var":"userHeadIconOut0","height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon0","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]},{"type":"Text","props":{"y":1,"x":1,"width":142,"var":"userName0","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"}},{"type":"Image","props":{"y":37,"x":-7,"var":"zhuang0","skin":"ui/game/zhangjia.png"}}]}]};
+        public static  uiView:any ={"type":"View","props":{"width":1920,"height":1080},"child":[{"type":"Image","props":{"y":0,"x":0,"width":1920,"var":"backImage","skin":"ui/game/bg.png","sizeGrid":"150,150,150,150,1","height":1080}},{"type":"Image","props":{"y":1116,"x":719,"skin":"ui/game/result_title_bg.png"},"child":[{"type":"Image","props":{"y":-10,"x":104,"skin":"ui/game/result_title_win.png"}}]},{"type":"Sprite","props":{"y":54,"x":54,"width":2020,"var":"resultLine3","scaleY":0.9,"scaleX":0.9,"height":300},"child":[{"type":"Sprite","props":{"y":-31,"x":3,"width":147,"var":"userHead3","height":216},"child":[{"type":"Image","props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"var":"userHeadMask3","skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"var":"userHeadIconOut3","height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon3","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]},{"type":"Image","props":{"y":37,"x":-7,"var":"zhuang3","skin":"ui/game/zhangjia.png"}},{"type":"Text","props":{"y":195,"x":-1,"width":142,"var":"userName3","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"}}]},{"type":"Sprite","props":{"y":0,"x":311,"width":1324,"var":"shouPai3","height":172},"child":[{"type":"Sprite","props":{"y":26,"x":0,"width":250,"visible":false,"var":"peng3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":250,"visible":false,"var":"selfPeng3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":508,"width":250,"visible":false,"var":"anGangHide3","height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}}]},{"type":"Sprite","props":{"y":26,"x":760,"width":248,"visible":false,"var":"mingGang3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":166,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":-31,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":254,"width":270,"visible":false,"var":"anGang3","pivotX":0,"height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":82,"visible":false,"var":"shou3","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png","name":"skin_pai"}}]}]},{"type":"Sprite","props":{"y":0,"x":1200,"width":82,"visible":false,"var":"fa3","pivotY":-26,"height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"var":"fa3Image","skin":"ui/majiang/shou_0.png"}}]}]}]},{"type":"Label","props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupaiNames3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"}},{"type":"Label","props":{"y":223,"x":1006,"width":590,"visible":false,"var":"score3","text":"得分：+800","height":48,"fontSize":36,"color":"#ffffff"}},{"type":"Image","props":{"y":16,"x":1705,"width":250,"visible":false,"var":"img_huOrLose3","skin":"ui/game/hu.png","height":200}}]},{"type":"Sprite","props":{"y":334,"x":54,"width":2020,"var":"resultLine0","scaleY":0.9,"scaleX":0.9,"height":300},"child":[{"type":"Sprite","props":{"y":-31,"x":4,"width":147,"var":"userHead0","height":216},"child":[{"type":"Image","props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon0","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]},{"type":"Image","props":{"y":37,"x":-7,"var":"zhuang0","skin":"ui/game/zhangjia.png"}},{"type":"Text","props":{"y":190,"x":-3,"width":142,"var":"userName0","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"}}]},{"type":"Sprite","props":{"y":0,"x":311,"width":1324,"var":"shouPai0","height":172},"child":[{"type":"Sprite","props":{"y":26,"x":0,"width":250,"var":"peng0","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":250,"var":"selfPeng0","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":508,"width":250,"var":"anGangHide0","height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}}]},{"type":"Sprite","props":{"y":26,"x":760,"width":248,"var":"mingGang0","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":166,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":-31,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":254,"width":270,"var":"anGang0","pivotX":0,"height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":82,"name":"shou0","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_32.png","name":"skin_pai"}}]}]},{"type":"Sprite","props":{"y":0,"x":1200,"width":82,"var":"fa0","pivotY":-26,"height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_0.png"}}]}]}]},{"type":"Label","props":{"y":169,"x":313,"width":905,"var":"hupaiNames0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"}},{"type":"Label","props":{"y":223,"x":1006,"width":590,"var":"score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"}},{"type":"Image","props":{"y":16,"x":1705,"width":250,"var":"img_huOrLose0","skin":"ui/game/fangpao.png","height":200}}]},{"type":"Sprite","props":{"y":632,"x":58,"width":2020,"var":"resultLine1","scaleY":0.9,"scaleX":0.9,"height":300},"child":[{"type":"Sprite","props":{"y":-26,"x":6,"width":147,"var":"userHead1","height":216},"child":[{"type":"Image","props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},"child":[{"type":"Image","props":{"y":0,"x":0,"width":133,"skin":"ui/game/user_head_mask.png","height":133}},{"type":"Sprite","props":{"y":0,"x":0,"width":133,"height":133},"child":[{"type":"Image","props":{"y":4,"x":7,"width":119,"var":"userHeadIcon1","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115}}]}]},{"type":"Image","props":{"y":37,"x":-7,"skin":"ui/game/zhangjia.png"}},{"type":"Text","props":{"y":192,"x":1,"width":142,"var":"userName1","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"}}]},{"type":"Sprite","props":{"y":0,"x":311,"width":1324,"var":"shouPai1","height":172},"child":[{"type":"Sprite","props":{"y":26,"x":0,"width":250,"var":"peng1","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":250,"var":"selfPeng1","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":508,"width":250,"var":"anGangHide1","height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}}]},{"type":"Sprite","props":{"y":26,"x":760,"width":248,"var":"mingGang1","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":0,"x":166,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]},{"type":"Image","props":{"y":-31,"x":83,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":254,"width":270,"var":"anGang1","pivotX":0,"height":128},"child":[{"type":"Image","props":{"y":0,"x":84,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":0,"x":168,"skin":"ui/majiang/zheng_an.png"}},{"type":"Image","props":{"y":-28,"x":84,"skin":"ui/majiang/zheng_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/zheng_19.png"}}]}]},{"type":"Sprite","props":{"y":26,"x":0,"width":82,"var":"shou1","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_32.png","name":"skin_pai"}}]}]},{"type":"Sprite","props":{"y":0,"x":1200,"width":82,"var":"fa1","pivotY":-26,"height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},"child":[{"type":"Image","props":{"y":0,"x":0,"skin":"ui/majiang/shou_0.png"}}]}]}]},{"type":"Label","props":{"y":169,"x":313,"width":905,"var":"hupaiNames1","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"}},{"type":"Label","props":{"y":223,"x":1006,"width":590,"var":"score1","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"}},{"type":"Image","props":{"y":16,"x":1705,"width":250,"var":"img_huOrLose1","skin":"ui/game/hu.png","height":200}}]},{"type":"Button","props":{"y":930,"x":1091,"var":"btn_left","skin":"base/btn_danger.png","scaleY":1.5,"scaleX":1.5,"labelSize":38,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","label":"离开"}},{"type":"Button","props":{"y":930,"x":1445,"var":"btn_restart","skin":"base/btn_normal.png","scaleY":1.5,"scaleX":1.5,"labelSize":36,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","label":"再来一局(9)"}}]};
         constructor(){ super()}
         createChildren():void {
         			View.regComponent("Text",laya.display.Text);
 
             super.createChildren();
-            this.createView(ui.test.winnerUI.uiView);
+            this.createView(ui.test.WinnerUI.uiView);
 
         }
 

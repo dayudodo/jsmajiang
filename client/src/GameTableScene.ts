@@ -5,26 +5,28 @@ module mj.scene {
     import ShoupaiConstuctor = mj.model.ShoupaiConstuctor;
     import PaiConverter = mj.utils.PaiConverter;
     import LayaUtils = mj.utils.LayaUtils;
-
+    import WinnerScene = mj.scene.WinnerScene
 
     export class GameTableScene extends ui.test.GameTableUI {
         public socket: Laya.Socket;
+        /**是否在计时结束后自动打牌，测试时使用 */
         public auto_dapai = false;
         /** 方向指向自己的手牌数组，还能添加服务器的发牌 */
         public clonePaiSpriteArray: Sprite[] = [];
         /**玩家手牌点击后上下的偏移量 */
         public ClickOffsetY = 40;
         private prevSelectedPai: Sprite = null;
-        /**是否在计时结束后自动打牌，测试时使用 */
+        public winnerScene: WinnerScene
 
         constructor() {
             super()
             this.socket = Laya.socket
 
-
         }
         show_winner(server_message) {
-
+            this.winnerScene = new WinnerScene()
+            let {winner, hupai_typesCode, hupai_names } = server_message
+            this.winnerScene.show_winner(winner, hupai_names)
         }
         show_dapai(player: Player, pai_name: Pai) {
             //首先隐藏所有的dapai
@@ -74,17 +76,18 @@ module mj.scene {
             }
         }
 
-        private showPeng(
+        public showPeng(
             groupShou: ShoupaiConstuctor,
             player: Player,
             x_one_pai_width: number,
-            y_one_pai_height: number
+            y_one_pai_height: number,
+            container:any = this
         ) {
             if (groupShou.peng.length > 0) {
                 //显示碰
                 groupShou.peng.forEach(pengPai => {
                     let clonePengSprite = LayaUtils.clone(
-                        this["peng" + player.ui_index]
+                        container["peng" + player.ui_index]
                     ) as Sprite;
                     for (var i = 0; i < clonePengSprite.numChildren; i++) {
                         var imgSprite = clonePengSprite._childs[i];
@@ -100,24 +103,25 @@ module mj.scene {
                     }
                     clonePengSprite.visible = true;
                     clonePengSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                    this["shouPai" + player.ui_index].addChild(clonePengSprite);
+                    container["shouPai" + player.ui_index].addChild(clonePengSprite);
                     player.ui_clone_arr.push(clonePengSprite);
                     player.shouPai_start_index = player.shouPai_start_index + 3;
                 });
             }
         }
 
-        private showMingGang(
+        public showMingGang(
             groupShou: ShoupaiConstuctor,
             player: Player,
             x_one_pai_width: number,
-            y_one_pai_height: number
+            y_one_pai_height: number,
+            container:any=this
         ) {
             if (groupShou.mingGang.length > 0) {
                 //显示明杠
                 groupShou.mingGang.forEach(mingGangPai => {
                     let clonemingGangSprite = LayaUtils.clone(
-                        this["mingGang" + player.ui_index]
+                        container["mingGang" + player.ui_index]
                     ) as Sprite;
                     for (var i = 0; i < clonemingGangSprite.numChildren; i++) {
                         var imgSprite = clonemingGangSprite._childs[i];
@@ -133,24 +137,25 @@ module mj.scene {
                     }
                     clonemingGangSprite.visible = true;
                     clonemingGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                    this["shouPai" + player.ui_index].addChild(clonemingGangSprite);
+                    container["shouPai" + player.ui_index].addChild(clonemingGangSprite);
                     player.ui_clone_arr.push(clonemingGangSprite);
                     player.shouPai_start_index = player.shouPai_start_index + 3;
                 });
             }
         }
 
-        private showSelfPeng(
+        public showSelfPeng(
             groupShou: ShoupaiConstuctor,
             player: Player,
             x_one_pai_width: number,
-            y_one_pai_height: number
+            y_one_pai_height: number,
+            container:any=this
         ) {
             if (groupShou.selfPeng.length > 0) {
                 //显示自碰牌
                 groupShou.selfPeng.forEach(selfPengPai => {
                     let cloneSelfPengSprite = LayaUtils.clone(
-                        this["selfPeng" + player.ui_index]
+                        container["selfPeng" + player.ui_index]
                     ) as Sprite;
                     //自碰牌呢在godplayer这儿显示的其实是手牌的图！其它玩家显示的是ce的图
                     for (var i = 0; i < cloneSelfPengSprite.numChildren; i++) {
@@ -167,7 +172,7 @@ module mj.scene {
                     }
                     cloneSelfPengSprite.visible = true;
                     cloneSelfPengSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                    this["shouPai" + player.ui_index].addChild(cloneSelfPengSprite);
+                    container["shouPai" + player.ui_index].addChild(cloneSelfPengSprite);
                     player.ui_clone_arr.push(cloneSelfPengSprite);
                     //只需要移动3位即可，因为暗杠其实点位也只有3张牌！
                     player.shouPai_start_index = player.shouPai_start_index + 3;
@@ -177,13 +182,13 @@ module mj.scene {
                 if (player.seat_index != 3) {
                     for (var i = 0; i < groupShou.selfPengCount; i++) {
                         let cloneselfPengHideSprite = LayaUtils.clone(
-                            this["selfPengHide" + player.ui_index]
+                            container["selfPengHide" + player.ui_index]
                         ) as Sprite;
                         //有selfPengCount的肯定就是左右玩家了，不可能会是god player!
                         cloneselfPengHideSprite.y = player.shouPai_start_index * y_one_pai_height;
                         cloneselfPengHideSprite.visible = true;
                         cloneselfPengHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                        this["shouPai" + player.ui_index].addChild(cloneselfPengHideSprite);
+                        container["shouPai" + player.ui_index].addChild(cloneselfPengHideSprite);
                         player.ui_clone_arr.push(cloneselfPengHideSprite);
                         player.shouPai_start_index = player.shouPai_start_index + 3;
                     }
@@ -191,17 +196,18 @@ module mj.scene {
             }
         }
         /**显示暗杠组 */
-        private showAnGang(
+        public showAnGang(
             groupShou: ShoupaiConstuctor,
             player: Player,
             x_one_pai_width: number,
-            y_one_pai_height: number
+            y_one_pai_height: number,
+            container:any=this
         ) {
             if (groupShou.anGang.length > 0) {
                 //显示暗杠
                 groupShou.anGang.forEach(anGangPai => {
                     let cloneanGangSprite = LayaUtils.clone(
-                        this["anGang" + player.ui_index]
+                        container["anGang" + player.ui_index]
                     ) as Sprite;
                     //暗杠特殊的是只需要显示一张牌
                     var imgSprite = cloneanGangSprite._childs[3];
@@ -216,7 +222,7 @@ module mj.scene {
                     }
                     cloneanGangSprite.visible = true;
                     cloneanGangSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                    this["shouPai" + player.ui_index].addChild(cloneanGangSprite);
+                    container["shouPai" + player.ui_index].addChild(cloneanGangSprite);
                     player.ui_clone_arr.push(cloneanGangSprite);
                     //只需要移动3位即可，因为暗杠其实点位也只有3张牌！
                     player.shouPai_start_index = player.shouPai_start_index + 3;
@@ -225,13 +231,13 @@ module mj.scene {
                 /**有几组暗杠，就显示几组背面，背面图UI中已经有就不再需要赋值了 */
                 for (var i = 0; i < groupShou.anGangCount; i++) {
                     let cloneanGangHideSprite = LayaUtils.clone(
-                        this["anGangHide" + player.ui_index]
+                        container["anGangHide" + player.ui_index]
                     ) as Sprite;
                     //有anGangCount的肯定就是左右玩家了，不可能会是god player!
                     cloneanGangHideSprite.y = player.shouPai_start_index * y_one_pai_height;
                     cloneanGangHideSprite.visible = true;
                     cloneanGangHideSprite.scale(config.GROUP_RATIO, config.GROUP_RATIO, true);
-                    this["shouPai" + player.ui_index].addChild(cloneanGangHideSprite);
+                    container["shouPai" + player.ui_index].addChild(cloneanGangHideSprite);
                     player.ui_clone_arr.push(cloneanGangHideSprite);
                     player.shouPai_start_index = player.shouPai_start_index + 3;
                 }

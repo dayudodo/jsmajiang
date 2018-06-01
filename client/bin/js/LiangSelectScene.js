@@ -48,8 +48,8 @@ var mj;
             };
             LianSelectScene.prototype.cancelAllClonePaiClicked = function () {
                 Laya.gameTable.clonePaiSpriteArray.forEach(function (paiSprite) {
-                    // 所有手牌事件不再响应，因为亮牌之后这些牌都不需要点击了！
-                    paiSprite.offAll(Laya.Event.CLICK);
+                    // 所有手牌事件不再响应，因为亮牌之后这些牌都不需要点击了！奇怪，为啥不能加参数呢？
+                    paiSprite.offAll();
                     //然后再决定把哪三个绑定为一体，再去添加新的点击事件处理。这些可以选择的牌应该由服务器来告诉我，在发送你可以亮的时候计算出来！
                 });
             };

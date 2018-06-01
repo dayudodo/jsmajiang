@@ -8,6 +8,7 @@ namespace mj.net {
   import GameSoundObserver = mj.manager.GameSoundObserver;
   import Image = Laya.Image;
   import ShoupaiConstuctor = mj.model.ShoupaiConstuctor;
+  import WinnerScene = mj.scene.WinnerScene
 
   export class Manager {
     public socket: Laya.Socket;
@@ -317,19 +318,23 @@ namespace mj.net {
       }
       //for test
 
-      // Laya.god_player.ui_index = 3
-      // Laya.god_player.group_shou_pai = {
-      //   // anGang: ["zh"],
-      //   anGang: [],
-      //   anGangCount: 0,
-      //   mingGang: ["fa"],
-      //   peng: [],
-      //   selfPeng: [],
-      //   // selfPengCount: 1,
-      //   shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
-      //   // shouPai: [],
-      //   // shouPaiCount: 4
-      // }
+
+      Laya.god_player.ui_index = 3
+      Laya.god_player.group_shou_pai = {
+        // anGang: ["zh"],
+        anGang: [],
+        // anGangCount: 0,
+        mingGang: ["fa"],
+        peng: [],
+        selfPeng: [],
+        // selfPengCount: 1,
+        shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
+        // shouPai: [],
+        // shouPaiCount: 4
+      }
+      gameTable.winnerScene = new WinnerScene()
+      gameTable.winnerScene.show_winner(Laya.god_player, "屁胡 清一色")
+      gameTable.addChild(gameTable.winnerScene)
       // this.opt = new OptDialogScene(['t1', 'b1'])
 
       // gameTable.show_group_shoupai(Laya.god_player)

@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
+//每一个玩家的数据保存在此类中
+const config = require("./config");
 const MajiangAlgo_1 = require("./MajiangAlgo");
 class Player {
     //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
@@ -54,6 +56,10 @@ class Player {
         this.socket = socket;
         this.username = username;
         this.user_id = user_id;
+    }
+    /**是否放炮 */
+    get is_fangpao() {
+        return this.fangpai_data.some(item => item.type == config.FangDaHuPao || item.type == config.FangPihuPao);
     }
     /**返回group手牌中出现3次的牌！ */
     PaiArr3A() {

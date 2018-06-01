@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1257,
-    "selecteID":1248,
+    "selectedBox":12,
+    "selecteID":59,
     "referenceLines":null,
     "props":{"width":1920,"var":"turntableDong","text":"剩余：7盘","sizeGrid":"70,70,70,70,1","sceneColor":"#000000","sceneBg":"laya/views/test/GameTable.jpg","height":1080},
     "nodeParent":-1,
@@ -5496,13 +5496,14 @@
             "props":{"y":3,"x":0,"width":1920,"var":"waitSprite","height":1080},
             "nodeParent":1,
             "label":"Sprite(waitSprite)",
-            "isOpen":false,
+            "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
             "hasChild":true,
             "compId":12,
             "child":[
                 {
+                    "x":30,
                     "type":"Button",
                     "props":{"y":512,"x":984,"width":393,"var":"inviteBtn","skin":"base/btn_normal.png","labelSize":60,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","label":"邀请好友","height":133},
                     "nodeParent":12,
@@ -5515,6 +5516,7 @@
                         ]
                 },
                 {
+                    "x":30,
                     "type":"Button",
                     "props":{"y":511,"x":508,"width":403,"var":"delRoomBtn","skin":"base/btn_danger.png","labelSize":60,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","label":"解散房间","height":133},
                     "nodeParent":12,
@@ -5527,6 +5529,7 @@
                         ]
                 },
                 {
+                    "x":30,
                     "type":"CheckBox",
                     "props":{"y":712,"x":726,"width":390,"var":"isAutoStart","skin":"base/checkbox.png","selected":true,"scaleY":1.2,"scaleX":1.2,"labelSize":52,"labelColors":"#cd5216","label":"人满自动开始","height":70},
                     "nodeParent":12,
@@ -5538,7 +5541,7 @@
                     "child":[
                         ]
                 }],
-            "$HIDDEN":true
+            "$HIDDEN":false
         },
         {
             "x":15,

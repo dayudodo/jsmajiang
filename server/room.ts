@@ -509,7 +509,8 @@ export class Room {
     // }else if(player.group_shou_pai.selfPeng.includes(hupaiZhang) || player.isAnSiGui(hupaiZhang) ){
     //   typesCode.push(config.HuisAnSiGui)
     // }
-
+    //找到放炮的玩家，也可能没有，因为玩家是自摸的。
+    let fangPaoPlayer = this.players.find(p=>p.is_fangpao == true)
     this.players.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_winner,
