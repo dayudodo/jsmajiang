@@ -79,11 +79,7 @@ export class Player {
     // {type: config.FangPihuPao, pai:''},
     // {type: config.FangDaHuPao, pai:''}
   ];
-  /**收到哪个的碰、杠，user_id：哪个玩家放的牌 */
-  public shou = {
-    gang: [{ pai: "", user_id: "" }],
-    peng: [{ pai: "", user_id: "" }]
-  };
+
   /**玩家的积分 */
   public score = 0;
   /**暗杠数量 */
@@ -111,6 +107,24 @@ export class Player {
     this.socket = socket;
     this.username = username;
     this.user_id = user_id;
+  }
+  /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
+  get result_shou_pai(){
+    let result = _.cloneDeep(this.group_shou_pai)
+    if (result.anGang.length>0) {
+      result.anGang.forEach(pai=>{
+        result.mingGang.push(pai)
+      })
+      result.anGang = []
+    }
+    if (result.selfPeng.length>0) {
+      result.selfPeng.forEach(pai=>{
+        result.peng.push(pai)
+      })
+      result.selfPeng = []
+    }
+    console.dir(result)
+    return result
   }
   /**是否放炮 */
   get is_fangpao(): boolean {

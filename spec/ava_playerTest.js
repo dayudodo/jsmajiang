@@ -15,6 +15,25 @@ test.beforeEach(t => {
   });
 });
 
+test("result_shou_pai在deepClone之后与group不相同", function(t) {
+  player = new Player({
+    group_shou_pai: {
+      anGang: ["b1"],
+      mingGang: [],
+      peng: [],
+      selfPeng:["t1","b2"],
+      shouPai: ["zh", "zh", "t7", "t8", "t9"]
+    }
+  });
+  // t.is( player.result_shou_pai.shouPai == player.group_shou_pai.shouPai, false  );
+  
+  t.deepEqual( player.result_shou_pai.anGang , []  );
+  t.deepEqual( player.result_shou_pai.mingGang , ["b1"]  );
+  t.deepEqual( player.result_shou_pai.selfPeng , []  );
+  t.deepEqual( player.result_shou_pai.peng , ["t1","b2"]  );
+  //原始的值不会被改变！
+  t.deepEqual( player.group_shou_pai.peng , []  );
+});
 
 
 test("应该有两个可以隐藏的3牌", function(t) {
