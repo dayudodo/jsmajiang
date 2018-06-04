@@ -468,6 +468,7 @@ export class Room {
   /**玩家选择胡牌*/
   client_confirm_hu(socket) {
     let player = this.find_player_by(socket);
+    player.is_hu = true
     // player.is_thinking = false //已经胡了还记录个啥思考呢？
     //自摸，胡自己摸的牌！
     if (player.mo_pai && player.canHu(player.mo_pai)) {
@@ -480,7 +481,7 @@ export class Room {
       }
       puts(this.operation_sequence);
       //并且扛牌是可以自己摸也可以求人！记录用户操作倒是对历史回放有一定帮助。
-      this.sendWinnerMsg(player, player.mo_pai);
+      this.sendAllResults(player, player.mo_pai);
     }
     //胡别人的打的牌
     else if (player.canHu(this.table_dapai)) {
@@ -491,14 +492,14 @@ export class Room {
         type: fangType,
         pai: this.table_dapai
       });
-      this.sendWinnerMsg(player, this.table_dapai);
+      this.sendAllResults(player, this.table_dapai);
       console.dir(this.hupai_player);
       console.dir(this.daPai_player.fangpai_data);
     } else {
       `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
     }
   }
-  private sendWinnerMsg(player: Player, hupaiZhang: Pai) {
+  private sendAllResults(player: Player, hupaiZhang: Pai) {
     let typesCode = player.hupai_data.hupai_dict[hupaiZhang];
     if (player.is_liang) {
       typesCode.push(config.HuisLiangDao);

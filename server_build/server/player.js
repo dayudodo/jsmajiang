@@ -24,8 +24,8 @@ class Player {
         this.is_zimo = false;
         //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
         this.is_thinking = false;
-        // /** 杠摸牌，用于检测杠上花 */
-        // public gang_mopai = false;
+        /**todo: 是否是胡玩家，确保只有一个 */
+        this.is_hu = false;
         /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
         this.fangpai_data = [
         // {type: config.FangGang, pai:''},
@@ -196,6 +196,15 @@ class Player {
     }
 }
 /**可以返回到客户端的玩家属性数组 */
-Player.filter_properties = ["username", "user_id", "seat_index", "group_shou_pai", "arr_dapai", "is_liang"];
+Player.filter_properties = [
+    "username",
+    "user_id",
+    "seat_index",
+    "group_shou_pai",
+    "arr_dapai",
+    "is_liang",
+    "is_hu",
+    "is_fangpao"
+];
 exports.Player = Player;
 //# sourceMappingURL=player.js.map
