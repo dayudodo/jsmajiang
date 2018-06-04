@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":82,
-    "selecteID":935,
+    "selectedBox":1,
+    "selecteID":1478,
     "referenceLines":null,
     "props":{"width":1920,"sceneColor":"#000000","height":1080},
     "nodeParent":-1,
@@ -572,25 +572,28 @@
                             "props":{"y":26,"x":0,"width":82,"visible":false,"var":"shou3","height":128},
                             "nodeParent":82,
                             "label":"Sprite(shou3)",
-                            "isOpen":false,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":935,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
                                     "nodeParent":935,
                                     "label":"Image",
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
                                     "compId":105,
                                     "child":[
                                         {
+                                            "x":75,
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png","name":"skin_pai"},
+                                            "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png"},
                                             "nodeParent":105,
                                             "label":"Image(skin_shoupai3)",
                                             "isDirectory":false,
@@ -619,6 +622,7 @@
                                     "props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},
                                     "nodeParent":1228,
                                     "label":"Image",
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -626,9 +630,9 @@
                                     "child":[
                                         {
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"var":"fa3Image","skin":"ui/majiang/shou_0.png"},
+                                            "props":{"y":0,"x":0,"skin":"ui/majiang/shou_0.png"},
                                             "nodeParent":328,
-                                            "label":"Image(fa3Image)",
+                                            "label":"Image",
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
@@ -643,9 +647,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupaiNames3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupai_names3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1371,
-                    "label":"Label(hupaiNames3)",
+                    "label":"Label(hupai_names3)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -698,14 +702,13 @@
                     "props":{"y":-31,"x":4,"width":147,"var":"userHead0","height":216},
                     "nodeParent":1589,
                     "label":"Sprite(userHead0)",
-                    "isOpen":true,
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1590,
                     "child":[
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},
                             "nodeParent":1590,
@@ -717,7 +720,6 @@
                             "compId":1591,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"width":133,"skin":"ui/game/user_head_mask.png","height":133},
                                     "nodeParent":1591,
@@ -730,7 +732,6 @@
                                         ]
                                 },
                                 {
-                                    "x":60,
                                     "type":"Sprite",
                                     "props":{"y":0,"x":0,"width":133,"height":133},
                                     "nodeParent":1591,
@@ -742,7 +743,6 @@
                                     "compId":1593,
                                     "child":[
                                         {
-                                            "x":75,
                                             "type":"Image",
                                             "props":{"y":4,"x":7,"width":119,"var":"userHeadIcon0","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115},
                                             "nodeParent":1593,
@@ -757,7 +757,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":37,"x":-7,"var":"zhuang0","skin":"ui/game/zhangjia.png"},
                             "nodeParent":1590,
@@ -770,7 +769,6 @@
                                 ]
                         },
                         {
-                            "x":45,
                             "type":"Text",
                             "props":{"y":190,"x":-3,"width":142,"var":"userName0","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"},
                             "nodeParent":1590,
@@ -798,7 +796,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":250,"var":"peng0","height":128},
+                            "props":{"y":26,"x":0,"width":250,"visible":false,"var":"peng0","height":128},
                             "nodeParent":1597,
                             "label":"Sprite(peng0)",
                             "isOpen":false,
@@ -881,7 +879,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":250,"var":"selfPeng0","height":128},
+                            "props":{"y":26,"x":0,"width":250,"visible":false,"var":"selfPeng0","height":128},
                             "nodeParent":1597,
                             "label":"Sprite(selfPeng0)",
                             "isOpen":false,
@@ -963,7 +961,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":508,"width":250,"var":"anGangHide0","height":128},
+                            "props":{"y":26,"x":508,"width":250,"visible":false,"var":"anGangHide0","height":128},
                             "nodeParent":1597,
                             "label":"Sprite(anGangHide0)",
                             "isOpen":false,
@@ -1025,7 +1023,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":760,"width":248,"var":"mingGang0","height":128},
+                            "props":{"y":26,"x":760,"width":248,"visible":false,"var":"mingGang0","height":128},
                             "nodeParent":1597,
                             "label":"Sprite(mingGang0)",
                             "isOpen":false,
@@ -1131,7 +1129,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":254,"width":270,"var":"anGang0","pivotX":0,"height":128},
+                            "props":{"y":26,"x":254,"width":270,"visible":false,"var":"anGang0","pivotX":0,"height":128},
                             "nodeParent":1597,
                             "label":"Sprite(anGang0)",
                             "isOpen":false,
@@ -1204,7 +1202,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":82,"name":"shou0","height":128},
+                            "props":{"y":26,"x":0,"width":82,"visible":false,"var":"shou0","height":128},
                             "nodeParent":1597,
                             "label":"Sprite(shou0)",
                             "isOpen":false,
@@ -1218,6 +1216,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
                                     "nodeParent":1636,
                                     "label":"Image",
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1225,9 +1224,9 @@
                                     "child":[
                                         {
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/shou_32.png","name":"skin_pai"},
+                                            "props":{"y":0,"x":0,"var":"skin_shoupai0","skin":"ui/majiang/shou_32.png"},
                                             "nodeParent":1637,
-                                            "label":"Image(skin_pai)",
+                                            "label":"Image(skin_shoupai0)",
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
@@ -1241,7 +1240,7 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":1200,"width":82,"var":"fa0","pivotY":-26,"height":128},
+                            "props":{"y":0,"x":1200,"width":82,"visible":false,"var":"fa0","pivotY":-26,"height":128},
                             "nodeParent":1597,
                             "label":"Sprite(fa0)",
                             "isOpen":false,
@@ -1255,6 +1254,7 @@
                                     "props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},
                                     "nodeParent":1639,
                                     "label":"Image",
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1279,9 +1279,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"var":"hupaiNames0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupai_names0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1589,
-                    "label":"Label(hupaiNames0)",
+                    "label":"Label(hupai_names0)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1292,7 +1292,7 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"var":"score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":223,"x":1006,"width":590,"visible":false,"var":"score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1589,
                     "label":"Label(score0)",
                     "isDirectory":false,
@@ -1305,7 +1305,7 @@
                 {
                     "x":30,
                     "type":"Image",
-                    "props":{"y":16,"x":1705,"width":250,"var":"img_huOrLose0","skin":"ui/game/fangpao.png","height":200},
+                    "props":{"y":16,"x":1705,"width":250,"visible":false,"var":"img_huOrLose0","skin":"ui/game/fangpao.png","height":200},
                     "nodeParent":1589,
                     "label":"Image(img_huOrLose0)",
                     "isDirectory":false,
@@ -1319,9 +1319,9 @@
         {
             "x":15,
             "type":"Sprite",
-            "props":{"y":632,"x":58,"width":2020,"var":"resultLine1","scaleY":0.9,"scaleX":0.9,"height":300},
+            "props":{"y":632,"x":58,"width":2020,"var":"resultLine2","scaleY":0.9,"scaleX":0.9,"height":300},
             "nodeParent":1,
-            "label":"Sprite(resultLine1)",
+            "label":"Sprite(resultLine2)",
             "isOpen":true,
             "isDirectory":true,
             "isAniNode":true,
@@ -1331,17 +1331,16 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":-26,"x":6,"width":147,"var":"userHead1","height":216},
+                    "props":{"y":-26,"x":6,"width":147,"var":"userHead2","height":216},
                     "nodeParent":1645,
-                    "label":"Sprite(userHead1)",
-                    "isOpen":true,
+                    "label":"Sprite(userHead2)",
+                    "isOpen":false,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1646,
                     "child":[
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},
                             "nodeParent":1646,
@@ -1353,7 +1352,6 @@
                             "compId":1647,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"width":133,"skin":"ui/game/user_head_mask.png","height":133},
                                     "nodeParent":1647,
@@ -1366,7 +1364,6 @@
                                         ]
                                 },
                                 {
-                                    "x":60,
                                     "type":"Sprite",
                                     "props":{"y":0,"x":0,"width":133,"height":133},
                                     "nodeParent":1647,
@@ -1378,11 +1375,10 @@
                                     "compId":1649,
                                     "child":[
                                         {
-                                            "x":75,
                                             "type":"Image",
-                                            "props":{"y":4,"x":7,"width":119,"var":"userHeadIcon1","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115},
+                                            "props":{"y":4,"x":7,"width":119,"var":"userHeadIcon2","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115},
                                             "nodeParent":1649,
-                                            "label":"Image(userHeadIcon1)",
+                                            "label":"Image(userHeadIcon2)",
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
@@ -1393,7 +1389,6 @@
                                 }]
                         },
                         {
-                            "x":45,
                             "type":"Image",
                             "props":{"y":37,"x":-7,"skin":"ui/game/zhangjia.png"},
                             "nodeParent":1646,
@@ -1406,11 +1401,10 @@
                                 ]
                         },
                         {
-                            "x":45,
                             "type":"Text",
-                            "props":{"y":192,"x":1,"width":142,"var":"userName1","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"},
+                            "props":{"y":192,"x":1,"width":142,"var":"userName2","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"},
                             "nodeParent":1646,
-                            "label":"Text(userName1)",
+                            "label":"Text(userName2)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -1422,9 +1416,9 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":0,"x":311,"width":1324,"var":"shouPai1","height":172},
+                    "props":{"y":0,"x":311,"width":1324,"var":"shouPai2","height":172},
                     "nodeParent":1645,
-                    "label":"Sprite(shouPai1)",
+                    "label":"Sprite(shouPai2)",
                     "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
@@ -1434,9 +1428,9 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":250,"var":"peng1","height":128},
+                            "props":{"y":26,"x":0,"width":250,"visible":false,"var":"peng2","height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(peng1)",
+                            "label":"Sprite(peng2)",
                             "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1516,9 +1510,9 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":250,"var":"selfPeng1","height":128},
+                            "props":{"y":26,"x":0,"width":250,"visible":false,"var":"selfPeng2","height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(selfPeng1)",
+                            "label":"Sprite(selfPeng2)",
                             "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1598,9 +1592,9 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":508,"width":250,"var":"anGangHide1","height":128},
+                            "props":{"y":26,"x":508,"width":250,"visible":false,"var":"anGangHide2","height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(anGangHide1)",
+                            "label":"Sprite(anGangHide2)",
                             "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1659,9 +1653,9 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":760,"width":248,"var":"mingGang1","height":128},
+                            "props":{"y":26,"x":760,"width":248,"visible":false,"var":"mingGang2","height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(mingGang1)",
+                            "label":"Sprite(mingGang2)",
                             "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1764,9 +1758,9 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":254,"width":270,"var":"anGang1","pivotX":0,"height":128},
+                            "props":{"y":26,"x":254,"width":270,"visible":false,"var":"anGang2","pivotX":0,"height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(anGang1)",
+                            "label":"Sprite(anGang2)",
                             "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1836,9 +1830,9 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":26,"x":0,"width":82,"var":"shou1","height":128},
+                            "props":{"y":26,"x":0,"width":82,"visible":false,"var":"shou2","height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(shou1)",
+                            "label":"Sprite(shou2)",
                             "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
@@ -1850,6 +1844,7 @@
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
                                     "nodeParent":1692,
                                     "label":"Image",
+                                    "isOpen":true,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1857,9 +1852,9 @@
                                     "child":[
                                         {
                                             "type":"Image",
-                                            "props":{"y":0,"x":0,"skin":"ui/majiang/shou_32.png","name":"skin_pai"},
+                                            "props":{"y":0,"x":0,"var":"skin_shoupai2","skin":"ui/majiang/shou_32.png"},
                                             "nodeParent":1693,
-                                            "label":"Image(skin_pai)",
+                                            "label":"Image(skin_shoupai2)",
                                             "isDirectory":false,
                                             "isAniNode":true,
                                             "hasChild":false,
@@ -1872,20 +1867,22 @@
                         {
                             "x":45,
                             "type":"Sprite",
-                            "props":{"y":0,"x":1200,"width":82,"var":"fa1","pivotY":-26,"height":128},
+                            "props":{"y":0,"x":1200,"width":82,"visible":false,"var":"fa2","pivotY":-26,"height":128},
                             "nodeParent":1653,
-                            "label":"Sprite(fa1)",
-                            "isOpen":false,
+                            "label":"Sprite(fa2)",
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":1695,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"width":82,"skin":"ui/majiang/shou_bg.png","height":128},
                                     "nodeParent":1695,
                                     "label":"Image",
+                                    "isOpen":null,
                                     "isDirectory":true,
                                     "isAniNode":true,
                                     "hasChild":true,
@@ -1909,9 +1906,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"var":"hupaiNames1","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupai_names2","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1645,
-                    "label":"Label(hupaiNames1)",
+                    "label":"Label(hupai_names2)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1922,9 +1919,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"var":"score1","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":223,"x":1006,"width":590,"visible":false,"var":"score2","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1645,
-                    "label":"Label(score1)",
+                    "label":"Label(score2)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1935,9 +1932,9 @@
                 {
                     "x":30,
                     "type":"Image",
-                    "props":{"y":16,"x":1705,"width":250,"var":"img_huOrLose1","skin":"ui/game/hu.png","height":200},
+                    "props":{"y":16,"x":1705,"width":250,"visible":false,"var":"img_huOrLose2","skin":"ui/game/hu.png","height":200},
                     "nodeParent":1645,
-                    "label":"Image(img_huOrLose1)",
+                    "label":"Image(img_huOrLose2)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,

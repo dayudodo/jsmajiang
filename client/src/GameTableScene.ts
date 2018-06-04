@@ -23,10 +23,10 @@ module mj.scene {
             this.socket = Laya.socket
 
         }
-        show_winner(server_message) {
+        show_allResults(server_message) {
             this.winnerScene = new WinnerScene()
             let {winner, hupai_typesCode, hupai_names } = server_message
-            this.winnerScene.show_winner(winner, hupai_names)
+            this.winnerScene.show_resultOf(winner, hupai_names)
         }
         show_dapai(player: Player, pai_name: Pai) {
             //首先隐藏所有的dapai
@@ -81,7 +81,8 @@ module mj.scene {
             player: Player,
             x_one_pai_width: number,
             y_one_pai_height: number,
-            container:any = this
+            container:any = this,
+            show_in_win=false
         ) {
             if (groupShou.peng.length > 0) {
                 //显示碰
@@ -92,11 +93,11 @@ module mj.scene {
                     for (var i = 0; i < clonePengSprite.numChildren; i++) {
                         var imgSprite = clonePengSprite._childs[i];
                         imgSprite.getChildAt(0).skin =
-                            player.ui_index == 3
+                            player.ui_index == 3 || show_in_win
                                 ? PaiConverter.skinOfZheng(pengPai)
                                 : PaiConverter.skinOfCe(pengPai);
                     }
-                    if (player.ui_index == 3) {
+                    if (player.ui_index == 3 || show_in_win) {
                         clonePengSprite.x = player.shouPai_start_index * x_one_pai_width;
                     } else {
                         clonePengSprite.y = player.shouPai_start_index * y_one_pai_height;
@@ -110,12 +111,22 @@ module mj.scene {
             }
         }
 
+        /**
+         * 显示玩家所有的明杠牌
+         * @param groupShou 
+         * @param player 
+         * @param x_one_pai_width 
+         * @param y_one_pai_height 
+         * @param container 两种一个是gameTableScene, 一种是winnerScene
+         * @param show_in_win 是否是显示在winnerScene中的，如果是，则显示skinOfZheng的图片
+         */
         public showMingGang(
             groupShou: ShoupaiConstuctor,
             player: Player,
             x_one_pai_width: number,
             y_one_pai_height: number,
-            container:any=this
+            container:any=this,
+            show_in_win=false
         ) {
             if (groupShou.mingGang.length > 0) {
                 //显示明杠
@@ -126,11 +137,11 @@ module mj.scene {
                     for (var i = 0; i < clonemingGangSprite.numChildren; i++) {
                         var imgSprite = clonemingGangSprite._childs[i];
                         imgSprite.getChildAt(0).skin =
-                            player.ui_index == 3
+                            player.ui_index == 3 || show_in_win
                                 ? PaiConverter.skinOfZheng(mingGangPai)
                                 : PaiConverter.skinOfCe(mingGangPai);
                     }
-                    if (player.ui_index == 3) {
+                    if (player.ui_index == 3 || show_in_win) {
                         clonemingGangSprite.x = player.shouPai_start_index * x_one_pai_width;
                     } else {
                         clonemingGangSprite.y = player.shouPai_start_index * y_one_pai_height;

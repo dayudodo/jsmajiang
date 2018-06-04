@@ -466,19 +466,12 @@ class Room {
         if (player.is_liang) {
             typesCode.push(config.HuisLiangDao);
         }
-        // //明四归，胡的是外面已经碰了的牌
-        // if(player.group_shou_pai.peng.includes(hupaiZhang)){
-        //   typesCode.push(config.HuisMingSiGui)
-        // }else if(player.group_shou_pai.selfPeng.includes(hupaiZhang) || player.isAnSiGui(hupaiZhang) ){
-        //   typesCode.push(config.HuisAnSiGui)
-        // }
         //找到放炮的玩家，也可能没有，因为玩家是自摸的。
         let fangPaoPlayer = this.players.find(p => p.is_fangpao == true);
         this.players.forEach(p => {
             p.socket.sendmsg({
                 type: g_events.server_winner,
                 winner: this.player_data_filter(player.socket, player, true),
-                hupai_typesCode: typesCode,
                 hupai_names: MajiangAlgo_1.MajiangAlgo.HuPaiNamesFromArr(typesCode)
             });
         });

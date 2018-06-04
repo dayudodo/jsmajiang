@@ -35,10 +35,10 @@ var mj;
                 _this.socket = Laya.socket;
                 return _this;
             }
-            GameTableScene.prototype.show_winner = function (server_message) {
+            GameTableScene.prototype.show_allResults = function (server_message) {
                 this.winnerScene = new WinnerScene();
                 var winner = server_message.winner, hupai_typesCode = server_message.hupai_typesCode, hupai_names = server_message.hupai_names;
-                this.winnerScene.show_winner(winner, hupai_names);
+                this.winnerScene.show_resultOf(winner, hupai_names);
             };
             GameTableScene.prototype.show_dapai = function (player, pai_name) {
                 //首先隐藏所有的dapai
@@ -85,8 +85,9 @@ var mj;
                     this.show_side_player_shoupai(player);
                 }
             };
-            GameTableScene.prototype.showPeng = function (groupShou, player, x_one_pai_width, y_one_pai_height, container) {
+            GameTableScene.prototype.showPeng = function (groupShou, player, x_one_pai_width, y_one_pai_height, container, show_in_win) {
                 if (container === void 0) { container = this; }
+                if (show_in_win === void 0) { show_in_win = false; }
                 if (groupShou.peng.length > 0) {
                     //显示碰
                     groupShou.peng.forEach(function (pengPai) {
@@ -94,11 +95,11 @@ var mj;
                         for (var i = 0; i < clonePengSprite.numChildren; i++) {
                             var imgSprite = clonePengSprite._childs[i];
                             imgSprite.getChildAt(0).skin =
-                                player.ui_index == 3
+                                player.ui_index == 3 || show_in_win
                                     ? PaiConverter.skinOfZheng(pengPai)
                                     : PaiConverter.skinOfCe(pengPai);
                         }
-                        if (player.ui_index == 3) {
+                        if (player.ui_index == 3 || show_in_win) {
                             clonePengSprite.x = player.shouPai_start_index * x_one_pai_width;
                         }
                         else {
@@ -112,8 +113,18 @@ var mj;
                     });
                 }
             };
-            GameTableScene.prototype.showMingGang = function (groupShou, player, x_one_pai_width, y_one_pai_height, container) {
+            /**
+             * 显示玩家所有的明杠牌
+             * @param groupShou
+             * @param player
+             * @param x_one_pai_width
+             * @param y_one_pai_height
+             * @param container 两种一个是gameTableScene, 一种是winnerScene
+             * @param show_in_win 是否是显示在winnerScene中的，如果是，则显示skinOfZheng的图片
+             */
+            GameTableScene.prototype.showMingGang = function (groupShou, player, x_one_pai_width, y_one_pai_height, container, show_in_win) {
                 if (container === void 0) { container = this; }
+                if (show_in_win === void 0) { show_in_win = false; }
                 if (groupShou.mingGang.length > 0) {
                     //显示明杠
                     groupShou.mingGang.forEach(function (mingGangPai) {
@@ -121,11 +132,11 @@ var mj;
                         for (var i = 0; i < clonemingGangSprite.numChildren; i++) {
                             var imgSprite = clonemingGangSprite._childs[i];
                             imgSprite.getChildAt(0).skin =
-                                player.ui_index == 3
+                                player.ui_index == 3 || show_in_win
                                     ? PaiConverter.skinOfZheng(mingGangPai)
                                     : PaiConverter.skinOfCe(mingGangPai);
                         }
-                        if (player.ui_index == 3) {
+                        if (player.ui_index == 3 || show_in_win) {
                             clonemingGangSprite.x = player.shouPai_start_index * x_one_pai_width;
                         }
                         else {

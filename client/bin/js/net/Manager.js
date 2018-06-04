@@ -51,14 +51,15 @@ var mj;
                     [g_events.server_can_dapai, this.server_can_dapai],
                 ];
             };
+            /**服务器发送winner消息，准备开始下一局！ */
+            Manager.prototype.server_winner = function (server_message) {
+                console.log(server_message);
+                //todo: 结算界面,显示所有的结果，三种情况，胜利、失败、流局
+                this.gameTable.show_allResults(server_message);
+            };
             /**服务器确认god_player可以打牌了，并不需要啥数据，只是个消息通知 */
             Manager.prototype.server_can_dapai = function (server_message) {
                 Laya.god_player.can_dapai = true;
-            };
-            Manager.prototype.server_winner = function (server_message) {
-                console.log(server_message);
-                //todo: 显示结算界面
-                this.gameTable.show_winner(server_message);
             };
             Manager.prototype.server_liang = function (server_message) {
                 console.log("server_liang:", server_message);
@@ -283,7 +284,7 @@ var mj;
                     gameTable.showHead(gameTable, rightPlayer);
                 }
                 //for test
-                Laya.god_player.ui_index = 3;
+                Laya.god_player.ui_index = 2;
                 Laya.god_player.group_shou_pai = {
                     // anGang: ["zh"],
                     anGang: [],
@@ -297,7 +298,7 @@ var mj;
                     // shouPaiCount: 4
                 };
                 gameTable.winnerScene = new WinnerScene();
-                gameTable.winnerScene.show_winner(Laya.god_player, "屁胡 清一色");
+                gameTable.winnerScene.show_resultOf(Laya.god_player, "屁胡 清一色");
                 gameTable.addChild(gameTable.winnerScene);
                 // this.opt = new OptDialogScene(['t1', 'b1'])
                 // gameTable.show_group_shoupai(Laya.god_player)
