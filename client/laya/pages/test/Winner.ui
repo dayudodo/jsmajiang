@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1,
-    "selecteID":1478,
+    "selectedBox":1645,
+    "selecteID":1699,
     "referenceLines":null,
     "props":{"width":1920,"sceneColor":"#000000","height":1080},
     "nodeParent":-1,
@@ -141,7 +141,7 @@
                         {
                             "x":45,
                             "type":"Text",
-                            "props":{"y":195,"x":-1,"width":142,"var":"userName3","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"},
+                            "props":{"y":195,"x":-1,"width":142,"var":"userName3","text":"用户名称","height":31,"fontSize":32,"color":"#ffcc01","align":"center"},
                             "nodeParent":381,
                             "label":"Text(userName3)",
                             "isDirectory":false,
@@ -572,14 +572,13 @@
                             "props":{"y":26,"x":0,"width":82,"visible":false,"var":"shou3","height":128},
                             "nodeParent":82,
                             "label":"Sprite(shou3)",
-                            "isOpen":true,
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":935,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"skin":"ui/majiang/shou_bg.png"},
                                     "nodeParent":935,
@@ -591,7 +590,6 @@
                                     "compId":105,
                                     "child":[
                                         {
-                                            "x":75,
                                             "type":"Image",
                                             "props":{"y":0,"x":0,"var":"skin_shoupai3","skin":"ui/majiang/shou_32.png"},
                                             "nodeParent":105,
@@ -647,9 +645,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupai_names3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"result_info3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1371,
-                    "label":"Label(hupai_names3)",
+                    "label":"Label(result_info3)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -660,7 +658,7 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"visible":false,"var":"score3","text":"得分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":223,"x":1006,"width":590,"visible":true,"var":"score3","text":"得分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1371,
                     "label":"Label(score3)",
                     "isDirectory":false,
@@ -702,13 +700,14 @@
                     "props":{"y":-31,"x":4,"width":147,"var":"userHead0","height":216},
                     "nodeParent":1589,
                     "label":"Sprite(userHead0)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1590,
                     "child":[
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},
                             "nodeParent":1590,
@@ -720,6 +719,7 @@
                             "compId":1591,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"width":133,"skin":"ui/game/user_head_mask.png","height":133},
                                     "nodeParent":1591,
@@ -732,6 +732,7 @@
                                         ]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Sprite",
                                     "props":{"y":0,"x":0,"width":133,"height":133},
                                     "nodeParent":1591,
@@ -743,6 +744,7 @@
                                     "compId":1593,
                                     "child":[
                                         {
+                                            "x":75,
                                             "type":"Image",
                                             "props":{"y":4,"x":7,"width":119,"var":"userHeadIcon0","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115},
                                             "nodeParent":1593,
@@ -757,6 +759,7 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":37,"x":-7,"var":"zhuang0","skin":"ui/game/zhangjia.png"},
                             "nodeParent":1590,
@@ -769,8 +772,9 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Text",
-                            "props":{"y":190,"x":-3,"width":142,"var":"userName0","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"},
+                            "props":{"y":190,"x":-3,"width":142,"var":"userName0","text":"用户名称","height":31,"fontSize":32,"color":"#ffcc01","align":"center"},
                             "nodeParent":1590,
                             "label":"Text(userName0)",
                             "isDirectory":false,
@@ -1279,9 +1283,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupai_names0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"result_info0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1589,
-                    "label":"Label(hupai_names0)",
+                    "label":"Label(result_info0)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1292,7 +1296,7 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"visible":false,"var":"score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":223,"x":1006,"width":590,"visible":true,"var":"score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1589,
                     "label":"Label(score0)",
                     "isDirectory":false,
@@ -1334,13 +1338,14 @@
                     "props":{"y":-26,"x":6,"width":147,"var":"userHead2","height":216},
                     "nodeParent":1645,
                     "label":"Sprite(userHead2)",
-                    "isOpen":false,
+                    "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
                     "hasChild":true,
                     "compId":1646,
                     "child":[
                         {
+                            "x":45,
                             "type":"Image",
                             "props":{"y":55,"x":7,"width":133,"skin":"ui/game/user_head_bg.png","height":133},
                             "nodeParent":1646,
@@ -1352,6 +1357,7 @@
                             "compId":1647,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":0,"x":0,"width":133,"skin":"ui/game/user_head_mask.png","height":133},
                                     "nodeParent":1647,
@@ -1364,6 +1370,7 @@
                                         ]
                                 },
                                 {
+                                    "x":60,
                                     "type":"Sprite",
                                     "props":{"y":0,"x":0,"width":133,"height":133},
                                     "nodeParent":1647,
@@ -1375,6 +1382,7 @@
                                     "compId":1649,
                                     "child":[
                                         {
+                                            "x":75,
                                             "type":"Image",
                                             "props":{"y":4,"x":7,"width":119,"var":"userHeadIcon2","skin":"ui/game/user_head_default.png","pivotY":0,"pivotX":0,"height":115},
                                             "nodeParent":1649,
@@ -1389,10 +1397,11 @@
                                 }]
                         },
                         {
+                            "x":45,
                             "type":"Image",
-                            "props":{"y":37,"x":-7,"skin":"ui/game/zhangjia.png"},
+                            "props":{"y":37,"x":-7,"var":"zhuang2","skin":"ui/game/zhangjia.png"},
                             "nodeParent":1646,
-                            "label":"Image",
+                            "label":"Image(zhuang2)",
                             "isDirectory":false,
                             "isAniNode":true,
                             "hasChild":false,
@@ -1401,8 +1410,9 @@
                                 ]
                         },
                         {
+                            "x":45,
                             "type":"Text",
-                            "props":{"y":192,"x":1,"width":142,"var":"userName2","text":"用户名称","height":31,"fontSize":28,"color":"#ffcc01","align":"center"},
+                            "props":{"y":192,"x":1,"width":142,"var":"userName2","text":"用户名称","height":31,"fontSize":32,"color":"#ffcc01","align":"center"},
                             "nodeParent":1646,
                             "label":"Text(userName2)",
                             "isDirectory":false,
@@ -1906,9 +1916,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"hupai_names2","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"result_info2","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1645,
-                    "label":"Label(hupai_names2)",
+                    "label":"Label(result_info2)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1919,7 +1929,7 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"visible":false,"var":"score2","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":223,"x":1006,"width":590,"visible":true,"var":"score2","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1645,
                     "label":"Label(score2)",
                     "isDirectory":false,

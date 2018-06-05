@@ -4,6 +4,16 @@ var mj;
     (function (model) {
         var Player = /** @class */ (function () {
             function Player() {
+                this.result_shou_pai = {
+                    anGang: [],
+                    mingGang: [],
+                    selfPeng: [],
+                    peng: [],
+                    shouPai: []
+                };
+                this.is_hu = false;
+                this.is_fangpao = false;
+                this.hupai_zhang = null;
                 this._flat_shou_pai = [];
                 this.group_shou_pai = {
                     anGang: [],
@@ -30,6 +40,12 @@ var mj;
                 /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
                 this.is_liang = false;
             }
+            Player.prototype.cloneResultsFrom = function (p2) {
+                var _this = this;
+                Player.result_properties.forEach(function (prop) {
+                    _this[prop] = p2[prop];
+                });
+            };
             Player.prototype.cloneValuesFrom = function (p2) {
                 var _this = this;
                 Player.filter_properties.forEach(function (prop) {
@@ -116,6 +132,18 @@ var mj;
                 "arr_dapai",
                 "is_liang",
                 "is_ting"
+            ];
+            /**胜负属性组 */
+            Player.result_properties = [
+                "user_id",
+                "username",
+                "seat_index",
+                "result_shou_pai",
+                "result_info",
+                "is_hu",
+                "hupai_zhang",
+                "is_fangpao",
+                "score",
             ];
             return Player;
         }());

@@ -52,9 +52,9 @@ var mj;
             };
             /**服务器发送winner消息，准备开始下一局！ */
             Manager.prototype.server_winner = function (server_message) {
-                console.log(server_message);
+                // console.log(server_message);
                 //todo: 结算界面,显示所有的结果，三种情况，胜利、失败、流局
-                // this.gameTable.show_allResults(server_message)
+                this.gameTable.show_allResults(server_message.players);
             };
             /**服务器确认god_player可以打牌了，并不需要啥数据，只是个消息通知 */
             Manager.prototype.server_can_dapai = function (server_message) {

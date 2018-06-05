@@ -35,10 +35,16 @@ var mj;
                 _this.socket = Laya.socket;
                 return _this;
             }
-            GameTableScene.prototype.show_allResults = function (server_message) {
+            GameTableScene.prototype.show_allResults = function (players) {
                 this.winnerScene = new WinnerScene();
-                var winner = server_message.winner, hupai_typesCode = server_message.hupai_typesCode, hupai_names = server_message.hupai_names;
-                this.winnerScene.show_resultOf(winner, hupai_names);
+                //更新本地player数据
+                players.forEach(function (person) {
+                    var localPlayer = Laya.room.players.find(function (p) { return p.user_id == person.user_id; });
+                    localPlayer.cloneResultsFrom(person);
+                });
+                console.log(Laya.room.players);
+                this.winnerScene.show_all(Laya.room.players);
+                this.addChild(this.winnerScene);
             };
             GameTableScene.prototype.show_dapai = function (player, pai_name) {
                 //首先隐藏所有的dapai

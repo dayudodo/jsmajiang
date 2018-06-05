@@ -24,6 +24,30 @@ module mj.model {
             "is_liang",
             "is_ting"
         ];
+        /**胜负属性组 */
+        static result_properties = [
+            "user_id",
+            "username",
+            "seat_index",
+            "result_shou_pai",
+            "result_info",
+            "is_hu",
+            "hupai_zhang",
+            "is_fangpao",
+            "score",
+        ]
+        public result_shou_pai: ShoupaiConstuctor =  {
+            anGang: [],
+            mingGang: [],
+            selfPeng: [],
+            peng: [],
+            shouPai: []
+        }
+        public result_info: string
+        public is_hu = false
+        public is_fangpao = false
+        public hupai_zhang = null
+
         public username: string
         public user_id: string
         private _flat_shou_pai: Array<Pai> = []
@@ -38,7 +62,7 @@ module mj.model {
         public ui_clone_arr = []
         public arr_dapai: Pai[] = []
         public room_name: string
-        public hupai_zhang: string
+        
         private _received_pai: Pai
         /**         是否是庄家         */
         public east = false;
@@ -60,6 +84,11 @@ module mj.model {
         public is_liang = false;
 
         constructor() { }
+        cloneResultsFrom(p2) {
+            Player.result_properties.forEach(prop => {
+                this[prop] = p2[prop]
+            })
+        }
 
         cloneValuesFrom(p2) {
             Player.filter_properties.forEach(prop => {

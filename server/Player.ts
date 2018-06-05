@@ -113,9 +113,9 @@ export class Player {
   /**玩家胜负信息 */
   get result_info(): string {
     if (this.is_hu) {
-      return MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode);
+      return MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode).join(' ') ;
     } else {
-      return  MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f=>f.type))
+      return  MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f=>f.type)).join(' ')
     }
   }
   /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */

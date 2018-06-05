@@ -476,11 +476,11 @@ class Room {
         //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！
         //暂时用思考变量来控制最终的发送！
         if (this.all_players_normal) {
-            let results = this.players.map(person => this.player_result_filter(person));
+            let players = this.players.map(person => this.player_result_filter(person));
             this.players.forEach(p => {
                 p.socket.sendmsg({
                     type: g_events.server_winner,
-                    results: results
+                    players: players
                 });
             });
         }

@@ -23,11 +23,20 @@ module mj.scene {
             this.socket = Laya.socket
 
         }
-        show_allResults(server_message) {
+        show_allResults(players) {
             this.winnerScene = new WinnerScene()
-            let {winner, hupai_typesCode, hupai_names } = server_message
-            this.winnerScene.show_resultOf(winner, hupai_names)
+
+            //更新本地player数据
+            players.forEach(person => {
+                let localPlayer = Laya.room.players.find(p => p.user_id == person.user_id);
+                localPlayer.cloneResultsFrom(person);
+            });
+            console.log(Laya.room.players);
+            
+            this.winnerScene.show_all(Laya.room.players)
+            this.addChild(this.winnerScene)
         }
+        
         show_dapai(player: Player, pai_name: Pai) {
             //首先隐藏所有的dapai
             // this.daPaiSprite.visible = true
@@ -81,8 +90,8 @@ module mj.scene {
             player: Player,
             x_one_pai_width: number,
             y_one_pai_height: number,
-            container:any = this,
-            show_in_win=false
+            container: any = this,
+            show_in_win = false
         ) {
             if (groupShou.peng.length > 0) {
                 //显示碰
@@ -125,8 +134,8 @@ module mj.scene {
             player: Player,
             x_one_pai_width: number,
             y_one_pai_height: number,
-            container:any=this,
-            show_in_win=false
+            container: any = this,
+            show_in_win = false
         ) {
             if (groupShou.mingGang.length > 0) {
                 //显示明杠
@@ -160,7 +169,7 @@ module mj.scene {
             player: Player,
             x_one_pai_width: number,
             y_one_pai_height: number,
-            container:any=this
+            container: any = this
         ) {
             if (groupShou.selfPeng.length > 0) {
                 //显示自碰牌
@@ -212,7 +221,7 @@ module mj.scene {
             player: Player,
             x_one_pai_width: number,
             y_one_pai_height: number,
-            container:any=this
+            container: any = this
         ) {
             if (groupShou.anGang.length > 0) {
                 //显示暗杠
