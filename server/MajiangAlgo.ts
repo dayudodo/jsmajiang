@@ -20,14 +20,14 @@ declare global {
   }
 }
 
-Array.prototype.remove = function (val) {
+Array.prototype.remove = function(val) {
   var index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
   }
   return this;
 };
-Array.prototype.equalArrays = function (b) {
+Array.prototype.equalArrays = function(b) {
   if (this.length != b.length) return false; // Different-size arrays not equal
   for (
     var i = 0;
@@ -523,10 +523,10 @@ export class MajiangAlgo {
       let single_pai = all_single_pai[i];
       let newShouPai: Array<Pai> = this.flat_shou_pai(group_shoupai)
         .concat(single_pai)
-        .sort()
+        .sort();
 
       // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
-      let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5
+      let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
       // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
       if (isFiveRepeat) {
         continue;
@@ -563,12 +563,10 @@ export class MajiangAlgo {
 
     for (var i = 0; i < all_single_pai.length; i++) {
       let single_pai = all_single_pai[i];
-      let newShouPai: Array<Pai> = result
-        .concat(single_pai)
-        .sort()
+      let newShouPai: Array<Pai> = result.concat(single_pai).sort();
 
       // console.log(newstr)
-      let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5
+      let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
       if (isFiveRepeat) {
         continue;
         // console.log(newstr.match(/(..)\1\1\1\1/g))
@@ -835,27 +833,27 @@ export class MajiangAlgo {
   static HuisMingSiGui(group_shou_pai: GroupConstructor, na_pai: Pai) {
     if (this.HuisPihu(group_shou_pai, na_pai)) {
       if (group_shou_pai.peng.includes(na_pai)) {
-        return true
+        return true;
       } else {
-        return false
+        return false;
       }
     } else {
-      return false
+      return false;
     }
   }
-  static exist3A(shou_pai:Array<Pai>, pai_name: Pai){
-    return shou_pai.filter(pai=>pai == pai_name).length === 3
+  static exist3A(shou_pai: Array<Pai>, pai_name: Pai) {
+    return shou_pai.filter(pai => pai == pai_name).length === 3;
   }
   /**暗四归 */
   static HuisAnSiGui(group_shou_pai: GroupConstructor, na_pai: Pai) {
     if (this.HuisPihu(group_shou_pai, na_pai)) {
       if (group_shou_pai.selfPeng.includes(na_pai) || this.exist3A(group_shou_pai.shouPai, na_pai)) {
-        return true
+        return true;
       } else {
-        return false
+        return false;
       }
     } else {
-      return false
+      return false;
     }
   }
 
@@ -905,9 +903,16 @@ export class MajiangAlgo {
     });
     return _output;
   }
-  static HuPaiNamesFromArr(hupaicodeArr: Array<number>): Array<string> {
+  /**胡牌文字描述 */
+  static HuPaiNamesFrom(hupaicodeArr: Array<number>): Array<string> {
     return hupaicodeArr.map(item => {
       return config.HuPaiSheet[item].name;
+    });
+  }
+  /**放炮文字描述 */
+  static FangPaoNamesFrom(fangPaoArr: number[]) {
+    return fangPaoArr.map(item => {
+      return config.FangSheet[item].name;
     });
   }
   /**通过胡的类型码数组来判断是否是大胡*/
@@ -924,7 +929,7 @@ export class MajiangAlgo {
       hupaicodeArr.includes(config.HuisXiaoShanYuan) ||
       hupaicodeArr.includes(config.HuisDaShanYuan) ||
       hupaicodeArr.includes(config.HuisMingSiGui) ||
-      hupaicodeArr.includes(config.HuisAnSiGui) 
+      hupaicodeArr.includes(config.HuisAnSiGui)
     ) {
       return true;
     }
@@ -957,12 +962,7 @@ export class MajiangAlgo {
     return paiFourTimesReg.test(newstr.replace(/\s+/g, ""));
   }
   /**group牌能杠吗？ */
-  static canGang(
-    group_shoupai: GroupConstructor,
-    pai: Pai,
-    isLiang: boolean,
-    mo_pai: Pai
-  ) {
+  static canGang(group_shoupai: GroupConstructor, pai: Pai, isLiang: boolean, mo_pai: Pai) {
     //如果直接用flat_shou_pai来进行判断，其实还是有问题的，比如玩家碰了b1, 但是手牌里面还有1个是用于另一手牌！
     // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
     if (group_shoupai.selfPeng.includes(pai)) {

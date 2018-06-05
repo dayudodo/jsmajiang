@@ -76,14 +76,17 @@ export const HuPaiSheet = [
   { type: "HuisLiangDao", name: "亮倒", score: 1 },
 ];
 
-/**放杠 */
-export const FangGang = "FangGang"
-/**放杠上杠 */
-export const FangGangShangGang = "FangGangShangGang"
-/**放屁胡炮 */
-export const FangPihuPao = "FangPihuPao"
-/**放大胡炮 */
-export const FangDaHuPao = "FangDaHuPao"
+export const FangGang = 0
+export const FangGangShangGang = 1
+export const FangPihuPao = 2
+export const FangDaHuPao = 3
+
+export const FangSheet = [
+  { type: "FangGang", name:"放杠", score: 1},
+  { type: "FangGangShangGang", name:"放杠上杠", score: 1},
+  { type: "FangPihuPao", name:"放屁胡炮", score: 1},
+  { type: "FangDaHuPao", name:"放大胡炮", score: 1},
+]
 
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {

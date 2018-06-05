@@ -9,21 +9,14 @@ import { TablePaiManager } from "./TablePaiManager";
 
 let room_valid_names = ["ange", "jack", "rose"];
 
-/**列举玩家的各种操作 */
+/**玩家的各种操作 */
 enum Operate {
-  /**用户摸牌 */
   mo = "mo",
-  /**用户打牌 */
   da = "da",
-  /**用户碰牌 */
   peng = "peng",
-  /**用户杠牌 */
   gang = "gang",
-  /**用户胡牌 */
   hu = "hu",
-  /**用户亮牌 */
   liang = "liang",
-  /**用户过牌 */
   guo = "guo"
 }
 
@@ -214,9 +207,13 @@ export class Room {
     //最后通过座位号来找到玩家,而不是数组序号,更不容易出错，哪怕是players数组乱序也不要紧
     return this.players.find(p => p.seat_index == next_index);
   }
-  /**胡牌玩家 */
-  get hupai_player(): Player {
-    return this.players.find(p => p.hupai_zhang != null);
+  /**放炮玩家，玩家自摸则返回空 */
+  get fangpao_player(): Player {
+    return this.players.find(p => p.is_fangpao == true);
+  }
+  /**胡牌玩家，可能有多个，一炮双响！ */
+  get hupai_players(): Player[] {
+    return this.players.filter(p => p.hupai_zhang != null);
   }
   //除了person外的其它玩家们
   public other_players(person): Array<Player> {
@@ -242,7 +239,7 @@ export class Room {
     return this.players.every(p => p.mo_pai == null);
   }
   /**
-   *
+   * 玩家数据过滤器，返回客户端需要的属性值
    * @param socket 哪个socket
    * @param player 需要向哪个玩家发送消息
    * @param ignore_filter 是否忽略filter
@@ -280,6 +277,14 @@ export class Room {
       //返回过滤的数据
       return player_data;
     }
+  }
+  /**玩家胜负属性值，由result_properties决定 */
+  public player_result_filter(player: Player) {
+    let result = {};
+    Player.result_properties.forEach(item => {
+      result[item] = _.cloneDeep(player[item]);
+    });
+    return result;
   }
   /**玩家选择碰牌，或者是超时自动跳过！*/
   client_confirm_peng(socket) {
@@ -414,6 +419,9 @@ export class Room {
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, socket) {
     let player = this.find_player_by(socket);
+    //玩家已经有决定，不再想了。
+    player.is_thinking = false;
+    player.is_liang = true;
     //如果selectedPais有效
     if (client_message.selectedPais && client_message.selectedPais.length > 0) {
       let selectedPais: Array<Pai> = client_message.selectedPais.sort();
@@ -428,11 +436,6 @@ export class Room {
         console.warn(`用户亮牌后选择${selectedPais}不在服务器的正常选择中：${rightSelectPais}`);
       }
     }
-
-    player.is_liang = true;
-    // player.is_ting = true; //如果亮牌，肯定就是听了
-    //玩家已经有决定，不再想了。
-    player.is_thinking = false;
 
     //亮牌之后，需要显示此玩家的所有牌，除了暗杠及自碰牌！
     this.players.forEach(p => {
@@ -468,8 +471,8 @@ export class Room {
   /**玩家选择胡牌*/
   client_confirm_hu(socket) {
     let player = this.find_player_by(socket);
-    player.is_hu = true
-    // player.is_thinking = false //已经胡了还记录个啥思考呢？
+    player.is_hu = true;
+    player.is_thinking = false; //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
     if (player.mo_pai && player.canHu(player.mo_pai)) {
       player.hupai_zhang = player.mo_pai;
@@ -493,27 +496,32 @@ export class Room {
         pai: this.table_dapai
       });
       this.sendAllResults(player, this.table_dapai);
-      console.dir(this.hupai_player);
+      console.dir(this.hupai_players);
       console.dir(this.daPai_player.fangpai_data);
     } else {
       `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
     }
   }
+
+  /**所有玩家的牌面返回客户端 */
   private sendAllResults(player: Player, hupaiZhang: Pai) {
     let typesCode = player.hupai_data.hupai_dict[hupaiZhang];
     if (player.is_liang) {
       typesCode.push(config.HuisLiangDao);
+      //数据分开的坏处！需要添加两次！
+      player.hupai_data.all_hupai_typesCode.push(config.HuisLiangDao)
     }
-
-    //找到放炮的玩家，也可能没有，因为玩家是自摸的。
-    let fangPaoPlayer = this.players.find(p=>p.is_fangpao == true)
-    this.players.forEach(p => {
-      p.socket.sendmsg({
-        type: g_events.server_winner,
-        winner: this.player_data_filter(player.socket, player, true),
-        hupai_names: MajiangAlgo.HuPaiNamesFromArr(typesCode)
+    //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！
+    //暂时用思考变量来控制最终的发送！
+    if (this.all_players_normal) {
+      let results = this.players.map(person => this.player_result_filter(person));
+      this.players.forEach(p => {
+        p.socket.sendmsg({
+          type: g_events.server_winner,
+          results: results
+        });
       });
-    });
+    }
   }
 
   /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
@@ -594,7 +602,7 @@ export class Room {
     return pai;
   }
 
-  /**所有玩家处于正常状态，指不是碰、杠、亮选择状态的时候*/
+  /**所有玩家处于正常状态，指房间内所有玩家不是碰、杠、亮、胡选择状态的时候*/
   private all_players_normal() {
     return this.players.every(p => p.is_thinking === false);
   }
@@ -714,7 +722,7 @@ export class Room {
 
     let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
     if (canShowSelect) {
-      //表示玩家正在 想
+      //表示玩家正在 想，会影响发牌、胡牌
       item_player.is_thinking = true;
       console.log(`房间${this.id} 玩家${item_player.username} 显示选择对话框，其手牌为:`);
       puts(item_player.group_shou_pai);

@@ -46,14 +46,16 @@ exports.HuPaiSheet = [
     { type: "HuisAnSiGui", name: "暗四归", score: 1 },
     { type: "HuisLiangDao", name: "亮倒", score: 1 },
 ];
-/**放杠 */
-exports.FangGang = "FangGang";
-/**放杠上杠 */
-exports.FangGangShangGang = "FangGangShangGang";
-/**放屁胡炮 */
-exports.FangPihuPao = "FangPihuPao";
-/**放大胡炮 */
-exports.FangDaHuPao = "FangDaHuPao";
+exports.FangGang = 0;
+exports.FangGangShangGang = 1;
+exports.FangPihuPao = 2;
+exports.FangDaHuPao = 3;
+exports.FangSheet = [
+    { type: "FangGang", name: "放杠", score: 1 },
+    { type: "FangGangShangGang", name: "放杠上杠", score: 1 },
+    { type: "FangPihuPao", name: "放屁胡炮", score: 1 },
+    { type: "FangDaHuPao", name: "放大胡炮", score: 1 },
+];
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {
 //   var template = `export const ${item.type} = ${index}\n`;

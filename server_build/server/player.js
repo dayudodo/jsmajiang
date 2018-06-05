@@ -52,6 +52,15 @@ class Player {
         this.username = username;
         this.user_id = user_id;
     }
+    /**玩家胜负信息 */
+    get result_info() {
+        if (this.is_hu) {
+            return MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode);
+        }
+        else {
+            return MajiangAlgo_1.MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f => f.type));
+        }
+    }
     /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
     get result_shou_pai() {
         let result = _.cloneDeep(this.group_shou_pai);
@@ -67,7 +76,6 @@ class Player {
             });
             result.selfPeng = [];
         }
-        console.dir(result);
         return result;
     }
     /**是否放炮 */
@@ -209,15 +217,18 @@ class Player {
     }
 }
 /**可以返回到客户端的玩家属性数组 */
-Player.filter_properties = [
-    "username",
+Player.filter_properties = ["username", "user_id", "seat_index", "group_shou_pai", "arr_dapai", "is_liang"];
+/**胜负属性组 */
+Player.result_properties = [
     "user_id",
+    "username",
     "seat_index",
-    "group_shou_pai",
-    "arr_dapai",
-    "is_liang",
+    "result_shou_pai",
+    "result_info",
     "is_hu",
-    "is_fangpao"
+    "hupai_zhang",
+    "is_fangpao",
+    "score",
 ];
 exports.Player = Player;
 //# sourceMappingURL=player.js.map

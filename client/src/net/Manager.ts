@@ -65,7 +65,7 @@ namespace mj.net {
     public server_winner(server_message) {
       console.log(server_message);
       //todo: 结算界面,显示所有的结果，三种情况，胜利、失败、流局
-      this.gameTable.show_allResults(server_message)
+      // this.gameTable.show_allResults(server_message)
     }
 
     /**服务器确认god_player可以打牌了，并不需要啥数据，只是个消息通知 */
@@ -322,22 +322,22 @@ namespace mj.net {
       //for test
 
 
-      Laya.god_player.ui_index = 2
-      Laya.god_player.group_shou_pai = {
-        // anGang: ["zh"],
-        anGang: [],
-        // anGangCount: 0,
-        mingGang: ["fa"],
-        peng: [],
-        selfPeng: [],
-        // selfPengCount: 1,
-        shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
-        // shouPai: [],
-        // shouPaiCount: 4
-      }
-      gameTable.winnerScene = new WinnerScene()
-      gameTable.winnerScene.show_resultOf(Laya.god_player, "屁胡 清一色")
-      gameTable.addChild(gameTable.winnerScene)
+      // Laya.god_player.ui_index = 2
+      // Laya.god_player.group_shou_pai = {
+      //   // anGang: ["zh"],
+      //   anGang: [],
+      //   // anGangCount: 0,
+      //   mingGang: ["fa"],
+      //   peng: [],
+      //   selfPeng: [],
+      //   // selfPengCount: 1,
+      //   shouPai: "t1 t1 t1 b1 b1 b1 b2 b3 t4".split(" ")
+      //   // shouPai: [],
+      //   // shouPaiCount: 4
+      // }
+      // gameTable.winnerScene = new WinnerScene()
+      // gameTable.winnerScene.show_resultOf(Laya.god_player, "屁胡 清一色")
+      // gameTable.addChild(gameTable.winnerScene)
       // this.opt = new OptDialogScene(['t1', 'b1'])
 
       // gameTable.show_group_shoupai(Laya.god_player)

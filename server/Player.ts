@@ -32,17 +32,19 @@ declare global {
 
 export class Player {
   /**可以返回到客户端的玩家属性数组 */
-  static filter_properties = [
-    "username",
+  static filter_properties = ["username", "user_id", "seat_index", "group_shou_pai", "arr_dapai", "is_liang"];
+  /**胜负属性组 */
+  static result_properties = [
     "user_id",
+    "username",
     "seat_index",
-    "group_shou_pai",
-    "arr_dapai",
-    "is_liang",
+    "result_shou_pai",
+    "result_info",
     "is_hu",
-    "is_fangpao"
-  ];
-
+    "hupai_zhang",
+    "is_fangpao",
+    "score",
+  ]
   //初始化第一手牌，肯定是有13张
   // this.room = null
   public socket: WebSocket;
@@ -108,23 +110,30 @@ export class Player {
     this.username = username;
     this.user_id = user_id;
   }
+  /**玩家胜负信息 */
+  get result_info(): string {
+    if (this.is_hu) {
+      return MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode);
+    } else {
+      return  MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f=>f.type))
+    }
+  }
   /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
-  get result_shou_pai(){
-    let result = _.cloneDeep(this.group_shou_pai)
-    if (result.anGang.length>0) {
-      result.anGang.forEach(pai=>{
-        result.mingGang.push(pai)
-      })
-      result.anGang = []
+  get result_shou_pai() {
+    let result = _.cloneDeep(this.group_shou_pai);
+    if (result.anGang.length > 0) {
+      result.anGang.forEach(pai => {
+        result.mingGang.push(pai);
+      });
+      result.anGang = [];
     }
-    if (result.selfPeng.length>0) {
-      result.selfPeng.forEach(pai=>{
-        result.peng.push(pai)
-      })
-      result.selfPeng = []
+    if (result.selfPeng.length > 0) {
+      result.selfPeng.forEach(pai => {
+        result.peng.push(pai);
+      });
+      result.selfPeng = [];
     }
-    console.dir(result)
-    return result
+    return result;
   }
   /**是否放炮 */
   get is_fangpao(): boolean {

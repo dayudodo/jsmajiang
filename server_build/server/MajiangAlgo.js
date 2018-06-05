@@ -507,9 +507,7 @@ class MajiangAlgo {
         let hupai_dict = {};
         for (var i = 0; i < all_single_pai.length; i++) {
             let single_pai = all_single_pai[i];
-            let newShouPai = result
-                .concat(single_pai)
-                .sort();
+            let newShouPai = result.concat(single_pai).sort();
             // console.log(newstr)
             let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
             if (isFiveRepeat) {
@@ -835,9 +833,16 @@ class MajiangAlgo {
         });
         return _output;
     }
-    static HuPaiNamesFromArr(hupaicodeArr) {
+    /**胡牌文字描述 */
+    static HuPaiNamesFrom(hupaicodeArr) {
         return hupaicodeArr.map(item => {
             return config.HuPaiSheet[item].name;
+        });
+    }
+    /**放炮文字描述 */
+    static FangPaoNamesFrom(fangPaoArr) {
+        return fangPaoArr.map(item => {
+            return config.FangSheet[item].name;
         });
     }
     /**通过胡的类型码数组来判断是否是大胡*/
