@@ -12,8 +12,12 @@ var mj;
                     shouPai: []
                 };
                 this.is_hu = false;
+                /**是否放炮 */
                 this.is_fangpao = false;
+                /**胡牌张 */
                 this.hupai_zhang = null;
+                /**一局得分 */
+                this.oneju_score = 0;
                 this._flat_shou_pai = [];
                 this.group_shou_pai = {
                     anGang: [],
@@ -143,7 +147,7 @@ var mj;
                 "is_hu",
                 "hupai_zhang",
                 "is_fangpao",
-                "score",
+                "oneju_score",
             ];
             return Player;
         }());

@@ -34,7 +34,7 @@ module mj.model {
             "is_hu",
             "hupai_zhang",
             "is_fangpao",
-            "score",
+            "oneju_score",
         ]
         public result_shou_pai: ShoupaiConstuctor =  {
             anGang: [],
@@ -43,10 +43,15 @@ module mj.model {
             peng: [],
             shouPai: []
         }
+        /**胜负信息，如暗四归x1, 屁胡X1, 亮倒x2 */
         public result_info: string
         public is_hu = false
+        /**是否放炮 */
         public is_fangpao = false
+        /**胡牌张 */
         public hupai_zhang = null
+        /**一局得分 */
+        public oneju_score = 0
 
         public username: string
         public user_id: string

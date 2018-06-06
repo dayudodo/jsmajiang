@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
+const MajiangAlgo_1 = require("./MajiangAlgo");
 //每一个玩家的数据保存在此类中
 const config = require("./config");
-const MajiangAlgo_1 = require("./MajiangAlgo");
 class Player {
     //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
     constructor({ group_shou_pai, socket, username, user_id }) {
@@ -35,6 +35,8 @@ class Player {
         ];
         /**玩家的积分 */
         this.score = 0;
+        /**一局得分 */
+        this.oneju_score = 0;
         /**暗杠数量 */
         this.count_anGang = 0;
         /**明杠数量 */
@@ -47,6 +49,7 @@ class Player {
         this.hupai_zhang = null;
         /**能打牌了 */
         this.can_dapai = false;
+        this.hu_names = [];
         this.group_shou_pai = group_shou_pai;
         this.socket = socket;
         this.username = username;
@@ -55,10 +58,10 @@ class Player {
     /**玩家胜负信息 */
     get result_info() {
         if (this.is_hu) {
-            return MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode).join(' ');
+            return MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode).join(" ");
         }
         else {
-            return MajiangAlgo_1.MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f => f.type)).join(' ');
+            return MajiangAlgo_1.MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f => f.type)).join(" ");
         }
     }
     /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
@@ -126,7 +129,9 @@ class Player {
             return false;
         }
     }
-    /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中 */
+    /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
+     * 一旦打出，则清空
+     */
     set mo_pai(pai) {
         this._mo_pai = pai;
         this.group_shou_pai.shouPai.push(pai);
@@ -228,7 +233,7 @@ Player.result_properties = [
     "is_hu",
     "hupai_zhang",
     "is_fangpao",
-    "score",
+    "oneju_score"
 ];
 exports.Player = Player;
 //# sourceMappingURL=player.js.map

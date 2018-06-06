@@ -1,8 +1,8 @@
 import * as _ from "lodash";
-import chalk from "chalk";
+import { MajiangAlgo } from "./MajiangAlgo";
+import { ScoreManager } from "./ScoreManager";
 //每一个玩家的数据保存在此类中
 import * as config from "./config";
-import { MajiangAlgo } from "./MajiangAlgo";
 
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
@@ -43,8 +43,8 @@ export class Player {
     "is_hu",
     "hupai_zhang",
     "is_fangpao",
-    "score",
-  ]
+    "oneju_score"
+  ];
   //初始化第一手牌，肯定是有13张
   // this.room = null
   public socket: WebSocket;
@@ -84,6 +84,8 @@ export class Player {
 
   /**玩家的积分 */
   public score = 0;
+  /**一局得分 */
+  public oneju_score = 0;
   /**暗杠数量 */
   public count_anGang = 0;
   /**明杠数量 */
@@ -103,6 +105,8 @@ export class Player {
   /**能打牌了 */
   public can_dapai: boolean = false;
 
+  public hu_names:string[] = []
+
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
     this.group_shou_pai = group_shou_pai;
@@ -110,12 +114,13 @@ export class Player {
     this.username = username;
     this.user_id = user_id;
   }
+
   /**玩家胜负信息 */
   get result_info(): string {
     if (this.is_hu) {
-      return MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode).join(' ') ;
+      return MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode).join(" ");
     } else {
-      return  MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f=>f.type)).join(' ')
+      return MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f => f.type)).join(" ");
     }
   }
   /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
@@ -184,7 +189,9 @@ export class Player {
     }
   }
 
-  /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中 */
+  /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
+   * 一旦打出，则清空
+   */
   set mo_pai(pai: Pai) {
     this._mo_pai = pai;
     this.group_shou_pai.shouPai.push(pai);

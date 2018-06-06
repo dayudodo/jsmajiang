@@ -51,7 +51,7 @@ var mj;
                 this["zhuang" + ui_index].visible = player.east;
                 this["userName" + ui_index].text = player.username;
                 // this["userName" + ui_index].visible = true
-                this["score" + ui_index].text = "总分：" + player.score;
+                this["oneju_score" + ui_index].text = "得分：" + player.oneju_score;
                 // this["score" + ui_index].visible = true
             };
             WinnerScene.prototype.show_huOrLost = function (player) {

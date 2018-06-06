@@ -6,6 +6,7 @@ import * as g_events from "./events";
 import { Player } from "./player";
 import * as util from "util";
 import { TablePaiManager } from "./TablePaiManager";
+import { ScoreManager } from "./ScoreManager";
 
 let room_valid_names = ["ange", "jack", "rose"];
 
@@ -475,6 +476,7 @@ export class Room {
     player.is_thinking = false; //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
     if (player.mo_pai && player.canHu(player.mo_pai)) {
+      player.is_zimo = true;
       player.hupai_zhang = player.mo_pai;
       player.hupai_data.hupai_dict[player.mo_pai].push(config.HuisZiMo);
       //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
@@ -509,8 +511,9 @@ export class Room {
     if (player.is_liang) {
       typesCode.push(config.HuisLiangDao);
       //数据分开的坏处！需要添加两次！
-      player.hupai_data.all_hupai_typesCode.push(config.HuisLiangDao)
+      player.hupai_data.all_hupai_typesCode.push(config.HuisLiangDao);
     }
+    ScoreManager.calculate_oneju_score(this.players)
     //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！
     //暂时用思考变量来控制最终的发送！
     if (this.all_players_normal) {
