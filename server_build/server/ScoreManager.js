@@ -15,23 +15,40 @@ class ScoreManager {
         let all_hu_players = players.filter(p => p.hupai_zhang != null);
         all_hu_players.forEach(hu_player => {
             let score = 0; //本局总分
+            let all_typesCode = hu_player.hupai_data.all_hupai_typesCode;
             //如果自摸，其它两家出钱
-            hu_player.hupai_data.all_hupai_typesCode.forEach(code => {
-                let hu_item = config.HuPaiSheet.find(item => item.type == code);
-                score += hu_item.multiple * config.base_score;
+            all_typesCode.forEach(code => {
+                score += this.cal_scoreOf(code);
             });
+            //杠牌算分，暗杠、擦炮两家给钱，这些应该由room负责保存胡牌代码。
             //todo:所有的胡都包括屁胡，所以可能需要减去屁胡的分，如果只有屁胡就不用减，或者直接就在获取hupai_data的时候处理？
             //单独的屁胡其实是不可能胡的，最小的胡也是屁胡+自摸！
             if (hu_player.is_zimo) {
                 //自摸后需要扣除其它两个玩家的相应分数！
-                this.other_players(hu_player, players).forEach(p => this.cal_fang_score(p, hu_player.hupai_data.all_hupai_typesCode));
-                //然后再翻倍
-                score = score * 2;
+                this.other_players(hu_player, players).forEach(p => this.cal_fang_score(p, all_typesCode));
+                //todo: 自摸的算番
             }
+            else {
+                //不是自摸，有人放炮，扣除放炮者的分数！
+                let fang_player = players.find(p => true == p.is_fangpao);
+                this.cal_fang_score(fang_player, all_typesCode);
+            }
+            hu_player.oneju_score = score;
         });
     }
+    /**计算某种胡code的分数 */
+    static cal_scoreOf(code) {
+        let hu_item = config.HuPaiSheet.find(item => item.type == code);
+        return hu_item.multiple * config.base_score;
+    }
     /**算player扣多少分，根据别人的typesCode */
-    static cal_fang_score(player, typesCode) { }
+    static cal_fang_score(player, typesCode) {
+        let score = 0;
+        typesCode.forEach(code => {
+            score += this.cal_scoreOf(code);
+        });
+        player.oneju_score -= score;
+    }
 }
 exports.ScoreManager = ScoreManager;
 //# sourceMappingURL=ScoreManager.js.map

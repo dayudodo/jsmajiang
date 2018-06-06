@@ -37,11 +37,16 @@ exports.FangGang = 0;
 exports.FangGangShangGang = 1;
 exports.FangPihuPao = 2;
 exports.FangDaHuPao = 3;
+exports.FangAnGang = 4;
+exports.FangCaPao = 5;
+/**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
 exports.FangSheet = [
-    { type: "FangGang", name: "放杠", score: 1 },
-    { type: "FangGangShangGang", name: "放杠上杠", score: 2 },
-    { type: "FangPihuPao", name: "放屁胡炮", score: 1 },
-    { type: "FangDaHuPao", name: "放大胡炮", score: 1 },
+    { type: "FangGang", name: "放杠", multiple: 1 },
+    { type: "FangGangShangGang", name: "放杠上杠", multiple: 2 },
+    { type: "FangPihuPao", name: "放屁胡炮", multiple: 1 },
+    { type: "FangDaHuPao", name: "放大胡炮", multiple: 1 },
+    { type: "FangAnGang", name: "放暗杠", multiple: 1 },
+    { type: "FangCaPao", name: "放擦炮", multiple: 1 },
 ];
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {
@@ -77,8 +82,11 @@ exports.HuisMingSiGui = 11;
 exports.HuisAnSiGui = 12;
 /**亮倒 */
 exports.HuisLiangDao = 13;
+/**普通杠 */
 exports.HuisGang = 14;
-exports.HuisChaPao = 15;
+/**擦炮 */
+exports.HuisCaPao = 15;
+/**暗杠 */
 exports.HuisAnGang = 16;
 //end自动生成代码
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
@@ -100,8 +108,10 @@ exports.HuPaiSheet = [
     { type: exports.HuisLiangDao, name: "亮倒", multiple: 2 },
     //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
     //放在胡里面是因为也算是一种胡，收钱了么
+    //普通杠放杠者出钱
     { type: exports.HuisGang, name: "扛", multiple: 2 },
-    { type: exports.HuisChaPao, name: "擦炮", multiple: 1 },
+    //下面两种其它两家给钱！
+    { type: exports.HuisCaPao, name: "擦炮", multiple: 1 },
     { type: exports.HuisAnGang, name: "暗杠", multiple: 1 },
 ];
 //# sourceMappingURL=config.js.map

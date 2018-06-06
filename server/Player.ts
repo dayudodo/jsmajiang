@@ -105,7 +105,7 @@ export class Player {
   /**能打牌了 */
   public can_dapai: boolean = false;
 
-  public hu_names:string[] = []
+  public hu_names: string[] = [];
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
@@ -155,10 +155,10 @@ export class Player {
     }
     return output;
   }
-  /**是否是暗四归，在group手牌中存在3张相同的牌 */
-  isAnSiGui(pai_name: Pai): boolean {
+  /**是否是手摸四张，用于判断暗四归，暗杠，在group手牌中存在3张相同的牌 */
+  isShouMoSi(pai_name: Pai): boolean {
     let countPai = this.group_shou_pai.shouPai.filter(pai => pai == pai_name);
-    return countPai.length === 3;
+    return countPai.length === 3 || this.group_shou_pai.selfPeng.includes(pai_name);
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {

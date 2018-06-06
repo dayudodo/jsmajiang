@@ -96,10 +96,10 @@ class Player {
         }
         return output;
     }
-    /**是否是暗四归，在group手牌中存在3张相同的牌 */
-    isAnSiGui(pai_name) {
+    /**是否是手摸四张，用于判断暗四归，暗杠，在group手牌中存在3张相同的牌 */
+    isShouMoSi(pai_name) {
         let countPai = this.group_shou_pai.shouPai.filter(pai => pai == pai_name);
-        return countPai.length === 3;
+        return countPai.length === 3 || this.group_shou_pai.selfPeng.includes(pai_name);
     }
     /**能否胡pai_name */
     canHu(pai_name) {

@@ -229,7 +229,7 @@ test("能杠t2, 使用手牌数组", function(t) {
   let str = getArr("zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa");
   t.is(MajiangAlgo._canGang(str, "t2"), true);
 });
-test("group不能扛", function(t) {
+test("flat能扛", function(t) {
   let group_shou_pai = {
     // anGang: ["zh"],
     anGang: [],
@@ -238,10 +238,11 @@ test("group不能扛", function(t) {
     selfPeng: [],
     selfPengCount: 1,
     peng: ["b1"],
-    shouPai: getArr("b1 b2 b3 b5 b6 b7 t1 t2 t3 t4")
+    shouPai: getArr("b2 b3 b4 b5 b6 b7 t1 t2 t3 t4")
   };
   t.is(MajiangAlgo._canGang(MajiangAlgo.flat_shou_pai(group_shou_pai), "b1"), true);
-});
+})
+
 test("group peng能扛", function(t) {
   let group_shou_pai = {
     // anGang: ["zh"],
@@ -257,7 +258,7 @@ test("group peng能扛", function(t) {
   //没有亮牌的时候，如果你是碰的牌，那么别人打的牌是不能杠的！
   t.is(MajiangAlgo.canGang(group_shou_pai, "b1", false), false);
 });
-test("group selfPeng能扛", function(t) {
+test("group 没有亮，selfPeng能扛", function(t) {
   let group_shou_pai = {
     // anGang: ["zh"],
     anGang: [],
@@ -270,7 +271,7 @@ test("group selfPeng能扛", function(t) {
   };
   t.is(MajiangAlgo.canGang(group_shou_pai, "b1", false), true);
 });
-test("group 亮牌不能扛", function(t) {
+test("group 杠牌在亮牌中，亮牌后不能扛", function(t) {
   let group_shou_pai = {
     // anGang: ["zh"],
     anGang: [],
@@ -295,5 +296,18 @@ test("group 亮牌不能碰,但是可以杠", function(t) {
     peng: ["b1"],
     shouPai: getArr("b2 b3 b4 t1 t1 t2 t2 t3 t3 fa")
   };
-  t.is(MajiangAlgo.canGang(group_shou_pai, "b1", true, "b1"), true);
+  t.is(MajiangAlgo.canGang(group_shou_pai, "b1", true, true), true);
+});
+test("group 碰之后，别人打的牌不能扛", function(t) {
+  let group_shou_pai = {
+    // anGang: ["zh"],
+    anGang: [],
+    anGangCount: 0,
+    mingGang: [],
+    selfPeng: [],
+    selfPengCount: 1,
+    peng: ["b1"],
+    shouPai: getArr("b2 b3 b4 t1 t1 t2 t2 t3 t3 fa")
+  };
+  t.is(MajiangAlgo.canGang(group_shou_pai, "b1", true), false);
 });

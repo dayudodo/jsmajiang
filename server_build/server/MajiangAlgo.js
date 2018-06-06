@@ -835,8 +835,9 @@ class MajiangAlgo {
     }
     /**胡牌文字描述 */
     static HuPaiNamesFrom(hupaicodeArr) {
-        return hupaicodeArr.map(item => {
-            return config.HuPaiSheet[item].name;
+        return hupaicodeArr.map(code => {
+            // return config.HuPaiSheet[item].name;
+            return config.HuPaiSheet.find(item => item.type == code).name;
         });
     }
     /**放炮文字描述 */
@@ -879,25 +880,27 @@ class MajiangAlgo {
         return paiThreeTimesReg.test(newstrArr.replace(/\s+/g, ""));
     }
     /**能杠吗？ */
-    static _canGang(shouPai, pai) {
-        let result = getArr(shouPai);
-        let newstr = result
-            .concat(pai)
-            .sort()
-            .join("");
-        let paiFourTimesReg = new RegExp(`(${pai})\\1\\1\\1`);
-        return paiFourTimesReg.test(newstr.replace(/\s+/g, ""));
+    static _canGang(shouPai, pai_name) {
+        let result = shouPai.concat(pai_name);
+        let countPai = result.filter(pai => pai == pai_name);
+        return countPai.length === 4;
     }
-    /**group牌能杠吗？ */
-    static canGang(group_shoupai, pai, isLiang, mo_pai) {
+    /**
+     * group牌能杠吗？
+     * @param group_shoupai
+     * @param pai
+     * @param isLiang 是否亮了
+     * @param selfMo 是否是自己摸的牌
+     */
+    static canGang(group_shoupai, pai, isLiang, selfMo = false) {
         //如果直接用flat_shou_pai来进行判断，其实还是有问题的，比如玩家碰了b1, 但是手牌里面还有1个是用于另一手牌！
         // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
         if (group_shoupai.selfPeng.includes(pai)) {
             return true;
         }
         if (isLiang) {
-            //如果亮牌了那么碰里面包括摸牌，说明是个擦炮！
-            if (group_shoupai.peng.includes(mo_pai)) {
+            //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
+            if (group_shoupai.peng.includes(pai) && selfMo) {
                 return true;
                 //没有亮牌的时候，如果你是碰的牌，那么别人打的牌是不能杠的！
             }
@@ -906,6 +909,7 @@ class MajiangAlgo {
             }
         }
         else {
+            //看手牌里面是否有三张牌！
             return MajiangAlgo._canGang(group_shoupai.shouPai, pai);
         }
     }

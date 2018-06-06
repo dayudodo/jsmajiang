@@ -60,7 +60,7 @@ export const IS_LIANG = 2;
 export const has_top = false
 
 /**基本分数，貌似都是上百的算 */
-export const base_score = 100
+export var base_score = 100
 
 
 
@@ -68,12 +68,17 @@ export const FangGang = 0
 export const FangGangShangGang = 1
 export const FangPihuPao = 2
 export const FangDaHuPao = 3
+export const FangAnGang = 4
+export const FangCaPao = 5
 
+/**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
 export const FangSheet = [
-  { type: "FangGang", name:"放杠", score: 1},
-  { type: "FangGangShangGang", name:"放杠上杠", score: 2},
-  { type: "FangPihuPao", name:"放屁胡炮", score: 1},
-  { type: "FangDaHuPao", name:"放大胡炮", score: 1},
+  { type: "FangGang", name:"放杠", multiple: 1},
+  { type: "FangGangShangGang", name:"放杠上杠", multiple: 2},
+  { type: "FangPihuPao", name:"放屁胡炮", multiple: 1},
+  { type: "FangDaHuPao", name:"放大胡炮", multiple: 1},
+  { type: "FangAnGang", name:"放暗杠", multiple: 1},
+  { type: "FangCaPao", name:"放擦炮", multiple: 1},
 ]
 
 // var output = "";
@@ -111,8 +116,11 @@ export const HuisMingSiGui = 11;
 export const HuisAnSiGui = 12;
 /**亮倒 */
 export const HuisLiangDao = 13;
+/**普通杠 */
 export const HuisGang = 14;
-export const HuisChaPao = 15;
+/**擦炮 */
+export const HuisCaPao = 15;
+/**暗杠 */
 export const HuisAnGang = 16;
 
 //end自动生成代码
@@ -136,7 +144,9 @@ export const HuPaiSheet = [
   { type: HuisLiangDao, name: "亮倒", multiple: 2 },
   //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
   //放在胡里面是因为也算是一种胡，收钱了么
+  //普通杠放杠者出钱
   { type: HuisGang, name: "扛", multiple: 2 },
-  { type: HuisChaPao, name: "擦炮", multiple: 1 },
+  //下面两种其它两家给钱！
+  { type: HuisCaPao, name: "擦炮", multiple: 1 },
   { type: HuisAnGang, name: "暗杠", multiple: 1 },
 ];

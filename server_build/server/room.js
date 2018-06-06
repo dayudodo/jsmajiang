@@ -305,6 +305,13 @@ class Room {
                 pai: gangPai,
                 self: true
             });
+            //二种情况，peng之后扛，或者是自己手摸4张！
+            if (gangPlayer.isShouMoSi(gangPlayer.mo_pai)) {
+                gangPlayer.hupai_data.all_hupai_typesCode.push(config.HuisAnGang);
+            }
+            else {
+                gangPlayer.hupai_data.all_hupai_typesCode.push(config.HuisCaPao);
+            }
         }
         else {
             //扛别人的牌
@@ -319,6 +326,7 @@ class Room {
                     to: gangPlayer
                 }
             });
+            gangPlayer.hupai_data.all_hupai_typesCode.push(config.HuisGang);
             //纪录玩家放了一杠，扣钱！还得判断下打牌玩家打牌之前是否杠牌了, 杠家其实是前三步，第一步杠，第二步摸，第三步才是打牌！
             let gangShangGang = false;
             let prev3_operation = this.front_operationOf(this.daPai_player, 3);
