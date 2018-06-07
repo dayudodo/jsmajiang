@@ -27,7 +27,7 @@ class Player {
         /**todo: 是否是胡玩家，确保只有一个 */
         this.is_hu = false;
         /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
-        this.fangpai_data = [
+        this.lose_data = [
         // {type: config.FangGang, pai:''},
         // {type: config.FangGangShangGang, pai:''},
         // {type: config.FangPihuPao, pai:''},
@@ -55,13 +55,59 @@ class Player {
         this.username = username;
         this.user_id = user_id;
     }
-    /**玩家胜负信息 */
+    /**保存杠上杠，并通知放杠家伙! */
+    saveGangShangGang(fangGangPlayer, pai_name) {
+        this.win_data.all_hupai_typesCode.push(config.huisGangShangGang);
+        fangGangPlayer.lose_data.push({
+            type: config.LoseGangShangGang,
+            pai: pai_name
+        });
+    }
+    /**保存普通杠，并通知放杠者 */
+    saveGang(fangGangPlayer, pai_name) {
+        this.win_data.all_hupai_typesCode.push(config.HuisGang);
+        fangGangPlayer.lose_data.push({
+            type: config.LoseGang,
+            pai: pai_name
+        });
+    }
+    /**保存擦炮的数据，并通知其它的玩家你得掏钱了! */
+    saveCaPao(other_players, pai_name) {
+        this.win_data.all_hupai_typesCode.push(config.HuisCaPao);
+        other_players.forEach(person => {
+            person.lose_data.push({
+                type: config.LoseCaPao,
+                pai: pai_name
+            });
+        });
+    }
+    /**保存暗杠的数据，改变其它两个玩家的扣分! */
+    saveAnGang(other_players, pai_name) {
+        this.win_data.all_hupai_typesCode.push(config.HuisAnGang);
+        other_players.forEach(person => {
+            person.lose_data.push({
+                type: config.LoseAnGang,
+                pai: pai_name
+            });
+        });
+    }
+    /**到底要出哪些杠钱！ */
+    get lose_names() {
+        return MajiangAlgo_1.MajiangAlgo.LoseNamesFrom(this.lose_data);
+    }
+    /**胡了哪些项目 */
+    get hupai_names() {
+        return MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(this.win_data.all_hupai_typesCode);
+    }
+    /**玩家胜负结果信息 */
     get result_info() {
+        //todo: 返回玩家的胜负两种消息！即使没胡，还是可能会有收入的！
+        //或者只显示你赢了多少钱，哪怕是个单杠！
         if (this.is_hu) {
-            return MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(this.hupai_data.all_hupai_typesCode).join(" ");
+            return this.hupai_names.join(" ");
         }
         else {
-            return MajiangAlgo_1.MajiangAlgo.FangPaoNamesFrom(this.fangpai_data.map(f => f.type)).join(" ");
+            return this.lose_names.join(" ");
         }
     }
     /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
@@ -83,7 +129,7 @@ class Player {
     }
     /**是否放炮 */
     get is_fangpao() {
-        return this.fangpai_data.some(item => item.type == config.FangDaHuPao || item.type == config.FangPihuPao);
+        return this.lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
     }
     /**返回group手牌中出现3次的牌！ */
     PaiArr3A() {
@@ -103,7 +149,7 @@ class Player {
     }
     /**能否胡pai_name */
     canHu(pai_name) {
-        if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
+        if (this.win_data.all_hupai_zhang.includes(pai_name)) {
             return true;
         }
         else {
@@ -112,7 +158,7 @@ class Player {
     }
     /**是否是大胡 */
     isDaHu(pai_name) {
-        return MajiangAlgo_1.MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
+        return MajiangAlgo_1.MajiangAlgo.isDaHu(this.win_data.hupai_dict[pai_name]);
     }
     /** 玩家手牌数组，从group_shou_pai中生成 */
     get flat_shou_pai() {
@@ -147,7 +193,7 @@ class Player {
     /**能亮否？能胡就能亮？ */
     canLiang() {
         // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-        return this.hupai_data.all_hupai_zhang.length > 0;
+        return this.win_data.all_hupai_zhang.length > 0;
     }
     /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
     canPeng(pai) {
@@ -155,8 +201,9 @@ class Player {
     }
     /**能杠吗？分碰了之后杠还是本来就有三张牌！最简单的自然是使用flat_shou_pai */
     canGang(pai) {
+        let selfMo = this.mo_pai != null;
         //能否杠还能分你是自摸碰还是求人碰，selfPeng是可以随便杠的，但是求人碰则得自己摸牌才能杠！
-        return MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, this.mo_pai);
+        return MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, selfMo);
     }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);
@@ -217,7 +264,7 @@ class Player {
     calculateHu() {
         let shoupai_changed = true;
         if (shoupai_changed) {
-            this.hupai_data = MajiangAlgo_1.MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);
+            this.win_data = MajiangAlgo_1.MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);
         }
     }
 }

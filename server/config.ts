@@ -1,7 +1,6 @@
 import * as util from "util";
 
 declare global {
-
   interface Array<T> {
     /** 复制一个数组*/
     repeat(o: number): T[];
@@ -16,13 +15,10 @@ declare global {
   type Pai = string;
   /**事件类型，以后可能改为数值 */
   type EVENT_TYPE = string;
-
-
 }
 
-
 if (!Array.prototype.repeat) {
-  Array.prototype.repeat = function (times) {
+  Array.prototype.repeat = function(times) {
     var result = [];
     for (var i = 0; i < times; i++) {
       this.map(item => {
@@ -34,7 +30,7 @@ if (!Array.prototype.repeat) {
 }
 
 var WebSocket = require("ws");
-WebSocket.prototype.sendmsg = function (msg) {
+WebSocket.prototype.sendmsg = function(msg) {
   this.send(JSON.stringify(msg));
 };
 
@@ -57,29 +53,27 @@ export const IS_TING = 1;
 export const IS_LIANG = 2;
 
 /**是否封顶，貌似满上其实就是封顶，不算多算了，比如七对自摸是满的，8倍？ */
-export const has_top = false
+export const has_top = false;
 
 /**基本分数，貌似都是上百的算 */
-export var base_score = 100
+export var base_score = 100;
 
-
-
-export const FangGang = 0
-export const FangGangShangGang = 1
-export const FangPihuPao = 2
-export const FangDaHuPao = 3
-export const FangAnGang = 4
-export const FangCaPao = 5
+export const LoseGang = 0;
+export const LoseGangShangGang = 1;
+export const LosePihuPao = 2;
+export const LoseDaHuPao = 3;
+export const LoseAnGang = 4;
+export const LoseCaPao = 5;
 
 /**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
-export const FangSheet = [
-  { type: "FangGang", name:"放杠", multiple: 1},
-  { type: "FangGangShangGang", name:"放杠上杠", multiple: 2},
-  { type: "FangPihuPao", name:"放屁胡炮", multiple: 1},
-  { type: "FangDaHuPao", name:"放大胡炮", multiple: 1},
-  { type: "FangAnGang", name:"放暗杠", multiple: 1},
-  { type: "FangCaPao", name:"放擦炮", multiple: 1},
-]
+export const LoseSheet = [
+  { type: LoseGang, name: "放杠", multiple: 1 },
+  { type: LoseGangShangGang, name: "放杠上杠", multiple: 2 },
+  { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
+  { type: LoseDaHuPao, name: "放大胡炮", multiple: 1 },
+  { type: LoseAnGang, name: "放暗杠", multiple: 1 },
+  { type: LoseCaPao, name: "放擦炮", multiple: 1 }
+];
 
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {
@@ -122,6 +116,7 @@ export const HuisGang = 14;
 export const HuisCaPao = 15;
 /**暗杠 */
 export const HuisAnGang = 16;
+export const huisGangShangGang = 17;
 
 //end自动生成代码
 
@@ -144,9 +139,19 @@ export const HuPaiSheet = [
   { type: HuisLiangDao, name: "亮倒", multiple: 2 },
   //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
   //放在胡里面是因为也算是一种胡，收钱了么
-  //普通杠放杠者出钱
+  //普通杠放杠者出钱，如同自摸一样，杠其实也是另外算的，在这儿只是起到一个名称的作用！
+  { type: HuisGang, name: "扛", multiple: 0 },
+  //下面两种其它两家给钱！
+  { type: HuisCaPao, name: "擦炮", multiple: 0 },
+  { type: HuisAnGang, name: "暗杠", multiple: 0 },
+  { type: huisGangShangGang, name: "杠上杠", multiple: 0 },
+];
+
+//在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
+export const GangSheet = [
   { type: HuisGang, name: "扛", multiple: 2 },
   //下面两种其它两家给钱！
   { type: HuisCaPao, name: "擦炮", multiple: 1 },
-  { type: HuisAnGang, name: "暗杠", multiple: 1 },
+  { type: HuisAnGang, name: "暗杠", multiple: 2 },
+  { type: huisGangShangGang, name: "杠上杠", multiple: 2 },
 ];

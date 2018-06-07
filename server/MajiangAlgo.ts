@@ -904,16 +904,17 @@ export class MajiangAlgo {
     return _output;
   }
   /**胡牌文字描述 */
-  static HuPaiNamesFrom(hupaicodeArr: Array<number>): Array<string> {
+  static HuPaiNamesFrom(hupaicodeArr: number[]): string[] {
     return hupaicodeArr.map(code => {
       // return config.HuPaiSheet[item].name;
-      return config.HuPaiSheet.find(item=>item.type == code).name
+      return config.HuPaiSheet.find(item => item.type == code).name;
     });
   }
   /**放炮文字描述 */
-  static FangPaoNamesFrom(fangPaoArr: number[]) {
-    return fangPaoArr.map(item => {
-      return config.FangSheet[item].name;
+  static LoseNamesFrom(loseData: any[]): string[] {
+    let loseCodesArr = loseData.map(item => item.type);
+    return loseCodesArr.map(code => {
+      return config.LoseSheet.find(item => item.type == code).name;
     });
   }
   /**通过胡的类型码数组来判断是否是大胡*/
@@ -954,14 +955,14 @@ export class MajiangAlgo {
   }
   /**能杠吗？ */
   static _canGang(shouPai: Array<Pai>, pai_name: Pai) {
-    let result = shouPai.concat(pai_name)
-    let countPai = result.filter(pai => pai == pai_name)
-    return countPai.length === 4
+    let result = shouPai.concat(pai_name);
+    let countPai = result.filter(pai => pai == pai_name);
+    return countPai.length === 4;
   }
   /**
    * group牌能杠吗？
-   * @param group_shoupai 
-   * @param pai 
+   * @param group_shoupai
+   * @param pai
    * @param isLiang 是否亮了
    * @param selfMo 是否是自己摸的牌
    */
