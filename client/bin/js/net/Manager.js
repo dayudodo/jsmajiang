@@ -123,8 +123,9 @@ var mj;
             };
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
-                var canHidePais = server_message.canHidePais;
-                this.opt = new OptDialogScene(canHidePais);
+                var canSelectPais = server_message.canSelectPais;
+                var canGangPais = server_message.canGangPais;
+                this.opt = new OptDialogScene(canSelectPais, canGangPais);
                 this.opt.showPlayerSelect({
                     isShowHu: isShowHu,
                     isShowLiang: isShowLiang,

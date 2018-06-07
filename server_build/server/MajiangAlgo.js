@@ -889,19 +889,23 @@ class MajiangAlgo {
     /**
      * group牌能杠吗？
      * @param group_shoupai
-     * @param pai
+     * @param pai_name
      * @param isLiang 是否亮了
      * @param selfMo 是否是自己摸的牌
      */
-    static canGang(group_shoupai, pai, isLiang, selfMo = false) {
+    static canGang(group_shoupai, pai_name, isLiang, selfMo = false) {
         //如果直接用flat_shou_pai来进行判断，其实还是有问题的，比如玩家碰了b1, 但是手牌里面还有1个是用于另一手牌！
         // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
-        if (group_shoupai.selfPeng.includes(pai)) {
+        //todo: 先碰再杠也可以，前端还要有所变化，让玩家选择要杠哪个牌！因为可能会有多个！
+        //peng, selfPeng其实都可以先拿出来，等牌够了再去杠，不过很多有人会这么做吧。
+        let prepare_gang = group_shoupai.peng.some(pai => group_shoupai.shouPai.includes(pai)) ||
+            group_shoupai.selfPeng.some(pai => group_shoupai.shouPai.includes(pai));
+        if (group_shoupai.selfPeng.includes(pai_name) || prepare_gang) {
             return true;
         }
         if (isLiang) {
             //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
-            if (group_shoupai.peng.includes(pai) && selfMo) {
+            if (group_shoupai.peng.includes(pai_name) && selfMo) {
                 return true;
                 //没有亮牌的时候，如果你是碰的牌，那么别人打的牌是不能杠的！
             }
@@ -911,7 +915,7 @@ class MajiangAlgo {
         }
         else {
             //看手牌里面是否有三张牌！
-            return MajiangAlgo._canGang(group_shoupai.shouPai, pai);
+            return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
         }
     }
 }

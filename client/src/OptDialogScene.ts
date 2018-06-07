@@ -6,6 +6,7 @@ module mj.scene {
     import Utils = mj.utils.LayaUtils
     import PaiConverter = mj.utils.PaiConverter;
     import LiangSelect = mj.scene.LianSelectScene;
+    import GangSelect = mj.scene.GangSelectScene;
 
 
     export class OptDialogScene extends ui.test.OptDialogUI {
@@ -13,13 +14,17 @@ module mj.scene {
         private static downBtnGlowFilters = [new GlowFilter("#ebb531", 14, 5, 5)];
         public socket: Laya.Socket;
         /**可以隐藏的牌 */
-        public canHidePais: Array<Pai>
+        public canSelectPais: Array<Pai>
+        /**可以杠的牌 */
+        public canGangPais: Array<Pai>
         public liangSelectOpt: LiangSelect
+        public gangSelectOpt: GangSelect
 
-        constructor(canHidePais) {
+        constructor(canSelectPais, canGangPais) {
             super()
             this.socket = Laya.client.socket
-            this.canHidePais = canHidePais
+            this.canSelectPais = canSelectPais
+            this.canGangPais= canGangPais
         }
 
 
@@ -29,7 +34,7 @@ module mj.scene {
                 Laya.god_player.is_liang = true
                 //弹出选择3A牌的对话框，设定为全局是为了方便调试！
                 //另外，没有需要隐藏的牌就不用再去显示了
-                this.liangSelectOpt = new LiangSelect(this.canHidePais)
+                this.liangSelectOpt = new LiangSelect(this.canSelectPais)
                 this.liangSelectOpt.decidePopup()
                 //显示完毕把自己干掉
                 this.close()
@@ -46,12 +51,17 @@ module mj.scene {
             })
 
             this.initButton(this.gang, isShowGang, () => {
-                console.log(`用户选择杠`);
-                this.socket.sendmsg({
-                    type: g_events.client_confirm_mingGang
-                })
+                console.log(`god_player我选择杠`);
+                //弹出杠的选择框，如果只有一个，也是不需要弹出的！
+                this.gangSelectOpt = new GangSelect(this.canGangPais)
+                this.gangSelectOpt.decidePopup()
+                //显示完毕把自己干掉
                 this.close()
                 this.removeSelf()
+                // this.socket.sendmsg({
+                //     type: g_events.client_confirm_mingGang
+                // })
+
             })
             this.initButton(this.peng, isShowPeng, () => {
                 console.log(`用户选择碰`);

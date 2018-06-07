@@ -2,20 +2,20 @@ module mj.scene {
     import Sprite = laya.display.Sprite;
     export class LianSelectScene extends ui.test.LiangSelectUI {
         /**可以隐藏的牌 */
-        public canHidePais: Array<Pai>
+        public canSelectPais: Array<Pai>
         /**点击数组，用于判断哪些已经选中 */
         public clickedPais = {}
         /**玩家选择了哪些牌隐藏 */
         public selectedPais: Array<Pai>
 
-        constructor(canHidePais) {
+        constructor(canSelectPais) {
             super()
-            this.canHidePais = canHidePais
+            this.canSelectPais = canSelectPais
 
         }
 
         public decidePopup() {
-            if (this.canHidePais && this.canHidePais.length > 0) {
+            if (this.canSelectPais && this.canSelectPais.length > 0) {
                 this.show_liangSelect()
                 this.popup()
                 this.okBtn.on(Laya.Event.CLICK, this, () => {
@@ -62,7 +62,7 @@ module mj.scene {
             //取消所有的按钮事件！
             this.cancelAllClonePaiClicked()
             //能够隐藏的牌由服务器传递过来参数canHidePais
-            this.canHidePais.forEach(pai => {
+            this.canSelectPais.forEach(pai => {
                 //新建sprite，将三个添加进来。
                 let newSelfPengSprite = new Sprite()
                 //找到

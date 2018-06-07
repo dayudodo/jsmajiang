@@ -21,6 +21,7 @@ module mj.scene {
 		}
 		public show_all(players: any) {
 			players.forEach(p => {
+				p.shouPai_start_index = 0
 				this.show_resultOf(p)
 			});
 		}

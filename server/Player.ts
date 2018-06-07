@@ -20,14 +20,14 @@ declare global {
     shouPaiCount?: number;
   }
   /**玩家状态，做为玩家可以操作的唯一证据！ */
-  enum playerStatus {
-    can_dapai,
-    can_peng,
-    can_gang,
-    can_ting,
-    can_liang,
-    can_hu
-  }
+  // enum playerStatus {
+  //   can_dapai,
+  //   can_peng,
+  //   can_gang,
+  //   can_ting,
+  //   can_liang,
+  //   can_hu
+  // }
 }
 
 export class Player {
@@ -97,15 +97,15 @@ export class Player {
   /**玩家手牌组，包括有几个杠、几个碰 */
   public group_shou_pai: GroupConstructor;
   /**所有赢的都在这儿了 */
-  public win_data: hupaiConstructor;
+  public hupai_data: hupaiConstructor;
   /**最后胡的是哪张牌 */
   public hupai_zhang: Pai = null;
   /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
-  public can_status: playerStatus;
+  // public can_status: playerStatus;
   /**能打牌了 */
   public can_dapai: boolean = false;
-
-  public hu_names: string[] = [];
+  /**临时的赢代码，比如杠 */
+  public temp_win_codes: number[] = [];
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
@@ -116,7 +116,7 @@ export class Player {
   }
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {
-    this.win_data.all_hupai_typesCode.push(config.huisGangShangGang);
+    this.temp_win_codes.push(config.huisGangShangGang);
     fangGangPlayer.lose_data.push({
       type: config.LoseGangShangGang,
       pai: pai_name
@@ -124,7 +124,7 @@ export class Player {
   }
   /**保存普通杠，并通知放杠者 */
   saveGang(fangGangPlayer: Player, pai_name: Pai) {
-    this.win_data.all_hupai_typesCode.push(config.HuisGang);
+    this.temp_win_codes.push(config.HuisGang);
     fangGangPlayer.lose_data.push({
       type: config.LoseGang,
       pai: pai_name
@@ -132,7 +132,7 @@ export class Player {
   }
   /**保存擦炮的数据，并通知其它的玩家你得掏钱了! */
   saveCaPao(other_players: Player[], pai_name: Pai) {
-    this.win_data.all_hupai_typesCode.push(config.HuisCaPao);
+    this.temp_win_codes.push(config.HuisCaPao);
     other_players.forEach(person => {
       person.lose_data.push({
         type: config.LoseCaPao,
@@ -143,7 +143,7 @@ export class Player {
 
   /**保存暗杠的数据，改变其它两个玩家的扣分! */
   saveAnGang(other_players: Player[], pai_name: Pai) {
-    this.win_data.all_hupai_typesCode.push(config.HuisAnGang);
+    this.temp_win_codes.push(config.HuisAnGang);
     other_players.forEach(person => {
       person.lose_data.push({
         type: config.LoseAnGang,
@@ -152,20 +152,33 @@ export class Player {
     });
   }
 
-  /**到底要出哪些杠钱！ */
-  get lose_names():string[] {
+  /**到底要出哪些杠钱！包括屁胡炮，大胡炮 */
+  get lose_names(): string[] {
     return MajiangAlgo.LoseNamesFrom(this.lose_data);
   }
+  /**哪些项目 */
+  get temp_win_names(): string[] {
+    return MajiangAlgo.HuPaiNamesFrom(this.temp_win_codes);
+  }
   /**胡了哪些项目 */
-  get hupai_names():string[] {
-    return MajiangAlgo.HuPaiNamesFrom(this.win_data.all_hupai_typesCode);
+  get all_win_names(): string[] {
+    return MajiangAlgo.HuPaiNamesFrom(this.all_win_codes);
+  }
+  /**返回所有赢代码，如果没胡，只返回杠的 */
+  get all_win_codes(): number[] {
+    if (this.is_hu) {
+      //todo: 胡之后，如何得到所有的胜类型代码？
+      return this.hupai_data.hupai_dict[this.hupai_zhang].concat(this.temp_win_codes);
+    } else {
+      return this.temp_win_codes;
+    }
   }
   /**玩家胜负结果信息 */
   get result_info(): string {
     //todo: 返回玩家的胜负两种消息！即使没胡，还是可能会有收入的！
     //或者只显示你赢了多少钱，哪怕是个单杠！
     if (this.is_hu) {
-      return this.hupai_names.join(" ");
+      return this.all_win_names.join(" ");
     } else {
       return this.lose_names.join(" ");
     }
@@ -191,6 +204,25 @@ export class Player {
   get is_fangpao(): boolean {
     return this.lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
   }
+  /**能够杠的牌 */
+  canGangPais() {
+    let output = [];
+    output = output.concat(this.group_shou_pai.peng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
+    output = output.concat(this.group_shou_pai.selfPeng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
+    output = output.concat(this.PaiArr4A())
+    return output
+  }
+  /**返回group手牌中出现4次的牌！ */
+  PaiArr4A() {
+    let result = _.countBy(this.group_shou_pai.shouPai);
+    let output = [];
+    for (const key in result) {
+      if (result[key] == 4) {
+        output.push(key);
+      }
+    }
+    return output;
+  }
   /**返回group手牌中出现3次的牌！ */
   PaiArr3A() {
     let result = _.countBy(this.group_shou_pai.shouPai);
@@ -209,7 +241,7 @@ export class Player {
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
-    if (this.win_data.all_hupai_zhang.includes(pai_name)) {
+    if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
       return true;
     } else {
       return false;
@@ -218,7 +250,7 @@ export class Player {
 
   /**是否是大胡 */
   isDaHu(pai_name: Pai): boolean {
-    return MajiangAlgo.isDaHu(this.win_data.hupai_dict[pai_name]);
+    return MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
   }
 
   /** 玩家手牌数组，从group_shou_pai中生成 */
@@ -254,7 +286,7 @@ export class Player {
   /**能亮否？能胡就能亮？ */
   canLiang(): boolean {
     // return MajiangAlgo.isDaHu(this.hupai_data.all_hupai_typesCode)
-    return this.win_data.all_hupai_zhang.length > 0;
+    return this.hupai_data.all_hupai_zhang.length > 0;
   }
   /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
   canPeng(pai: Pai): boolean {
@@ -327,7 +359,7 @@ export class Player {
   calculateHu() {
     let shoupai_changed = true;
     if (shoupai_changed) {
-      this.win_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);
+      this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);
     }
   }
 }

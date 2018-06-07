@@ -1,0 +1,37 @@
+var g_events;
+(function (g_events) {
+    g_events.client_testlogin = "client_testlogin";
+    g_events.client_create_room = "client_create_room";
+    g_events.client_join_room = "client_join_room";
+    g_events.client_player_ready = "client_player_ready";
+    g_events.client_unknown = "client_unknown";
+    g_events.client_da_pai = "client_da_pai";
+    g_events.client_confirm_hu = "client_confirm_hu";
+    g_events.client_confirm_ting = "client_confirm_ting";
+    g_events.client_confirm_liang = "client_confirm_liang";
+    g_events.client_confirm_mingGang = "client_confirm_mingGang";
+    g_events.client_confirm_peng = "client_confirm_peng";
+    g_events.client_confirm_guo = "client_confirm_guo";
+    g_events.server_login = "server_login";
+    g_events.server_welcome = "server_welcome";
+    g_events.server_no_room = "server_no_room";
+    g_events.server_room_full = "server_room_full";
+    g_events.server_no_such_room = "server_no_such_room";
+    // export const server_create_room_ok = "server_create_room_ok";
+    g_events.server_player_enter_room = "server_player_enter_room";
+    g_events.server_other_player_enter_room = "server_other_player_enter_room";
+    g_events.server_receive_ready = "server_receive_ready";
+    g_events.server_game_start = "server_game_start";
+    g_events.server_table_fa_pai = "server_table_fa_pai";
+    g_events.server_table_fa_pai_other = "server_table_fa_pai_other";
+    g_events.server_dapai = "server_dapai";
+    g_events.server_dapai_other = "server_dapai_other";
+    g_events.server_peng = "server_peng";
+    g_events.server_mingGang = "server_mingGang";
+    g_events.server_liang = "server_liang";
+    g_events.server_gameover = "server_gameover";
+    g_events.server_winner = "server_winner";
+    g_events.server_can_select = "server_can_select";
+    g_events.server_can_dapai = "server_can_dapai";
+})(g_events || (g_events = {}));
+//# sourceMappingURL=g_events.js.map

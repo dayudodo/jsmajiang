@@ -18,7 +18,7 @@ export class ScoreManager {
     let all_hu_players = players.filter(p => p.hupai_zhang != null);
     all_hu_players.forEach(hu_player => {
       let score = 0; //本局总分
-      let all_typesCode = hu_player.win_data.all_hupai_typesCode;
+      let all_typesCode = hu_player.hupai_data.all_hupai_typesCode;
       //如果自摸，其它两家出钱
       all_typesCode.forEach(code => {
         score += this.scoreOf(code);

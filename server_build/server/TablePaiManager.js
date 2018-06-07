@@ -88,6 +88,21 @@ class TablePaiManager {
         newPais = newPais.concat(allpais);
         return newPais;
     }
+    /**开局双杠，测试杠选择 */
+    static player1_2gang() {
+        var allpais = TablePaiManager.fapai_random();
+        var player1 = MajiangAlgo_1.getArr("b1 b1 b1 b1 b2 b2 b2 b2 b7 b8 b8 t1 t2 t9 fa");
+        //发牌需要有个顺序，不能使用getArr
+        // var fa_pais = "t2 di".split(" ")
+        var newPais = [];
+        newPais = newPais.concat(player1);
+        // newPais = newPais.concat(fa_pais);
+        player1.forEach((pai, index) => {
+            allpais.remove(pai);
+        });
+        newPais = newPais.concat(allpais);
+        return newPais;
+    }
     static playe3_gangshangGang() {
         var allpais = TablePaiManager.fapai_random();
         var player1 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b4 b5 b6 b7 b8 b8 t9 fa");

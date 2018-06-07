@@ -147,8 +147,9 @@ namespace mj.net {
 
     public server_can_select(server_message) {
       let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt;
-      let canHidePais: Array<Pai> = server_message.canHidePais
-      this.opt = new OptDialogScene(canHidePais);
+      let canSelectPais: Array<Pai> = server_message.canSelectPais
+      let canGangPais: Array<Pai> = server_message.canGangPais
+      this.opt = new OptDialogScene(canSelectPais, canGangPais);
       this.opt.showPlayerSelect({
         isShowHu: isShowHu,
         isShowLiang: isShowLiang,

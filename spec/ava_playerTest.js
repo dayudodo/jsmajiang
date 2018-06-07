@@ -15,6 +15,19 @@ test.beforeEach(t => {
   });
 });
 
+test("能够杠的牌有三张", function(t) {
+  player = new Player({
+    group_shou_pai: {
+      anGang: [],
+      mingGang: [],
+      peng: ["b1"],
+      selfPeng:["b2"],
+      shouPai: ["b1", "b2", "t7", "t7", "t7","t7","fa"]
+    }
+  });
+  t.deepEqual( player.canGangPais() , ["b1","b2","t7"]  );
+
+});
 test("result_shou_pai在deepClone之后与group不相同", function(t) {
   player = new Player({
     group_shou_pai: {
@@ -122,6 +135,15 @@ test("暗杠之后牌正常", function(t) {
 });
 
 test("打牌之后正常算出胡牌", function(t) {
+  var player = new Player({
+    group_shou_pai: {
+      anGang: ["b1"],
+      mingGang: ["b2"],
+      peng: ["t1"],
+      selfPeng:[],
+      shouPai: ["zh", "zh", "t7", "t8", "t9"]
+    }
+  });
   player.da_pai("t9");
   t.deepEqual(player.hupai_data.all_hupai_zhang, ["t6", "t9"]);
 });

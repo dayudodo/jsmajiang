@@ -309,5 +309,31 @@ test("group 碰之后，别人打的牌不能扛", function(t) {
     peng: ["b1"],
     shouPai: getArr("b2 b3 b4 t1 t1 t2 t2 t3 t3 fa")
   };
-  t.is(MajiangAlgo.canGang(group_shou_pai, "b1", true), false);
+  t.is(MajiangAlgo.canGang(group_shou_pai, "b1", true, false), false);
+});
+test("group 能杠，但是先碰，拿牌可以杠peng", function(t) {
+  let group_shou_pai = {
+    // anGang: ["zh"],
+    anGang: [],
+    anGangCount: 0,
+    mingGang: [],
+    selfPeng: [],
+    selfPengCount: 1,
+    peng: ["b1"],
+    shouPai: getArr("b1 b3 b4 t1 t1 t2 t2 t3 t3 fa")
+  };
+  t.is(MajiangAlgo.canGang(group_shou_pai, "b2", true), true);
+});
+test("group 能杠，但是先碰，拿牌可以杠selfPeng", function(t) {
+  let group_shou_pai = {
+    // anGang: ["zh"],
+    anGang: [],
+    anGangCount: 0,
+    mingGang: [],
+    selfPeng: ["b1"],
+    // selfPengCount: 1,
+    peng: [],
+    shouPai: getArr("b1 b3 b4 t1 t1 t2 t2 t3 t3 fa")
+  };
+  t.is(MajiangAlgo.canGang(group_shou_pai, "b2", true), true);
 });

@@ -15,12 +15,14 @@ var mj;
         var GlowFilter = laya.filters.GlowFilter;
         var Event = Laya.Event;
         var LiangSelect = mj.scene.LianSelectScene;
+        var GangSelect = mj.scene.GangSelectScene;
         var OptDialogScene = /** @class */ (function (_super) {
             __extends(OptDialogScene, _super);
-            function OptDialogScene(canHidePais) {
+            function OptDialogScene(canSelectPais, canGangPais) {
                 var _this = _super.call(this) || this;
                 _this.socket = Laya.client.socket;
-                _this.canHidePais = canHidePais;
+                _this.canSelectPais = canSelectPais;
+                _this.canGangPais = canGangPais;
                 return _this;
             }
             OptDialogScene.prototype.showPlayerSelect = function (_a) {
@@ -31,7 +33,7 @@ var mj;
                     Laya.god_player.is_liang = true;
                     //弹出选择3A牌的对话框，设定为全局是为了方便调试！
                     //另外，没有需要隐藏的牌就不用再去显示了
-                    _this.liangSelectOpt = new LiangSelect(_this.canHidePais);
+                    _this.liangSelectOpt = new LiangSelect(_this.canSelectPais);
                     _this.liangSelectOpt.decidePopup();
                     //显示完毕把自己干掉
                     _this.close();
@@ -47,12 +49,16 @@ var mj;
                     _this.removeSelf();
                 });
                 this.initButton(this.gang, isShowGang, function () {
-                    console.log("\u7528\u6237\u9009\u62E9\u6760");
-                    _this.socket.sendmsg({
-                        type: g_events.client_confirm_mingGang
-                    });
+                    console.log("god_player\u6211\u9009\u62E9\u6760");
+                    //弹出杠的选择框，如果只有一个，也是不需要弹出的！
+                    _this.gangSelectOpt = new GangSelect(_this.canGangPais);
+                    _this.gangSelectOpt.decidePopup();
+                    //显示完毕把自己干掉
                     _this.close();
                     _this.removeSelf();
+                    // this.socket.sendmsg({
+                    //     type: g_events.client_confirm_mingGang
+                    // })
                 });
                 this.initButton(this.peng, isShowPeng, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u78B0");
