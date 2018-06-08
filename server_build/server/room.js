@@ -295,13 +295,15 @@ class Room {
         let gangPlayer = this.find_player_by(socket);
         gangPlayer.is_thinking = false;
         let selectedPai = client_message.selectedPai;
-        console.log("====================================");
-        console.log(selectedPai);
-        console.log("====================================");
-        return;
+        //对参数进行检查！
+        if (selectedPai) {
+            if (!gangPlayer.canGangPais().includes(selectedPai)) {
+                throw new Error(`玩家：${gangPlayer.username}可以杠的牌${gangPlayer.canGangPais()}并不包括${selectedPai}`);
+            }
+        }
         let gangPai;
-        /**自己扛 */
-        let selfGang = this.fapai_to_who === gangPlayer;
+        /**自己扛, 包括客户端能够发送selectedPai, 或者摸牌的玩家就是扛玩家 */
+        let selfGang = selectedPai || this.fapai_to_who === gangPlayer;
         if (selfGang) {
             gangPai = selectedPai ? selectedPai : gangPlayer.mo_pai;
             this.operation_sequence.push({
@@ -310,18 +312,30 @@ class Room {
                 pai: gangPai,
                 self: true
             });
-            //二种情况，peng之后扛，或者是自己手摸4张！
-            if (gangPlayer.isShouMoSi(gangPlayer.mo_pai)) {
-                gangPlayer.saveAnGang(this.other_players(gangPlayer), gangPlayer.mo_pai);
+            //如果是玩家自己摸的4张牌
+            if (selectedPai) {
+                gangPlayer.confirm_anGang(selectedPai);
+                gangPlayer.saveAnGang(this.other_players(gangPlayer), selectedPai);
             }
             else {
-                gangPlayer.saveCaPao(this.other_players(gangPlayer), gangPlayer.mo_pai);
+                //如果是摸牌之后可以暗杠？不能暗杠就是擦炮了
+                if (gangPlayer.isMoHouSi(gangPlayer.mo_pai)) {
+                    gangPlayer.confirm_anGang(gangPlayer.mo_pai);
+                    gangPlayer.saveAnGang(this.other_players(gangPlayer), gangPlayer.mo_pai);
+                }
+                else {
+                    //擦炮其实也是一种明杠
+                    gangPlayer.confirm_mingGang(gangPlayer.mo_pai);
+                    gangPlayer.saveCaPao(this.other_players(gangPlayer), gangPlayer.mo_pai);
+                }
             }
         }
         else {
-            //扛别人的牌
+            //扛别人的牌, 暗杠还没有完成，别人又打了一个杠！这种情况下应该优先选择是否杠别人的牌，或者过，过了就不能再选自己的扛牌了
+            //按理说应该一次只能来一次操作！扛了再扛已经是有点儿过份了！这种处理的话如果选择过，别人打牌后自己还是可以扛，编程来说也
+            //方便的多
             //杠之后打牌玩家的打牌就跑到杠玩家手中了
-            gangPai = selectedPai ? selectedPai : this.daPai_player.arr_dapai.pop();
+            gangPai = this.daPai_player.arr_dapai.pop();
             this.operation_sequence.push({
                 who: gangPlayer,
                 action: Operate.gang,
@@ -348,9 +362,9 @@ class Room {
             console.log(`${this.daPai_player.username} lose_names:`);
             console.dir(this.daPai_player.lose_names);
             console.log("====================================");
+            //在杠玩家的group_shou_pai.peng中添加此dapai
+            gangPlayer.confirm_mingGang(gangPai);
         }
-        //在杠玩家的group_shou_pai.peng中添加此dapai
-        gangPlayer.confirm_mingGang(gangPai);
         //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
         this.current_player = gangPlayer;
         //给每个人都要发出全部玩家的更新数据，这样最方便！简单粗暴

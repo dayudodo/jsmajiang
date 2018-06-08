@@ -122,7 +122,7 @@ export class Player {
       pai: pai_name
     });
   }
-  /**保存普通杠，并通知放杠者 */
+  /**保存普通杠消息，并通知放杠者 */
   saveGang(fangGangPlayer: Player, pai_name: Pai) {
     this.temp_win_codes.push(config.HuisGang);
     fangGangPlayer.lose_data.push({
@@ -130,7 +130,7 @@ export class Player {
       pai: pai_name
     });
   }
-  /**保存擦炮的数据，并通知其它的玩家你得掏钱了! */
+  /**保存擦炮的消息，并通知其它的玩家你得掏钱了! */
   saveCaPao(other_players: Player[], pai_name: Pai) {
     this.temp_win_codes.push(config.HuisCaPao);
     other_players.forEach(person => {
@@ -141,7 +141,7 @@ export class Player {
     });
   }
 
-  /**保存暗杠的数据，改变其它两个玩家的扣分! */
+  /**保存暗杠的消息，改变其它两个玩家的扣分! */
   saveAnGang(other_players: Player[], pai_name: Pai) {
     this.temp_win_codes.push(config.HuisAnGang);
     other_players.forEach(person => {
@@ -234,8 +234,8 @@ export class Player {
     }
     return output;
   }
-  /**是否是手摸四张，用于判断暗四归，暗杠，在group手牌中存在3张相同的牌 */
-  isShouMoSi(pai_name: Pai): boolean {
+  /**摸牌后四张，用于判断暗四归，暗杠，在group手牌中存在3张相同的牌 */
+  isMoHouSi(pai_name: Pai): boolean {
     let countPai = this.group_shou_pai.shouPai.filter(pai => pai == pai_name);
     return countPai.length === 3 || this.group_shou_pai.selfPeng.includes(pai_name);
   }
@@ -314,7 +314,7 @@ export class Player {
     //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
     //如果是碰了之后杠，需要删除这张碰牌
     this.group_shou_pai.peng.remove(pai);
-    //包括亮牌中的selfPeng
+    //包括亮牌中的selfPeng，因为peng, selfPeng里面只可能有一个，所以都删除不会出错！
     this.group_shou_pai.selfPeng.remove(pai);
     //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
     //不过自己摸牌其实是属于暗杠的范围了
