@@ -83,7 +83,8 @@ var mj;
                         cloneCount = 1;
                     }
                     else {
-                        cloneCount = 4;
+                        var shouPai_1 = Laya.god_player.group_shou_pai.shouPai;
+                        cloneCount = shouPai_1.filter(function (pai_name) { return pai_name == pai; }).length;
                     }
                     //在shouPai里面找到此牌
                     var shouPai = Laya.god_player.group_shou_pai.shouPai;

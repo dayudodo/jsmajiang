@@ -295,6 +295,10 @@ class Room {
         let gangPlayer = this.find_player_by(socket);
         gangPlayer.is_thinking = false;
         let selectedPai = client_message.selectedPai;
+        //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
+        if (selectedPai == this.table_dapai) {
+            selectedPai = null;
+        }
         //对参数进行检查！
         if (selectedPai) {
             if (!gangPlayer.canGangPais().includes(selectedPai)) {
@@ -336,6 +340,9 @@ class Room {
             //方便的多
             //杠之后打牌玩家的打牌就跑到杠玩家手中了
             gangPai = this.daPai_player.arr_dapai.pop();
+            if (gangPai != this.table_dapai) {
+                throw new Error(`放杠者：${gangPai} 与 table_pai: ${this.table_dapai}不相同？`);
+            }
             this.operation_sequence.push({
                 who: gangPlayer,
                 action: Operate.gang,
@@ -729,6 +736,7 @@ class Room {
         canGangPais = item_player.canGangPais();
         if (canGangPais.length > 0) {
             isShowGang = true;
+            console.log(`房间${this.id} 玩家${item_player.username}可以自杠牌:${canGangPais}`);
         }
         /**如果是用户打牌，才会下面的判断，也就是说dapai_name有值时是别人在打牌！ */
         if (dapai_name) {
@@ -746,6 +754,8 @@ class Room {
             }
             if (item_player.canGang(dapai_name)) {
                 isShowGang = true;
+                //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
+                canGangPais.push(dapai_name);
                 console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`);
             }
             if (item_player.canPeng(dapai_name)) {
@@ -841,7 +851,7 @@ class Room {
         //初始化牌面
         //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
         //todo: 仅供测试用的发牌器
-        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player1_2gang();
+        this.cloneTablePais = TablePaiManager_1.TablePaiManager.player1_3gang();
         //开始给所有人发牌，并给东家多发一张
         if (!this.dong_jia) {
             throw new Error(chalk_1.default.red("房间${id}没有东家，检查代码！"));

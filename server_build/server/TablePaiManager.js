@@ -88,16 +88,26 @@ class TablePaiManager {
         newPais = newPais.concat(allpais);
         return newPais;
     }
-    /**开局双杠，测试杠选择 */
-    static player1_2gang() {
+    /**开局双杠，他人放杠，测试杠选择 */
+    static player1_3gang() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b1 b1 b1 b2 b2 b2 b2 b7 b8 b8 t1 t2 t9 fa");
+        var player1 = MajiangAlgo_1.getArr("b1 b1 b1 b1 b2 b2 b2 b2 di di di t1 t9");
+        var player2 = MajiangAlgo_1.getArr("b3 t1 t1 t1 t4 t6 zh zh zh fa fa fa di");
+        var player3 = MajiangAlgo_1.getArr("t2 t2 t3 t3 t4 t5 t6 t6 t7 t7 t8 b8 b9");
         //发牌需要有个顺序，不能使用getArr
         // var fa_pais = "t2 di".split(" ")
         var newPais = [];
         newPais = newPais.concat(player1);
+        newPais = newPais.concat(player2);
+        newPais = newPais.concat(player3);
         // newPais = newPais.concat(fa_pais);
         player1.forEach((pai, index) => {
+            allpais.remove(pai);
+        });
+        player2.forEach((pai, index) => {
+            allpais.remove(pai);
+        });
+        player3.forEach((pai, index) => {
             allpais.remove(pai);
         });
         newPais = newPais.concat(allpais);

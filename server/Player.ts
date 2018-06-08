@@ -209,8 +209,8 @@ export class Player {
     let output = [];
     output = output.concat(this.group_shou_pai.peng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
     output = output.concat(this.group_shou_pai.selfPeng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
-    output = output.concat(this.PaiArr4A())
-    return output
+    output = output.concat(this.PaiArr4A());
+    return output;
   }
   /**返回group手牌中出现4次的牌！ */
   PaiArr4A() {
@@ -322,6 +322,8 @@ export class Player {
       this.delete_pai(this.group_shou_pai.shouPai, pai);
     }
     this.group_shou_pai.shouPai.sort();
+    //杠之后需要重新算下胡牌！
+    this.calculateHu();
   }
 
   /**自己摸的牌就是暗杠了*/
@@ -333,6 +335,8 @@ export class Player {
     }
     this.group_shou_pai.anGang.push(pai);
     this.group_shou_pai.shouPai.sort();
+    //杠之后需要重新算下胡牌！
+    this.calculateHu();
   }
 
   /**确定自碰牌，将pai从shouPai中移动到selfPeng之中！ */
@@ -357,6 +361,7 @@ export class Player {
   }
   /**计算各种胡牌的状态 */
   calculateHu() {
+    //只要手牌改变，其实都是需要重新计算胡牌！
     let shoupai_changed = true;
     if (shoupai_changed) {
       this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);

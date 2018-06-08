@@ -67,7 +67,8 @@ module mj.scene {
                 if (Laya.god_player.group_shou_pai.peng.indexOf(pai) > -1 || Laya.god_player.group_shou_pai.selfPeng.indexOf(pai) > -1) {
                     cloneCount = 1
                 } else {
-                    cloneCount = 4
+                    let {shouPai} =  Laya.god_player.group_shou_pai
+                    cloneCount = shouPai.filter(pai_name=> pai_name == pai).length
                 }
                 //在shouPai里面找到此牌
                 let {shouPai} = Laya.god_player.group_shou_pai
