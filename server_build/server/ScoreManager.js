@@ -5,28 +5,37 @@ const config = require("./config");
 /**算分管理器 */
 class ScoreManager {
     static other_players(person, players) {
-        // console.log("查找本玩家%s的其它玩家", person.username);
         let o_players = players.filter(p => p.user_id != person.user_id);
-        // console.log(o_players.map(p => p.username));
         return o_players;
     }
     /**所有玩家的一局得分，计算结果直接保存到各player的oneju_score中 */
     static cal_oneju_score(players) {
-        let all_hu_players = players.filter(p => p.hupai_zhang != null);
+        let all_hu_players = players.filter(p => true == p.is_hu);
         all_hu_players.forEach(hu_player => {
-            let score = 0; //本局总分
-            let all_typesCode = hu_player.hupai_data.all_hupai_typesCode;
+            let all_typesCode = hu_player.hupai_data.hupai_dict[hu_player.hupai_zhang];
             //如果自摸，其它两家出钱
-            all_typesCode.forEach(code => {
-                score += this.scoreOf(code);
-            });
+            // all_typesCode.forEach(code => {
+            //   score += this.scoreOf(code);
+            // });
             //杠牌算分，暗杠、擦炮两家给钱，这些应该由room负责保存胡牌代码。
             //todo:所有的胡都包括屁胡，所以可能需要减去屁胡的分，如果只有屁胡就不用减，或者直接就在获取hupai_data的时候处理？
             //单独的屁胡其实是不可能胡的，最小的胡也是屁胡+自摸！
             if (hu_player.is_zimo) {
-                //自摸后需要扣除其它两个玩家的相应分数！
+                //自摸后需要扣除其它两个玩家的相应分数！分数算在胡家手中。
                 this.other_players(hu_player, players).forEach(p => {
-                    p.oneju_score -= this.cal_fang_score(all_typesCode);
+                    let score = 0;
+                    score = this.cal_fang_score(all_typesCode);
+                    p.oneju_score -= score;
+                    hu_player.oneju_score += score;
+                    //漂单独算
+                    if (config.have_piao) {
+                        //漂的加分减分都是要算双倍的！
+                        p.oneju_score -= config.piao_score * 2;
+                        hu_player.oneju_score += config.piao_score * 2;
+                    }
+                    console.log("====================================");
+                    console.log("hu_player.oneju_score: ", hu_player.oneju_score);
+                    console.log("====================================");
                 });
                 //todo: 自摸的算番
             }
@@ -35,14 +44,7 @@ class ScoreManager {
                 let fang_player = players.find(p => true == p.is_fangpao);
                 fang_player.oneju_score -= this.cal_fang_score(all_typesCode);
             }
-            //杠单独算
-            hu_player.oneju_score = score;
         });
-    }
-    /**计算某种胡code的分数 */
-    static scoreOf(code) {
-        let hu_item = config.HuPaiSheet.find(item => item.type == code);
-        return hu_item.multiple * config.base_score;
     }
     /**某种杠code的分数 */
     static gangScoreOf(code) {
@@ -58,8 +60,16 @@ class ScoreManager {
         });
         return score;
     }
+    /**计算某种胡code的分数 */
+    static scoreOf(code) {
+        let hu_item = config.HuPaiSheet.find(item => item.type == code);
+        return hu_item.multiple * config.base_score;
+    }
     /**算player扣多少分，根据别人的typesCode */
     static cal_fang_score(typesCode) {
+        console.log("====================================");
+        console.log(typesCode);
+        console.log("====================================");
         let score = 0;
         typesCode.forEach(code => {
             score += this.scoreOf(code);

@@ -56,7 +56,10 @@ export const IS_LIANG = 2;
 export const has_top = false;
 
 /**基本分数，貌似都是上百的算 */
-export var base_score = 100;
+export var base_score = 5;
+/**是否有漂，一般都会有，比如5定5，定5 意思就是定漂5块钱，赢多进5块，输多出5块 */
+export var have_piao = true;
+export var piao_score = 5;
 
 export const LoseGang = 0;
 export const LoseGangShangGang = 1;

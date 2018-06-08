@@ -32,7 +32,10 @@ exports.IS_LIANG = 2;
 /**是否封顶，貌似满上其实就是封顶，不算多算了，比如七对自摸是满的，8倍？ */
 exports.has_top = false;
 /**基本分数，貌似都是上百的算 */
-exports.base_score = 100;
+exports.base_score = 5;
+/**是否有漂，一般都会有，比如5定5，定5 意思就是定漂5块钱，赢多进5块，输多出5块 */
+exports.have_piao = true;
+exports.piao_score = 5;
 exports.LoseGang = 0;
 exports.LoseGangShangGang = 1;
 exports.LosePihuPao = 2;
@@ -97,8 +100,8 @@ exports.HuPaiSheet = [
     { type: exports.HuisQidui, name: "七对", multiple: 4 },
     { type: exports.HuisNongQiDui, name: "龙七对", multiple: 8 },
     { type: exports.HuisPengpeng, name: "碰碰胡", multiple: 2 },
-    { type: exports.HuisXiaoShanYuan, name: "小三元", multiple: 4 },
-    { type: exports.HuisDaShanYuan, name: "大三元", multiple: 8 },
+    { type: exports.HuisXiaoShanYuan, name: "小三元", multiple: 2 },
+    { type: exports.HuisDaShanYuan, name: "大三元", multiple: 4 },
     { type: exports.HuisGangShangKai, name: "杠上开花", multiple: 2 },
     { type: exports.HuisGangShangPao, name: "杠上炮", multiple: 2 },
     { type: exports.HuisPihu, name: "屁胡", multiple: 1 },
