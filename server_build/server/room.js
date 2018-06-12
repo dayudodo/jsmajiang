@@ -44,6 +44,8 @@ class Room {
         this.fapai_to_who = null;
         /**哪个玩家在打牌 */
         this.daPai_player = null;
+        /**哪个玩家在杠！ */
+        // public gang_player = null;
         //计时器
         this.room_clock = null;
         /**玩家操作序列 */
@@ -391,8 +393,14 @@ class Room {
                 gangPlayer_user_id: gangPlayer.user_id
             });
         });
-        //杠之后从后面摸一张牌！
-        this.server_fa_pai(gangPlayer, true);
+        //杠之后从后面摸一张牌！这儿应该有个判断，如果手里面还有手牌，就不用再发！
+        //玩家打牌之后才能够再发牌！
+        if (null == gangPlayer.mo_pai && this.daPai_player === gangPlayer) {
+            this.server_fa_pai(gangPlayer, true);
+        }
+        else {
+            this.decide_can_dapai(gangPlayer);
+        }
     }
     /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
     decide_fapai() {
@@ -691,6 +699,7 @@ class Room {
             isShowGang = true;
         }
         //没亮的时候呢可以杠，碰就不需要再去检测了
+        //杠了之后打牌才能够再次检测杠！
         if (item_player.canGang(mo_pai)) {
             isShowGang = true;
             console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${mo_pai}`);
