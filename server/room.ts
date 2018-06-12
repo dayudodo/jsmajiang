@@ -161,7 +161,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -326,12 +326,13 @@ export class Room {
     });
   }
 
-  
+
 
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_mingGang(client_message, socket) {
     let gangPlayer = this.find_player_by(socket);
     gangPlayer.is_thinking = false;
+    //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
     let selectedPai: Pai = client_message.selectedPai;
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
     if (selectedPai == this.table_dapai) {
@@ -345,8 +346,10 @@ export class Room {
     }
 
     let gangPai: Pai;
-    /**自己扛, 包括客户端能够发送selectedPai, 或者摸牌的玩家就是扛玩家 */
-    let selfGang = selectedPai || this.fapai_to_who === gangPlayer;
+    //自己扛, 包括客户端能够发送selectedPai, 或者摸牌的玩家就是扛玩家
+    // this.fapai_to_who === gangPlayer会有一个问题，正好是给下一家发牌且他能杠！就出错了。
+    //所以，发牌的时候，要控制下，只有杠玩家打牌之后才能发牌！
+    let selfGang = selectedPai || (this.fapai_to_who === gangPlayer)
     if (selfGang) {
       gangPai = selectedPai ? selectedPai : gangPlayer.mo_pai;
       this.operation_sequence.push({
@@ -429,8 +432,10 @@ export class Room {
     //杠之后从后面摸一张牌！这儿应该有个判断，如果手里面还有手牌，就不用再发！
     //玩家打牌之后才能够再发牌！
     if (null == gangPlayer.mo_pai && this.daPai_player === gangPlayer) {
+      console.log(`杠玩家已经打牌，可以发牌给${gangPlayer.username}`);
+
       this.server_fa_pai(gangPlayer, true);
-    }else{
+    } else {
       this.decide_can_dapai(gangPlayer)
     }
   }
@@ -559,6 +564,7 @@ export class Room {
    * @param fromEnd 是否从最后发牌
    */
   server_fa_pai(player: Player, fromEnd: boolean = false): Pai {
+
     let pai: Array<Pai>;
     if (fromEnd) {
       pai = [this.cloneTablePais.pop()];
@@ -605,6 +611,7 @@ export class Room {
     this.decide_can_dapai(player);
     return pai[0];
   }
+
   /**决定玩家是否可以打牌 */
   private decide_can_dapai(player: Player) {
     player.can_dapai = true;
@@ -650,7 +657,7 @@ export class Room {
 
     //记录下哪个在打牌
     this.daPai_player = player;
-    
+
     /**没有用户在选择操作胡、杠、碰、过、亮 */
     if (this.all_players_normal()) {
       //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
@@ -749,7 +756,7 @@ export class Room {
     }
     //没亮的时候呢可以杠，碰就不需要再去检测了
     //杠了之后打牌才能够再次检测杠！
-    if( item_player.canGang(mo_pai)) {
+    if (item_player.canGang(mo_pai)) {
       isShowGang = true;
       console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${mo_pai}`);
     }
@@ -816,10 +823,13 @@ export class Room {
         console.log(`房间${this.id} 玩家${item_player.username}大大胡牌${dapai_name}`);
         //todo: 等待20秒，过时发牌
       }
-      if(item_player.canGang(dapai_name)) {
+      if (item_player.canGang(dapai_name)) {
         isShowGang = true;
         //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
-        canGangPais.push(dapai_name);
+        //如果canGangPais为空，那么就不要让用户选择！
+        if (!_.isEmpty(canGangPais)) {
+          canGangPais.push(dapai_name);
+        }
         console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${dapai_name}`);
       }
       if (item_player.canPeng(dapai_name)) {

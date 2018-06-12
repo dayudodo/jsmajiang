@@ -40,7 +40,8 @@ Array.prototype.equalArrays = function(b) {
 
 export function getArr(str): Array<Pai> {
   if (!str || str.length == 0) {
-    throw new Error("str is empty");
+    // throw new Error("str is empty");
+    return []
     //如果是数组，那么就直接返回，可能就是一套手牌，比如["b1","b2"...]
   } else if (str instanceof Array) {
     return str;
@@ -80,8 +81,11 @@ export class MajiangAlgo {
 */
 
   static isAA(test_arr: Array<Pai>) {
-    if (test_arr.length != 2) {
-      throw new Error(`test_arr:  ${test_arr} must have 2 values`);
+    // if (test_arr.length != 2) {
+    //   throw new Error(`test_arr:  ${test_arr} must have 2 values`);
+    // }
+    if(_.isEmpty(test_arr)){
+      return false
     }
     let s1 = test_arr[0],
       s2 = test_arr[1];

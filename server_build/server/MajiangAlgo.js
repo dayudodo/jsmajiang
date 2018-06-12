@@ -28,7 +28,8 @@ Array.prototype.equalArrays = function (b) {
 };
 function getArr(str) {
     if (!str || str.length == 0) {
-        throw new Error("str is empty");
+        // throw new Error("str is empty");
+        return [];
         //如果是数组，那么就直接返回，可能就是一套手牌，比如["b1","b2"...]
     }
     else if (str instanceof Array) {
@@ -58,8 +59,11 @@ class MajiangAlgo {
   可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
   */
     static isAA(test_arr) {
-        if (test_arr.length != 2) {
-            throw new Error(`test_arr:  ${test_arr} must have 2 values`);
+        // if (test_arr.length != 2) {
+        //   throw new Error(`test_arr:  ${test_arr} must have 2 values`);
+        // }
+        if (_.isEmpty(test_arr)) {
+            return false;
         }
         let s1 = test_arr[0], s2 = test_arr[1];
         return s1 == s2;
