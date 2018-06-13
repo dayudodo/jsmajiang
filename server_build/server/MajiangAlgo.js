@@ -423,7 +423,8 @@ class MajiangAlgo {
     static HuisPengpeng(group_shoupai, na_pai) {
         let len = this.flat_shou_pai(group_shoupai).push(na_pai);
         if (len < 14) {
-            throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
+            // throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
+            return false;
         }
         return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
     }

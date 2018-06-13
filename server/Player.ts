@@ -100,8 +100,11 @@ export class Player {
   public hupai_data: hupaiConstructor;
   /**最后胡的是哪张牌 */
   public hupai_zhang: Pai = null;
-  /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
+  // /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
   // public can_status: playerStatus;
+
+  /**摸扛之后是否打牌 */
+  public after_mo_gang_dapai = false;
   /**能打牌了 */
   public can_dapai: boolean = false;
   /**临时的赢代码，比如杠 */
@@ -273,6 +276,7 @@ export class Player {
    */
   set mo_pai(pai: Pai) {
     this._mo_pai = pai;
+    this.after_mo_gang_dapai = false
     this.group_shou_pai.shouPai.push(pai);
     this.group_shou_pai.shouPai.sort();
   }
@@ -310,6 +314,7 @@ export class Player {
   }
   /**杠别人的牌是明杠 */
   confirm_mingGang(pai: Pai) {
+    this.after_mo_gang_dapai = false
     this.group_shou_pai.mingGang.push(pai);
     //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
     //如果是碰了之后杠，需要删除这张碰牌
@@ -328,6 +333,7 @@ export class Player {
 
   /**自己摸的牌就是暗杠了*/
   confirm_anGang(pai: Pai) {
+    this.after_mo_gang_dapai = false
     //首先从手牌中删除四！张牌，
     // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
     for (var i = 0; i < 4; i++) {
@@ -356,6 +362,7 @@ export class Player {
     }
     this.group_shou_pai.shouPai.sort();
     this._mo_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+    this.after_mo_gang_dapai = true
     // this.gang_mopai = false; //打牌之后就不再是杠摸牌了。
     this.calculateHu();
   }
