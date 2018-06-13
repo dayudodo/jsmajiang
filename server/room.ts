@@ -334,6 +334,7 @@ export class Room {
     let selectedPai: Pai = client_message.selectedPai;
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
     if (selectedPai == this.table_dapai) {
+      //设置为null, 表明不是自己摸的扛或者天生就是4张。
       selectedPai = null;
     }
     //对参数进行检查！
@@ -597,10 +598,7 @@ export class Room {
       pai: pai[0]
     });
     //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
-    if (player.after_mo_gang_dapai || this.game_start) {
-      this.decideFaPaiSelectShow(player, pai[0]);
-      this.game_start = false;
-    }
+    this.decideFaPaiSelectShow(player, pai[0]);
     //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
     player.mo_pai = pai[0];
     console.log(chalk.cyan("服务器发牌 %s 给：%s"), player.mo_pai, player.username);
@@ -746,7 +744,6 @@ export class Room {
       isShowGang = true;
     }
     //没亮的时候呢可以杠，碰就不需要再去检测了
-    //杠了之后打牌才能够再次检测杠！
     if (item_player.canGang(mo_pai)) {
       isShowGang = true;
       console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${mo_pai}`);
