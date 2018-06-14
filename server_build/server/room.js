@@ -9,7 +9,7 @@ const util = require("util");
 const TablePaiManager_1 = require("./TablePaiManager");
 const ScoreManager_1 = require("./ScoreManager");
 let room_valid_names = ["ange", "jack", "rose"];
-/**玩家的各种操作 */
+/**玩家的各种操作 */
 var Operate;
 (function (Operate) {
     Operate["mo"] = "mo";
@@ -731,6 +731,7 @@ class Room {
         /**客户端亮之后可以隐藏的牌*/
         let canSelectPais = [];
         let canGangPais = [];
+        let otherPlayer_dapai = this.daPai_player !== item_player;
         //流式处理，一次判断所有，然后结果发送给客户端
         //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
         if (!item_player.is_liang) {
@@ -743,15 +744,17 @@ class Room {
         }
         //如果玩家自己有杠，也是可以杠的，哪怕是别人打了牌！貌似有点儿小问题，啥呢？每次打牌我都不杠，这也叫气死个人！
         //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
-        canGangPais = item_player.canGangPais();
-        if (canGangPais.length > 0) {
-            isShowGang = true;
-            console.log(`房间${this.id} 玩家${item_player.username}可以自杠牌:${canGangPais}`);
+        //摸牌后才会检测自扛的情况
+        if (item_player.mo_pai) {
+            canGangPais = item_player.canGangPais();
+            if (canGangPais.length > 0) {
+                isShowGang = true;
+                console.log(`房间${this.id} 玩家${item_player.username}可以自杠牌:${canGangPais}`);
+            }
         }
         /**如果是用户打牌，才会下面的判断，也就是说dapai_name有值时是别人在打牌！ */
         if (dapai_name) {
             /**是否是其它玩家打牌，如果是自己打牌，就不再去检测碰他人、杠他人 */
-            let otherPlayer_dapai = this.daPai_player !== item_player;
             if (otherPlayer_dapai) {
                 //如果用户亮牌而且可以胡别人打的牌
                 if (item_player.is_liang && item_player.canHu(dapai_name)) {

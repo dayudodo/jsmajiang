@@ -1,4 +1,5 @@
 "use strict";
+// import * as util from "util";
 Object.defineProperty(exports, "__esModule", { value: true });
 if (!Array.prototype.repeat) {
     Array.prototype.repeat = function (times) {

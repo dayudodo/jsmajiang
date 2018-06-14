@@ -33,7 +33,7 @@ var test_names = [
   "adam8",
   "david9"
 ];
-var eventsHandler: Array<[String, Function]> = [
+var eventsHandler: [String, Function][] = [
   [g_events.client_testlogin, client_testlogin],
   [g_events.client_create_room, client_create_room],
   [g_events.client_join_room, client_join_room],
