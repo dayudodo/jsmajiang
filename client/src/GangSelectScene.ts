@@ -88,7 +88,7 @@ module mj.scene {
 
                 //给这个Sprite添加点击事件，这样三个可以一起改变显示效果
                 newGangSprite.on(Laya.Event.CLICK, this, () => {
-                    console.log(`newGangSprite clicked`);
+                    console.log(`newGangSprite clicked， ${pai}, ${cloneCount}`);
 
                     //只会有一个杠牌！
                     //有值说明已经点击过了,取消此项杠牌

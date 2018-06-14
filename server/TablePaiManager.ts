@@ -188,6 +188,7 @@ export class TablePaiManager {
 
     return newPais;
   }
+
   /**庄家摸牌能天胡*/
   static zhuang_mopai_hu() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
@@ -221,9 +222,9 @@ export class TablePaiManager {
   static zhuang_mopai_gang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
+    var player1 = getArr("t1 t1 t1 t1 t7 b8 b9 zh zh fa di di di");
     var player2 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-    var player3 = getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
+    var player3 = getArr("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
     var fa_pais = getArr("di");
     var newPais = [];
     newPais = newPais.concat(player1);

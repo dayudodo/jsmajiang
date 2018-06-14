@@ -202,9 +202,9 @@ class TablePaiManager {
     /**庄家摸牌能杠*/
     static zhuang_mopai_gang() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
+        var player1 = MajiangAlgo_1.getArr("t1 t1 t1 t1 t7 b8 b9 zh zh fa di di di");
         var player2 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-        var player3 = MajiangAlgo_1.getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
+        var player3 = MajiangAlgo_1.getArr("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
         var fa_pais = MajiangAlgo_1.getArr("di");
         var newPais = [];
         newPais = newPais.concat(player1);

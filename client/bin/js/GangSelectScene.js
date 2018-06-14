@@ -102,7 +102,7 @@ var mj;
                     _this.shouPai3.addChild(newGangSprite);
                     //给这个Sprite添加点击事件，这样三个可以一起改变显示效果
                     newGangSprite.on(Laya.Event.CLICK, _this, function () {
-                        console.log("newGangSprite clicked");
+                        console.log("newGangSprite clicked\uFF0C " + pai + ", " + cloneCount);
                         //只会有一个杠牌！
                         //有值说明已经点击过了,取消此项杠牌
                         if (_this.isEmpty(_this.clickedGangPai)) {

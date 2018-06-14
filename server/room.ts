@@ -333,7 +333,8 @@ export class Room {
     //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
     let selectedPai: Pai = client_message.selectedPai;
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
-    if (selectedPai == this.table_dapai) {
+    //如果杠别人的牌，或者杠自己摸的牌
+    if (selectedPai == this.table_dapai || selectedPai == gangPlayer.mo_pai) {
       //设置为null, 表明不是自己摸的扛或者天生就是4张。
       selectedPai = null;
     }
@@ -364,19 +365,20 @@ export class Room {
       } else {
         //如果是摸牌之后可以暗杠？不能暗杠就是擦炮了
         if (gangPlayer.isMoHouSi(gangPlayer.mo_pai)) {
+          console.log(`玩家${gangPlayer.username}自己摸牌${gangPai}可以扛`);
+
           gangPlayer.confirm_anGang(gangPlayer.mo_pai);
           gangPlayer.saveAnGang(this.other_players(gangPlayer), gangPlayer.mo_pai);
         } else {
+          console.log(`玩家${gangPlayer.username}擦炮 ${gangPai}`);
           //擦炮其实也是一种明杠
           gangPlayer.confirm_mingGang(gangPlayer.mo_pai);
           gangPlayer.saveCaPao(this.other_players(gangPlayer), gangPlayer.mo_pai);
         }
       }
-      //杠之后从后面摸一张牌！这儿应该有个判断，如果手里面还有手牌，就不用再发！
-      //玩家打牌之后才能够再发牌！
+      //只要扛了就从后面发牌，并且不用判断是否已经打牌！
       console.log(`玩家自摸牌可杠，发牌给${gangPlayer.username}`);
       this.server_fa_pai(gangPlayer, true);
-      // this.decide_can_dapai(gangPlayer);
     } else {
       //扛别人的牌, 暗杠还没有完成，别人又打了一个杠！这种情况下应该优先选择是否杠别人的牌，或者过，过了就不能再选自己的扛牌了
       //按理说应该一次只能来一次操作！扛了再扛已经是有点儿过份了！这种处理的话如果选择过，别人打牌后自己还是可以扛，编程来说也
@@ -718,7 +720,7 @@ export class Room {
     }
   }
   /**发牌后决定玩家是否能显示（胡、杠）的选择窗口。
-   *  与其它玩家选择有所不同，碰不会检测，因为你不能碰自己打的牌！ */
+   * 碰、杠他人不会检测，因为你不能碰、杠自己打的牌！ */
   private decideFaPaiSelectShow(item_player: Player, mo_pai: Pai): boolean {
     let isShowHu: boolean = false,
       isShowLiang: boolean = false,
@@ -746,6 +748,9 @@ export class Room {
     //没亮的时候呢可以杠，碰就不需要再去检测了
     if (item_player.canGang(mo_pai)) {
       isShowGang = true;
+      if (!_.isEmpty(canGangPais)) {
+        canGangPais.push(mo_pai);
+      }
       console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${mo_pai}`);
     }
     if (item_player.canHu(mo_pai)) {
@@ -921,7 +926,7 @@ export class Room {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //todo: 仅供测试用的发牌器
-    this.cloneTablePais = TablePaiManager.player1_3gang();
+    this.cloneTablePais = TablePaiManager.zhuang_mopai_gang();
     //开始给所有人发牌，并给东家多发一张
     if (!this.dong_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));

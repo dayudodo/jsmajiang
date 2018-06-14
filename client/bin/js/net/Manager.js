@@ -169,7 +169,7 @@ var mj;
                 //服务器发牌，感觉这张牌还是应该单独计算吧，都放在手牌里面想要显示是有问题的。
                 // console.log(server_message.pai);
                 var pai = server_message.pai;
-                Laya.god_player.received_pai = pai;
+                // Laya.god_player.received_pai = pai;
                 //显示服务器发过来的牌
                 this.gameTable.show_fapai(pai);
             };
