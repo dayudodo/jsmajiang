@@ -18,10 +18,10 @@ var mj;
         var GangSelect = mj.scene.GangSelectScene;
         var OptDialogScene = /** @class */ (function (_super) {
             __extends(OptDialogScene, _super);
-            function OptDialogScene(canSelectPais, canGangPais) {
+            function OptDialogScene(canHidePais, canGangPais) {
                 var _this = _super.call(this) || this;
                 _this.socket = Laya.client.socket;
-                _this.canSelectPais = canSelectPais;
+                _this.canHidePais = canHidePais;
                 _this.canGangPais = canGangPais;
                 return _this;
             }
@@ -33,7 +33,7 @@ var mj;
                     Laya.god_player.is_liang = true;
                     //弹出选择3A牌的对话框，设定为全局是为了方便调试！
                     //另外，没有需要隐藏的牌就不用再去显示了
-                    _this.liangSelectOpt = new LiangSelect(_this.canSelectPais);
+                    _this.liangSelectOpt = new LiangSelect(_this.canHidePais);
                     _this.liangSelectOpt.decidePopup();
                     //显示完毕把自己干掉
                     _this.close();

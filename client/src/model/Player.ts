@@ -36,7 +36,7 @@ module mj.model {
             "is_fangpao",
             "oneju_score",
         ]
-        public result_shou_pai: ShoupaiConstuctor =  {
+        public result_shou_pai: ShoupaiConstuctor = {
             anGang: [],
             mingGang: [],
             selfPeng: [],
@@ -67,7 +67,7 @@ module mj.model {
         public ui_clone_arr = []
         public arr_dapai: Pai[] = []
         public room_name: string
-        
+
         private _received_pai: Pai
         /**         是否是庄家         */
         public east = false;
@@ -143,11 +143,8 @@ module mj.model {
         }
         /**  从玩家手牌中删除pai并计算胡牌*/
         da_pai(pai: Pai) {
-            if (this.delete_pai(this.group_shou_pai.shouPai, pai)) {
-                this.arr_dapai.push(pai);
-            } else {
-                throw new Error(`${this.username}打了张非法牌？${pai}`);
-            }
+            this.delete_pai(this.group_shou_pai.shouPai, pai)
+            this.arr_dapai.push(pai);
             this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
             this.group_shou_pai.shouPai.sort() //打牌之后还是需要重新排序下的，以和服务器保持一致。
         }

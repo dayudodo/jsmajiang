@@ -361,7 +361,7 @@ module mj.scene {
                 // 如果两次点击同一张牌，应该打出去
                 if (this.prevSelectedPai === newPaiSprite) {
                     let daPai: Pai = shou_pai[index];
-                    console.log(`用户选择打牌${daPai}`);
+                    console.log(`本玩家选择打牌${daPai}`);
                     this.socket.sendmsg({
                         type: g_events.client_da_pai,
                         pai: daPai

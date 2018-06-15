@@ -106,12 +106,8 @@ var mj;
             });
             /**  从玩家手牌中删除pai并计算胡牌*/
             Player.prototype.da_pai = function (pai) {
-                if (this.delete_pai(this.group_shou_pai.shouPai, pai)) {
-                    this.arr_dapai.push(pai);
-                }
-                else {
-                    throw new Error(this.username + "\u6253\u4E86\u5F20\u975E\u6CD5\u724C\uFF1F" + pai);
-                }
+                this.delete_pai(this.group_shou_pai.shouPai, pai);
+                this.arr_dapai.push(pai);
                 this._received_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
                 this.group_shou_pai.shouPai.sort(); //打牌之后还是需要重新排序下的，以和服务器保持一致。
             };

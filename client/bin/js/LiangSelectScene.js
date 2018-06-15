@@ -15,35 +15,35 @@ var mj;
         var Sprite = laya.display.Sprite;
         var LianSelectScene = /** @class */ (function (_super) {
             __extends(LianSelectScene, _super);
-            function LianSelectScene(canSelectPais) {
+            function LianSelectScene(canHidePais) {
                 var _this = _super.call(this) || this;
                 /**点击数组，用于判断哪些已经选中 */
                 _this.clickedPais = {};
-                _this.canSelectPais = canSelectPais;
+                _this.canHidePais = canHidePais;
                 return _this;
             }
             LianSelectScene.prototype.decidePopup = function () {
                 var _this = this;
-                if (this.canSelectPais && this.canSelectPais.length > 0) {
+                if (this.canHidePais && this.canHidePais.length > 0) {
                     this.show_liangSelect();
                     this.popup();
                     this.okBtn.on(Laya.Event.CLICK, this, function () {
-                        _this.sendSelectedPais();
+                        _this.sendLiangHidePais();
                         _this.close();
                         _this.removeSelf();
                     });
                 }
                 else {
                     this.cancelAllClonePaiClicked();
-                    this.sendSelectedPais();
+                    this.sendLiangHidePais();
                 }
             };
-            LianSelectScene.prototype.sendSelectedPais = function () {
-                this.selectedPais = Object.keys(this.clickedPais);
-                // console.log(this.selectedPais);
+            LianSelectScene.prototype.sendLiangHidePais = function () {
+                this.liangHidePais = Object.keys(this.clickedPais);
+                //告诉服务器这些liangHidePais是亮之后需要隐藏的牌
                 Laya.socket.sendmsg({
                     type: g_events.client_confirm_liang,
-                    selectedPais: this.selectedPais
+                    liangHidePais: this.liangHidePais
                 });
             };
             LianSelectScene.prototype.cancelAllClonePaiClicked = function () {
@@ -69,7 +69,7 @@ var mj;
                 //取消所有的按钮事件！
                 this.cancelAllClonePaiClicked();
                 //能够隐藏的牌由服务器传递过来参数canHidePais
-                this.canSelectPais.forEach(function (pai) {
+                this.canHidePais.forEach(function (pai) {
                     //新建sprite，将三个添加进来。
                     var newSelfPengSprite = new Sprite();
                     //找到

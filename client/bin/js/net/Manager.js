@@ -123,9 +123,9 @@ var mj;
             };
             Manager.prototype.server_can_select = function (server_message) {
                 var _a = server_message.select_opt, isShowHu = _a[0], isShowLiang = _a[1], isShowGang = _a[2], isShowPeng = _a[3];
-                var canSelectPais = server_message.canSelectPais;
+                var canHidePais = server_message.canHidePais;
                 var canGangPais = server_message.canGangPais;
-                this.opt = new OptDialogScene(canSelectPais, canGangPais);
+                this.opt = new OptDialogScene(canHidePais, canGangPais);
                 this.opt.showPlayerSelect({
                     isShowHu: isShowHu,
                     isShowLiang: isShowLiang,
@@ -141,7 +141,7 @@ var mj;
             };
             Manager.prototype.server_dapai_other = function (server_message) {
                 var username = server_message.username, user_id = server_message.user_id, pai_name = server_message.pai_name;
-                console.log(username + ", id: " + user_id + " \u6253\u724C" + pai_name);
+                console.log("\u5176\u5B83\u73A9\u5BB6 " + username + ", id: " + user_id + " \u6253\u724C" + pai_name);
                 var dapaiPlayer = Laya.room.players.find(function (p) { return p.user_id == user_id; });
                 //记录下打牌玩家
                 Laya.room.dapai_player = dapaiPlayer;
@@ -154,7 +154,9 @@ var mj;
                 this.gameTable.show_dapai(dapaiPlayer, pai_name);
             };
             Manager.prototype.server_dapai = function (server_message) {
-                var pai_name = server_message.pai_name;
+                var pai_name = server_message.pai_name, group_shou_pai = server_message.group_shou_pai;
+                Laya.god_player.group_shou_pai = group_shou_pai;
+                this.gameTable.show_group_shoupai(Laya.god_player);
                 this.gameTable.show_dapai(Laya.god_player, pai_name);
                 console.log("\u670D\u52A1\u5668\u786E\u8BA4\u4F60\u5DF2\u6253\u724C " + pai_name);
             };

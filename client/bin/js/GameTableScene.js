@@ -63,8 +63,8 @@ var mj;
                 });
             };
             GameTableScene.prototype.showSkinOfCountDown = function (twonumber) {
-                _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
                 var _a;
+                _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
             };
             /**UI上显示出玩家的group手牌！ */
             GameTableScene.prototype.show_group_shoupai = function (player) {
@@ -328,7 +328,7 @@ var mj;
                     // 如果两次点击同一张牌，应该打出去
                     if (this.prevSelectedPai === newPaiSprite) {
                         var daPai = shou_pai[index];
-                        console.log("\u7528\u6237\u9009\u62E9\u6253\u724C" + daPai);
+                        console.log("\u672C\u73A9\u5BB6\u9009\u62E9\u6253\u724C" + daPai);
                         this.socket.sendmsg({
                             type: g_events.client_da_pai,
                             pai: daPai

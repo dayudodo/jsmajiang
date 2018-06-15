@@ -147,9 +147,9 @@ namespace mj.net {
 
     public server_can_select(server_message) {
       let [isShowHu, isShowLiang, isShowGang, isShowPeng] = server_message.select_opt;
-      let canSelectPais: Array<Pai> = server_message.canSelectPais
+      let canHidePais: Array<Pai> = server_message.canHidePais
       let canGangPais: Array<Pai> = server_message.canGangPais
-      this.opt = new OptDialogScene(canSelectPais, canGangPais);
+      this.opt = new OptDialogScene(canHidePais, canGangPais);
       this.opt.showPlayerSelect({
         isShowHu: isShowHu,
         isShowLiang: isShowLiang,
@@ -166,7 +166,7 @@ namespace mj.net {
     }
     private server_dapai_other(server_message) {
       let { username, user_id, pai_name } = server_message;
-      console.log(`${username}, id: ${user_id} 打牌${pai_name}`);
+      console.log(`其它玩家 ${username}, id: ${user_id} 打牌${pai_name}`);
       let dapaiPlayer = Laya.room.players.find(p => p.user_id == user_id);
       //记录下打牌玩家
       Laya.room.dapai_player = dapaiPlayer;
@@ -180,10 +180,12 @@ namespace mj.net {
     }
 
     private server_dapai(server_message) {
-      let { pai_name } = server_message;
+      let { pai_name,group_shou_pai } = server_message;
+      Laya.god_player.group_shou_pai = group_shou_pai
+
+      this.gameTable.show_group_shoupai(Laya.god_player)
       this.gameTable.show_dapai(Laya.god_player, pai_name)
       console.log(`服务器确认你已打牌 ${pai_name}`);
-
     }
 
 

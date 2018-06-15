@@ -356,17 +356,20 @@ export class Player {
     this.group_shou_pai.shouPai.sort();
   }
   /**  从玩家手牌中删除pai并计算胡牌*/
-  da_pai(pai: Pai) {
-    if (this.delete_pai(this.group_shou_pai.shouPai, pai)) {
-      this.arr_dapai.push(pai);
+  da_pai(pai_name: Pai) {
+    if (this.delete_pai(this.group_shou_pai.shouPai, pai_name)) {
+      this.arr_dapai.push(pai_name);
     } else {
-      throw new Error(`${this.username}打了张非法牌？${pai}`);
+      throw new Error(`${this.username}打了张非法牌？${pai_name}`);
     }
-    this.group_shou_pai.shouPai.sort();
-    this._mo_pai = null; //打牌之后说明玩家的桌面牌是真的没有了
+    //如果打的牌与摸牌相同，不用重复计算，就算是以前手牌里面有，其实也相当于是打了张摸牌
+    let shouPaiChanged = pai_name != this.mo_pai
+    if(shouPaiChanged){
+      this.group_shou_pai.shouPai.sort();
+      this.calculateHu();
+    }
+    this._mo_pai = null; //打牌之后玩家处于非摸牌状态
     this.after_mo_gang_dapai = true
-    // this.gang_mopai = false; //打牌之后就不再是杠摸牌了。
-    this.calculateHu();
   }
   /**计算各种胡牌的状态 */
   calculateHu() {

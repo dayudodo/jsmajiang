@@ -14,16 +14,16 @@ module mj.scene {
         private static downBtnGlowFilters = [new GlowFilter("#ebb531", 14, 5, 5)];
         public socket: Laya.Socket;
         /**可以隐藏的牌 */
-        public canSelectPais: Array<Pai>
+        public canHidePais: Array<Pai>
         /**可以杠的牌 */
         public canGangPais: Array<Pai>
         public liangSelectOpt: LiangSelect
         public gangSelectOpt: GangSelect
 
-        constructor(canSelectPais, canGangPais) {
+        constructor(canHidePais, canGangPais) {
             super()
             this.socket = Laya.client.socket
-            this.canSelectPais = canSelectPais
+            this.canHidePais = canHidePais
             this.canGangPais= canGangPais
         }
 
@@ -34,7 +34,7 @@ module mj.scene {
                 Laya.god_player.is_liang = true
                 //弹出选择3A牌的对话框，设定为全局是为了方便调试！
                 //另外，没有需要隐藏的牌就不用再去显示了
-                this.liangSelectOpt = new LiangSelect(this.canSelectPais)
+                this.liangSelectOpt = new LiangSelect(this.canHidePais)
                 this.liangSelectOpt.decidePopup()
                 //显示完毕把自己干掉
                 this.close()
