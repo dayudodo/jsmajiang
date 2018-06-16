@@ -69,7 +69,7 @@ export class Room {
   /**发牌给哪个玩家 */
   public fapai_to_who: Player = null;
   /**哪个玩家在打牌 */
-  public daPai_player: Player = null;
+  public dapai_player: Player = null;
   /**哪个玩家在杠！ */
   // public gang_player = null;
 
@@ -294,7 +294,7 @@ export class Room {
     let pengPlayer = this.find_player_by(socket);
     pengPlayer.is_thinking = false;
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
-    let dapai: Pai = this.daPai_player.arr_dapai.pop();
+    let dapai: Pai = this.dapai_player.arr_dapai.pop();
     //碰也相当于是碰玩家也摸了张牌！
     pengPlayer.mo_pai = dapai;
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
@@ -384,7 +384,7 @@ export class Room {
       //按理说应该一次只能来一次操作！扛了再扛已经是有点儿过份了！这种处理的话如果选择过，别人打牌后自己还是可以扛，编程来说也
       //方便的多
       //杠之后打牌玩家的打牌就跑到杠玩家手中了
-      gangPai = this.daPai_player.arr_dapai.pop();
+      gangPai = this.dapai_player.arr_dapai.pop();
       if (gangPai != this.table_dapai) {
         throw new Error(`放杠者：${gangPai} 与 table_pai: ${this.table_dapai}不相同？`);
       }
@@ -393,25 +393,25 @@ export class Room {
         action: Operate.gang,
         pai: gangPai,
         detail: {
-          from: this.daPai_player,
+          from: this.dapai_player,
           to: gangPlayer
         }
       });
       //纪录玩家放了一杠，扣钱！还得判断下打牌玩家打牌之前是否杠牌了, 杠家其实是前三步，第一步杠，第二步摸，第三步才是打牌！
       let gangShangGang = false;
-      let prev3_operation = this.front_operationOf(this.daPai_player, 3);
+      let prev3_operation = this.front_operationOf(this.dapai_player, 3);
       if (prev3_operation) {
         gangShangGang = prev3_operation.action === Operate.gang;
       }
       if (gangShangGang) {
-        gangPlayer.saveGangShangGang(this.daPai_player, gangPai);
+        gangPlayer.saveGangShangGang(this.dapai_player, gangPai);
       } else {
-        gangPlayer.saveGang(this.daPai_player, gangPai);
+        gangPlayer.saveGang(this.dapai_player, gangPai);
       }
       console.log("====================================");
       // puts(this.OperationsOf(this.daPai_player))
-      console.log(`${this.daPai_player.username} lose_names:`);
-      console.dir(this.daPai_player.lose_names);
+      console.log(`${this.dapai_player.username} lose_names:`);
+      console.dir(this.dapai_player.lose_names);
       console.log("====================================");
       //在杠玩家的group_shou_pai.peng中添加此dapai
       gangPlayer.confirm_mingGang(gangPai);
@@ -537,13 +537,13 @@ export class Room {
       player.hupai_zhang = this.table_dapai;
       //记录放炮者
       let fangType = player.isDaHu(this.table_dapai) ? config.LoseDaHuPao : config.LosePihuPao;
-      this.daPai_player.lose_data.push({
+      this.dapai_player.lose_data.push({
         type: fangType,
         pai: this.table_dapai
       });
       this.sendAllResults(player, this.table_dapai);
       console.dir(this.hupai_players);
-      console.dir(this.daPai_player.lose_data);
+      console.dir(this.dapai_player.lose_data);
     } else {
       `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
     }
@@ -598,10 +598,11 @@ export class Room {
       action: Operate.mo,
       pai: pai[0]
     });
-    //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
-    this.decideSelectShow(player, pai[0]);
     //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
     player.mo_pai = pai[0];
+    //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
+    this.decideSelectShow(player, pai[0]);
+
     console.log(chalk.cyan("服务器发牌 %s 给：%s"), player.mo_pai, player.username);
     console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length);
     // player.socket.emit("server_table_fapai", pai);
@@ -645,7 +646,7 @@ export class Room {
     let canNormalFaPai = true;
 
     //记录下哪个在打牌
-    this.daPai_player = player;
+    this.dapai_player = player;
 
     /**没有用户在选择操作胡、杠、碰、过、亮 */
     if (this.all_players_normal()) {
@@ -774,7 +775,7 @@ export class Room {
   //   return canShowSelect;
   // }
   /**玩家是否能显示（胡、亮、杠、碰）的选择窗口 */
-  private decideSelectShow(item_player: Player, pai_name: Pai = null): boolean {
+  private decideSelectShow(player: Player, pai_name: Pai = null): boolean {
     let isShowHu: boolean = false,
       isShowLiang: boolean = false,
       isShowGang: boolean = false,
@@ -782,72 +783,87 @@ export class Room {
     /**客户端亮之后可以隐藏的牌*/
     let canLiangPais: Array<Pai> = [];
     let canGangPais: Array<Pai> = [];
-    let otherPlayer_dapai = this.daPai_player !== item_player;
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
     //此种情况也包括了pai_name为空的情况！意思就是只检测能否亮牌！
-    if (!item_player.is_liang) {
-      if (item_player.canLiang()) {
+    if (!player.is_liang) {
+      if (player.canLiang()) {
         isShowLiang = true;
-        canLiangPais = item_player.PaiArr3A();
-        console.log(`房间${this.id} 玩家${item_player.username}可以亮牌`);
-        puts(item_player.hupai_data);
+        canLiangPais = player.PaiArr3A();
+        console.log(`房间${this.id} 玩家${player.username}可以亮牌`);
+        puts(player.hupai_data);
       }
     }
 
     //如果玩家自己有杠，也是可以杠的，哪怕是别人打了牌！貌似有点儿小问题，啥呢？每次打牌我都不杠，这也叫气死个人！
     //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
     //摸牌后才会检测自扛的情况
-    if (item_player.mo_pai) {
-      canGangPais = item_player.canGangPais();
+    if (player.mo_pai) {
+      canGangPais = player.canGangPais();
       if (canGangPais.length > 0) {
         isShowGang = true;
-        console.log(`房间${this.id} 玩家${item_player.username}可以自杠牌:${canGangPais}`);
+        console.log(`房间${this.id} 玩家${player.username}可以自杠牌:${canGangPais}`);
       }
     }
 
+    let otherPlayer_dapai = this.dapai_player !== player;
     /**有pai_name, 说明是别人打或者自己摸的 */
     if (pai_name) {
-      /**是否是其它玩家打牌，如果是自己打牌，就不再去检测碰他人、杠他人 */
-      if (otherPlayer_dapai) {
+      //是否是其它玩家打牌
+      if (this.dapai_player && otherPlayer_dapai && !player.mo_pai) {
 
         //如果用户亮牌而且可以胡别人打的牌
-        if (item_player.is_liang && item_player.canHu(pai_name)) {
+        if (player.is_liang && player.canHu(pai_name)) {
           isShowHu = true;
-          console.log(`房间${this.id} 玩家${item_player.username}亮牌之后可以胡牌${pai_name}`);
+          console.log(`房间${this.id} 玩家${player.username}亮牌之后可以胡牌${pai_name}`);
         }
         // 大胡也可以显示胡牌
         //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
-        if ( !isShowHu && item_player.isDaHu(pai_name)) {
+        if (!isShowHu && player.isDaHu(pai_name)) {
           isShowHu = true;
-          console.log(`房间${this.id} 玩家${item_player.username}可以大胡：${pai_name}`);
+          console.log(`房间${this.id} 玩家${player.username}可以大胡：${pai_name}`);
           //todo: 等待20秒，过时发牌
         }
-        if (item_player.canGang(pai_name)) {
+        if (player.canGang(pai_name)) {
           isShowGang = true;
           //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
           //如果canGangPais为空，那么就不要让用户选择！
           if (!_.isEmpty(canGangPais)) {
             canGangPais.push(pai_name);
           }
-          console.log(`房间${this.id} 玩家${item_player.username}可以杠牌${pai_name}`);
+          console.log(`房间${this.id} 玩家${player.username}可以杠牌${pai_name}`);
         }
-        if (item_player.canPeng(pai_name)) {
+        if (player.canPeng(pai_name)) {
           isShowPeng = true;
-          console.log(`房间${this.id} 玩家${item_player.username}可以碰牌${pai_name}`);
+          console.log(`房间${this.id} 玩家${player.username}可以碰牌${pai_name}`);
         }
       } else {
-        ({ isShowGang, isShowHu } = this.decideMoPai(pai_name, item_player,  canGangPais));
+        //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人 
+        let mo_pai = pai_name
+        if (player.canGang(mo_pai)) {
+          isShowGang = true;
+          if (!_.isEmpty(canGangPais)) {
+            canGangPais.push(mo_pai);
+          }
+          console.log(`房间${this.id} 玩家${player.username}摸牌后可以杠牌${mo_pai}`);
+        }
+        if (player.canHu(mo_pai)) {
+          isShowHu = true;
+          console.log(`房间${this.id} 玩家${player.username}可以自摸胡${mo_pai}`);
+        }
       }
     }
 
     let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng;
     if (canShowSelect) {
-      item_player.is_thinking = true;
-      console.log(`房间${this.id} 玩家${item_player.username} 可以显示选择对话框，其手牌为:`);
-      puts(item_player.group_shou_pai);
+      player.is_thinking = true;
+      console.log(`房间${this.id} 玩家${player.username} 可以显示选择对话框，其手牌为:`);
+      puts(player.group_shou_pai);
+      console.log(`可以隐藏的牌：${canLiangPais}`);
+      console.log(`可以杠的牌：${canGangPais}`);
+
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
-      item_player.socket.sendmsg({
+      player.socket.sendmsg({
         type: g_events.server_can_select,
         select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng],
         canLiangPais: canLiangPais,
@@ -857,23 +873,8 @@ export class Room {
     return canShowSelect;
   }
 
-  /**自己摸牌后进行杠、胡判断 */
-  private decideMoPai(mo_pai: string, item_player: Player, canGangPais: string[]) {
-    let isShowGang=false, isShowHu = false;
-    //没亮的时候呢可以杠，碰就不需要再去检测了
-    if (item_player.canGang(mo_pai)) {
-      isShowGang = true;
-      if (!_.isEmpty(canGangPais)) {
-        canGangPais.push(mo_pai);
-      }
-      console.log(`房间${this.id} 玩家${item_player.username}摸牌后可以杠牌${mo_pai}`);
-    }
-    if (item_player.canHu(mo_pai)) {
-      isShowHu = true;
-      console.log(`房间${this.id} 玩家${item_player.username}可以自摸胡${mo_pai}`);
-    }
-    return { isShowGang, isShowHu };
-  }
+
+
 
   /**
    * 给房间内的所有玩家广播消息
@@ -906,7 +907,7 @@ export class Room {
     });
   }
 
-  get dong_jia() {
+  get zhuang_jia() {
     //获取东家
     return _.find(this.players, { east: true });
   }
@@ -953,7 +954,7 @@ export class Room {
     //todo: 仅供测试用的发牌器
     this.cloneTablePais = TablePaiManager.zhuang_mopai_gang();
     //开始给所有人发牌，并给东家多发一张
-    if (!this.dong_jia) {
+    if (!this.zhuang_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"));
     }
     //先把所有玩家的牌准备好！
@@ -968,7 +969,7 @@ export class Room {
       //有可能游戏一开始就听牌，或者你可以亮出来！这时候是不可能胡的，因为你牌不够，需要别人打一张或者自己摸张牌
       //todo: 如果东家也可以听牌呢？所以每个用户都需要检测一遍！
       this.sendGroupShouPaiOf(p);
-      if (p == this.dong_jia) {
+      if (p == this.zhuang_jia) {
         //告诉东家，服务器已经开始发牌了，房间还是得负责收发，玩家类只需要保存数据和运算即可。
         //不管东家会不会胡，都是需要发牌的！
         // this.server_fa_pai(p);
@@ -980,7 +981,7 @@ export class Room {
       }
     });
     //所有人发完13张，再给东家发张牌，从其开始打
-    this.server_fa_pai(this.dong_jia);
+    this.server_fa_pai(this.zhuang_jia);
     // this.decideFaPaiSelectShow(this.dong_jia, this.dong_jia.mo_pai)
   }
 
