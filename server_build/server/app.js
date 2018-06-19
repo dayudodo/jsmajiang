@@ -28,7 +28,7 @@ var eventsHandler = [
     [g_events.client_confirm_guo, client_confirm_guo],
     [g_events.client_restart_game, client_restart_game]
 ];
-function client_restart_game(socket) {
+function client_restart_game(client_message, socket) {
     let { player, room } = getPlayerRoom(socket);
     room.restart_game(player);
 }

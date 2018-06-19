@@ -935,6 +935,7 @@ class Room {
         this.players.forEach(p => (p.ready = false));
     }
     init_players() {
+        let newPlayers = [];
         this.players.forEach(p => {
             let person = new player_1.Player({
                 group_shou_pai: {
@@ -950,9 +951,13 @@ class Room {
             });
             //todo: 设定哪个是庄家，貌似是放炮的是庄家？如果平局，则还是上一家。
             person.east = p.east;
+            //保留玩家的座位号
+            person.seat_index = p.seat_index;
             //赋值后相当于是清空了玩家的所有数据。
-            p = person;
+            newPlayers.push(person);
         });
+        this.players = null;
+        this.players = newPlayers;
     }
     //游戏结束后重新开始游戏！
     restart_game(player) {
