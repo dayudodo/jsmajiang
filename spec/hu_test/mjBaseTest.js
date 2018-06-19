@@ -66,11 +66,7 @@ test("should isABC true", function(t) {
 test("should isABC false", function(t) {
   t.is(MajiangAlgo.isABC("b1 b2 b4"), false);
 });
-test("should isABC throw null error", function(t) {
-  // t.is(Majiang.isABC).toThrowError(/empty/)
-  t.throws(MajiangAlgo.isABC, /empty/);
-  // t.is(foo(1)).toThrowError(/foo/)
-});
+
 // test("只有两个值，isABC抛出错误", function (t) {
 //   let str = "b1 b2";
 //   t.throws(MajiangAlgo.isABC.bind(null, str), /必须/);
@@ -336,4 +332,17 @@ test("group 能杠，但是先碰，拿牌可以杠selfPeng", function(t) {
     shouPai: getArr("b1 b3 b4 t1 t1 t2 t2 t3 t3 fa")
   };
   t.is(MajiangAlgo.canGang(group_shou_pai, "b2", true), true);
+});
+test("group 不能扛自己摸的牌", function(t) {
+  let group_shou_pai = {
+    // anGang: ["zh"],
+    anGang: [],
+    anGangCount: 0,
+    mingGang: [],
+    selfPeng: [],
+    // selfPengCount: 1,
+    peng: [],
+    shouPai: getArr("b1 b1 b1 b3 b4 t1 t1 t4 t5 t6 t3 t3 fa fa")
+  };
+  t.is(MajiangAlgo.canGang(group_shou_pai, "t3", false, true), false);
 });

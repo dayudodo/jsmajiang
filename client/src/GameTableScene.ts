@@ -346,9 +346,11 @@ module mj.scene {
                 posiX += one_shou_pai_width;
             }
         }
+        /**隐藏指定玩家方向，用ui_index */
         private hideDirection(player: Player) {
             this["direction" + player.ui_index].visible = false;
         }
+
         private handleClonePaiSpriteClick(
             newPaiSprite: Sprite,
             shou_pai: string[],
@@ -410,10 +412,10 @@ module mj.scene {
         }
 
         // 是否隐藏了打牌所在区域sprite
-        private isFirstHideOut0 = true;
-        private isFirstHideOut1 = true;
-        private isFirstHideOut2 = true;
-        private isFirstHideOut3 = true;
+        // private isFirstHideOut0 = true;
+        // private isFirstHideOut1 = true;
+        // private isFirstHideOut2 = true;
+        // private isFirstHideOut3 = true;
 
         /**删除掉所有剩余shouPai的复制 */
         private destroyAllPaiCloneSprites() {

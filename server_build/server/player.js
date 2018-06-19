@@ -150,7 +150,7 @@ class Player {
     get is_fangpao() {
         return this.lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
     }
-    /**能够杠的牌 */
+    /**能够杠的牌，包括peng, selfPeng里面可以自扛以及暗杠的牌 */
     canGangPais() {
         let output = [];
         output = output.concat(this.group_shou_pai.peng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));

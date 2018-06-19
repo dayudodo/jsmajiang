@@ -791,13 +791,15 @@ class Room {
             else {
                 //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人 
                 let mo_pai = pai_name;
-                if (player.canGang(mo_pai)) {
-                    isShowGang = true;
-                    if (!_.isEmpty(canGangPais)) {
-                        canGangPais.push(mo_pai);
-                    }
-                    console.log(`房间${this.id} 玩家${player.username}摸牌后可以杠牌${mo_pai}`);
-                }
+                //自己摸牌后其实已经有canGangPais, 不用再检查杠了。
+                // if (player.canGang(mo_pai)) {
+                //   isShowGang = true;
+                //   if (!_.isEmpty(canGangPais)) {
+                //     canGangPais.push(mo_pai);
+                //   }
+                //   console.log(`房间${this.id} 玩家${player.username}摸牌后可以杠牌${mo_pai}`);
+                // }
+                //摸牌后并没有重复计算胡牌，所以可以使用其判断胡牌！
                 if (player.canHu(mo_pai)) {
                     isShowHu = true;
                     console.log(`房间${this.id} 玩家${player.username}可以自摸胡${mo_pai}`);

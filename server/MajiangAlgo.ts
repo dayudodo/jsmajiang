@@ -41,7 +41,7 @@ Array.prototype.equalArrays = function(b) {
 export function getArr(str): Array<Pai> {
   if (!str || str.length == 0) {
     // throw new Error("str is empty");
-    return []
+    return [];
     //如果是数组，那么就直接返回，可能就是一套手牌，比如["b1","b2"...]
   } else if (str instanceof Array) {
     return str;
@@ -84,8 +84,8 @@ export class MajiangAlgo {
     // if (test_arr.length != 2) {
     //   throw new Error(`test_arr:  ${test_arr} must have 2 values`);
     // }
-    if(_.isEmpty(test_arr)){
-      return false
+    if (_.isEmpty(test_arr)) {
+      return false;
     }
     let s1 = test_arr[0],
       s2 = test_arr[1];
@@ -129,7 +129,8 @@ export class MajiangAlgo {
   static isABC(test_arr) {
     let result = getArr(test_arr);
     if (result.length < 3) {
-      throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
+      // throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
+      return false;
     }
     let s1 = result[0],
       s2 = result[1],
@@ -475,7 +476,7 @@ export class MajiangAlgo {
     let len = this.flat_shou_pai(group_shoupai).push(na_pai);
     if (len < 14) {
       // throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
-      return false
+      return false;
     }
     return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
   }
@@ -986,13 +987,17 @@ export class MajiangAlgo {
       //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
       if (group_shoupai.peng.includes(pai_name) && selfMo) {
         return true;
-        //没有亮牌的时候，如果你是碰的牌，那么别人打的牌是不能杠的！
       } else {
         return false;
       }
     } else {
-      //看手牌里面是否有三张牌！
-      return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
+      //没有亮牌
+      //看手牌里面是否有三张牌！如果是自己摸的牌，那么需要先从手牌里面移走再去检测，因为player.mo_pai时已经添加进手牌了
+      if (selfMo) {
+        return MajiangAlgo._canGang(group_shoupai.shouPai.remove(pai_name), pai_name);
+      } else {
+        return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
+      }
     }
   }
 }

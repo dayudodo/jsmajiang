@@ -96,7 +96,8 @@ class MajiangAlgo {
     static isABC(test_arr) {
         let result = getArr(test_arr);
         if (result.length < 3) {
-            throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
+            // throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
+            return false;
         }
         let s1 = result[0], s2 = result[1], s3 = result[2];
         //判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
@@ -912,15 +913,20 @@ class MajiangAlgo {
             //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
             if (group_shoupai.peng.includes(pai_name) && selfMo) {
                 return true;
-                //没有亮牌的时候，如果你是碰的牌，那么别人打的牌是不能杠的！
             }
             else {
                 return false;
             }
         }
         else {
-            //看手牌里面是否有三张牌！
-            return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
+            //没有亮牌
+            //看手牌里面是否有三张牌！如果是自己摸的牌，那么需要先从手牌里面移走再去检测，因为player.mo_pai时已经添加进手牌了
+            if (selfMo) {
+                return MajiangAlgo._canGang(group_shoupai.shouPai.remove(pai_name), pai_name);
+            }
+            else {
+                return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
+            }
         }
     }
 }

@@ -27,11 +27,6 @@ var mj;
                 _this.ClickOffsetY = 40;
                 _this.prevSelectedPai = null;
                 _this.waitTime = config.MAX_WAIT_TIME;
-                // 是否隐藏了打牌所在区域sprite
-                _this.isFirstHideOut0 = true;
-                _this.isFirstHideOut1 = true;
-                _this.isFirstHideOut2 = true;
-                _this.isFirstHideOut3 = true;
                 _this.socket = Laya.socket;
                 return _this;
             }
@@ -63,8 +58,8 @@ var mj;
                 });
             };
             GameTableScene.prototype.showSkinOfCountDown = function (twonumber) {
-                _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
                 var _a;
+                _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
             };
             /**UI上显示出玩家的group手牌！ */
             GameTableScene.prototype.show_group_shoupai = function (player) {
@@ -318,6 +313,7 @@ var mj;
                     _loop_1(index);
                 }
             };
+            /**隐藏指定玩家方向，用ui_index */
             GameTableScene.prototype.hideDirection = function (player) {
                 this["direction" + player.ui_index].visible = false;
             };
@@ -375,6 +371,11 @@ var mj;
                 this.shouPai3.addChild(newFa3Sprite);
                 this.show_count_down(Laya.god_player);
             };
+            // 是否隐藏了打牌所在区域sprite
+            // private isFirstHideOut0 = true;
+            // private isFirstHideOut1 = true;
+            // private isFirstHideOut2 = true;
+            // private isFirstHideOut3 = true;
             /**删除掉所有剩余shouPai的复制 */
             GameTableScene.prototype.destroyAllPaiCloneSprites = function () {
                 this.clonePaiSpriteArray.forEach(function (item, index) {

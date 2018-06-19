@@ -1,5 +1,6 @@
 import test from "ava";
 import { Player } from "../server_build/server/player";
+import { getArr } from "../server_build/server/MajiangAlgo";
 
 var player;
 
@@ -167,5 +168,39 @@ test("打牌之后能否大胡", function(t) {
   player.da_pai("t8");
   t.is(player.isDaHu("t8"), true)
   t.is(player.isDaHu("zh"), false)
+
+});
+test("不能扛自己摸的牌", function(t) {
+  player = new Player({
+    group_shou_pai: {
+      // anGang: ["zh"],
+      anGang: [],
+      anGangCount: 0,
+      mingGang: [],
+      selfPeng: [],
+      // selfPengCount: 1,
+      peng: [],
+      shouPai: getArr("b1 b1 b1 b3 b4 t1 t1 t4 t5 t6 t3 t3 fa fa")
+    }
+  });
+  player.mo_pai="t3"
+  t.is(player.canGang("t3"), false)
+
+});
+test("可以扛自己摸的牌", function(t) {
+  player = new Player({
+    group_shou_pai: {
+      // anGang: ["zh"],
+      anGang: [],
+      anGangCount: 0,
+      mingGang: [],
+      selfPeng: [],
+      // selfPengCount: 1,
+      peng: [],
+      shouPai: getArr("b1 b1 b1 b3 b4 t1 t1 t4 t5 t6 t3 t3 t3 fa")
+    }
+  });
+  player.mo_pai="t3"
+  t.is(player.canGang("t3"), true)
 
 });
