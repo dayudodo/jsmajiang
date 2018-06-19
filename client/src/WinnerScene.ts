@@ -11,7 +11,11 @@ module mj.scene {
 	export class WinnerScene extends ui.test.WinnerUI {
 		constructor() {
 			super()
-
+			this.btn_restart.on(Laya.Event.CLICK, this, ()=>{
+				Laya.socket.sendmsg({
+					type: g_events.client_restart_game
+				})
+			})
 		}
 		/**初始化，先把一些东西隐藏起来 */
 		public init() {
@@ -28,8 +32,10 @@ module mj.scene {
 		public show_resultOf(player: any) {
 			let {gameTable } = Laya
 			let {ui_index} = player
-			this["result_info" + ui_index].text = player.result_info
-			this["result_info" + ui_index].visible = true
+			this["win_info" + ui_index].text = player.result_info.win_info
+			this["win_info" + ui_index].visible = true
+			this["lose_info" + ui_index].text = player.result_info.lose_info
+			this["lose_info" + ui_index].visible = true
 
 			let one_shou_pai_width = this.shou3.width //牌的宽度都是一样的，这无所谓！
 			//其实只需要显示杠及碰即可，不再有SelfPeng，anGang之类的，都会显示出来，需要服务器发送改变后的数据

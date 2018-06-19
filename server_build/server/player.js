@@ -122,12 +122,12 @@ class Player {
     get result_info() {
         //todo: 返回玩家的胜负两种消息！即使没胡，还是可能会有收入的！
         //或者只显示你赢了多少钱，哪怕是个单杠！
-        if (this.is_hu) {
-            return this.all_win_names.join(" ");
-        }
-        else {
-            return this.lose_names.join(" ");
-        }
+        // if (this.is_hu) {
+        //   return this.all_win_names.join(" ");
+        // } else {
+        //   return this.lose_names.join(" ");
+        // }
+        return { win_info: this.all_win_names.join(" "), lose_info: this.lose_names.join(" ") };
     }
     /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
     get result_shou_pai() {

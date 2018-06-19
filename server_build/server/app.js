@@ -13,17 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
 const g_lobby = new LobbyManager_1.LobbyManager();
-var test_names = [
-    "jack1",
-    "rose2",
-    "tom3",
-    "jerry4",
-    "michael5",
-    "adam6",
-    "bruce7",
-    "adam8",
-    "david9"
-];
+var test_names = ["jack1", "rose2", "tom3", "jerry4", "michael5", "adam6", "bruce7", "adam8", "david9"];
 var eventsHandler = [
     [g_events.client_testlogin, client_testlogin],
     [g_events.client_create_room, client_create_room],
@@ -35,16 +25,21 @@ var eventsHandler = [
     [g_events.client_confirm_liang, client_confirm_liang],
     [g_events.client_confirm_mingGang, client_confirm_mingGang],
     [g_events.client_confirm_peng, client_confirm_peng],
-    [g_events.client_confirm_guo, client_confirm_guo]
+    [g_events.client_confirm_guo, client_confirm_guo],
+    [g_events.client_restart_game, client_restart_game]
 ];
-function confirmInit(socket) {
+function client_restart_game(socket) {
+    let { player, room } = getPlayerRoom(socket);
+    room.restart_game(player);
+}
+function getPlayerRoom(socket) {
     let player = g_lobby.find_player_by(socket);
     let room = g_lobby.find_room_by(socket);
     // let table_pai = room.table_dapai;
     return { room, player };
 }
 function client_confirm_hu(client_message, socket) {
-    let { player, room } = confirmInit(socket);
+    let { player, room } = getPlayerRoom(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择胡牌`);
     room.client_confirm_hu(socket);
 }
@@ -54,22 +49,22 @@ function client_confirm_hu(client_message, socket) {
 //   room.client_confirm_ting(socket);
 // }
 function client_confirm_liang(client_message, socket) {
-    let { player, room } = confirmInit(socket);
+    let { player, room } = getPlayerRoom(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
     room.client_confirm_liang(client_message, socket);
 }
 function client_confirm_mingGang(client_message, socket) {
-    let { player, room } = confirmInit(socket);
+    let { player, room } = getPlayerRoom(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择杠牌`);
     room.client_confirm_mingGang(client_message, socket);
 }
 function client_confirm_peng(client_message, socket) {
-    let { player, room } = confirmInit(socket);
+    let { player, room } = getPlayerRoom(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择碰牌`);
     room.client_confirm_peng(socket);
 }
 function client_confirm_guo(client_message, socket) {
-    let { player, room } = confirmInit(socket);
+    let { player, room } = getPlayerRoom(socket);
     console.log(`房间:${room.id} 用户:${player.username} 选择过牌`);
     room.client_confirm_guo(socket);
 }

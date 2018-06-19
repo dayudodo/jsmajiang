@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1371,
-    "selecteID":1587,
+    "selectedBox":1645,
+    "selecteID":1703,
     "referenceLines":null,
     "props":{"width":1920,"sceneColor":"#000000","height":1080},
     "nodeParent":-1,
@@ -645,9 +645,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"result_info3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":1190,"visible":false,"var":"win_info3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1371,
-                    "label":"Label(result_info3)",
+                    "label":"Label(win_info3)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -658,7 +658,20 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"visible":true,"var":"oneju_score3","text":"得分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":221,"x":310,"width":1196,"visible":false,"var":"lose_info3","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "nodeParent":1371,
+                    "label":"Label(lose_info3)",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":1701,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Label",
+                    "props":{"y":222,"x":1674,"width":308,"visible":true,"var":"oneju_score3","text":"得分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1371,
                     "label":"Label(oneju_score3)",
                     "isDirectory":false,
@@ -1283,9 +1296,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"result_info0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":1194,"visible":false,"var":"win_info0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1589,
-                    "label":"Label(result_info0)",
+                    "label":"Label(win_info0)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1296,7 +1309,20 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"visible":true,"var":"oneju_score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":222,"x":313,"width":1197,"visible":false,"var":"lose_info0","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "nodeParent":1589,
+                    "label":"Label(lose_info0)",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":1702,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Label",
+                    "props":{"y":225,"x":1670,"width":312,"visible":true,"var":"oneju_score0","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1589,
                     "label":"Label(oneju_score0)",
                     "isDirectory":false,
@@ -1916,9 +1942,9 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":169,"x":313,"width":905,"visible":false,"var":"result_info2","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":169,"x":313,"width":1194,"visible":false,"var":"win_info2","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1645,
-                    "label":"Label(result_info2)",
+                    "label":"Label(win_info2)",
                     "isDirectory":false,
                     "isAniNode":true,
                     "hasChild":false,
@@ -1929,7 +1955,20 @@
                 {
                     "x":30,
                     "type":"Label",
-                    "props":{"y":223,"x":1006,"width":590,"visible":true,"var":"oneju_score2","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
+                    "props":{"y":221,"x":310,"width":1194,"visible":false,"var":"lose_info2","text":"屁胡X1","height":48,"fontSize":36,"color":"#ffffff"},
+                    "nodeParent":1645,
+                    "label":"Label(lose_info2)",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":1703,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
+                    "type":"Label",
+                    "props":{"y":217,"x":1671,"width":314,"visible":true,"var":"oneju_score2","text":"总分：+800","height":48,"fontSize":36,"color":"#ffffff"},
                     "nodeParent":1645,
                     "label":"Label(oneju_score2)",
                     "isDirectory":false,

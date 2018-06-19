@@ -6,6 +6,7 @@ var g_events;
     g_events.client_player_ready = "client_player_ready";
     g_events.client_unknown = "client_unknown";
     g_events.client_da_pai = "client_da_pai";
+    g_events.client_restart_game = "client_restart_game";
     g_events.client_confirm_hu = "client_confirm_hu";
     g_events.client_confirm_ting = "client_confirm_ting";
     g_events.client_confirm_liang = "client_confirm_liang";

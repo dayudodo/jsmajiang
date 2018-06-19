@@ -20,7 +20,13 @@ var mj;
         var WinnerScene = /** @class */ (function (_super) {
             __extends(WinnerScene, _super);
             function WinnerScene() {
-                return _super.call(this) || this;
+                var _this = _super.call(this) || this;
+                _this.btn_restart.on(Laya.Event.CLICK, _this, function () {
+                    Laya.socket.sendmsg({
+                        type: g_events.client_restart_game
+                    });
+                });
+                return _this;
             }
             /**初始化，先把一些东西隐藏起来 */
             WinnerScene.prototype.init = function () {
@@ -37,8 +43,10 @@ var mj;
             WinnerScene.prototype.show_resultOf = function (player) {
                 var gameTable = Laya.gameTable;
                 var ui_index = player.ui_index;
-                this["result_info" + ui_index].text = player.result_info;
-                this["result_info" + ui_index].visible = true;
+                this["win_info" + ui_index].text = player.result_info.win_info;
+                this["win_info" + ui_index].visible = true;
+                this["lose_info" + ui_index].text = player.result_info.lose_info;
+                this["lose_info" + ui_index].visible = true;
                 var one_shou_pai_width = this.shou3.width; //牌的宽度都是一样的，这无所谓！
                 //其实只需要显示杠及碰即可，不再有SelfPeng，anGang之类的，都会显示出来，需要服务器发送改变后的数据
                 gameTable.showMingGang(player.result_shou_pai, player, one_shou_pai_width, 0, this, true);

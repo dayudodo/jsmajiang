@@ -5,6 +5,7 @@
   export const client_player_ready = "client_player_ready"
   export const client_unknown = "client_unknown"
   export const client_da_pai = "client_da_pai"
+  export const client_restart_game = "client_restart_game"
 
   export const client_confirm_hu = "client_confirm_hu"
   export const client_confirm_ting = "client_confirm_ting"

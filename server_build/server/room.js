@@ -8,6 +8,7 @@ const player_1 = require("./player");
 const util = require("util");
 const TablePaiManager_1 = require("./TablePaiManager");
 const ScoreManager_1 = require("./ScoreManager");
+const MyDataBase_1 = require("./MyDataBase");
 let room_valid_names = ["ange", "jack", "rose"];
 /**玩家的各种操作 */
 var Operate;
@@ -789,7 +790,7 @@ class Room {
                 }
             }
             else {
-                //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人 
+                //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人
                 let mo_pai = pai_name;
                 //自己摸牌后其实已经有canGangPais, 不用再检查杠了。
                 // if (player.canGang(mo_pai)) {
@@ -855,7 +856,7 @@ class Room {
     }
     get zhuang_jia() {
         //获取东家
-        return _.find(this.players, { east: true });
+        return this.players.find(p => true === p.east);
     }
     set_dong_jia(player) {
         //只能有一个东家, 不使用other_players计算麻烦
@@ -928,23 +929,42 @@ class Room {
         });
         //所有人发完13张，再给东家发张牌，从其开始打
         this.server_fa_pai(this.zhuang_jia);
-        // this.decideFaPaiSelectShow(this.dong_jia, this.dong_jia.mo_pai)
+        //decideSelectShow已经写入server_fa_pai中。
+        // this.decideSelectShow(this.dong_jia, this.dong_jia.mo_pai)
+        //游戏开始后，所有玩家退出准备状态！为重新开启游戏做准备。
+        this.players.forEach(p => (p.ready = false));
+    }
+    init_players() {
+        this.players.forEach(p => {
+            let person = new player_1.Player({
+                group_shou_pai: {
+                    anGang: [],
+                    mingGang: [],
+                    peng: [],
+                    selfPeng: [],
+                    shouPai: []
+                },
+                socket: p.socket,
+                username: p.username,
+                user_id: p.user_id
+            });
+            //todo: 设定哪个是庄家，貌似是放炮的是庄家？如果平局，则还是上一家。
+            person.east = p.east;
+            //赋值后相当于是清空了玩家的所有数据。
+            p = person;
+        });
     }
     //游戏结束后重新开始游戏！
-    restart_game() {
-        //清空所有玩家的牌
-        this.players.forEach(p => {
-            p.group_shou_pai = {
-                anGang: [],
-                mingGang: [],
-                peng: [],
-                selfPeng: [],
-                shouPai: []
-            };
-            p.ready = false;
-            p.arr_dapai = [];
-        });
-        this.server_game_start();
+    restart_game(player) {
+        //todo: 做一简单防护，玩家不能保存两次数据
+        MyDataBase_1.MyDataBase.getInstance().save(player);
+        player.ready = true;
+        let all_confirm_restart = this.players.every(p => true === p.ready);
+        if (all_confirm_restart) {
+            //清空所有玩家的牌，还是新建player? 哪个速度更快一些呢？可能新建对象会慢吧。
+            this.init_players();
+            this.server_game_start();
+        }
     }
 }
 exports.Room = Room;

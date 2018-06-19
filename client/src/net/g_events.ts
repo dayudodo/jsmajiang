@@ -1,12 +1,14 @@
 
 module g_events{
 
+ 
   export const client_testlogin = "client_testlogin";
   export const client_create_room = "client_create_room"
   export const client_join_room = "client_join_room"
   export const client_player_ready = "client_player_ready"
   export const client_unknown = "client_unknown"
   export const client_da_pai = "client_da_pai"
+  export const client_restart_game = "client_restart_game"
 
   export const client_confirm_hu = "client_confirm_hu"
   export const client_confirm_ting = "client_confirm_ting"
@@ -38,6 +40,8 @@ module g_events{
 
   export const server_can_select = "server_can_select";
   export const server_can_dapai = "server_can_dapai";
+
+
 
 
 

@@ -177,14 +177,15 @@ export class Player {
     }
   }
   /**玩家胜负结果信息 */
-  get result_info(): string {
+  get result_info(): {} {
     //todo: 返回玩家的胜负两种消息！即使没胡，还是可能会有收入的！
     //或者只显示你赢了多少钱，哪怕是个单杠！
-    if (this.is_hu) {
-      return this.all_win_names.join(" ");
-    } else {
-      return this.lose_names.join(" ");
-    }
+    // if (this.is_hu) {
+    //   return this.all_win_names.join(" ");
+    // } else {
+    //   return this.lose_names.join(" ");
+    // }
+    return { win_info: this.all_win_names.join(" "), lose_info: this.lose_names.join(" ") };
   }
   /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
   get result_shou_pai() {
@@ -278,7 +279,7 @@ export class Player {
    */
   set mo_pai(pai: Pai) {
     this._mo_pai = pai;
-    this.after_mo_gang_dapai = false
+    this.after_mo_gang_dapai = false;
     this.group_shou_pai.shouPai.push(pai);
     this.group_shou_pai.shouPai.sort();
   }
@@ -316,7 +317,7 @@ export class Player {
   }
   /**杠别人的牌是明杠 */
   confirm_mingGang(pai: Pai) {
-    this.after_mo_gang_dapai = false
+    this.after_mo_gang_dapai = false;
     this.group_shou_pai.mingGang.push(pai);
     //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
     //如果是碰了之后杠，需要删除这张碰牌
@@ -335,7 +336,7 @@ export class Player {
 
   /**自己摸的牌就是暗杠了*/
   confirm_anGang(pai: Pai) {
-    this.after_mo_gang_dapai = false
+    this.after_mo_gang_dapai = false;
     //首先从手牌中删除四！张牌，
     // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
     for (var i = 0; i < 4; i++) {
@@ -363,13 +364,13 @@ export class Player {
       throw new Error(`${this.username}打了张非法牌？${pai_name}`);
     }
     //如果打的牌与摸牌相同，不用重复计算，就算是以前手牌里面有，其实也相当于是打了张摸牌
-    let shouPaiChanged = pai_name != this.mo_pai
-    if(shouPaiChanged){
+    let shouPaiChanged = pai_name != this.mo_pai;
+    if (shouPaiChanged) {
       this.group_shou_pai.shouPai.sort();
       this.calculateHu();
     }
     this._mo_pai = null; //打牌之后玩家处于非摸牌状态
-    this.after_mo_gang_dapai = true
+    this.after_mo_gang_dapai = true;
   }
   /**计算各种胡牌的状态 */
   calculateHu() {

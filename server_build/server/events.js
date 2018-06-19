@@ -6,6 +6,7 @@ exports.client_join_room = "client_join_room";
 exports.client_player_ready = "client_player_ready";
 exports.client_unknown = "client_unknown";
 exports.client_da_pai = "client_da_pai";
+exports.client_restart_game = "client_restart_game";
 exports.client_confirm_hu = "client_confirm_hu";
 exports.client_confirm_ting = "client_confirm_ting";
 exports.client_confirm_liang = "client_confirm_liang";
