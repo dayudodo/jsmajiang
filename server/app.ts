@@ -38,9 +38,13 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_restart_game, client_restart_game]
 ];
 
+
 function client_restart_game(client_message, socket) {
   let { player, room } = getPlayerRoom(socket);
-  room.restart_game(player)
+  console.log(`房间:${room.id} 用户:${player.username} 重新开始游戏`);
+  //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
+  //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
+  room.client_restart_game(g_lobby, client_message, socket)
 }
 
 function getPlayerRoom(socket) {

@@ -7,6 +7,7 @@ import * as util from "util";
 import { TablePaiManager } from "./TablePaiManager";
 import { ScoreManager } from "./ScoreManager";
 import { MyDataBase } from "./MyDataBase";
+import { LobbyManager } from "./LobbyManager";
 
 let room_valid_names = ["ange", "jack", "rose"];
 
@@ -257,13 +258,15 @@ export class Room {
     if (player.socket == socket) {
       return player_data;
     } else if (ignore_filter) {
-      //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng
+      //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng及暗杠
       player_data["group_shou_pai"]["selfPeng"] = [];
       player_data["group_shou_pai"]["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+      player_data["group_shou_pai"]["anGang"] = [];
+      player_data["group_shou_pai"]["anGangCount"] = player.group_shou_pai.anGang.length;
       return player_data;
-      //不是god_player, 也没有忽略过滤器，就全过滤！
     } else {
-      //暗杠只有数量，但是不显示具体的内容
+      //不是god_player, 也没有忽略过滤器，就全过滤！
+      //暗杠只有数量，不显示具体的内容
       let shou_pai = player_data["group_shou_pai"];
       shou_pai["anGang"] = [];
       shou_pai["anGangCount"] = player.group_shou_pai.anGang.length;
@@ -987,7 +990,7 @@ export class Room {
     this.players.forEach(p => (p.ready = false));
   }
 
-  init_players() {
+  init_players(lobby: LobbyManager) {
     let newPlayers = []
     this.players.forEach(p => {
 
@@ -1009,13 +1012,14 @@ export class Room {
       person.seat_index = p.seat_index
       //赋值后相当于是清空了玩家的所有数据。
       newPlayers.push(person)
+      lobby.find_conn_by(p.socket).player = person
     });
-    this.players = null;
     this.players = newPlayers
   }
 
   //游戏结束后重新开始游戏！
-  restart_game(player: Player) {
+  client_restart_game(lobby:LobbyManager , client_message, socket: WebSocket) {
+    let player = this.find_player_by(socket)
     //todo: 做一简单防护，玩家不能保存两次数据
     MyDataBase.getInstance().save(player);
     player.ready = true;
@@ -1023,7 +1027,7 @@ export class Room {
     let all_confirm_restart = this.players.every(p => true === p.ready);
     if (all_confirm_restart) {
       //清空所有玩家的牌，还是新建player? 哪个速度更快一些呢？可能新建对象会慢吧。
-      this.init_players();
+      this.init_players(lobby);
       this.server_game_start();
     }
   }

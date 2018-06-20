@@ -25,6 +25,7 @@ var mj;
                     Laya.socket.sendmsg({
                         type: g_events.client_restart_game
                     });
+                    _this.destroy();
                 });
                 return _this;
             }

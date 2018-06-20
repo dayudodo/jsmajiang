@@ -15,6 +15,7 @@ module mj.scene {
 				Laya.socket.sendmsg({
 					type: g_events.client_restart_game
 				})
+				this.destroy()
 			})
 		}
 		/**初始化，先把一些东西隐藏起来 */

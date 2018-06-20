@@ -205,26 +205,52 @@ namespace mj.net {
       this.gameTable.show_fapai(pai);
     }
 
+    init_players(){
+      let newPlayers = []
+      Laya.room.players.forEach(p=>{
+        let person = new Player()
+        person.user_id = p.user_id
+        person.username = p.username
+        person.seat_index = p.seat_index
+        person.ui_index = p.ui_index
+        person.east = p.east
+        //赋值克隆以便在show_group_shoupai中删除这些克隆的牌！
+        person.ui_clone_arr = p.ui_clone_arr
+        newPlayers.push(person)
+        //重新设置god_player
+        if(person.ui_index == 3){
+          Laya.god_player = person
+        }
+      })
+      Laya.room.players = newPlayers
 
+    }
 
     private server_game_start(server_message) {
       // console.log(server_message);
       // return
       let { gameTable } = this;
-      //游戏开始了
-      //测试下显示牌面的效果，还需要转换一下要显示的东西，服务器发过来的是自己的b2,b3，而ui里面名称则不相同。又得写个表了！
-
+            //重新初始化用户
+      this.init_players()
       //客户端也需要保存好当前的牌，以便下一步处理
       Laya.god_player.group_shou_pai = server_message.god_player.group_shou_pai;
+      
       //把group保存到两边玩家的手牌之中。
       let leftPlayer = Laya.room.left_player;
       leftPlayer.group_shou_pai = server_message.left_player.group_shou_pai;
+      
       let rightPlayer = Laya.room.right_player;
       rightPlayer.group_shou_pai = server_message.right_player.group_shou_pai;
+      
       // console.log(server_message);
       gameTable.show_group_shoupai(Laya.god_player);
+      gameTable.show_out(Laya.god_player)
+
       gameTable.show_group_shoupai(leftPlayer);
+      gameTable.show_out(leftPlayer)
+      
       gameTable.show_group_shoupai(rightPlayer);
+      gameTable.show_out(rightPlayer)
     }
 
     public openHandler(event: any = null): void {
