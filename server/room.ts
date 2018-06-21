@@ -604,6 +604,8 @@ export class Room {
     });
     //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
     player.mo_pai = pai[0];
+    //在这儿需要计算下胡牌，防止出现扛之后可以亮，但是没有把mo_pai算在内的情况！
+    // player.calculateHu()
     //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
     this.decideSelectShow(player, pai[0]);
 
@@ -790,7 +792,8 @@ export class Room {
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
     //此种情况也包括了pai_name为空的情况！意思就是只检测能否亮牌！
-    if (!player.is_liang) {
+    //如果没亮而且玩家没有摸牌，才去检测亮。
+    if (!player.is_liang && !pai_name) {
       if (player.canLiang()) {
         isShowLiang = true;
         canLiangPais = player.PaiArr3A();
@@ -926,7 +929,7 @@ export class Room {
    */
   filter_group(player: Player, ignore_filter: boolean = false) {
     if (ignore_filter) {
-      return player.group_shou_pai
+      return player.group_shou_pai;
     } else {
       //需要新建group对象返回，不能改变原有的数据！
       let newGroup = _.cloneDeep(player.group_shou_pai);
@@ -991,9 +994,8 @@ export class Room {
   }
 
   init_players(lobby: LobbyManager) {
-    let newPlayers = []
+    let newPlayers = [];
     this.players.forEach(p => {
-
       let person = new Player({
         group_shou_pai: {
           anGang: [],
@@ -1009,17 +1011,17 @@ export class Room {
       //todo: 设定哪个是庄家，貌似是放炮的是庄家？如果平局，则还是上一家。
       person.east = p.east;
       //保留玩家的座位号
-      person.seat_index = p.seat_index
+      person.seat_index = p.seat_index;
       //赋值后相当于是清空了玩家的所有数据。
-      newPlayers.push(person)
-      lobby.find_conn_by(p.socket).player = person
+      newPlayers.push(person);
+      lobby.find_conn_by(p.socket).player = person;
     });
-    this.players = newPlayers
+    this.players = newPlayers;
   }
 
   //游戏结束后重新开始游戏！
-  client_restart_game(lobby:LobbyManager , client_message, socket: WebSocket) {
-    let player = this.find_player_by(socket)
+  client_restart_game(lobby: LobbyManager, client_message, socket: WebSocket) {
+    let player = this.find_player_by(socket);
     //todo: 做一简单防护，玩家不能保存两次数据
     MyDataBase.getInstance().save(player);
     player.ready = true;

@@ -566,6 +566,8 @@ class Room {
         });
         //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
         player.mo_pai = pai[0];
+        //在这儿需要计算下胡牌，防止出现扛之后可以亮，但是没有把mo_pai算在内的情况！
+        // player.calculateHu()
         //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
         this.decideSelectShow(player, pai[0]);
         console.log(chalk_1.default.cyan("服务器发牌 %s 给：%s"), player.mo_pai, player.username);
@@ -742,7 +744,8 @@ class Room {
         //流式处理，一次判断所有，然后结果发送给客户端
         //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
         //此种情况也包括了pai_name为空的情况！意思就是只检测能否亮牌！
-        if (!player.is_liang) {
+        //如果没亮而且玩家没有摸牌，才去检测亮。
+        if (!player.is_liang && !pai_name) {
             if (player.canLiang()) {
                 isShowLiang = true;
                 canLiangPais = player.PaiArr3A();
