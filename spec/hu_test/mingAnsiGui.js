@@ -39,6 +39,23 @@ test("明四归，但是非暗四归", function (t) {
   };
   t.is(MajiangAlgo.HuisAnSiGui(group_shoupai, na_pai), false);
 });
+
+test("亮倒后明四归，不亮暗四归", function (t) {
+  // let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6 fa fa fa zh";
+  let na_pai = "t7";
+  let group_shoupai = {
+    anGang: [],
+    mingGang: [],
+    peng: [],
+    selfPeng: [],
+    shouPai: getArr("b4 b5 b6 b7 b8 b9 t6 t7 t7 t7 t8 t8 t9")
+  };
+  t.is(MajiangAlgo.HuisMingSiGui(group_shoupai, na_pai, true), true);
+  t.is(MajiangAlgo.HuisMingSiGui(group_shoupai, na_pai, false), false);
+  t.is(MajiangAlgo.HuisAnSiGui(group_shoupai, na_pai, true), false);
+  t.is(MajiangAlgo.HuisAnSiGui(group_shoupai, na_pai, false), true);
+});
+
 test("暗四归，非明四归", function (t) {
   // let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6 fa fa fa zh";
   let na_pai = "b2";

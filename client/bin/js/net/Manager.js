@@ -176,23 +176,26 @@ var mj;
                 this.gameTable.show_fapai(pai);
             };
             Manager.prototype.init_players = function () {
-                var newPlayers = [];
                 Laya.room.players.forEach(function (p) {
-                    var person = new Player();
-                    person.user_id = p.user_id;
-                    person.username = p.username;
-                    person.seat_index = p.seat_index;
-                    person.ui_index = p.ui_index;
-                    person.east = p.east;
-                    //赋值克隆以便在show_group_shoupai中删除这些克隆的牌！
-                    person.ui_clone_arr = p.ui_clone_arr;
-                    newPlayers.push(person);
-                    //重新设置god_player
-                    if (person.ui_index == 3) {
-                        Laya.god_player = person;
-                    }
+                    //重置玩家的数据比新建player要来的方便！
+                    // p.group_shou_pai = {
+                    //   anGang: [],
+                    //   mingGang: [],
+                    //   peng: [],
+                    //   selfPeng: [],
+                    //   shouPai: []
+                    // }
+                    p.result_info = "";
+                    p.is_hu = false;
+                    p.is_fangpao = false;
+                    p.hupai_zhang = null;
+                    p.oneju_score = 0;
+                    p.arr_dapai = [];
+                    p.score = 0;
+                    p.shouPai_start_index = 0;
+                    p.can_dapai = false;
+                    p.is_liang = false;
                 });
-                Laya.room.players = newPlayers;
             };
             Manager.prototype.server_game_start = function (server_message) {
                 // console.log(server_message);

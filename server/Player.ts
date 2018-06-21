@@ -377,7 +377,7 @@ export class Player {
     //只要手牌改变，其实都是需要重新计算胡牌！
     let shoupai_changed = true;
     if (shoupai_changed) {
-      this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai);
+      this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai, this.is_liang);
     }
   }
 }

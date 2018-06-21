@@ -870,25 +870,25 @@ class Room {
     /**过滤grou_shou_pai,
      * @param ignore_filter 是否忽略此过滤器，用户选择亮牌，就不再需要过滤了。
      */
-    filter_group(group_shouPai, ignore_filter = false) {
+    filter_group(player, ignore_filter = false) {
         if (ignore_filter) {
-            return group_shouPai;
+            return player.group_shou_pai;
         }
         else {
             //需要新建group对象返回，不能改变原有的数据！
-            let newGroup = _.clone(group_shouPai);
+            let newGroup = _.cloneDeep(player.group_shou_pai);
             newGroup.anGang = [];
-            newGroup.anGangCount = group_shouPai.anGang.length;
+            newGroup.anGangCount = player.group_shou_pai.anGang.length;
             newGroup.selfPeng = [];
-            newGroup.selfPengCount = group_shouPai.selfPeng.length;
+            newGroup.selfPengCount = player.group_shou_pai.selfPeng.length;
             newGroup.shouPai = [];
-            newGroup.shouPaiCount = group_shouPai.shouPai.length;
+            newGroup.shouPaiCount = player.group_shou_pai.shouPai.length;
             return newGroup;
         }
     }
     sendGroupShouPaiOf(p) {
-        let leftGroup = this.filter_group(this.left_player(p).group_shou_pai);
-        let rightGroup = this.filter_group(this.right_player(p).group_shou_pai);
+        let leftGroup = this.filter_group(this.left_player(p));
+        let rightGroup = this.filter_group(this.right_player(p));
         p.socket.sendmsg({
             type: g_events.server_game_start,
             god_player: { group_shou_pai: p.group_shou_pai },
