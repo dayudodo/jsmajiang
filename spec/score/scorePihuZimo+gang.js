@@ -41,6 +41,7 @@ test.beforeEach(t => {
     username: "rose2",
     user_id: 10002
   });
+  //给player1放了个普通杠
   player2.lose_data =[
     {type: config.LoseGang, pai: 'b2'}
   ]
@@ -60,7 +61,7 @@ test.beforeEach(t => {
 });
 
 //
-test("5定5 屁胡进20", function(t) {
+test("5定5 屁胡自摸进20", function(t) {
   ScoreManager.cal_oneju_score([player1, player2, player3]);
   console.log(
     `各自分数： player1:${player1.oneju_score}  player2:${player2.oneju_score}  player3:${player3.oneju_score}`

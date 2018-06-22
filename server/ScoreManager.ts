@@ -16,7 +16,7 @@ export class ScoreManager {
     let all_hu_players = players.filter(p => true == p.is_hu);
 
     all_hu_players.forEach(hu_player => {
-      let all_typesCode = hu_player.hupai_data.hupai_dict[hu_player.hupai_zhang];
+      let all_hupaiTypesCode = hu_player.hupai_data.hupai_dict[hu_player.hupai_zhang];
 
       //如果自摸，其它两家出钱
       // all_typesCode.forEach(code => {
@@ -30,42 +30,54 @@ export class ScoreManager {
         //自摸后需要扣除其它两个玩家的相应分数！分数算在胡家手中。
         this.other_players(hu_player, players).forEach(p => {
           let score = 0;
-          score = this.cal_fang_score(all_typesCode);
+          score = this.cal_fang_score(all_hupaiTypesCode);
+          //扣掉其它两个玩家的分数
           p.oneju_score -= score;
+          //分数添加到胡家里面
           hu_player.oneju_score += score;
 
-          //漂单独算
+          //漂单独算，貌似玩家单独还可以设置！其实也可以强制漂，这由庄家决定。创建房间的人可以设定漂
           if (config.have_piao) {
             //漂的加分减分都是要算双倍的！
             p.oneju_score -= config.piao_score * 2;
             hu_player.oneju_score += config.piao_score * 2;
           }
           console.log("====================================");
-          console.log("hu_player.oneju_score: ", hu_player.oneju_score);
+          console.log(`${hu_player.username}.oneju_score: ${hu_player.oneju_score}`);
           console.log("====================================");
         });
         //todo: 自摸的算番
+
       } else {
         //不是自摸，有人放炮，扣除放炮者的分数！
-        let fang_player = players.find(p => true == p.is_fangpao);
-        fang_player.oneju_score -= this.cal_fang_score(all_typesCode);
+        let fangpao_player = players.find(p => true == p.is_fangpao);
+        fangpao_player.oneju_score -= this.cal_fang_score(all_hupaiTypesCode);
+        //扣除被扛的分数
+
+        //分数添加到胡家里面
+
       }
     });
+
+    //todo: 平局
+
+    //todo: 扛牌分计算
   }
 
-  /**某种杠code的分数 */
-  static gangScoreOf(code: number): number {
-    let hu_item = config.GangSheet.find(item => item.type == code);
-    return hu_item.multiple * config.base_score;
-  }
   /**typesCode中的所有杠分 */
   static cal_gang_score(typesCode: number[]): number {
+    /**某种杠code的分数 */
+    let gangScoreOf=(code: number): number => {
+      let hu_item = config.GangSheet.find(item => item.type == code);
+      return hu_item.multiple * config.base_score;
+    }
+
     let score = 0;
     let gangCodes = typesCode.filter(
       code => config.HuisGang == code || config.HuisAnGang == code || config.HuisCaPao == code
     );
     gangCodes.forEach(code => {
-      score += this.gangScoreOf(code);
+      score += gangScoreOf(code);
     });
     return score;
   }
