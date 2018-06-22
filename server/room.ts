@@ -793,7 +793,7 @@ export class Room {
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
     //此种情况也包括了pai_name为空的情况！意思就是只检测能否亮牌！
     //如果没亮而且玩家没有摸牌，才去检测亮。
-    if (!player.is_liang && !pai_name) {
+    if (!player.is_liang && !player.mo_pai) {
       if (player.canLiang()) {
         isShowLiang = true;
         canLiangPais = player.PaiArr3A();

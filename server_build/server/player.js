@@ -51,7 +51,7 @@ class Player {
         // public can_status: playerStatus;
         /**摸扛之后是否打牌 */
         this.after_mo_gang_dapai = false;
-        /**能打牌了 */
+        /**客户端能打牌的控制变量 */
         this.can_dapai = false;
         /**临时的赢代码，比如杠 */
         this.temp_win_codes = [];

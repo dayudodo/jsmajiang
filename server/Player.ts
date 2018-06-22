@@ -105,7 +105,7 @@ export class Player {
 
   /**摸扛之后是否打牌 */
   public after_mo_gang_dapai = false;
-  /**能打牌了 */
+  /**客户端能打牌的控制变量 */
   public can_dapai: boolean = false;
   /**临时的赢代码，比如杠 */
   public temp_win_codes: number[] = [];

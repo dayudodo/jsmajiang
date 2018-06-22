@@ -175,6 +175,7 @@ var mj;
                 //显示服务器发过来的牌
                 this.gameTable.show_fapai(pai);
             };
+            /**重新初始化用户 */
             Manager.prototype.init_players = function () {
                 Laya.room.players.forEach(function (p) {
                     //重置玩家的数据比新建player要来的方便！
@@ -201,7 +202,6 @@ var mj;
                 // console.log(server_message);
                 // return
                 var gameTable = this.gameTable;
-                //重新初始化用户
                 this.init_players();
                 //客户端也需要保存好当前的牌，以便下一步处理
                 Laya.god_player.group_shou_pai = server_message.god_player.group_shou_pai;

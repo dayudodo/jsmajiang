@@ -38,6 +38,13 @@ module mj.scene {
 			this["lose_info" + ui_index].text = player.result_info.lose_info
 			this["lose_info" + ui_index].visible = true
 
+			if(player.is_hu){
+				let hupaiSprite = this["fa"+ ui_index] as Sprite
+				let huImage = hupaiSprite.getChildAt(0).getChildAt(0) as Image
+				huImage.skin = PaiConverter.skinOfShou(player.hupai_zhang)
+				hupaiSprite.visible = true
+			}
+
 			let one_shou_pai_width = this.shou3.width //牌的宽度都是一样的，这无所谓！
 			//其实只需要显示杠及碰即可，不再有SelfPeng，anGang之类的，都会显示出来，需要服务器发送改变后的数据
 			gameTable.showMingGang(player.result_shou_pai, player, one_shou_pai_width, 0, this, true)
