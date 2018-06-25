@@ -61,22 +61,6 @@ export var base_score = 5;
 export var have_piao = true;
 export var piao_score = 5;
 
-export const LoseGang = 0;
-export const LoseGangShangGang = 1;
-export const LosePihuPao = 2;
-export const LoseDaHuPao = 3;
-export const LoseAnGang = 4;
-export const LoseCaPao = 5;
-
-/**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
-export const LoseSheet = [
-  { type: LoseGang, name: "放杠", multiple: 1 },
-  { type: LoseGangShangGang, name: "放杠上杠", multiple: 2 },
-  { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
-  { type: LoseDaHuPao, name: "放大胡炮", multiple: 1 },
-  { type: LoseAnGang, name: "放暗杠", multiple: 1 },
-  { type: LoseCaPao, name: "放擦炮", multiple: 1 }
-];
 
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {
@@ -157,4 +141,23 @@ export const GangSheet = [
   { type: HuisCaPao, name: "擦炮", multiple: 1 },
   { type: HuisAnGang, name: "暗杠", multiple: 2 },
   { type: huisGangShangGang, name: "杠上杠", multiple: 2 },
+];
+
+export const LoseGang = 0;
+export const LoseGangShangGang = 1;
+// export const LosePihuPao = 2;
+// export const LoseDaHuPao = 3;
+export const LoseAnGang = 4;
+export const LoseCaPao = 5;
+// export const LoseZiMo = 6;
+
+/**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
+export const LoseSheet = [
+  { type: LoseGang, name: "放杠", multiple: 1 },
+  { type: LoseGangShangGang, name: "放杠上杠", multiple: 2 },
+  // { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
+  // { type: LoseDaHuPao, name: "放大胡炮", multiple: 1 },
+  { type: LoseAnGang, name: "被暗杠", multiple: 1 },
+  { type: LoseCaPao, name: "被擦炮", multiple: 1 },
+  // { type: LoseZiMo, name: "被自摸", multiple: 1 },
 ];

@@ -13,6 +13,12 @@ export class ScoreManager {
   }
   /**所有玩家的一局得分，计算结果直接保存到各player的oneju_score中 */
   static cal_oneju_score(players: Player[]) {
+    //todo: 扛分计算
+    // 每个玩家都要算一次扛分
+    players.forEach(p=>{
+      let all_typesCode = p.all_win_codes
+    })
+
     let all_hu_players = players.filter(p => true == p.is_hu);
 
     all_hu_players.forEach(hu_player => {
@@ -61,11 +67,11 @@ export class ScoreManager {
 
     //todo: 平局
 
-    //todo: 扛牌分计算
+    
   }
 
   /**typesCode中的所有杠分 */
-  static cal_gang_score(typesCode: number[]): number {
+  static cal_gang_score(gangCodes: number[]): number {
     /**某种杠code的分数 */
     let gangScoreOf=(code: number): number => {
       let hu_item = config.GangSheet.find(item => item.type == code);
@@ -73,9 +79,7 @@ export class ScoreManager {
     }
 
     let score = 0;
-    let gangCodes = typesCode.filter(
-      code => config.HuisGang == code || config.HuisAnGang == code || config.HuisCaPao == code
-    );
+
     gangCodes.forEach(code => {
       score += gangScoreOf(code);
     });

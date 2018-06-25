@@ -73,9 +73,11 @@ export class Player {
   public is_thinking = false;
   /**todo: 是否是胡玩家，确保只有一个 */
   public is_hu = false;
+  /**是否放炮 */
+  public is_fangpao = false;
 
   /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
-  public lose_data = [
+  public gang_lose_data = [
     // {type: config.FangGang, pai:''},
     // {type: config.FangGangShangGang, pai:''},
     // {type: config.FangPihuPao, pai:''},
@@ -108,7 +110,7 @@ export class Player {
   /**客户端能打牌的控制变量 */
   public can_dapai: boolean = false;
   /**临时的赢代码，比如杠 */
-  public temp_win_codes: number[] = [];
+  public gang_win_codes: number[] = [];
 
   //新建，用户就会有一个socket_id，一个socket其实就是一个连接了
   constructor({ group_shou_pai, socket, username, user_id }) {
@@ -119,25 +121,25 @@ export class Player {
   }
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {
-    this.temp_win_codes.push(config.huisGangShangGang);
-    fangGangPlayer.lose_data.push({
+    this.gang_win_codes.push(config.huisGangShangGang);
+    fangGangPlayer.gang_lose_data.push({
       type: config.LoseGangShangGang,
       pai: pai_name
     });
   }
   /**保存普通杠消息，并通知放杠者 */
   saveGang(fangGangPlayer: Player, pai_name: Pai) {
-    this.temp_win_codes.push(config.HuisGang);
-    fangGangPlayer.lose_data.push({
+    this.gang_win_codes.push(config.HuisGang);
+    fangGangPlayer.gang_lose_data.push({
       type: config.LoseGang,
       pai: pai_name
     });
   }
   /**保存擦炮的消息，并通知其它的玩家你得掏钱了! */
   saveCaPao(other_players: Player[], pai_name: Pai) {
-    this.temp_win_codes.push(config.HuisCaPao);
+    this.gang_win_codes.push(config.HuisCaPao);
     other_players.forEach(person => {
-      person.lose_data.push({
+      person.gang_lose_data.push({
         type: config.LoseCaPao,
         pai: pai_name
       });
@@ -146,22 +148,26 @@ export class Player {
 
   /**保存暗杠的消息，改变其它两个玩家的扣分! */
   saveAnGang(other_players: Player[], pai_name: Pai) {
-    this.temp_win_codes.push(config.HuisAnGang);
+    this.gang_win_codes.push(config.HuisAnGang);
     other_players.forEach(person => {
-      person.lose_data.push({
+      person.gang_lose_data.push({
         type: config.LoseAnGang,
         pai: pai_name
       });
     });
   }
 
-  /**到底要出哪些杠钱！包括屁胡炮，大胡炮 */
+  /**到底要出哪些杠钱的名称！包括屁胡炮，大胡炮 */
   get lose_names(): string[] {
-    return MajiangAlgo.LoseNamesFrom(this.lose_data);
+    return MajiangAlgo.LoseNamesFrom(this.gang_lose_data);
   }
-  /**哪些项目 */
-  get temp_win_names(): string[] {
-    return MajiangAlgo.HuPaiNamesFrom(this.temp_win_codes);
+  /**出杠钱的数字代码 */
+  get gang_lose_codes(): number[] {
+    return this.gang_lose_data.map(d => d.type);
+  }
+  /**胡了哪些项目 */
+  get gang_win_names(): string[] {
+    return MajiangAlgo.HuPaiNamesFrom(this.gang_win_codes);
   }
   /**胡了哪些项目 */
   get all_win_names(): string[] {
@@ -171,11 +177,21 @@ export class Player {
   get all_win_codes(): number[] {
     if (this.is_hu) {
       //todo: 胡之后，如何得到所有的胜类型代码？
-      return this.hupai_data.hupai_dict[this.hupai_zhang].concat(this.temp_win_codes);
+      return this.hupai_typesCode().concat(this.gang_win_codes);
     } else {
-      return this.temp_win_codes;
+      return this.gang_win_codes;
     }
   }
+
+  /**当前玩家的胡牌类型码，可以在最后胡牌的时候进行修改 */
+  public hupai_typesCode(): number[] {
+    if (this.is_hu) {
+      return this.hupai_data.hupai_dict[this.hupai_zhang];
+    } else {
+      return null;
+    }
+  }
+
   /**玩家胜负结果信息 */
   get result_info(): {} {
     //todo: 返回玩家的胜负两种消息！即使没胡，还是可能会有收入的！
@@ -204,10 +220,11 @@ export class Player {
     }
     return result;
   }
-  /**是否放炮 */
-  get is_fangpao(): boolean {
-    return this.lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
-  }
+  // /**是否放炮 */
+  // get is_fangpao(): boolean {
+  //   // return this.gang_lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
+  //   return true;
+  // }
   /**能够杠的牌，包括peng, selfPeng里面可以自扛以及暗杠的牌 */
   canGangPais() {
     let output = [];
