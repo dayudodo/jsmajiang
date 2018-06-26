@@ -16,7 +16,8 @@ export class ScoreManager {
     //todo: 扛分计算
     // 每个玩家都要算一次扛分
     players.forEach(p=>{
-      let all_typesCode = p.all_win_codes
+      p.score += this.cal_gang_score(p.gang_win_codes)
+      p.score -= this.cal_gang_score(p.gang_lose_codes)
     })
 
     let all_hu_players = players.filter(p => true == p.is_hu);

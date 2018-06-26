@@ -402,14 +402,15 @@ export class Room {
         }
       });
       //纪录玩家放了一杠，扣钱！还得判断下打牌玩家打牌之前是否杠牌了, 杠家其实是前三步，第一步杠，第二步摸，第三步才是打牌！
-      let gangShangGang = false;
+      let isGangShangGang = false;
       let prev3_operation = this.front_operationOf(this.dapai_player, 3);
       if (prev3_operation) {
-        gangShangGang = prev3_operation.action === Operate.gang;
+        isGangShangGang = prev3_operation.action === Operate.gang;
       }
-      if (gangShangGang) {
+      if (isGangShangGang) {
         gangPlayer.saveGangShangGang(this.dapai_player, gangPai);
       } else {
+        //不是杠上杠，就是普通杠了
         gangPlayer.saveGang(this.dapai_player, gangPai);
       }
       console.log("====================================");
