@@ -15,10 +15,10 @@ export class ScoreManager {
   static cal_oneju_score(players: Player[]) {
     //todo: 扛分计算
     // 每个玩家都要算一次扛分
-    players.forEach(p=>{
-      p.score += this.cal_gang_score(p.gang_win_codes)
-      p.score -= this.cal_gang_score(p.gang_lose_codes)
-    })
+    players.forEach(p => {
+      p.score += this.cal_gang_score(p.gang_win_codes, true);
+      p.score -= this.cal_gang_score(p.gang_lose_codes, false);
+    });
 
     let all_hu_players = players.filter(p => true == p.is_hu);
 
@@ -54,7 +54,6 @@ export class ScoreManager {
           console.log("====================================");
         });
         //todo: 自摸的算番
-
       } else {
         //不是自摸，有人放炮，扣除放炮者的分数！
         let fangpao_player = players.find(p => true == p.is_fangpao);
@@ -62,22 +61,24 @@ export class ScoreManager {
         //扣除被扛的分数
 
         //分数添加到胡家里面
-
       }
     });
 
     //todo: 平局
-
-    
   }
 
-  /**typesCode中的所有杠分 */
-  static cal_gang_score(gangCodes: number[]): number {
+  /** gangCodes中的所有杠分 */
+  static cal_gang_score(gangCodes: number[], is_win: boolean): number {
     /**某种杠code的分数 */
-    let gangScoreOf=(code: number): number => {
-      let hu_item = config.GangSheet.find(item => item.type == code);
+    let gangScoreOf = (code: number): number => {
+      let hu_item;
+      if (is_win) {
+        hu_item = config.GangWinSheet.find(item => item.type == code);
+      } else {
+        hu_item = config.GangLoseSheet.find(item => item.type == code);
+      }
       return hu_item.multiple * config.base_score;
-    }
+    };
 
     let score = 0;
 

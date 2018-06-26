@@ -135,7 +135,7 @@ export const HuPaiSheet = [
 ];
 
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
-export const GangSheet = [
+export const GangWinSheet = [
   { type: HuisGang, name: "扛", multiple: 2 },
   //下面两种其它两家给钱！
   { type: HuisCaPao, name: "擦炮", multiple: 1 },
@@ -152,7 +152,7 @@ export const LoseCaPao = 5;
 // export const LoseZiMo = 6;
 
 /**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
-export const LoseSheet = [
+export const GangLoseSheet = [
   { type: LoseGang, name: "放杠", multiple: 1 },
   { type: LoseGangShangGang, name: "放杠上杠", multiple: 2 },
   // { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
