@@ -165,9 +165,13 @@ export class Player {
   get gang_lose_codes(): number[] {
     return this.gang_lose_data.map(d => d.type);
   }
-  /**胡了哪些项目 */
+  /**赢了哪些杠 */
   get gang_win_names(): string[] {
-    return MajiangAlgo.HuPaiNamesFrom(this.gang_win_codes);
+    return MajiangAlgo.GangNamesFrom(this.gang_win_codes, true);
+  }
+  /**放了哪些杠 */
+  get gang_lose_names(): string[] {
+    return MajiangAlgo.GangNamesFrom(this.gang_lose_codes, false);
   }
   /**胡了哪些项目 */
   get all_win_names(): string[] {

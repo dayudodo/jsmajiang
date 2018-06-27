@@ -16,14 +16,17 @@ export class ScoreManager {
     //todo: 扛分计算
     // 每个玩家都要算一次扛分
     players.forEach(p => {
-      p.score += this.cal_gang_score(p.gang_win_codes, true);
-      p.score -= this.cal_gang_score(p.gang_lose_codes, false);
+      p.oneju_score += this.cal_gang_score(p.gang_win_codes, true);
+      console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}` );
+      
+      p.oneju_score -= this.cal_gang_score(p.gang_lose_codes, false);
+      console.log(`${p.username}出杠钱有：${p.gang_lose_names}，分值：${p.oneju_score}`);
     });
 
     let all_hu_players = players.filter(p => true == p.is_hu);
 
     all_hu_players.forEach(hu_player => {
-      let all_hupaiTypesCode = hu_player.hupai_data.hupai_dict[hu_player.hupai_zhang];
+      let all_hupaiTypesCode = hu_player.hupai_typesCode()
 
       //如果自摸，其它两家出钱
       // all_typesCode.forEach(code => {

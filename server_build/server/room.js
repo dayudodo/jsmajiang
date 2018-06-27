@@ -370,15 +370,16 @@ class Room {
                 }
             });
             //纪录玩家放了一杠，扣钱！还得判断下打牌玩家打牌之前是否杠牌了, 杠家其实是前三步，第一步杠，第二步摸，第三步才是打牌！
-            let gangShangGang = false;
+            let isGangShangGang = false;
             let prev3_operation = this.front_operationOf(this.dapai_player, 3);
             if (prev3_operation) {
-                gangShangGang = prev3_operation.action === Operate.gang;
+                isGangShangGang = prev3_operation.action === Operate.gang;
             }
-            if (gangShangGang) {
+            if (isGangShangGang) {
                 gangPlayer.saveGangShangGang(this.dapai_player, gangPai);
             }
             else {
+                //不是杠上杠，就是普通杠了
                 gangPlayer.saveGang(this.dapai_player, gangPai);
             }
             console.log("====================================");
@@ -492,11 +493,11 @@ class Room {
         if (player.mo_pai && player.canHu(player.mo_pai)) {
             player.is_zimo = true;
             player.hupai_zhang = player.mo_pai;
-            player.temp_win_codes.push(config.HuisZiMo);
             //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
             let prev2_operation = this.front_operationOf(player, 2);
             if (prev2_operation && prev2_operation.action == Operate.gang) {
-                player.temp_win_codes.push(config.HuisGangShangKai);
+                //保存杠上杠到胡牌类型码数组中
+                player.hupai_typesCode().push(config.HuisGangShangKai);
             }
             puts(this.operation_sequence);
             //并且扛牌是可以自己摸也可以求人！记录用户操作倒是对历史回放有一定帮助。
@@ -506,14 +507,10 @@ class Room {
         else if (player.canHu(this.table_dapai)) {
             player.hupai_zhang = this.table_dapai;
             //记录放炮者
-            let fangType = player.isDaHu(this.table_dapai) ? config.LoseDaHuPao : config.LosePihuPao;
-            this.dapai_player.lose_data.push({
-                type: fangType,
-                pai: this.table_dapai
-            });
+            this.dapai_player.is_fangpao = true;
             this.sendAllResults(player, this.table_dapai);
             console.dir(this.hupai_players);
-            console.dir(this.dapai_player.lose_data);
+            console.dir(this.dapai_player.gang_lose_data);
         }
         else {
             `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
@@ -522,7 +519,8 @@ class Room {
     /**所有玩家的牌面返回客户端 */
     sendAllResults(player, hupaiZhang) {
         if (player.is_liang) {
-            player.temp_win_codes.push(config.HuisLiangDao);
+            // player.gang_win_codes.push(config.HuisLiangDao);
+            player.hupai_typesCode().push(config.HuisLiangDao);
         }
         ScoreManager_1.ScoreManager.cal_oneju_score(this.players);
         //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！

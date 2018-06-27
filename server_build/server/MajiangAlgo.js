@@ -861,11 +861,26 @@ class MajiangAlgo {
             return config.HuPaiSheet.find(item => item.type == code).name;
         });
     }
+    static GangNamesFrom(gangCodeArr, is_win) {
+        let result = [];
+        let name;
+        gangCodeArr.forEach(code => {
+            if (is_win) {
+                name = config.GangWinSheet.find(item => item.type === code).name;
+                result.push(name);
+            }
+            else {
+                name = config.GangLoseSheet.find(item => item.type === code).name;
+                result.push(name);
+            }
+        });
+        return result;
+    }
     /**放炮文字描述 */
     static LoseNamesFrom(loseData) {
         let loseCodesArr = loseData.map(item => item.type);
         return loseCodesArr.map(code => {
-            return config.LoseSheet.find(item => item.type == code).name;
+            return config.GangLoseSheet.find(item => item.type == code).name;
         });
     }
     /**通过胡的类型码数组来判断是否是大胡*/

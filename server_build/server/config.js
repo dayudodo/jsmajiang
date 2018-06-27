@@ -37,21 +37,6 @@ exports.base_score = 5;
 /**是否有漂，一般都会有，比如5定5，定5 意思就是定漂5块钱，赢多进5块，输多出5块 */
 exports.have_piao = true;
 exports.piao_score = 5;
-exports.LoseGang = 0;
-exports.LoseGangShangGang = 1;
-exports.LosePihuPao = 2;
-exports.LoseDaHuPao = 3;
-exports.LoseAnGang = 4;
-exports.LoseCaPao = 5;
-/**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
-exports.LoseSheet = [
-    { type: exports.LoseGang, name: "放杠", multiple: 1 },
-    { type: exports.LoseGangShangGang, name: "放杠上杠", multiple: 2 },
-    { type: exports.LosePihuPao, name: "放屁胡炮", multiple: 1 },
-    { type: exports.LoseDaHuPao, name: "放大胡炮", multiple: 1 },
-    { type: exports.LoseAnGang, name: "放暗杠", multiple: 1 },
-    { type: exports.LoseCaPao, name: "放擦炮", multiple: 1 }
-];
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {
 //   var template = `export const ${item.type} = ${index}\n`;
@@ -121,11 +106,27 @@ exports.HuPaiSheet = [
     { type: exports.huisGangShangGang, name: "杠上杠", multiple: 0 },
 ];
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
-exports.GangSheet = [
-    { type: exports.HuisGang, name: "扛", multiple: 2 },
+exports.GangWinSheet = [
+    { type: exports.HuisGang, name: "扛", multiple: 1 },
     //下面两种其它两家给钱！
     { type: exports.HuisCaPao, name: "擦炮", multiple: 1 },
     { type: exports.HuisAnGang, name: "暗杠", multiple: 2 },
     { type: exports.huisGangShangGang, name: "杠上杠", multiple: 2 },
+];
+exports.LoseGang = 0;
+exports.LoseGangShangGang = 1;
+// export const LosePihuPao = 2;
+// export const LoseDaHuPao = 3;
+exports.LoseAnGang = 4;
+exports.LoseCaPao = 5;
+// export const LoseZiMo = 6;
+/**他人的自摸也会在这儿体现！暗杠、擦炮的扣分都记录在此 */
+exports.GangLoseSheet = [
+    { type: exports.LoseGang, name: "放杠", multiple: 1 },
+    { type: exports.LoseGangShangGang, name: "放杠上杠", multiple: 2 },
+    // { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
+    // { type: LoseDaHuPao, name: "放大胡炮", multiple: 1 },
+    { type: exports.LoseAnGang, name: "被暗杠", multiple: 1 },
+    { type: exports.LoseCaPao, name: "被擦炮", multiple: 1 },
 ];
 //# sourceMappingURL=config.js.map

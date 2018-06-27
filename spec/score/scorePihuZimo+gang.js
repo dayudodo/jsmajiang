@@ -28,6 +28,7 @@ test.beforeEach(t => {
   player1.hupai_data = {
     hupai_dict: { t9: [config.HuisPihu] }
   };
+  
 
   player2 = new Player({
     group_shou_pai: {
@@ -42,9 +43,7 @@ test.beforeEach(t => {
     user_id: 10002
   });
   //给player1放了个普通杠
-  player2.lose_data =[
-    {type: config.LoseGang, pai: 'b2'}
-  ]
+  player1.saveGang(player2,'b2')
 
   player3 = new Player({
     group_shou_pai: {
@@ -61,12 +60,12 @@ test.beforeEach(t => {
 });
 
 //
-test("5定5 屁胡自摸进20", function(t) {
+test("5定5 屁胡自摸进30,外带1杠5", function(t) {
   ScoreManager.cal_oneju_score([player1, player2, player3]);
   console.log(
     `各自分数： player1:${player1.oneju_score}  player2:${player2.oneju_score}  player3:${player3.oneju_score}`
   );
-  t.deepEqual(player1.oneju_score, 30);
+  t.deepEqual(player1.oneju_score, 35);
 });
 // test("5， 没漂，屁胡进10", function(t) {
 //   config.have_piao = false

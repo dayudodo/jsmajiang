@@ -10,9 +10,17 @@ class ScoreManager {
     }
     /**所有玩家的一局得分，计算结果直接保存到各player的oneju_score中 */
     static cal_oneju_score(players) {
+        //todo: 扛分计算
+        // 每个玩家都要算一次扛分
+        players.forEach(p => {
+            p.oneju_score += this.cal_gang_score(p.gang_win_codes, true);
+            console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}`);
+            p.oneju_score -= this.cal_gang_score(p.gang_lose_codes, false);
+            console.log(`${p.username}出杠钱有：${p.gang_lose_names}，分值：${p.oneju_score}`);
+        });
         let all_hu_players = players.filter(p => true == p.is_hu);
         all_hu_players.forEach(hu_player => {
-            let all_hupaiTypesCode = hu_player.hupai_data.hupai_dict[hu_player.hupai_zhang];
+            let all_hupaiTypesCode = hu_player.hupai_typesCode();
             //如果自摸，其它两家出钱
             // all_typesCode.forEach(code => {
             //   score += this.scoreOf(code);
@@ -50,17 +58,21 @@ class ScoreManager {
             }
         });
         //todo: 平局
-        //todo: 扛牌分计算
     }
-    /**typesCode中的所有杠分 */
-    static cal_gang_score(typesCode) {
+    /** gangCodes中的所有杠分 */
+    static cal_gang_score(gangCodes, is_win) {
         /**某种杠code的分数 */
         let gangScoreOf = (code) => {
-            let hu_item = config.GangSheet.find(item => item.type == code);
+            let hu_item;
+            if (is_win) {
+                hu_item = config.GangWinSheet.find(item => item.type == code);
+            }
+            else {
+                hu_item = config.GangLoseSheet.find(item => item.type == code);
+            }
             return hu_item.multiple * config.base_score;
         };
         let score = 0;
-        let gangCodes = typesCode.filter(code => config.HuisGang == code || config.HuisAnGang == code || config.HuisCaPao == code);
         gangCodes.forEach(code => {
             score += gangScoreOf(code);
         });
