@@ -126,7 +126,7 @@ exports.GangLoseSheet = [
     { type: exports.LoseGangShangGang, name: "放杠上杠", multiple: 2 },
     // { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
     // { type: LoseDaHuPao, name: "放大胡炮", multiple: 1 },
-    { type: exports.LoseAnGang, name: "被暗杠", multiple: 1 },
+    { type: exports.LoseAnGang, name: "被暗杠", multiple: 2 },
     { type: exports.LoseCaPao, name: "被擦炮", multiple: 1 },
 ];
 //# sourceMappingURL=config.js.map
