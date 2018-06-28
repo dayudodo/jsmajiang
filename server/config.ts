@@ -119,8 +119,9 @@ export const HuPaiSheet = [
   { type: HuisGangShangKai, name: "杠上开花", multiple: 2 },
   { type: HuisGangShangPao, name: "杠上炮", multiple: 2 },
   { type: HuisPihu, name: "屁胡", multiple: 1 },
-  //自摸比较特殊，不算番，而是其它两家出钱！
-  { type: HuisZiMo, name: "自摸", multiple: 0 },
+  //自摸比较特殊，不算番，而是其它两家出钱！自摸是胡上加番的方式，并非基本胡
+  //象屁胡、七对、碰碰、卡五星是基本的
+  // { type: HuisZiMo, name: "自摸", multiple: 0 },
   { type: HuisMingSiGui, name: "明四归", multiple: 2 },
   { type: HuisAnSiGui, name: "暗四归", multiple: 4 },
   { type: HuisLiangDao, name: "亮倒", multiple: 2 },

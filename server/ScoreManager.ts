@@ -17,8 +17,8 @@ export class ScoreManager {
     // 每个玩家都要算一次扛分
     players.forEach(p => {
       p.oneju_score += this.cal_gang_score(p.gang_win_codes, true);
-      console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}` );
-      
+      console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}`);
+
       p.oneju_score -= this.cal_gang_score(p.gang_lose_codes, false);
       console.log(`${p.username}出杠钱有：${p.gang_lose_names}，分值：${p.oneju_score}`);
     });
@@ -26,7 +26,7 @@ export class ScoreManager {
     let all_hu_players = players.filter(p => true == p.is_hu);
 
     all_hu_players.forEach(hu_player => {
-      let all_hupaiTypesCode = hu_player.hupai_typesCode()
+      let all_hupaiTypesCode = hu_player.hupai_typesCode();
 
       //如果自摸，其它两家出钱
       // all_typesCode.forEach(code => {
@@ -40,6 +40,10 @@ export class ScoreManager {
         //自摸后需要扣除其它两个玩家的相应分数！分数算在胡家手中。
         this.other_players(hu_player, players).forEach(p => {
           let score = 0;
+          let onlyIncludePiHu = _.isEqual([config.HuisPihu], all_hupaiTypesCode)
+          if(! onlyIncludePiHu){
+            all_hupaiTypesCode.remove(config.HuisPihu)
+          }
           score = this.cal_fang_score(all_hupaiTypesCode);
           //扣掉其它两个玩家的分数
           p.oneju_score -= score;
@@ -58,12 +62,16 @@ export class ScoreManager {
         });
         //todo: 自摸的算番
       } else {
+        let score = 0;
+        //不是自摸的屁胡不需要计算屁胡，肯定会有其它的胡牌方式
+        all_hupaiTypesCode.remove(config.HuisPihu)
+        score = this.cal_fang_score(all_hupaiTypesCode);
         //不是自摸，有人放炮，扣除放炮者的分数！
         let fangpao_player = players.find(p => true == p.is_fangpao);
-        fangpao_player.oneju_score -= this.cal_fang_score(all_hupaiTypesCode);
-        //扣除被扛的分数
+        fangpao_player.oneju_score -= score
 
         //分数添加到胡家里面
+        hu_player.oneju_score += score;
       }
     });
 
@@ -98,7 +106,7 @@ export class ScoreManager {
   /**算player扣多少分，根据别人的typesCode */
   static cal_fang_score(typesCode: number[]): number {
     console.log("====================================");
-    console.log(typesCode);
+    console.log(MajiangAlgo.HuPaiNamesFrom(typesCode));
     console.log("====================================");
     let score = 0;
     typesCode.forEach(code => {

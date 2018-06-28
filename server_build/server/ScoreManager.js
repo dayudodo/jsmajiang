@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const _ = require("lodash");
+const MajiangAlgo_1 = require("./MajiangAlgo");
 //每一个玩家的数据保存在此类中
 const config = require("./config");
 /**算分管理器 */
@@ -32,6 +34,10 @@ class ScoreManager {
                 //自摸后需要扣除其它两个玩家的相应分数！分数算在胡家手中。
                 this.other_players(hu_player, players).forEach(p => {
                     let score = 0;
+                    let onlyIncludePiHu = _.isEqual([config.HuisPihu], all_hupaiTypesCode);
+                    if (!onlyIncludePiHu) {
+                        all_hupaiTypesCode.remove(config.HuisPihu);
+                    }
                     score = this.cal_fang_score(all_hupaiTypesCode);
                     //扣掉其它两个玩家的分数
                     p.oneju_score -= score;
@@ -50,11 +56,15 @@ class ScoreManager {
                 //todo: 自摸的算番
             }
             else {
+                let score = 0;
+                //不是自摸的屁胡不需要计算屁胡，肯定会有其它的胡牌方式
+                all_hupaiTypesCode.remove(config.HuisPihu);
+                score = this.cal_fang_score(all_hupaiTypesCode);
                 //不是自摸，有人放炮，扣除放炮者的分数！
                 let fangpao_player = players.find(p => true == p.is_fangpao);
-                fangpao_player.oneju_score -= this.cal_fang_score(all_hupaiTypesCode);
-                //扣除被扛的分数
+                fangpao_player.oneju_score -= score;
                 //分数添加到胡家里面
+                hu_player.oneju_score += score;
             }
         });
         //todo: 平局
@@ -86,7 +96,7 @@ class ScoreManager {
     /**算player扣多少分，根据别人的typesCode */
     static cal_fang_score(typesCode) {
         console.log("====================================");
-        console.log(typesCode);
+        console.log(MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(typesCode));
         console.log("====================================");
         let score = 0;
         typesCode.forEach(code => {
