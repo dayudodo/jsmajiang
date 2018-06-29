@@ -132,11 +132,12 @@ export const HuPaiSheet = [
   //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
   //放在胡里面是因为也算是一种胡，收钱了么
   //普通杠放杠者出钱，如同自摸一样，杠其实也是另外算的，在这儿只是起到一个名称的作用！
-  // { type: HuisGang, name: "扛", multiple: 0 },
-  // //下面两种其它两家给钱！
-  // { type: HuisCaPao, name: "擦炮", multiple: 0 },
-  // { type: HuisAnGang, name: "暗杠", multiple: 0 },
-  // { type: huisGangShangGang, name: "杠上杠", multiple: 0 },
+  //以下杠只是要取得名称，不起作用
+  { type: HuisGang, name: "扛" },
+  //下面两种其它两家给钱！
+  { type: HuisCaPao, name: "擦炮" },
+  { type: HuisAnGang, name: "暗杠" },
+  { type: HuisGangShangGang, name: "杠上杠"},
 ];
 
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！

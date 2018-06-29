@@ -100,6 +100,15 @@ exports.HuPaiSheet = [
     { type: exports.HuisMingSiGui, name: "明四归", multiple: 2 },
     { type: exports.HuisAnSiGui, name: "暗四归", multiple: 4 },
     { type: exports.HuisLiangDao, name: "亮倒", multiple: 2 },
+    //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
+    //放在胡里面是因为也算是一种胡，收钱了么
+    //普通杠放杠者出钱，如同自摸一样，杠其实也是另外算的，在这儿只是起到一个名称的作用！
+    //以下杠只是要取得名称，不起作用
+    { type: exports.HuisGang, name: "扛" },
+    //下面两种其它两家给钱！
+    { type: exports.HuisCaPao, name: "擦炮" },
+    { type: exports.HuisAnGang, name: "暗杠" },
+    { type: exports.HuisGangShangGang, name: "杠上杠" },
 ];
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
 exports.GangWinSheet = [
