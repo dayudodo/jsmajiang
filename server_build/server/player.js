@@ -64,7 +64,7 @@ class Player {
     }
     /**保存杠上杠，并通知放杠家伙! */
     saveGangShangGang(fangGangPlayer, pai_name) {
-        this.gang_win_codes.push(config.huisGangShangGang);
+        this.gang_win_codes.push(config.HuisGangShangGang);
         fangGangPlayer.gang_lose_data.push({
             type: config.LoseGangShangGang,
             pai: pai_name

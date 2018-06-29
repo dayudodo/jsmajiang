@@ -16,7 +16,7 @@ test.beforeEach(t => {
       mingGang: [],
       peng: [],
       selfPeng: [],
-      shouPai: getArr("b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5")
+      shouPai: getArr("b1 b1 b1 b2 b2 b2 b4 b6 b3 b3 b3 b5 b5")
     },
     socket: null,
     username: "jack1",
@@ -67,7 +67,7 @@ test("卡五星放炮", function(t) {
     ${player3.username}:${player3.oneju_score}`
   );
   console.log("~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~");
-  t.deepEqual(player1.oneju_score, 20);
+  t.deepEqual(player1.oneju_score, 30);
 });
 test("卡五星自摸", function(t) {
   player1.is_zimo = true;
@@ -80,5 +80,22 @@ test("卡五星自摸", function(t) {
     ${player3.username}:${player3.oneju_score}`
   );
   console.log("~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~");
-  t.deepEqual(player1.oneju_score, 40);
+  t.deepEqual(player1.oneju_score, 60);
+});
+test("清一色卡五星自摸", function(t) {
+  player1.is_zimo = true;
+  player2.is_fangpao = false;
+  player1.hupai_data = {
+    hupai_dict: { "b5": [config.HuisPihu, config.HuisKaWuXing, config.HuisYise] }
+  };
+  ScoreManager.cal_oneju_score([player1, player2, player3]);
+  console.log(
+    `各自分数： 
+    ${player1.username}:${player1.oneju_score}  
+    ${player2.username}:${player2.oneju_score}  
+    ${player3.username}:${player3.oneju_score}`
+  );
+  console.log("~~~~~~~~~~~~~~end~~~~~~~~~~~~~~~~")
+  //小胡外带清一色，大胡清一色就满了！
+  t.deepEqual(player1.oneju_score, 100);
 });

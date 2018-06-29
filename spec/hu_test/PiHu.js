@@ -3,7 +3,7 @@ import { MajiangAlgo, getArr } from "../../server_build/server/MajiangAlgo";
 
 // 屁胡
 test("普通屁胡", function (t) {
-  let str = "b1 b2 b2 b3 b3 b4 t4 t5  fa fa fa zh zh";
+  let str = "b1 b2 b2 b3 b3 b4 t4 t5 fa fa fa zh zh";
   let na_pai = "t6";
   t.is(MajiangAlgo._HuisPihu(str, na_pai), true);
 });

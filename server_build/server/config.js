@@ -37,6 +37,8 @@ exports.base_score = 5;
 /**是否有漂，一般都会有，比如5定5，定5 意思就是定漂5块钱，赢多进5块，输多出5块 */
 exports.have_piao = true;
 exports.piao_score = 5;
+/**是否封顶，即最高8倍，超过了也只是8倍 */
+exports.have_top = true;
 // var output = "";
 // HuPaiSheet.forEach((item, index) => {
 //   var template = `export const ${item.type} = ${index}\n`;
@@ -77,12 +79,12 @@ exports.HuisGang = 14;
 exports.HuisCaPao = 15;
 /**暗杠 */
 exports.HuisAnGang = 16;
-exports.huisGangShangGang = 17;
+exports.HuisGangShangGang = 17;
 //end自动生成代码
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 exports.HuPaiSheet = [
     { type: exports.HuisYise, name: "清一色", multiple: 4 },
-    { type: exports.HuisKaWuXing, name: "卡五星", multiple: 2 },
+    { type: exports.HuisKaWuXing, name: "卡五星", multiple: 4 },
     { type: exports.HuisQidui, name: "七对", multiple: 4 },
     //因为龙七对之前会先检测是否是七对，所以龙七对倍数是4，合起来就是8了
     { type: exports.HuisNongQiDui, name: "龙七对", multiple: 4 },
@@ -98,14 +100,6 @@ exports.HuPaiSheet = [
     { type: exports.HuisMingSiGui, name: "明四归", multiple: 2 },
     { type: exports.HuisAnSiGui, name: "暗四归", multiple: 4 },
     { type: exports.HuisLiangDao, name: "亮倒", multiple: 2 },
-    //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
-    //放在胡里面是因为也算是一种胡，收钱了么
-    //普通杠放杠者出钱，如同自摸一样，杠其实也是另外算的，在这儿只是起到一个名称的作用！
-    { type: exports.HuisGang, name: "扛", multiple: 0 },
-    //下面两种其它两家给钱！
-    { type: exports.HuisCaPao, name: "擦炮", multiple: 0 },
-    { type: exports.HuisAnGang, name: "暗杠", multiple: 0 },
-    { type: exports.huisGangShangGang, name: "杠上杠", multiple: 0 },
 ];
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
 exports.GangWinSheet = [
@@ -113,7 +107,7 @@ exports.GangWinSheet = [
     //下面两种其它两家给钱！
     { type: exports.HuisCaPao, name: "擦炮", multiple: 1 },
     { type: exports.HuisAnGang, name: "暗杠", multiple: 2 },
-    { type: exports.huisGangShangGang, name: "杠上杠", multiple: 2 },
+    { type: exports.HuisGangShangGang, name: "杠上杠", multiple: 2 },
 ];
 exports.LoseGang = 0;
 exports.LoseGangShangGang = 1;
