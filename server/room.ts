@@ -530,7 +530,7 @@ export class Room {
       //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
       let prev2_operation = this.front_operationOf(player, 2);
       if (prev2_operation && prev2_operation.action == Operate.gang) {
-        //保存杠上杠到胡牌类型码数组中
+        //保存杠上开花到胡牌类型码数组中
         player.hupai_typesCode().push(config.HuisGangShangKai)
       }
       puts(this.operation_sequence);
@@ -542,6 +542,12 @@ export class Room {
       player.hupai_zhang = this.table_dapai;
       //记录放炮者
       this.dapai_player.is_fangpao = true;
+      //看是否是杠牌！
+      let prev2_operation = this.front_operationOf(this.dapai_player, 2);
+      if (prev2_operation && prev2_operation.action == Operate.gang) {
+        //杠上炮，打的杠牌是别人的胡牌
+        player.hupai_typesCode().push(config.HuisGangShangPao)
+      }
       this.sendAllResults(player, this.table_dapai);
       console.dir(this.hupai_players);
       console.dir(this.dapai_player.gang_lose_data);
@@ -556,10 +562,11 @@ export class Room {
       // player.gang_win_codes.push(config.HuisLiangDao);
       player.hupai_typesCode().push(config.HuisLiangDao)
     }
-    ScoreManager.cal_oneju_score(this.players);
     //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！
     //暂时用思考变量来控制最终的发送！
     if (this.all_players_normal) {
+      //所有玩家都选择完毕才去进行真正的结算
+      ScoreManager.cal_oneju_score(this.players);
       let players = this.players.map(person => this.player_result_filter(person));
       this.players.forEach(p => {
         p.socket.sendmsg({

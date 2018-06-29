@@ -66,5 +66,45 @@ test("七对放炮", function(t) {
     ${player2.username}:${player2.oneju_score}  
     ${player3.username}:${player3.oneju_score}`
   );
-  t.deepEqual(player1.oneju_score, 20);
+  //漂的各自5+5, 以及七对的5*4
+  t.deepEqual(player1.oneju_score, 30);
+});
+
+test("七对自摸", function(t) {
+  player1.is_zimo=true
+  player2.is_fangpao=false
+  ScoreManager.cal_oneju_score([player1, player2, player3]);
+  console.log(
+    `各自分数： ${player1.username}:${player1.oneju_score}  
+    ${player2.username}:${player2.oneju_score}  
+    ${player3.username}:${player3.oneju_score}`
+  );
+  t.deepEqual(player1.oneju_score, 60);
+});
+test("龙七对放炮", function(t) {
+  player1.hupai_data = {
+    hupai_dict: { "fa": [config.HuisPihu,config.HuisQidui, config.HuisNongQiDui] }
+  };
+  ScoreManager.cal_oneju_score([player1, player2, player3]);
+  console.log(
+    `各自分数： ${player1.username}:${player1.oneju_score}  
+    ${player2.username}:${player2.oneju_score}  
+    ${player3.username}:${player3.oneju_score}`
+  );
+  //漂的各自5+5, 以及七对的5*4
+  t.deepEqual(player1.oneju_score, 50);
+});
+test("龙七对自摸", function(t) {
+  player1.is_zimo=true
+  player1.hupai_data = {
+    hupai_dict: { "fa": [config.HuisPihu,config.HuisQidui, config.HuisNongQiDui] }
+  };
+  player2.is_fangpao=false
+  ScoreManager.cal_oneju_score([player1, player2, player3]);
+  console.log(
+    `各自分数： ${player1.username}:${player1.oneju_score}  
+    ${player2.username}:${player2.oneju_score}  
+    ${player3.username}:${player3.oneju_score}`
+  );
+  t.deepEqual(player1.oneju_score, 100);
 });

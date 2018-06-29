@@ -17,10 +17,10 @@ export class ScoreManager {
     // 每个玩家都要算一次扛分
     players.forEach(p => {
       p.oneju_score += this.cal_gang_score(p.gang_win_codes, true);
-      console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}`);
+      // console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}`);
 
       p.oneju_score -= this.cal_gang_score(p.gang_lose_codes, false);
-      console.log(`${p.username}出杠钱有：${p.gang_lose_names}，分值：${p.oneju_score}`);
+      // console.log(`${p.username}出杠钱有：${p.gang_lose_names}，分值：${p.oneju_score}`);
     });
 
     let all_hu_players = players.filter(p => true == p.is_hu);
@@ -44,38 +44,51 @@ export class ScoreManager {
           if(! onlyIncludePiHu){
             all_hupaiTypesCode.remove(config.HuisPihu)
           }
-          score = this.cal_fang_score(all_hupaiTypesCode);
+          score = this.cal_hu_score(all_hupaiTypesCode);
           //扣掉其它两个玩家的分数
           p.oneju_score -= score;
+          console.log(`扣除${p.username}分数：${score}`);
+          
           //分数添加到胡家里面
           hu_player.oneju_score += score;
+          console.log(`增加${hu_player.username}分数：${score}`);
 
           //漂单独算，貌似玩家单独还可以设置！其实也可以强制漂，这由庄家决定。创建房间的人可以设定漂
-          if (config.have_piao) {
-            //漂的加分减分都是要算双倍的！
-            p.oneju_score -= config.piao_score * 2;
-            hu_player.oneju_score += config.piao_score * 2;
-          }
-          console.log("====================================");
-          console.log(`${hu_player.username}.oneju_score: ${hu_player.oneju_score}`);
-          console.log("====================================");
+          this.cal_piao(p, hu_player)
+          // console.log("====================================");
+          // console.log(`自摸玩家：${hu_player.username}.oneju_score: ${hu_player.oneju_score}`);
+          // console.log("====================================");
         });
         //todo: 自摸的算番
       } else {
         let score = 0;
         //不是自摸的屁胡不需要计算屁胡，肯定会有其它的胡牌方式
         all_hupaiTypesCode.remove(config.HuisPihu)
-        score = this.cal_fang_score(all_hupaiTypesCode);
+        score = this.cal_hu_score(all_hupaiTypesCode);
         //不是自摸，有人放炮，扣除放炮者的分数！
         let fangpao_player = players.find(p => true == p.is_fangpao);
         fangpao_player.oneju_score -= score
 
-        //分数添加到胡家里面
+        //分数添加到胡家手里
         hu_player.oneju_score += score;
+
+        //输赢双方的漂分
+        this.cal_piao(fangpao_player, hu_player);
+
+        
       }
     });
 
     //todo: 平局
+  }
+
+  /**计算输赢玩家的漂分 */
+  private static cal_piao(fangpao_player: Player, hu_player: Player) {
+    if (config.have_piao) {
+      //漂的加分减分都是要算双倍的！
+      fangpao_player.oneju_score -= config.piao_score * 2;
+      hu_player.oneju_score += config.piao_score * 2;
+    }
   }
 
   /** gangCodes中的所有杠分 */
@@ -104,14 +117,14 @@ export class ScoreManager {
     return hu_item.multiple * config.base_score;
   }
   /**算player扣多少分，根据别人的typesCode */
-  static cal_fang_score(typesCode: number[]): number {
-    console.log("====================================");
-    console.log(MajiangAlgo.HuPaiNamesFrom(typesCode));
-    console.log("====================================");
+  static cal_hu_score(typesCode: number[]): number {
     let score = 0;
     typesCode.forEach(code => {
       score += this.scoreOf(code);
     });
+    console.log("====================================");
+    console.log("胡：%s, 分值：%s",MajiangAlgo.HuPaiNamesFrom(typesCode), score);
+    console.log("====================================");
     return score;
   }
 }

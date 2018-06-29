@@ -112,7 +112,8 @@ export const HuPaiSheet = [
   { type: HuisYise, name: "清一色", multiple: 4 },
   { type: HuisKaWuXing, name: "卡五星", multiple: 2 },
   { type: HuisQidui, name: "七对", multiple: 4 },
-  { type: HuisNongQiDui, name: "龙七对", multiple: 8 },
+  //因为龙七对之前会先检测是否是七对，所以龙七对倍数是4，合起来就是8了
+  { type: HuisNongQiDui, name: "龙七对", multiple: 4 },
   { type: HuisPengpeng, name: "碰碰胡", multiple: 2 },
   { type: HuisXiaoShanYuan, name: "小三元", multiple: 2 },
   { type: HuisDaShanYuan, name: "大三元", multiple: 4 },

@@ -84,7 +84,8 @@ exports.HuPaiSheet = [
     { type: exports.HuisYise, name: "清一色", multiple: 4 },
     { type: exports.HuisKaWuXing, name: "卡五星", multiple: 2 },
     { type: exports.HuisQidui, name: "七对", multiple: 4 },
-    { type: exports.HuisNongQiDui, name: "龙七对", multiple: 8 },
+    //因为龙七对之前会先检测是否是七对，所以龙七对倍数是4，合起来就是8了
+    { type: exports.HuisNongQiDui, name: "龙七对", multiple: 4 },
     { type: exports.HuisPengpeng, name: "碰碰胡", multiple: 2 },
     { type: exports.HuisXiaoShanYuan, name: "小三元", multiple: 2 },
     { type: exports.HuisDaShanYuan, name: "大三元", multiple: 4 },
