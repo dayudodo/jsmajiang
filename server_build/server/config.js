@@ -96,10 +96,11 @@ exports.HuPaiSheet = [
     { type: exports.HuisPihu, name: "屁胡", multiple: 1 },
     //自摸比较特殊，不算番，而是其它两家出钱！自摸是胡上加番的方式，并非基本胡
     //象屁胡、七对、碰碰、卡五星是基本的
-    // { type: HuisZiMo, name: "自摸", multiple: 0 },
     { type: exports.HuisMingSiGui, name: "明四归", multiple: 2 },
     { type: exports.HuisAnSiGui, name: "暗四归", multiple: 4 },
-    { type: exports.HuisLiangDao, name: "亮倒", multiple: 2 },
+    //特殊的两种胡牌算番，亮倒呢是要把所有本金的胡分翻倍！包括下面的杠其实都是不包括multiple的
+    { type: exports.HuisZiMo, name: "自摸" },
+    { type: exports.HuisLiangDao, name: "亮倒" },
     //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
     //放在胡里面是因为也算是一种胡，收钱了么
     //普通杠放杠者出钱，如同自摸一样，杠其实也是另外算的，在这儿只是起到一个名称的作用！

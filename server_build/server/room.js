@@ -525,7 +525,6 @@ class Room {
     /**所有玩家的牌面返回客户端 */
     sendAllResults(player, hupaiZhang) {
         if (player.is_liang) {
-            // player.gang_win_codes.push(config.HuisLiangDao);
             player.hupai_typesCode().push(config.HuisLiangDao);
         }
         //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！

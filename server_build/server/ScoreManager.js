@@ -13,20 +13,23 @@ class ScoreManager {
     /**所有玩家的一局得分，计算结果直接保存到各player的oneju_score中 */
     static cal_oneju_score(players) {
         //todo: 扛分计算
-        // 每个玩家都要算一次扛分
+        // 每个玩家都要算一次扛分，且杠分不算漂，也没有倍率，就是固定的
         players.forEach(p => {
-            p.oneju_score += this.cal_gang_score(p.gang_win_codes, true);
-            // console.log(`${p.username}的赢杠有：${p.gang_win_names}，分值：${p.oneju_score}`);
-            p.oneju_score -= this.cal_gang_score(p.gang_lose_codes, false);
-            // console.log(`${p.username}出杠钱有：${p.gang_lose_names}，分值：${p.oneju_score}`);
+            let gang_win_score = this.cal_gang_score(p.gang_win_codes, true);
+            p.oneju_score += gang_win_score;
+            let gang_lose_score = this.cal_gang_score(p.gang_lose_codes, false);
+            p.oneju_score -= gang_lose_score;
+            console.log(`${p.username}的
+      赢杠：${p.gang_win_names}，分值：${gang_win_score}
+      出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`);
         });
         //是否封顶
-        let top_score;
+        let top_score, base_top_score = config.base_score * 8;
         if (config.have_piao) {
-            top_score = config.base_score * 8 + config.piao_score * 2;
+            top_score = base_top_score + config.piao_score * 2;
         }
         else {
-            top_score = config.base_score * 8;
+            top_score = base_top_score;
         }
         let all_hu_players = players.filter(p => true == p.is_hu);
         all_hu_players.forEach(hu_player => {
@@ -38,21 +41,31 @@ class ScoreManager {
                 //自摸后需要扣除其它两个玩家的相应分数！分数算在胡家手中。
                 this.other_players(hu_player, players).forEach(p => {
                     let score = 0;
-                    let onlyIncludePiHu = _.isEqual([config.HuisPihu], all_hupaiTypesCode);
+                    //是否只包括屁胡，其实有三种情况！
+                    let onlyIncludePiHu = _.isEqual([config.HuisPihu], all_hupaiTypesCode) ||
+                        _.isEqual([config.HuisPihu, config.HuisZiMo], all_hupaiTypesCode) ||
+                        _.isEqual([config.HuisPihu, config.HuisLiangDao], all_hupaiTypesCode);
                     if (!onlyIncludePiHu) {
                         all_hupaiTypesCode.remove(config.HuisPihu);
                     }
                     score = this.cal_hu_score(all_hupaiTypesCode);
+                    if (hu_player.is_liang) {
+                        score = score * 2;
+                        console.log(`${hu_player.username}亮倒，分数*2： ${score}`);
+                    }
+                    if (p.is_liang) {
+                        score = score * 2;
+                    }
                     //胡分不能超过封顶的分数，所以杠和胡分开算是正确的！
                     if (score > top_score) {
                         score = top_score;
                     }
-                    //扣掉其它两个玩家的分数
-                    p.oneju_score -= score;
-                    console.log(`扣除${p.username}分数：${score}`);
                     //分数添加到胡家里面
                     hu_player.oneju_score += score;
                     console.log(`增加${hu_player.username}分数：${score}`);
+                    //扣掉其它两个玩家的分数，还要看亮倒的情况
+                    p.oneju_score -= score;
+                    console.log(`扣除${p.username}分数：${score}`);
                     //漂单独算，貌似玩家单独还可以设置！其实也可以强制漂，这由庄家决定。创建房间的人可以设定漂
                     //如果已经封顶，不再计算漂
                     if (score < top_score) {
@@ -66,15 +79,28 @@ class ScoreManager {
             else {
                 //非自摸，有人放炮
                 let score = 0;
+                let fangpao_player = players.find(p => true == p.is_fangpao);
                 //不是自摸的屁胡不需要计算屁胡，肯定会有其它的胡牌方式
-                all_hupaiTypesCode.remove(config.HuisPihu);
+                //是否只包括屁胡，其实有三种情况！
+                let onlyIncludePiHu = _.isEqual([config.HuisPihu], all_hupaiTypesCode) ||
+                    _.isEqual([config.HuisPihu, config.HuisZiMo], all_hupaiTypesCode) ||
+                    _.isEqual([config.HuisPihu, config.HuisLiangDao], all_hupaiTypesCode);
+                if (!onlyIncludePiHu) {
+                    all_hupaiTypesCode.remove(config.HuisPihu);
+                }
                 score = this.cal_hu_score(all_hupaiTypesCode);
+                if (hu_player.is_liang) {
+                    score = score * 2;
+                    console.log(`${hu_player.username}亮倒，分数*2： ${score}`);
+                }
+                if (fangpao_player.is_liang) {
+                    score = score * 2;
+                }
                 //胡分不能超过封顶的分数，所以杠和胡分开算是正确的！
                 if (score > top_score) {
                     score = top_score;
                 }
                 //扣除放炮者的分数！
-                let fangpao_player = players.find(p => true == p.is_fangpao);
                 fangpao_player.oneju_score -= score;
                 //分数添加到胡家手里
                 hu_player.oneju_score += score;
@@ -116,7 +142,13 @@ class ScoreManager {
     /**计算某种胡code的分数 */
     static scoreOf(code) {
         let hu_item = config.HuPaiSheet.find(item => item.type == code);
-        return hu_item.multiple * config.base_score;
+        //如果有倍率，则计算，没有就返回0
+        if (hu_item.multiple) {
+            return hu_item.multiple * config.base_score;
+        }
+        else {
+            return 0;
+        }
     }
     /**算player扣多少分，根据别人的typesCode */
     static cal_hu_score(typesCode) {

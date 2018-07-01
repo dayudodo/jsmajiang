@@ -65,7 +65,7 @@ export class Player {
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = []; //打过的牌有哪些，断线后可以重新发送此数据
 
-  /** 玩家是否亮牌，只在可以听胡的时候才能亮牌*/
+  /** 玩家是否亮牌，只在可以听胡的时候才能亮牌, 注意，胡里面也包括有亮的信息*/
   public is_liang = false;
   /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
   public is_zimo = false;
@@ -119,6 +119,7 @@ export class Player {
     this.username = username;
     this.user_id = user_id;
   }
+
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {
     this.gang_win_codes.push(config. HuisGangShangGang);

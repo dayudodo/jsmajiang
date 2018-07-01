@@ -70,6 +70,7 @@ test("七对放炮", function(t) {
   t.deepEqual(player1.oneju_score, 30);
 });
 
+
 test("七对自摸", function(t) {
   player1.is_zimo=true
   player2.is_fangpao=false
