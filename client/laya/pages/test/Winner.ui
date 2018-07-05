@@ -1,8 +1,8 @@
 {
     "x":0,
     "type":"View",
-    "selectedBox":1645,
-    "selecteID":1703,
+    "selectedBox":1371,
+    "selecteID":1588,
     "referenceLines":null,
     "props":{"width":1920,"sceneColor":"#000000","height":1080},
     "nodeParent":-1,
@@ -684,7 +684,7 @@
                 {
                     "x":30,
                     "type":"Image",
-                    "props":{"y":16,"x":1705,"width":250,"visible":false,"var":"img_huOrLose3","skin":"ui/game/hu.png","height":200},
+                    "props":{"y":16,"x":1705,"width":250,"visible":false,"var":"img_huOrLose3","skin":"ui/game/zimo.png","height":200},
                     "nodeParent":1371,
                     "label":"Image(img_huOrLose3)",
                     "isDirectory":false,
