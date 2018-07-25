@@ -3,7 +3,7 @@ import { MajiangAlgo } from "./MajiangAlgo";
 import { Player } from "./player";
 //每一个玩家的数据保存在此类中
 import * as config from "./config";
-import { Room } from "./room";
+import chalk from "chalk";
 
 /**算分管理器 */
 export class ScoreManager {
@@ -17,17 +17,17 @@ export class ScoreManager {
     // 每个玩家都要算一次扛分，且杠分不算漂，也没有倍率，就是固定的
     players.forEach(p => {
       let gang_win_score = this.cal_gang_score(p.gang_win_codes, true);
-      p.oneju_score += gang_win_score
+      p.oneju_score += gang_win_score;
       if (gang_win_score > 0) {
-        console.log(`${p.username}的
-        赢杠：${p.gang_win_names}，分值：${gang_win_score}`)
+        console.log(chalk.green(`${p.username}的
+        赢杠：${p.gang_win_names}，分值：${gang_win_score}`));
       }
 
       let gang_lose_score = this.cal_gang_score(p.gang_lose_codes, false);
-      p.oneju_score -= gang_lose_score
+      p.oneju_score -= gang_lose_score;
       if (gang_lose_score > 0) {
-        console.log(`${p.username}的
-        出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`);
+        console.log(chalk.red(`${p.username}的
+        出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`));
       }
     });
 
