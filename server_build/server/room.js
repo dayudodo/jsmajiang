@@ -27,8 +27,6 @@ function puts(obj) {
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
 class Room {
     constructor() {
-        /**房间号，唯一，用户需要根据这个id进入房间*/
-        this.id = null;
         //房间内的所有玩家，人数有上限，定义在config.
         this.players = [];
         //房间内的牌
@@ -76,7 +74,7 @@ class Room {
     static getId() {
         //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
         //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
-        return "001";
+        return 1;
     }
     //用户加入房间，还需要告诉其它的用户我已经加入了
     join_player(person) {

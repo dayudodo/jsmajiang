@@ -169,21 +169,22 @@ function client_create_room(client_message, socket) {
     else {
         let owner_room = new room_1.Room();
         let room_name = owner_room.id;
-        if (!room_name) {
+        if (room_name) {
+            owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
+            conn.player.seat_index = 0; //玩家座位号从0开始
+            owner_room.join_player(conn.player); //新建的房间要加入本玩家
+            conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
+            console.log(`${conn.player.username}创建了房间${owner_room.id}, seat_index: ${conn.player.seat_index}`);
+            conn.room.player_enter_room(socket);
+            //todo: 供调试用
+            global.room = conn.room;
+        }
+        else { //无法创建房间号
             console.log("服务器无可用房间了");
             socket.sendmsg({
                 type: g_events.server_no_room
             });
-            return;
         }
-        owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
-        conn.player.seat_index = 0; //玩家座位号从0开始
-        owner_room.join_player(conn.player); //新建的房间要加入本玩家
-        conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
-        console.log(`${conn.player.username}创建了房间${owner_room.id}, seat_index: ${conn.player.seat_index}`);
-        conn.room.player_enter_room(socket);
-        //todo: 供调试用
-        global.room = conn.room;
     }
 }
 function client_testlogin(client_message, socket) {

@@ -38,13 +38,12 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_restart_game, client_restart_game]
 ];
 
-
 function client_restart_game(client_message, socket) {
   let { player, room } = getPlayerRoom(socket);
   console.log(`房间:${room.id} 用户:${player.username} 重新开始游戏`);
   //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
   //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
-  room.client_restart_game(g_lobby, client_message, socket)
+  room.client_restart_game(g_lobby, client_message, socket);
 }
 
 function getPlayerRoom(socket) {
@@ -181,21 +180,23 @@ function client_create_room(client_message, socket) {
   } else {
     let owner_room = new Room();
     let room_name = owner_room.id;
-    if (!room_name) {
+    if (room_name) {
+      owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
+      conn.player.seat_index = 0; //玩家座位号从0开始
+      owner_room.join_player(conn.player); //新建的房间要加入本玩家
+      conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
+      console.log(`${conn.player.username}创建了房间${owner_room.id}, seat_index: ${conn.player.seat_index}`);
+      conn.room.player_enter_room(socket);
+      //todo: 供调试用
+      global.room = conn.room;
+
+    } else { //无法创建房间号
+
       console.log("服务器无可用房间了");
       socket.sendmsg({
         type: g_events.server_no_room
       });
-      return;
     }
-    owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
-    conn.player.seat_index = 0; //玩家座位号从0开始
-    owner_room.join_player(conn.player); //新建的房间要加入本玩家
-    conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
-    console.log(`${conn.player.username}创建了房间${owner_room.id}, seat_index: ${conn.player.seat_index}`);
-    conn.room.player_enter_room(socket);
-    //todo: 供调试用
-    global.room = conn.room;
   }
 }
 
