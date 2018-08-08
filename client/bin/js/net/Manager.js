@@ -389,8 +389,8 @@ var mj;
                 this.open_gameTable(server_message);
             };
             Manager.prototype.server_no_such_room = function () {
-                console.log("无此房间号");
-                var dialog = new DialogScene("无此房间号", function () {
+                console.log("无此房间号", Laya.god_player.room_number);
+                var dialog = new DialogScene("\u65E0\u6B64\u623F\u95F4\u53F7:" + Laya.god_player.room_number, function () {
                     dialog.close();
                 });
                 dialog.popup();

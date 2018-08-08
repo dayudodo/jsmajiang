@@ -448,8 +448,8 @@ namespace mj.net {
     }
 
     private server_no_such_room() {
-      console.log("无此房间号");
-      let dialog = new DialogScene("无此房间号", () => {
+      console.log("无此房间号", Laya.god_player.room_number);
+      let dialog = new DialogScene(`无此房间号:${Laya.god_player.room_number}`, () => {
         dialog.close();
       });
       dialog.popup();

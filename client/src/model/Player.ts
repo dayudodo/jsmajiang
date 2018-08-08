@@ -66,7 +66,9 @@ module mj.model {
         /**clone的界面元素全部保存在此 */
         public ui_clone_arr = []
         public arr_dapai: Pai[] = []
-        public room_name: string
+        // public room_name: string
+        /** 玩家想要进入的房间号 */
+        public room_number: number
 
         private _received_pai: Pai
         /**         是否是庄家         */

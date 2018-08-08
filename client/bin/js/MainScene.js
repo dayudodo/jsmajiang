@@ -38,13 +38,18 @@ var mj;
                 //加入房间
                 var god_player = Laya.god_player;
                 //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
-                var msg = {
-                    type: g_events.client_join_room,
-                    username: god_player.username,
-                    user_id: god_player.user_id,
-                    room_id: '001'
-                };
-                this.socket.send(JSON.stringify(msg));
+                laya.ui.Dialog.manager.maskLayer.alpha = 0.6;
+                var dialog = new scene.JoinRoomDialogue();
+                this.join_room = dialog;
+                Laya.stage.addChild(dialog);
+                dialog.popup();
+                // let msg = {
+                //     type: g_events.client_join_room,
+                //     username: god_player.username,
+                //     user_id: god_player.user_id,
+                //     room_id: '001'
+                // }
+                // this.socket.send(JSON.stringify(msg))
             };
             MainScene.prototype.ClickCreate = function () {
                 //创建房间

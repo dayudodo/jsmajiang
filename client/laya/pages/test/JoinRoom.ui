@@ -1,11 +1,12 @@
 {
     "x":0,
-    "type":"View",
+    "type":"Dialog",
     "selectedBox":38,
-    "selecteID":36,
-    "props":{"x":0,"width":1080,"sceneColor":"#000000","sceneBg":"laya/views/test/JoinRoom.jpg","height":640},
+    "selecteID":37,
+    "referenceLines":null,
+    "props":{"x":0,"width":1920,"sceneColor":"#000000","sceneBg":"laya/views/test/JoinRoom.jpg","height":1080},
     "nodeParent":-1,
-    "label":"View",
+    "label":"Dialog",
     "isOpen":true,
     "isDirectory":true,
     "isAniNode":true,
@@ -15,7 +16,7 @@
         {
             "x":15,
             "type":"Sprite",
-            "props":{"y":80,"x":112,"width":1031,"var":"mainSprite","scaleY":0.8,"scaleX":0.8,"height":529},
+            "props":{"y":276,"x":522,"width":1031,"var":"mainSprite","scaleY":0.8,"scaleX":0.8,"height":529},
             "nodeParent":1,
             "label":"Sprite(mainSprite)",
             "isOpen":true,
@@ -27,9 +28,9 @@
                 {
                     "x":30,
                     "type":"Sprite",
-                    "props":{"y":35,"x":2,"var":"inputShow"},
+                    "props":{"y":-19,"x":-76,"var":"numbersShow","scaleY":1.2,"scaleX":1.2},
                     "nodeParent":38,
-                    "label":"Sprite(inputShow)",
+                    "label":"Sprite(numbersShow)",
                     "isOpen":true,
                     "isDirectory":true,
                     "isAniNode":true,
@@ -39,10 +40,10 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":0,"x":0,"width":110,"skin":"base/number_bg.png","height":110},
+                            "props":{"y":0,"x":0,"width":110,"visible":false,"skin":"base/number_bg.png","height":110},
                             "nodeParent":37,
                             "label":"Image",
-                            "isOpen":null,
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -64,7 +65,7 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":0,"x":148,"width":110,"skin":"base/number_bg.png","height":110},
+                            "props":{"y":0,"x":148,"width":110,"visible":false,"skin":"base/number_bg.png","height":110},
                             "nodeParent":37,
                             "label":"Image",
                             "isOpen":null,
@@ -89,7 +90,7 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":0,"x":295,"width":110,"skin":"base/number_bg.png","height":110},
+                            "props":{"y":0,"x":295,"width":110,"visible":false,"skin":"base/number_bg.png","height":110},
                             "nodeParent":37,
                             "label":"Image",
                             "isOpen":null,
@@ -114,7 +115,7 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":0,"x":443,"width":110,"skin":"base/number_bg.png","height":110},
+                            "props":{"y":0,"x":443,"width":110,"visible":false,"skin":"base/number_bg.png","height":110},
                             "nodeParent":37,
                             "label":"Image",
                             "isOpen":null,
@@ -139,10 +140,10 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":0,"x":590,"width":110,"skin":"base/number_bg.png","height":110},
+                            "props":{"y":0,"x":590,"width":110,"visible":false,"skin":"base/number_bg.png","height":110},
                             "nodeParent":37,
                             "label":"Image",
-                            "isOpen":null,
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
@@ -164,18 +165,19 @@
                         {
                             "x":45,
                             "type":"Image",
-                            "props":{"y":0,"x":738,"width":110,"skin":"base/number_bg.png","height":110},
+                            "props":{"y":0,"x":738,"width":110,"visible":false,"skin":"base/number_bg.png","height":110},
                             "nodeParent":37,
                             "label":"Image",
-                            "isOpen":false,
+                            "isOpen":true,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":127,
                             "child":[
                                 {
+                                    "x":60,
                                     "type":"Image",
-                                    "props":{"y":9,"x":26,"skin":"base/number/win/0.png"},
+                                    "props":{"y":9,"x":26,"skin":"base/number/win/1.png"},
                                     "nodeParent":127,
                                     "label":"Image",
                                     "isDirectory":false,
@@ -185,38 +187,25 @@
                                     "child":[
                                         ]
                                 }]
-                        },
-                        {
-                            "x":45,
-                            "type":"Image",
-                            "props":{"y":-1,"x":869,"width":145,"skin":"base/number_bg.png","height":110},
-                            "nodeParent":37,
-                            "label":"Image",
-                            "isOpen":true,
-                            "isDirectory":true,
-                            "isAniNode":true,
-                            "hasChild":true,
-                            "compId":137,
-                            "child":[
-                                {
-                                    "x":60,
-                                    "type":"Label",
-                                    "props":{"y":21,"x":17,"width":108,"text":"删除","height":83,"fontSize":60,"color":"#ff0000"},
-                                    "nodeParent":137,
-                                    "label":"Label",
-                                    "isDirectory":false,
-                                    "isAniNode":true,
-                                    "hasChild":false,
-                                    "compId":139,
-                                    "child":[
-                                        ]
-                                }]
                         }]
                 },
                 {
                     "x":30,
+                    "type":"Button",
+                    "props":{"y":-9,"x":1012,"width":144,"var":"btn_delete","skin":"base/btn_danger.png","scaleY":1.2,"scaleX":1.2,"labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":true,"label":"删除","height":107},
+                    "nodeParent":38,
+                    "label":"Button(btn_delete)",
+                    "isDirectory":false,
+                    "isAniNode":true,
+                    "hasChild":false,
+                    "compId":142,
+                    "child":[
+                        ]
+                },
+                {
+                    "x":30,
                     "type":"Sprite",
-                    "props":{"y":169,"x":4,"var":"inputSprite"},
+                    "props":{"y":169,"x":11,"var":"inputSprite","scaleY":1.2,"scaleX":1.2},
                     "nodeParent":38,
                     "label":"Sprite(inputSprite)",
                     "isOpen":true,
@@ -228,17 +217,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":180,"x":719,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":180,"x":719,"width":140,"var":"n0","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n0)",
+                            "isOpen":false,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":2,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/0.png","mouseEnabled":false},
                                     "nodeParent":2,
@@ -254,17 +242,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":0,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":0,"x":0,"width":140,"var":"n1","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n1)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":39,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":29,"x":51,"skin":"base/number/win/1.png","mouseEnabled":false},
                                     "nodeParent":39,
@@ -280,17 +267,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":180,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":0,"x":180,"width":140,"var":"n2","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n2)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":41,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/2.png","mouseEnabled":false},
                                     "nodeParent":41,
@@ -306,17 +292,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":360,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":0,"x":360,"width":140,"var":"n3","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n3)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":43,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/3.png","mouseEnabled":false},
                                     "nodeParent":43,
@@ -332,17 +317,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":540,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":0,"x":540,"width":140,"var":"n4","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n4)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":45,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/4.png","mouseEnabled":false},
                                     "nodeParent":45,
@@ -358,17 +342,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":0,"x":715,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":0,"x":715,"width":140,"var":"n5","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n5)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":52,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/5.png","mouseEnabled":false},
                                     "nodeParent":52,
@@ -384,17 +367,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":180,"x":0,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":180,"x":0,"width":140,"var":"n6","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n6)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":53,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/6.png","mouseEnabled":false},
                                     "nodeParent":53,
@@ -410,17 +392,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":180,"x":180,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":180,"x":180,"width":140,"var":"n7","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n7)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":54,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/7.png","mouseEnabled":false},
                                     "nodeParent":54,
@@ -436,17 +417,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":180,"x":360,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":180,"x":360,"width":140,"var":"n8","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n8)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":55,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/8.png","mouseEnabled":false},
                                     "nodeParent":55,
@@ -462,17 +442,16 @@
                         {
                             "x":45,
                             "type":"Button",
-                            "props":{"y":180,"x":540,"width":140,"skin":"base/btn_basic.png","height":140},
+                            "props":{"y":180,"x":540,"width":140,"var":"n9","skin":"base/btn_basic.png","height":140},
                             "nodeParent":36,
-                            "label":"Button",
-                            "isOpen":true,
+                            "label":"Button(n9)",
+                            "isOpen":null,
                             "isDirectory":true,
                             "isAniNode":true,
                             "hasChild":true,
                             "compId":56,
                             "child":[
                                 {
-                                    "x":60,
                                     "type":"Image",
                                     "props":{"y":28,"x":42,"skin":"base/number/win/9.png","mouseEnabled":false},
                                     "nodeParent":56,
@@ -490,7 +469,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":514,"x":93,"width":300,"var":"btn_redo","skin":"base/btn_danger.png","scaleY":1.2,"scaleX":1.2,"labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":"true","label":"重新输入","height":95},
+            "props":{"y":779,"x":500,"width":300,"var":"btn_redo","skin":"base/btn_danger.png","scaleY":1.2,"scaleX":1.2,"labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":true,"label":"重新输入","height":95},
             "nodeParent":1,
             "label":"Button(btn_redo)",
             "isDirectory":false,
@@ -503,7 +482,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":514,"x":612,"width":300,"var":"btn_ok","skin":"base/btn_normal.png","scaleY":1.2,"scaleX":1.2,"labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":"true","label":"确定","height":95},
+            "props":{"y":782,"x":1017,"width":300,"var":"btn_ok","skin":"base/btn_normal.png","scaleY":1.2,"scaleX":1.2,"labelSize":40,"labelPadding":"0,0,6,0","labelColors":"#FFFFFF,#FFFFFF,#FFFFFF","labelBold":true,"label":"确定","height":95},
             "nodeParent":1,
             "label":"Button(btn_ok)",
             "isDirectory":false,
@@ -516,7 +495,7 @@
         {
             "x":15,
             "type":"Button",
-            "props":{"y":15,"x":964,"var":"btn_close","skin":"base/btn_close.png"},
+            "props":{"y":115,"x":1437,"var":"btn_close","skin":"base/btn_close.png"},
             "nodeParent":1,
             "label":"Button(btn_close)",
             "isDirectory":false,
@@ -529,7 +508,7 @@
         {
             "x":15,
             "type":"Label",
-            "props":{"y":8,"x":26,"width":818,"text":"请输入房间号","height":83,"fontSize":60,"color":"#ffffff"},
+            "props":{"y":110,"x":359,"width":818,"text":"请输入房间号","height":83,"fontSize":60,"color":"#ffffff"},
             "nodeParent":1,
             "label":"Label",
             "isDirectory":false,

@@ -3,8 +3,10 @@
 module mj.scene {
     import SettingScene = ui.test.SettingDialogUI
     
+    
     export class MainScene extends ui.test.MainUI {
         public socket = Laya.client.socket
+        public join_room 
 
         constructor(username: string, user_id: string) {
             super()
@@ -29,13 +31,19 @@ module mj.scene {
             //加入房间
             let {god_player} = Laya
             //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
-            let msg = {
-                type: g_events.client_join_room,
-                username: god_player.username,
-                user_id: god_player.user_id,
-                room_id: '001'
-            }
-            this.socket.send(JSON.stringify(msg))
+            laya.ui.Dialog.manager.maskLayer.alpha = 0.6
+            let dialog = new JoinRoomDialogue()
+            this.join_room = dialog
+            Laya.stage.addChild(dialog)
+            dialog.popup()
+            
+            // let msg = {
+            //     type: g_events.client_join_room,
+            //     username: god_player.username,
+            //     user_id: god_player.user_id,
+            //     room_id: '001'
+            // }
+            // this.socket.send(JSON.stringify(msg))
 
         }
         ClickCreate(): void {
