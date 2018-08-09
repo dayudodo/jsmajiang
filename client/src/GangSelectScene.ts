@@ -20,12 +20,12 @@ module mj.scene {
         public decidePopup() {
             if (this.canSelectPais && this.canSelectPais.length > 0) {
                 this.show_gangSelect()
-                this.popup()
                 this.okBtn.on(Laya.Event.CLICK, this, () => {
                     this.sendSelectedPai()
                     this.close()
-                    this.removeSelf();
+                    // this.removeSelf();
                 })
+                this.popup()
             } else {
                 this.sendSelectedPai()
             }

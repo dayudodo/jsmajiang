@@ -58,8 +58,8 @@ var mj;
                 });
             };
             GameTableScene.prototype.showSkinOfCountDown = function (twonumber) {
-                var _a;
                 _a = PaiConverter.CountDownNumSkin(twonumber), this.Num1.skin = _a[0], this.Num0.skin = _a[1];
+                var _a;
             };
             /**UI上显示出玩家的group手牌！ */
             GameTableScene.prototype.show_group_shoupai = function (player) {

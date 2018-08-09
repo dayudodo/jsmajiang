@@ -2,7 +2,8 @@ module mj.scene {
     import Sprite = laya.display.Sprite;
     import Image = Laya.Image
 
-    export class JoinRoomDialogue extends ui.test.JoinRoomUI {
+    export class JoinRoomDialog extends ui.test.JoinRoomUI {
+        public socket: Laya.Socket;
         /** 房间最大号，10**6， 最多一百万个房间？  */
         private INPUT_MAX = 6
         /** 当前每几位数 */
@@ -16,11 +17,9 @@ module mj.scene {
 
         constructor() {
             super()
-            this.btn_close.on(Laya.Event.CLICK, this, () => {
-                // Laya.stage.alpha = this.stageAlpha
-                this.close()
-                this.removeSelf()
-            })
+            this.socket = Laya.client.socket
+            this.btn_close.on(Laya.Event.CLICK, this, this.close)
+
             this.btn_ok.on(Laya.Event.CLICK, this, () => {
                 console.log('real room_nubmer is: ', this.room_nubmer)
 
@@ -31,13 +30,12 @@ module mj.scene {
                 Laya.god_player.room_number = this.room_nubmer
 
                 //使用room_number加入房间
-                Laya.socket.sendmsg({
+                this.socket.sendmsg({
                     type: g_events.client_join_room,
                     room_number: this.room_nubmer
                 })
                 //发送完成后需要关闭对话框，房间号应该作为个全局变量存在，玩家一次也就只能进入一个房间
                 this.close()
-                this.removeSelf()
 
             })
             this.btn_delete.on(Laya.Event.CLICK, this, () => {

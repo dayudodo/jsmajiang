@@ -26,12 +26,12 @@ var mj;
                 var _this = this;
                 if (this.canHidePais && this.canHidePais.length > 0) {
                     this.show_liangSelect();
-                    this.popup();
                     this.okBtn.on(Laya.Event.CLICK, this, function () {
                         _this.sendLiangHidePais();
                         _this.close();
-                        _this.removeSelf();
+                        // this.removeSelf();
                     });
+                    this.popup();
                 }
                 else {
                     this.cancelAllClonePaiClicked();

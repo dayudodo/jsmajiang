@@ -33,9 +33,9 @@ namespace mj.net {
       this.socket.on(Laya.Event.CLOSE, this, this.closeHandler);
       this.socket.on(Laya.Event.ERROR, this, this.errorHandler);
       //建立连接, 如果想在手机上使用，用物理地址，只是浏览器测试，用localhost!
-      this.socket.connectByUrl("ws://192.168.2.200:3333");
+      // this.socket.connectByUrl("ws://192.168.2.200:3333");
       // this.socket.connectByUrl("ws://192.168.2.23:3333");
-      // this.socket.connectByUrl("ws://localhost:3333");
+      this.socket.connectByUrl("ws://localhost:3333");
       this.eventsHandler = [
         [g_events.server_welcome, this.server_welcome],
         [g_events.server_login, this.server_login],
@@ -156,9 +156,12 @@ namespace mj.net {
         isShowGang: isShowGang,
         isShowPeng: isShowPeng
       });
-      laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
-      // this.gameTable.addChild(this.opt);
+      // laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
+      // laya.uiconfig
       this.opt.popup();
+      // Laya.gameTable.addChild(this.opt);
+      // Laya.stage.addChild(this.opt)
+
     }
 
     private server_gameover(server_message) {

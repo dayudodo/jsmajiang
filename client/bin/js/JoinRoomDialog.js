@@ -12,9 +12,9 @@ var mj;
 (function (mj) {
     var scene;
     (function (scene) {
-        var JoinRoomDialogue = /** @class */ (function (_super) {
-            __extends(JoinRoomDialogue, _super);
-            function JoinRoomDialogue() {
+        var JoinRoomDialog = /** @class */ (function (_super) {
+            __extends(JoinRoomDialog, _super);
+            function JoinRoomDialog() {
                 var _this = _super.call(this) || this;
                 /** 房间最大号，10**6， 最多一百万个房间？  */
                 _this.INPUT_MAX = 6;
@@ -26,11 +26,8 @@ var mj;
                 _this.room_chars = [];
                 /** 保存laya.stage的原始alpha值，便于还原 */
                 _this.stageAlpha = 0;
-                _this.btn_close.on(Laya.Event.CLICK, _this, function () {
-                    // Laya.stage.alpha = this.stageAlpha
-                    _this.close();
-                    _this.removeSelf();
-                });
+                _this.socket = Laya.client.socket;
+                _this.btn_close.on(Laya.Event.CLICK, _this, _this.close);
                 _this.btn_ok.on(Laya.Event.CLICK, _this, function () {
                     console.log('real room_nubmer is: ', _this.room_nubmer);
                     //todo: for test
@@ -38,13 +35,12 @@ var mj;
                     console.log('test room_nubmer is: ', _this.room_nubmer);
                     Laya.god_player.room_number = _this.room_nubmer;
                     //使用room_number加入房间
-                    Laya.socket.sendmsg({
+                    _this.socket.sendmsg({
                         type: g_events.client_join_room,
                         room_number: _this.room_nubmer
                     });
                     //发送完成后需要关闭对话框，房间号应该作为个全局变量存在，玩家一次也就只能进入一个房间
                     _this.close();
-                    _this.removeSelf();
                 });
                 _this.btn_delete.on(Laya.Event.CLICK, _this, function () {
                     _this.room_chars.pop();
@@ -58,11 +54,11 @@ var mj;
                 return _this;
             }
             /** 数字的图片skin */
-            JoinRoomDialogue.prototype.skin_ofNumber = function (value) {
+            JoinRoomDialog.prototype.skin_ofNumber = function (value) {
                 return "base/number/win/" + value + ".png";
             };
             /** 显示房间号，有几位就显示几位 */
-            JoinRoomDialogue.prototype.show_room_number = function () {
+            JoinRoomDialog.prototype.show_room_number = function () {
                 //如果大于MAX, 就把前面的取消掉，始终保持6位数！
                 if (this.room_chars.length > this.INPUT_MAX) {
                     this.room_chars.shift();
@@ -81,7 +77,7 @@ var mj;
                 }
             };
             /** 如果数字键被点击 */
-            JoinRoomDialogue.prototype.numberClicked = function () {
+            JoinRoomDialog.prototype.numberClicked = function () {
                 var _this = this;
                 this.n0.on(Laya.Event.CLICK, this, function () {
                     _this.room_chars.push('0');
@@ -124,23 +120,23 @@ var mj;
                     _this.show_room_number();
                 });
             };
-            Object.defineProperty(JoinRoomDialogue.prototype, "room_string", {
+            Object.defineProperty(JoinRoomDialog.prototype, "room_string", {
                 get: function () {
                     return this.room_chars.join('');
                 },
                 enumerable: true,
                 configurable: true
             });
-            Object.defineProperty(JoinRoomDialogue.prototype, "room_nubmer", {
+            Object.defineProperty(JoinRoomDialog.prototype, "room_nubmer", {
                 get: function () {
                     return parseInt(this.room_string);
                 },
                 enumerable: true,
                 configurable: true
             });
-            return JoinRoomDialogue;
+            return JoinRoomDialog;
         }(ui.test.JoinRoomUI));
-        scene.JoinRoomDialogue = JoinRoomDialogue;
+        scene.JoinRoomDialog = JoinRoomDialog;
     })(scene = mj.scene || (mj.scene = {}));
 })(mj || (mj = {}));
-//# sourceMappingURL=JoinRoomDialogue.js.map
+//# sourceMappingURL=JoinRoomDialog.js.map

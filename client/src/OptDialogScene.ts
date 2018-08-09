@@ -38,7 +38,7 @@ module mj.scene {
                 this.liangSelectOpt.decidePopup()
                 //显示完毕把自己干掉
                 this.close()
-                this.removeSelf()
+                // this.removeSelf()
                 //亮牌有所不同的是其还需要改变桌面的显示
             })
             this.initButton(this.hu, isShowHu, () => {
@@ -47,7 +47,7 @@ module mj.scene {
                     type: g_events.client_confirm_hu
                 })
                 this.close()
-                this.removeSelf()
+                // this.removeSelf()
             })
 
             this.initButton(this.gang, isShowGang, () => {
@@ -57,10 +57,7 @@ module mj.scene {
                 this.gangSelectOpt.decidePopup()
                 //显示完毕把自己干掉
                 this.close()
-                this.removeSelf()
-                // this.socket.sendmsg({
-                //     type: g_events.client_confirm_mingGang
-                // })
+                // this.removeSelf()
 
             })
             this.initButton(this.peng, isShowPeng, () => {
@@ -69,7 +66,7 @@ module mj.scene {
                     type: g_events.client_confirm_peng
                 })
                 this.close()
-                this.removeSelf()
+                // this.removeSelf()
             })
             //过肯定是在所有情况下都要显示的！
             this.initButton(this.guo, true, () => {
@@ -78,7 +75,7 @@ module mj.scene {
                     type: g_events.client_confirm_guo
                 })
                 this.close()
-                this.removeSelf()
+                // this.removeSelf()
             })
         }
         /**

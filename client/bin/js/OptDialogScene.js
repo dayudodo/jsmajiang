@@ -37,7 +37,7 @@ var mj;
                     _this.liangSelectOpt.decidePopup();
                     //显示完毕把自己干掉
                     _this.close();
-                    _this.removeSelf();
+                    // this.removeSelf()
                     //亮牌有所不同的是其还需要改变桌面的显示
                 });
                 this.initButton(this.hu, isShowHu, function () {
@@ -46,7 +46,7 @@ var mj;
                         type: g_events.client_confirm_hu
                     });
                     _this.close();
-                    _this.removeSelf();
+                    // this.removeSelf()
                 });
                 this.initButton(this.gang, isShowGang, function () {
                     console.log("god_player\u6211\u9009\u62E9\u6760");
@@ -55,10 +55,7 @@ var mj;
                     _this.gangSelectOpt.decidePopup();
                     //显示完毕把自己干掉
                     _this.close();
-                    _this.removeSelf();
-                    // this.socket.sendmsg({
-                    //     type: g_events.client_confirm_mingGang
-                    // })
+                    // this.removeSelf()
                 });
                 this.initButton(this.peng, isShowPeng, function () {
                     console.log("\u7528\u6237\u9009\u62E9\u78B0");
@@ -66,7 +63,7 @@ var mj;
                         type: g_events.client_confirm_peng
                     });
                     _this.close();
-                    _this.removeSelf();
+                    // this.removeSelf()
                 });
                 //过肯定是在所有情况下都要显示的！
                 this.initButton(this.guo, true, function () {
@@ -75,7 +72,7 @@ var mj;
                         type: g_events.client_confirm_guo
                     });
                     _this.close();
-                    _this.removeSelf();
+                    // this.removeSelf()
                 });
             };
             /**

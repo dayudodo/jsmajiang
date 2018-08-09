@@ -17,12 +17,12 @@ module mj.scene {
         public decidePopup() {
             if (this.canHidePais && this.canHidePais.length > 0) {
                 this.show_liangSelect()
-                this.popup()
                 this.okBtn.on(Laya.Event.CLICK, this, () => {
                     this.sendLiangHidePais()
                     this.close()
-                    this.removeSelf();
+                    // this.removeSelf();
                 })
+                this.popup()
             }else{
                 this.cancelAllClonePaiClicked()
                 this.sendLiangHidePais()

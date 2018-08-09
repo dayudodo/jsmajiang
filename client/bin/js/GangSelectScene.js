@@ -30,12 +30,12 @@ var mj;
                 var _this = this;
                 if (this.canSelectPais && this.canSelectPais.length > 0) {
                     this.show_gangSelect();
-                    this.popup();
                     this.okBtn.on(Laya.Event.CLICK, this, function () {
                         _this.sendSelectedPai();
                         _this.close();
-                        _this.removeSelf();
+                        // this.removeSelf();
                     });
+                    this.popup();
                 }
                 else {
                     this.sendSelectedPai();

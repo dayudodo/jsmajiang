@@ -39,10 +39,9 @@ var mj;
                 var god_player = Laya.god_player;
                 //todo: 应该要弹出一个选择窗口，测试时直接加入rose房间，房间其实还应该有个id号，唯一的。
                 laya.ui.Dialog.manager.maskLayer.alpha = 0.6;
-                var dialog = new scene.JoinRoomDialogue();
-                this.join_room = dialog;
-                // Laya.stage.addChild(dialog)
-                dialog.popup();
+                this.join_room_dialog = new scene.JoinRoomDialog();
+                this.join_room_dialog.popup();
+                Laya.stage.addChild(this.join_room_dialog);
                 // let msg = {
                 //     type: g_events.client_join_room,
                 //     username: god_player.username,
