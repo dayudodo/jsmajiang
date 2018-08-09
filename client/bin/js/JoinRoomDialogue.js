@@ -37,13 +37,14 @@ var mj;
                     _this.room_chars = ['1'];
                     console.log('test room_nubmer is: ', _this.room_nubmer);
                     Laya.god_player.room_number = _this.room_nubmer;
-                    //发送完成后需要关闭对话框，房间号应该作为个全局变量存在，玩家一次也就只能进入一个房间
-                    _this.close();
                     //使用room_number加入房间
                     Laya.socket.sendmsg({
                         type: g_events.client_join_room,
                         room_number: _this.room_nubmer
                     });
+                    //发送完成后需要关闭对话框，房间号应该作为个全局变量存在，玩家一次也就只能进入一个房间
+                    _this.close();
+                    _this.removeSelf();
                 });
                 _this.btn_delete.on(Laya.Event.CLICK, _this, function () {
                     _this.room_chars.pop();

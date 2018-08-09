@@ -41,7 +41,7 @@ var mj;
                 laya.ui.Dialog.manager.maskLayer.alpha = 0.6;
                 var dialog = new scene.JoinRoomDialogue();
                 this.join_room = dialog;
-                Laya.stage.addChild(dialog);
+                // Laya.stage.addChild(dialog)
                 dialog.popup();
                 // let msg = {
                 //     type: g_events.client_join_room,

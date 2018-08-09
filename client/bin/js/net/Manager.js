@@ -134,7 +134,7 @@ var mj;
                 });
                 laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
                 // this.gameTable.addChild(this.opt);
-                this.opt.popup();
+                this.opt.popup(true);
             };
             Manager.prototype.server_gameover = function (server_message) {
                 console.log("server_gameover");

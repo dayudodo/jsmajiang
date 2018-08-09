@@ -34,7 +34,7 @@ module mj.scene {
             laya.ui.Dialog.manager.maskLayer.alpha = 0.6
             let dialog = new JoinRoomDialogue()
             this.join_room = dialog
-            Laya.stage.addChild(dialog)
+            // Laya.stage.addChild(dialog)
             dialog.popup()
             
             // let msg = {
