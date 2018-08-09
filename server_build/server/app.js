@@ -125,25 +125,25 @@ function client_da_pai(client_message, socket) {
     room.client_da_pai(socket, pai);
 }
 function client_join_room(client_message, socket) {
-    let { room_id } = client_message;
-    let room = g_lobby.find_room_by_id(room_id);
+    let { room_number } = client_message;
+    let room = g_lobby.find_room_by_id(room_number);
     // console.dir(room);
     let _me = g_lobby.find_player_by(socket); //有时候感觉直接把用户信息就保存在socket里面也许会更方便，不过呢，会改变socket
     let conn = g_lobby.find_conn_by(socket);
     //找到房间后，还要把当前连接的room保存到其连接信息中，而在登录时conn中已经保存有用户信息了
     conn.room = room;
-    console.log(`用户${_me.username}想要加入房间${room_id}`);
+    console.log(`用户${_me.username}想要加入房间${room_number}`);
     // console.log('本玩家连接信息')
     // console.dir(conn);
     if (room) {
         //todo: 检查房间玩家数量，超过3人就不能再添加了
-        console.log(`${room_id}房间内全部玩家：${room.all_player_names}`);
+        console.log(`${room_number}房间内全部玩家：${room.all_player_names}`);
         if (room.players_count == config.LIMIT_IN_ROOM) {
-            console.log(`房间${room_id}已满，玩家有：${room.all_player_names}`);
+            console.log(`房间${room_number}已满，玩家有：${room.all_player_names}`);
             socket.sendmsg({ type: g_events.server_room_full });
         }
         else {
-            console.log(`用户${_me.username}成功加入房间${room_id}`);
+            console.log(`用户${_me.username}成功加入房间${room_number}`);
             //设置其座位号
             _me.seat_index = room.last_join_player.seat_index + 1;
             room.join_player(_me);
@@ -153,7 +153,7 @@ function client_join_room(client_message, socket) {
         }
     }
     else {
-        console.log(`服务器无此房间：${room_id}`);
+        console.log(`服务器无此房间：${room_number}`);
         socket.sendmsg({
             type: g_events.server_no_such_room
         });

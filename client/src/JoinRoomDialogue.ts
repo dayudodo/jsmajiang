@@ -14,8 +14,6 @@ module mj.scene {
         /** 保存laya.stage的原始alpha值，便于还原 */
         private stageAlpha = 0;
 
-
-
         constructor() {
             super()
             this.btn_close.on(Laya.Event.CLICK, this, () => {
@@ -32,14 +30,14 @@ module mj.scene {
                 console.log('test room_nubmer is: ', this.room_nubmer)
 
                 Laya.god_player.room_number = this.room_nubmer
+                //发送完成后需要关闭对话框，房间号应该作为个全局变量存在，玩家一次也就只能进入一个房间
+                this.close()
                 //使用room_number加入房间
                 Laya.socket.sendmsg({
                     type: g_events.client_join_room,
                     room_number: this.room_nubmer
                 })
-                //发送完成后需要关闭对话框，房间号应该作为个全局变量存在，玩家一次也就只能进入一个房间
-                this.close()
-                this.removeSelf()
+
             })
             this.btn_delete.on(Laya.Event.CLICK, this, () => {
                 this.room_chars.pop()
@@ -77,6 +75,7 @@ module mj.scene {
                 number_image.skin = skin
             }
         }
+        /** 如果数字键被点击 */
         numberClicked(): void {
             this.n0.on(Laya.Event.CLICK, this, () => {
                 this.room_chars.push('0')
