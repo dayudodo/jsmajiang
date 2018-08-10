@@ -24,9 +24,6 @@ var mj;
                 // private room_string = ''
                 /** 房间号字符，比如['1','2'] */
                 _this.room_chars = [];
-                /** 保存laya.stage的原始alpha值，便于还原 */
-                _this.stageAlpha = 0;
-                _this.socket = Laya.client.socket;
                 _this.btn_close.on(Laya.Event.CLICK, _this, _this.close);
                 _this.btn_ok.on(Laya.Event.CLICK, _this, function () {
                     console.log('real room_nubmer is: ', _this.room_nubmer);
@@ -35,7 +32,7 @@ var mj;
                     console.log('test room_nubmer is: ', _this.room_nubmer);
                     Laya.god_player.room_number = _this.room_nubmer;
                     //使用room_number加入房间
-                    _this.socket.sendmsg({
+                    Laya.socket.sendmsg({
                         type: g_events.client_join_room,
                         room_number: _this.room_nubmer
                     });

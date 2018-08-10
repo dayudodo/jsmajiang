@@ -3,7 +3,6 @@ module mj.scene {
     import Image = Laya.Image
 
     export class JoinRoomDialog extends ui.test.JoinRoomUI {
-        public socket: Laya.Socket;
         /** 房间最大号，10**6， 最多一百万个房间？  */
         private INPUT_MAX = 6
         /** 当前每几位数 */
@@ -12,12 +11,9 @@ module mj.scene {
         // private room_string = ''
         /** 房间号字符，比如['1','2'] */
         public room_chars = []
-        /** 保存laya.stage的原始alpha值，便于还原 */
-        private stageAlpha = 0;
 
         constructor() {
             super()
-            this.socket = Laya.client.socket
             this.btn_close.on(Laya.Event.CLICK, this, this.close)
 
             this.btn_ok.on(Laya.Event.CLICK, this, () => {
@@ -30,7 +26,7 @@ module mj.scene {
                 Laya.god_player.room_number = this.room_nubmer
 
                 //使用room_number加入房间
-                this.socket.sendmsg({
+                Laya.socket.sendmsg({
                     type: g_events.client_join_room,
                     room_number: this.room_nubmer
                 })

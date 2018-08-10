@@ -39,6 +39,7 @@ var mj;
                 }
                 else {
                     this.sendSelectedPai();
+                    this.close();
                 }
             };
             Object.defineProperty(GangSelectScene.prototype, "selectedPai", {

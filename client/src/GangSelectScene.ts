@@ -28,6 +28,7 @@ module mj.scene {
                 this.popup()
             } else {
                 this.sendSelectedPai()
+                this.close()
             }
         }
          /**玩家选择了个杠牌 */

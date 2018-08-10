@@ -1,10 +1,9 @@
 {
     "x":0,
     "type":"Dialog",
-    "selectedBox":38,
-    "selecteID":37,
+    "selectedBox":1,
     "referenceLines":null,
-    "props":{"x":0,"width":1920,"sceneColor":"#000000","sceneBg":"laya/views/test/JoinRoom.jpg","height":1080},
+    "props":{"width":1920,"sceneColor":"#000000","height":1080},
     "nodeParent":-1,
     "label":"Dialog",
     "isOpen":true,

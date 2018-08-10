@@ -133,9 +133,9 @@ var mj;
                     isShowPeng: isShowPeng
                 });
                 // laya.ui.Dialog.manager.maskLayer.alpha = 0; //全透明，但是不能点击其它地方，只能选择可选操作，杠、胡等
-                Laya.gameTable.addChild(this.opt);
+                // Laya.gameTable.addChild(this.opt);
                 this.opt.popup();
-                // Laya.stage.addChild(this.opt)
+                Laya.stage.addChild(this.opt);
             };
             Manager.prototype.server_gameover = function (server_message) {
                 console.log("server_gameover");
@@ -256,8 +256,8 @@ var mj;
             };
             /** 用户创建房间、加入房间后打开gameTable */
             Manager.prototype.open_gameTable = function (server_message) {
-                Laya.stage.destroyChildren();
-                // let { seat_index, east} = server_message
+                // Laya.stage.destroyChildren();
+                Laya.stage.removeChildren(); //使用remove可能比destroy更安全吧？起码不会出现奇怪的错误。
                 //在最需要的时候才去创建对象，比类都还没有实例时创建问题少一些？
                 this.gameTable = new GameTableScene();
                 var gameTable = this.gameTable;
