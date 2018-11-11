@@ -13,23 +13,9 @@ export class ScoreManager {
   }
   /**所有玩家的一局得分，计算结果直接保存到各player的oneju_score中 */
   static cal_oneju_score(players: Player[]) {
-    //todo: 扛分计算
     // 每个玩家都要算一次扛分，且杠分不算漂，也没有倍率，就是固定的
-    players.forEach(p => {
-      let gang_win_score = this.cal_gang_score(p.gang_win_codes, true);
-      p.oneju_score += gang_win_score;
-      if (gang_win_score > 0) {
-        console.log(chalk.green(`${p.username}的
-        赢杠：${p.gang_win_names}，分值：${gang_win_score}`));
-      }
-
-      let gang_lose_score = this.cal_gang_score(p.gang_lose_codes, false);
-      p.oneju_score -= gang_lose_score;
-      if (gang_lose_score > 0) {
-        console.log(chalk.red(`${p.username}的
-        出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`));
-      }
-    });
+    //得分其实是个总程序，其它的应该直接用方法名称写出代码的意义所在
+    ScoreManager.cal_players_gang(players);
 
     //是否封顶
     let top_score,
@@ -131,6 +117,27 @@ export class ScoreManager {
     });
 
     //todo: 平局
+  }
+
+  private static cal_players_gang(players: Player[]) {
+    players.forEach(p => {
+      let gang_win_score = this.cal_gang_score(p.gang_win_codes, true);
+      p.oneju_score += gang_win_score;
+      if (gang_win_score > 0) {
+        console.log(
+          chalk.green(`${p.username}的
+        赢杠：${p.gang_win_names}，分值：${gang_win_score}`)
+        );
+      }
+      let gang_lose_score = this.cal_gang_score(p.gang_lose_codes, false);
+      p.oneju_score -= gang_lose_score;
+      if (gang_lose_score > 0) {
+        console.log(
+          chalk.red(`${p.username}的
+        出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`)
+        );
+      }
+    });
   }
 
   /**计算输赢玩家的漂分 */
