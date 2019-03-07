@@ -193,6 +193,7 @@ export class Room {
     console.log(`房间:${this.id}内玩家准备开始计数：${player_ready_count}`);
     return player_ready_count == config.LIMIT_IN_ROOM;
   }
+  //统计当前房间的玩家人数
   get players_count(): number {
     return this.players.length;
   }
