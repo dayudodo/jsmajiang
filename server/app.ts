@@ -18,7 +18,7 @@ declare global {
     }
   }
 }
-//initialize a simple http server
+//初始化一个http server
 const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
 const g_lobby = new LobbyManager();
@@ -39,23 +39,17 @@ var eventsHandler: [String, Function][] = [
 ];
 
 function client_restart_game(client_message, socket) {
-  let { player, room } = getPlayerRoom(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 重新开始游戏`);
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 重新开始游戏`);
   //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
   //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
-  room.client_restart_game(g_lobby, client_message, socket);
+  player.room.client_restart_game(g_lobby, client_message, socket);
 }
 
-function getPlayerRoom(socket) {
-  let player = g_lobby.find_player_by(socket);
-  let room = g_lobby.find_room_by(socket);
-  // let table_pai = room.table_dapai;
-  return { room, player };
-}
 function client_confirm_hu(client_message, socket) {
-  let { player, room } = getPlayerRoom(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 选择胡牌`);
-  room.client_confirm_hu(socket);
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 选择胡牌`);
+  player.room.client_confirm_hu(socket);
 }
 // function client_confirm_ting(client_message, socket) {
 //   let { player, room } = confirmInit(socket);
@@ -63,24 +57,24 @@ function client_confirm_hu(client_message, socket) {
 //   room.client_confirm_ting(socket);
 // }
 function client_confirm_liang(client_message, socket) {
-  let { player, room } = getPlayerRoom(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 选择亮牌`);
-  room.client_confirm_liang(client_message, socket);
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 选择亮牌`);
+  player.room.client_confirm_liang(client_message, socket);
 }
 function client_confirm_mingGang(client_message, socket) {
-  let { player, room } = getPlayerRoom(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 选择杠牌`);
-  room.client_confirm_mingGang(client_message, socket);
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 选择杠牌`);
+  player.room.client_confirm_mingGang(client_message, socket);
 }
 function client_confirm_peng(client_message, socket) {
-  let { player, room } = getPlayerRoom(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 选择碰牌`);
-  room.client_confirm_peng(socket);
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 选择碰牌`);
+  player.room.client_confirm_peng(socket);
 }
 function client_confirm_guo(client_message, socket) {
-  let { player, room } = getPlayerRoom(socket);
-  console.log(`房间:${room.id} 用户:${player.username} 选择过牌`);
-  room.client_confirm_guo(socket);
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 选择过牌`);
+  player.room.client_confirm_guo(socket);
 }
 
 wsserver.on("connection", socket => {
@@ -130,11 +124,10 @@ wsserver.on("connection", socket => {
 
 function client_da_pai(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
-  let room = g_lobby.find_room_by(socket);
   let pai: Pai = client_message.pai;
   console.log(chalk.blue(`用户${player.username}打牌:${pai}`));
   //告诉房间，哪个socket打了啥牌
-  room.client_da_pai(socket, pai);
+  player.room.client_da_pai(socket, pai);
 }
 
 function client_join_room(client_message, socket) {
@@ -158,7 +151,9 @@ function client_join_room(client_message, socket) {
       console.log(`用户${_me.username}成功加入房间${room_number}`);
       //设置其座位号
       _me.seat_index = room.last_join_player.seat_index + 1;
+      //房间会保存玩家信息，玩家也会保存房间信息
       room.join_player(_me);
+      _me.room = room;
       // console.dir(room)
       //通知他人应该是房间的事情！
       room.player_enter_room(socket);

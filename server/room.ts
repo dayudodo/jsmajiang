@@ -48,7 +48,7 @@ declare global {
   }
 }
 
-function puts(obj) {
+function puts(obj: any) {
   console.log(util.inspect(obj));
 }
 

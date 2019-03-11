@@ -6,9 +6,6 @@ class Timer {
     }
     //计时过后运行fn
     run(fn, maxWaitTime = 2) {
-        if (typeof fn !== "function") {
-            throw new Error("fn必须是个函数");
-        }
         let timeout = setTimeout(() => {
             fn();
         }, maxWaitTime * 1000);

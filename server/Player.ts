@@ -3,6 +3,7 @@ import { MajiangAlgo } from "./MajiangAlgo";
 import { ScoreManager } from "./ScoreManager";
 //每一个玩家的数据保存在此类中
 import * as config from "./config";
+import { Room } from "./room";
 
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
@@ -45,8 +46,8 @@ export class Player {
     "is_fangpao",
     "oneju_score"
   ];
-  //初始化第一手牌，肯定是有13张
-  // this.room = null
+  //玩家在哪个房间，自己是知道的！
+  public room: Room;
   public socket: WebSocket;
   /**用户是否连接？有可能掉线！*/
   public connect = false;
