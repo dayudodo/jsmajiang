@@ -30,7 +30,8 @@ if (!Array.prototype.repeat) {
 }
 
 var WebSocket = require("ws");
-WebSocket.prototype.sendmsg = function(msg) {
+//todo: 此处可以替换成probuf，以便提高速度
+WebSocket.prototype.sendmsg = function(msg: any) {
   this.send(JSON.stringify(msg));
 };
 

@@ -121,6 +121,12 @@ export class Player {
     this.user_id = user_id;
   }
 
+  public other_players(person): Array<Player> {
+    // console.log("查找本玩家%s的其它玩家", person.username);
+    let o_players = this.room.players.filter(p => p.user_id != person.user_id);
+    // console.log(o_players.map(p => p.username));
+    return o_players;
+  }
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {
     this.gang_win_codes.push(config. HuisGangShangGang);

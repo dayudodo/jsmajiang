@@ -9,7 +9,7 @@ const room_1 = require("./room");
 const chalk_1 = require("chalk");
 const g_events = require("./events");
 const app = express();
-//initialize a simple http server
+//初始化一个http server
 const server = http.createServer(app);
 const wsserver = new WebSocket.Server({ server });
 const g_lobby = new LobbyManager_1.LobbyManager();

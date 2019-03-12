@@ -116,7 +116,7 @@ export class Room {
     //首先应该看玩家是否已经 在房间里面了
     let player = this.find_player_by(socket);
     if (!player) {
-      console.warn("加入房间之前，玩家未加入this.players");
+      console.warn("玩家未登录，不能加入房间！bug...");
     }
     //首先告诉其它人player进入房间！客户端会添加此玩家
     this.other_players(player).forEach(p => {
