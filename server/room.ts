@@ -56,8 +56,12 @@ function puts(obj: any) {
 export class Room {
   /**房间号，唯一，用户需要根据这个id进入房间*/
   public readonly id: number;
-  //房间内的所有玩家，人数有上限，定义在config.
-  public players: Array<Player> = [];
+  //创建房间的玩家
+  public creator: Player;
+  //房间创建时间，房间肯定是有限时
+  public createTime =  Date.now();
+  //房间内的所有玩家，人数有上限，定义在config的LIMIT_IN_ROOM中
+  public players: Array<Player> = new Array(config.LIMIT_IN_ROOM)
   //房间内的牌
   public cloneTablePais: Array<Pai> = [];
   /**当前玩家，哪个打牌哪个就是当前玩家*/

@@ -166,6 +166,7 @@ function client_join_room(client_message, socket) {
   }
 }
 
+//客户端玩家创建房间
 function client_create_room(client_message, socket) {
   let conn = g_lobby.find_conn_by(socket);
   if (!conn.player) {
@@ -176,6 +177,7 @@ function client_create_room(client_message, socket) {
     let owner_room = new Room();
     let room_name = owner_room.id;
     if (room_name) {
+      owner_room.creator = conn.player //房间中记录下创建者
       owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
       conn.player.seat_index = 0; //玩家座位号从0开始
       owner_room.join_player(conn.player); //新建的房间要加入本玩家
