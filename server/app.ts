@@ -37,6 +37,8 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_confirm_guo, client_confirm_guo],
   [g_events.client_restart_game, client_restart_game]
 ];
+//玩家总数统计，用户进入时增加，退出时减少
+let count_users = 0
 
 function client_restart_game(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
@@ -85,6 +87,8 @@ wsserver.on("connection", socket => {
     type: g_events.server_welcome,
     welcome: "与服务器建立连接，欢迎来到安哥世界"
   });
+  count_users++; //在线用户数量增加
+
   const onClose = () => {
     let disconnect_client = g_lobby.dis_connect(socket);
     // console.dir(disconnect_client);
@@ -105,12 +109,13 @@ wsserver.on("connection", socket => {
     //只有进入房间的才算是真正的玩家
     // console.log("剩%s个用户...", g_lobby.players_count);
     socket = null; //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect?
+    count_users--; //在线用户减少，退出房间但是没有断开连接依然会算成是在线玩家
     console.log("剩%s个连接...", g_lobby.clients_count);
   };
   socket.on("close", onClose);
-  //connection is up, let's add a simple simple event
+  
+  //接收客户端发送来的消息并做相应的处理
   socket.on("message", message => {
-    //log the received message and send it back to the client
     let client_message = JSON.parse(message);
     let right_element = eventsHandler.find(item => client_message.type == item[0]);
     if (right_element) {
@@ -245,6 +250,13 @@ function client_player_ready(client_message, socket) {
   }
 }
 
+//服务器相关信息，包括内存使用状态，当前玩家数量
+function server_info(){
+  return {
+    memoryUsage: process.memoryUsage(),
+    count_users: count_users,
+  }
+}
 //start our server
 server.listen(process.env.PORT || config.PORT, () => {
   var ifs = require("os").networkInterfaces();

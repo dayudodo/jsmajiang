@@ -51,6 +51,8 @@ export class Player {
   public socket: WebSocket;
   /**用户是否连接？有可能掉线！*/
   public connect = false;
+  // IP地址
+  public ip = null;
   /**用户是否已经准备好，全部准备好后就可以开始了*/
   public ready = false;
   /**用户是否是东家*/
