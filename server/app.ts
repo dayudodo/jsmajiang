@@ -133,6 +133,7 @@ function client_da_pai(client_message, socket) {
   console.log(chalk.blue(`用户${player.username}打牌:${pai}`));
   //告诉房间，哪个socket打了啥牌
   player.room.client_da_pai(socket, pai);
+  
 }
 
 function client_join_room(client_message, socket) {
@@ -222,6 +223,7 @@ function client_testlogin(client_message, socket) {
   });
   //todo: 模拟用户的积分，暂时定为其id增长1万。
   s_player.score = s_player.user_id + 10000;
+  s_player.ip = socket.handshake.address //通过socket获取到用户的ip地址
   console.log(`${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${socket.id}`);
   conn.player = s_player;
   socket.sendmsg({
