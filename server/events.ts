@@ -13,6 +13,7 @@
   export const client_confirm_mingGang = "client_confirm_mingGang"
   export const client_confirm_peng = "client_confirm_peng"
   export const client_confirm_guo = "client_confirm_guo"
+  export const client_disslove = "client_disslove"
 
   export const server_login = "server_login";
   export const server_welcome = "server_welcome";
@@ -28,6 +29,7 @@
   export const server_table_fa_pai_other = "server_table_fa_pai_other";
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
+  export const server_dissolve = "server_dissolve";
   
   export const server_peng = "server_peng";
   export const server_mingGang = "server_mingGang";

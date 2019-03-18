@@ -55,6 +55,8 @@ export class Player {
   public ip = null;
   /**用户是否已经准备好，全部准备好后就可以开始了*/
   public ready = false;
+  /**是否是房主 */
+  public master = false;
   /**用户是否是东家*/
   public east = false;
   /**用户名称，以后可以显示微信名称*/
@@ -123,11 +125,11 @@ export class Player {
     this.user_id = user_id;
   }
 
-  public other_players(person): Array<Player> {
+  //除了我以外的其它玩家
+  public other_players(): Player[] {
     // console.log("查找本玩家%s的其它玩家", person.username);
-    let o_players = this.room.players.filter(p => p.user_id != person.user_id);
-    // console.log(o_players.map(p => p.username));
-    return o_players;
+    return this.room.players.filter(p => p.user_id != this.user_id);
+
   }
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {

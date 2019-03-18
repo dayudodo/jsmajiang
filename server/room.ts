@@ -59,7 +59,7 @@ export class Room {
   //创建房间的玩家
   public creator: Player;
   //房间创建时间，房间肯定是有限时
-  public createTime =  Date.now();
+  public createTime = Date.now();
   //房间内的所有玩家，人数有上限，定义在config的LIMIT_IN_ROOM中
   public players: Array<Player> = new Array(config.LIMIT_IN_ROOM)
   //房间内的牌
@@ -107,7 +107,7 @@ export class Room {
   }
 
   /**创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面*/
-  static getId():number {
+  static getId(): number {
     //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
     //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
     return 1;
@@ -167,7 +167,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id;
     });
   }
@@ -894,14 +894,24 @@ export class Room {
    * 给房间内的所有玩家广播消息
    * @param event_type 事件类型
    * @param data 事件所携带数据
+   * @param
    */
-  broadcast(event_type: EVENT_TYPE, data) {
-    this.players.forEach(p => {
-      p.socket.sendmsg({
-        type: event_type,
-        data: data
+  broadcast(event_type: EVENT_TYPE, data, player?: Player) {
+    if (player) {
+      player.other_players().forEach(p => {
+        p.socket.sendmsg({
+          type: event_type,
+          data: data
+        });
       });
-    });
+    } else {
+      this.players.forEach(p => {
+        p.socket.sendmsg({
+          type: event_type,
+          data: data
+        });
+      })
+    }
   }
   /**广播服务器打牌的消息给所有玩家 */
   broadcast_server_dapai(player, pai_name) {
@@ -1041,5 +1051,17 @@ export class Room {
       this.init_players(lobby);
       this.server_game_start();
     }
+  }
+  /**房主解散房间 */
+  client_disslove(lobby: LobbyManager, client_message, socket: any) {
+    let player = this.find_player_by(socket)
+    //如果不是房主，则返回
+    if(player.master == false){
+      return;
+    }
+    //通知所有人房主解散了
+    this.broadcast(g_events.server_dissolve, {})
+    socket.disconnect()
+    return 'ok'
   }
 }

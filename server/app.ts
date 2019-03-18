@@ -35,11 +35,24 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_confirm_mingGang, client_confirm_mingGang],
   [g_events.client_confirm_peng, client_confirm_peng],
   [g_events.client_confirm_guo, client_confirm_guo],
-  [g_events.client_restart_game, client_restart_game]
+  [g_events.client_restart_game, client_restart_game],
+  [g_events.client_disslove, client_disslove  ],
 ];
 //玩家总数统计，用户进入时增加，退出时减少
 let count_users = 0
 
+/**房主解散房间 */
+function client_disslove(client_message, socket) {
+  let player = g_lobby.find_player_by(socket);
+  console.log(`房间:${player.room.id} 用户:${player.username} 解散房间`);
+  //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
+  //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
+  if('ok'== player.room.client_disslove(g_lobby, client_message, socket)){
+    count_users --
+  }else{
+    throw new Error('用户解散房间失败')
+  }
+}
 function client_restart_game(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 重新开始游戏`);
@@ -108,7 +121,7 @@ wsserver.on("connection", socket => {
     }
     //只有进入房间的才算是真正的玩家
     // console.log("剩%s个用户...", g_lobby.players_count);
-    socket = null; //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect?
+    socket.disconnect(); //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect?
     count_users--; //在线用户减少，退出房间但是没有断开连接依然会算成是在线玩家
     console.log("剩%s个连接...", g_lobby.clients_count);
   };
