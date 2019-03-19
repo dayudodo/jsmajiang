@@ -1,7 +1,7 @@
 var express = require("express"),
   http = require("http"),
-  WebSocket = require("ws"),
-  ip = require("ip");
+  WebSocket = require("ws");
+
 import * as config from "./config";
 import * as _ from "lodash";
 import { LobbyManager } from "./LobbyManager";
@@ -38,8 +38,7 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_restart_game, client_restart_game],
   [g_events.client_disslove, client_disslove  ],
 ];
-//玩家总数统计，用户进入时增加，退出时减少
-let count_users = 0
+
 
 /**房主解散房间 */
 function client_disslove(client_message, socket) {
@@ -48,7 +47,6 @@ function client_disslove(client_message, socket) {
   //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
   //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
   if('ok'== player.room.client_disslove(g_lobby, client_message, socket)){
-    count_users --
   }else{
     throw new Error('用户解散房间失败')
   }
@@ -100,9 +98,8 @@ wsserver.on("connection", socket => {
     type: g_events.server_welcome,
     welcome: "与服务器建立连接，欢迎来到安哥世界"
   });
-  count_users++; //在线用户数量增加
 
-  const onClose = () => {
+  socket.on("close", () => {
     let disconnect_client = g_lobby.dis_connect(socket);
     // console.dir(disconnect_client);
     let d_client = _.first(disconnect_client);
@@ -121,11 +118,9 @@ wsserver.on("connection", socket => {
     }
     //只有进入房间的才算是真正的玩家
     // console.log("剩%s个用户...", g_lobby.players_count);
-    socket.disconnect(); //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect?
-    count_users--; //在线用户减少，退出房间但是没有断开连接依然会算成是在线玩家
+    // socket.disconnect(); //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect? 已经连接已经在g_lobby中处理过了！
     console.log("剩%s个连接...", g_lobby.clients_count);
-  };
-  socket.on("close", onClose);
+  });
   
   //接收客户端发送来的消息并做相应的处理
   socket.on("message", message => {
@@ -269,7 +264,7 @@ function client_player_ready(client_message, socket) {
 function server_info(){
   return {
     memoryUsage: process.memoryUsage(),
-    count_users: count_users,
+    clients_count: g_lobby.clients_count,
   }
 }
 //start our server

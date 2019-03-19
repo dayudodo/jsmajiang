@@ -4,14 +4,14 @@ import * as _ from "lodash";
 import { Player } from "./player";
 import { Room } from "./room";
 
-interface ConnInterface{
+interface ConnInterface {
   socket_id: number,
   player: Player,
   room: Room
 }
 //room也添加进来，是为了方便添加用户或者删除，其实有点儿冗余，因为player里面包含有room信息
 export class LobbyManager {
-  public conn_array:Array<ConnInterface>
+  public conn_array: Array<ConnInterface>
   public _id_seed: number
   public _user_id_seed: number;
 
@@ -20,12 +20,12 @@ export class LobbyManager {
     this._id_seed = 0
     this._user_id_seed = 100
   }
-  generate_socket_id(){
+  generate_socket_id() {
     return ++this._id_seed
   }
   //其实这个方法应该放在Player中的，不过为了方便还是用大厅来制造唯一，道理也能说通，大厅是第一道关口
-  generate_user_id(){
-    return ++ this._user_id_seed
+  generate_user_id() {
+    return ++this._user_id_seed
   }
   new_connect(socket) {
     this.conn_array.push({
@@ -43,6 +43,7 @@ export class LobbyManager {
     let dc = _.remove(this.conn_array, item => item.socket_id == socket.id);
     // console.dir(this.conn_array);
     // console.dir(dc),dc其实是个数组，里面包含了你删除的那几个元素，找不到会返回个空数组
+    socket.disconnect()
     return dc;
   }
   find_conn_by(socket): ConnInterface {

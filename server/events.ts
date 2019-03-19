@@ -30,6 +30,7 @@
   export const server_dapai = "server_dapai";
   export const server_dapai_other = "server_dapai_other";
   export const server_dissolve = "server_dissolve";
+  export const server_ping = "server_ping";
   
   export const server_peng = "server_peng";
   export const server_mingGang = "server_mingGang";
