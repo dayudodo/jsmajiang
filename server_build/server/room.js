@@ -27,8 +27,10 @@ function puts(obj) {
 //用户自然是属于一个房间，房间里面有几个人可以参加由房间说了算
 class Room {
     constructor() {
-        //房间内的所有玩家，人数有上限，定义在config.
-        this.players = [];
+        //房间创建时间，房间肯定是有限时
+        this.createTime = Date.now();
+        //房间内的所有玩家，人数有上限，定义在config的LIMIT_IN_ROOM中
+        this.players = new Array(config.LIMIT_IN_ROOM);
         //房间内的牌
         this.cloneTablePais = [];
         /**当前玩家，哪个打牌哪个就是当前玩家*/
@@ -84,7 +86,7 @@ class Room {
         //首先应该看玩家是否已经 在房间里面了
         let player = this.find_player_by(socket);
         if (!player) {
-            console.warn("加入房间之前，玩家未加入this.players");
+            console.warn("玩家未登录，不能加入房间！bug...");
         }
         //首先告诉其它人player进入房间！客户端会添加此玩家
         this.other_players(player).forEach(p => {
@@ -836,14 +838,16 @@ class Room {
      * 给房间内的所有玩家广播消息
      * @param event_type 事件类型
      * @param data 事件所携带数据
+     * @param except_player 需要排除的玩家，参数可以忽略，表示为所有人发送数据
      */
-    broadcast(event_type, data) {
-        this.players.forEach(p => {
-            p.socket.sendmsg({
-                type: event_type,
-                data: data
-            });
-        });
+    broadcast(event_type, data, except_player) {
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (player == except_player) {
+                continue;
+            }
+            player.socket.sendmsg(Object.assign({ type: event_type }, data));
+        }
     }
     /**广播服务器打牌的消息给所有玩家 */
     broadcast_server_dapai(player, pai_name) {
@@ -979,6 +983,18 @@ class Room {
             this.init_players(lobby);
             this.server_game_start();
         }
+    }
+    /**房主解散房间 */
+    client_disslove(lobby, client_message, socket) {
+        let player = this.find_player_by(socket);
+        //如果不是房主，则返回
+        if (player.master == false) {
+            return;
+        }
+        //通知所有人房主解散了
+        this.broadcast(g_events.server_dissolve, {});
+        socket.disconnect();
+        return 'ok';
     }
 }
 exports.Room = Room;

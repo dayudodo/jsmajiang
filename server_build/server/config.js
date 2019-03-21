@@ -13,6 +13,7 @@ if (!Array.prototype.repeat) {
     };
 }
 var WebSocket = require("ws");
+//todo: 此处可以替换成probuf，以便提高速度
 WebSocket.prototype.sendmsg = function (msg) {
     this.send(JSON.stringify(msg));
 };

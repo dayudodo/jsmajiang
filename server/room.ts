@@ -894,23 +894,19 @@ export class Room {
    * 给房间内的所有玩家广播消息
    * @param event_type 事件类型
    * @param data 事件所携带数据
-   * @param
+   * @param except_player 需要排除的玩家，参数可以忽略，表示为所有人发送数据
    */
-  broadcast(event_type: EVENT_TYPE, data, player?: Player) {
-    if (player) {
-      player.other_players().forEach(p => {
-        p.socket.sendmsg({
-          type: event_type,
-          data: data
-        });
-      });
-    } else {
-      this.players.forEach(p => {
-        p.socket.sendmsg({
-          type: event_type,
-          data: data
-        });
+  broadcast(event_type: EVENT_TYPE, data, except_player?: Player) {
+    for (let i = 0; i < this.players.length; i++) {
+      const player = this.players[i];
+      if(player == except_player){
+        continue;
+      }
+      player.socket.sendmsg({
+        type: event_type,
+        ...data
       })
+      
     }
   }
   /**广播服务器打牌的消息给所有玩家 */

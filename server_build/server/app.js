@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var express = require("express"), http = require("http"), WebSocket = require("ws"), ip = require("ip");
+var express = require("express"), http = require("http"), WebSocket = require("ws");
 const config = require("./config");
 const _ = require("lodash");
 const LobbyManager_1 = require("./LobbyManager");
@@ -26,8 +26,21 @@ var eventsHandler = [
     [g_events.client_confirm_mingGang, client_confirm_mingGang],
     [g_events.client_confirm_peng, client_confirm_peng],
     [g_events.client_confirm_guo, client_confirm_guo],
-    [g_events.client_restart_game, client_restart_game]
+    [g_events.client_restart_game, client_restart_game],
+    [g_events.client_disslove, client_disslove],
 ];
+/**房主解散房间 */
+function client_disslove(client_message, socket) {
+    let player = g_lobby.find_player_by(socket);
+    console.log(`房间:${player.room.id} 用户:${player.username} 解散房间`);
+    //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
+    //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
+    if ('ok' == player.room.client_disslove(g_lobby, client_message, socket)) {
+    }
+    else {
+        throw new Error('用户解散房间失败');
+    }
+}
 function client_restart_game(client_message, socket) {
     let player = g_lobby.find_player_by(socket);
     console.log(`房间:${player.room.id} 用户:${player.username} 重新开始游戏`);
@@ -73,7 +86,7 @@ wsserver.on("connection", socket => {
         type: g_events.server_welcome,
         welcome: "与服务器建立连接，欢迎来到安哥世界"
     });
-    const onClose = () => {
+    socket.on("close", () => {
         let disconnect_client = g_lobby.dis_connect(socket);
         // console.dir(disconnect_client);
         let d_client = _.first(disconnect_client);
@@ -93,13 +106,11 @@ wsserver.on("connection", socket => {
         }
         //只有进入房间的才算是真正的玩家
         // console.log("剩%s个用户...", g_lobby.players_count);
-        socket = null; //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect?
+        // socket.disconnect(); //不管我使用socket.close还是terminate都不会让此socket消失。。。也许使用reconnect? 已经连接已经在g_lobby中处理过了！
         console.log("剩%s个连接...", g_lobby.clients_count);
-    };
-    socket.on("close", onClose);
-    //connection is up, let's add a simple simple event
+    });
+    //接收客户端发送来的消息并做相应的处理
     socket.on("message", message => {
-        //log the received message and send it back to the client
         let client_message = JSON.parse(message);
         let right_element = eventsHandler.find(item => client_message.type == item[0]);
         if (right_element) {
@@ -154,6 +165,7 @@ function client_join_room(client_message, socket) {
         });
     }
 }
+//客户端玩家创建房间
 function client_create_room(client_message, socket) {
     let conn = g_lobby.find_conn_by(socket);
     if (!conn.player) {
@@ -165,6 +177,7 @@ function client_create_room(client_message, socket) {
         let owner_room = new room_1.Room();
         let room_name = owner_room.id;
         if (room_name) {
+            owner_room.creator = conn.player; //房间中记录下创建者
             owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
             conn.player.seat_index = 0; //玩家座位号从0开始
             owner_room.join_player(conn.player); //新建的房间要加入本玩家
@@ -202,6 +215,7 @@ function client_testlogin(client_message, socket) {
     });
     //todo: 模拟用户的积分，暂时定为其id增长1万。
     s_player.score = s_player.user_id + 10000;
+    s_player.ip = socket.handshake.address; //通过socket获取到用户的ip地址
     console.log(`${s_player.username}登录成功，id:${s_player.user_id}, socket_id: ${socket.id}`);
     conn.player = s_player;
     socket.sendmsg({
@@ -226,6 +240,13 @@ function client_player_ready(client_message, socket) {
         //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
         room.server_game_start();
     }
+}
+//服务器相关信息，包括内存使用状态，当前玩家数量
+function server_info() {
+    return {
+        memoryUsage: process.memoryUsage(),
+        clients_count: g_lobby.clients_count,
+    };
 }
 //start our server
 server.listen(process.env.PORT || config.PORT, () => {

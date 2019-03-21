@@ -9,8 +9,12 @@ class Player {
     constructor({ group_shou_pai, socket, username, user_id }) {
         /**用户是否连接？有可能掉线！*/
         this.connect = false;
+        /**IP地址 */
+        this.ip = null;
         /**用户是否已经准备好，全部准备好后就可以开始了*/
         this.ready = false;
+        /**是否是房主 */
+        this.master = false;
         /**用户是否是东家*/
         this.east = false;
         /** 玩家在房间的座位号，也是加入房间的顺序号 */
@@ -61,6 +65,11 @@ class Player {
         this.socket = socket;
         this.username = username;
         this.user_id = user_id;
+    }
+    //除了我以外的其它玩家
+    other_players() {
+        // console.log("查找本玩家%s的其它玩家", person.username);
+        return this.room.players.filter(p => p.user_id != this.user_id);
     }
     /**保存杠上杠，并通知放杠家伙! */
     saveGangShangGang(fangGangPlayer, pai_name) {
