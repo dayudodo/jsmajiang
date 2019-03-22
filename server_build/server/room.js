@@ -67,8 +67,6 @@ class Room {
         // { who: this, action: Operate.liang },
         // { who: this, action: Operate.guo }
         ];
-        /**游戏刚开始，需要检测一次选择状态！ */
-        this.game_start = true;
         // 房间新建之后，就会拥有个id了
         this.id = Room.getId();
     }

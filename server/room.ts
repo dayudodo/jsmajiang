@@ -581,8 +581,6 @@ export class Room {
     }
   }
 
-  /**游戏刚开始，需要检测一次选择状态！ */
-  private game_start = true;
   /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
    * @param fromEnd 是否从最后发牌
    */
