@@ -582,6 +582,7 @@ export class Room {
   }
 
   /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
+   * @param player 发牌给哪个玩家
    * @param fromEnd 是否从最后发牌
    */
   server_fa_pai(player: Player, fromEnd: boolean = false): Pai {

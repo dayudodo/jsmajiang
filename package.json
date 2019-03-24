@@ -56,7 +56,7 @@
   },
   "ava": {
     "files": [
-      "server_build/spec/hu_test/*.js"
+      "spec/newhu_test/*.js"
     ],
     "require": [
       "babel-register"
