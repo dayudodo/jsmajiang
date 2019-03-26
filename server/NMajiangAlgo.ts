@@ -44,6 +44,21 @@ Array.prototype.equalArrays = function(b) {
 function getAllJiangArr(result): Array<string> {
   return result.join("").match(/(..)\1/g);
 }
+/**获取当前牌的类型，比如饼、条、万、字牌 */
+function getMJType(mjNumber){
+  if(mjNumber >= 0 && mjNumber < 9){
+      //饼
+      return config.TYPE_BING;
+  }
+  else if(mjNumber >= 9 && mjNumber < 18){
+      //条
+      return config.TYPE_TIAO;
+  }
+  else if(mjNumber >= 18 && mjNumber < 27){
+      //万
+      return config.TYPE_ZHIPAI;
+  }
+}
 
 interface hupaiConstructor {
   /**所有的胡牌类型码 */
