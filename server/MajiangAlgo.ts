@@ -4,6 +4,7 @@ import * as _ from "lodash";
 import chalk from "chalk";
 import * as config from "./config";
 import { SSL_OP_NETSCAPE_CA_DN_BUG } from "constants";
+
 // 全局常量，所有的牌
 var BING: Array<Pai> = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 var TIAO: Array<Pai> = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];

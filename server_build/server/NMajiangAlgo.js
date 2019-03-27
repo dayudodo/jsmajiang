@@ -2,11 +2,12 @@
 //麻将判胡算法主程序，纯数字版本
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
+const config = require("./config");
 // 全局常量，所有的牌,饼为1，条为2，万为3，中国、发财、白板为不连续的三张牌
 var BING = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
 var TIAO = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
-var WAN = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
+var WAN = [20, 21, 22, 23, 24, 25, 26, 27, 28];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
 var ZHIPAI = [31, 32, 33];
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
@@ -28,6 +29,21 @@ Array.prototype.equalArrays = function (b) {
 };
 function getAllJiangArr(result) {
     return result.join("").match(/(..)\1/g);
+}
+/**获取当前牌的类型，比如饼、条、万、字牌,现在数值不确定，所以要用first, last。 */
+function getMJType(mjNumber) {
+    if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
+        //饼
+        return config.TYPE_BING;
+    }
+    else if (mjNumber >= _.first(TIAO) && mjNumber <= _.last(TIAO)) {
+        //条
+        return config.TYPE_TIAO;
+    }
+    else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
+        //万
+        return config.TYPE_ZHIPAI;
+    }
 }
 /**麻将胡牌算法 */
 class NMajiangAlgo {

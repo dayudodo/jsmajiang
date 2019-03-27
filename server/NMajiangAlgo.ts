@@ -9,7 +9,7 @@ type Pai = number;
 var BING: Array<Pai> = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
 var TIAO: Array<Pai> = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
-var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
+var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
 var ZHIPAI: Array<Pai> = [31, 32, 33];
 
@@ -23,14 +23,14 @@ declare global {
   }
 }
 
-Array.prototype.remove = function(val) {
+Array.prototype.remove = function (val) {
   var index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
   }
   return this;
 };
-Array.prototype.equalArrays = function(b) {
+Array.prototype.equalArrays = function (b) {
   if (this.length != b.length) return false; // Different-size arrays not equal
   for (
     var i = 0;
@@ -44,19 +44,19 @@ Array.prototype.equalArrays = function(b) {
 function getAllJiangArr(result): Array<string> {
   return result.join("").match(/(..)\1/g);
 }
-/**获取当前牌的类型，比如饼、条、万、字牌 */
-function getMJType(mjNumber){
-  if(mjNumber >= 0 && mjNumber < 9){
-      //饼
-      return config.TYPE_BING;
+/**获取当前牌的类型，比如饼、条、万、字牌,现在数值不确定，所以要用first, last。 */
+function getMJType(mjNumber) {
+  if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
+    //饼
+    return config.TYPE_BING;
   }
-  else if(mjNumber >= 9 && mjNumber < 18){
-      //条
-      return config.TYPE_TIAO;
+  else if (mjNumber >= _.first(TIAO) && mjNumber <= _.last(TIAO)) {
+    //条
+    return config.TYPE_TIAO;
   }
-  else if(mjNumber >= 18 && mjNumber < 27){
-      //万
-      return config.TYPE_ZHIPAI;
+  else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
+    //万
+    return config.TYPE_ZHIPAI;
   }
 }
 
@@ -128,17 +128,17 @@ export class NMajiangAlgo {
       s3 = test_arr[2];
     //判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
     let isABC =
-      s2-1 == s1 &&
-      s2+1 == s3
+      s2 - 1 == s1 &&
+      s2 + 1 == s3
     return isABC;
   }
 
   static isABCorAAA(test_arr: Array<Pai>) {
     if (test_arr.length == 3) {
       return this._isAAA(test_arr) || this.isABC(test_arr);
-    }else if (test_arr.length == 4) {
+    } else if (test_arr.length == 4) {
       return this._is4A(test_arr);
-    }else{
+    } else {
       return false
     }
   }
