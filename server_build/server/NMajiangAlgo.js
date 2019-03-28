@@ -302,28 +302,34 @@ class NMajiangAlgo {
             return true;
         }
         shouPai = shouPai.sort(); //每次都要排序！防止不连续的情况
-        let threeTest = [];
-        //判断开头是否是三个连续
-        let result = this.isAndDelAAA(shouPai);
-        if (!!result) {
-            // 检测剩下的的是否是几句话
-            threeTest.push(this.isJiJuhua(result.remainArr));
-        }
-        //判断开头是否是4个连续
-        result = this.isAndDel4A(shouPai);
-        if (!!result) {
-            console.log(result.remainArr);
-            threeTest.push(this.isJiJuhua(result.remainArr));
-        }
+        // let threeTest = []
+        let result;
         //判断开头是否是ABC
         result = this.isAndDelABC(shouPai);
         if (!!result) {
-            threeTest.push(this.isJiJuhua(result.remainArr));
+            // console.log(result.remainArr);
+            //如果结果是true,返回，否则还要进行下面的检测
+            if (this.isJiJuhua(result.remainArr)) {
+                return true;
+            }
+        }
+        //判断开头是否是4个连续，首先检测这个，从大的开始检测
+        result = this.isAndDel4A(shouPai);
+        if (!!result) {
+            // console.log(result.remainArr);
+            if (this.isJiJuhua(result.remainArr)) {
+                return true;
+            }
+        }
+        result = this.isAndDelAAA(shouPai);
+        //判断开头是否是三个连续
+        if (!!result) {
+            // 检测剩下的的是否是几句话
+            return this.isJiJuhua(result.remainArr);
         }
         else {
             return false;
         }
-        return !!threeTest.indexOf(true);
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
