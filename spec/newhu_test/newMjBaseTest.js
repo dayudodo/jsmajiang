@@ -8,93 +8,110 @@ function pais(strs) {
   return PaiConvertor.pais(strs)
 }
 
-test("应为将", function(t) {
-  t.is(NMajiangAlgo.isAA(pais("b1 b1")), true);
-});
-test("should将", function(t) {
-  t.is(NMajiangAlgo.isAA(pais("b1b1")), true);
-});
-test("should一句话", function(t) {
-  t.is(NMajiangAlgo._isAAA(pais("b1 b1 b1")), true);
-});
-test("should一句话false", function(t) {
-  t.is(NMajiangAlgo._isAAA(pais("b1 b1 b2")), false);
-});
 
-test(`0 should is4A 'b1 b1 b1 b1' true`, function(t) {
-  let str = "b1 b1 b1 b1";
-  t.is(NMajiangAlgo._is4A(pais(str)), true);
+// test(`是几句话`, function(t) {
+//   let str = "b1 b1 b1 b2 b3 b4";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isJiJuhua(test_arr)
+//   t.is(result, true);
+// });
+// test(`is 223344`, function(t) {
+//   let str = "b1 b1 b2 b2 b3 b3";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isJiJuhua(test_arr)
+//   t.is(result, true);
+// });
+test(`is 杠ABC`, function(t) {
+  let str = "b1 b1 b1 b1 b2 b3 b4";
+  let test_arr = pais(str)
+  let result = NMajiangAlgo.isJiJuhua(test_arr)
+  t.is(result, true);
 });
-test(`0 should _is4A 'b1b1b1b1' true`, function(t) {
-  let str = "b1 b1 b1 b1";
-  t.is(NMajiangAlgo._is4A(pais(str)), true);
-});
-test(`1 should _is4A  false`, function(t) {
-  let str = "b1 b2 b1 b1";
-  t.is(NMajiangAlgo._is4A(pais(str)), false);
-});
-test(`2 should _is4A  false`, function(t) {
-  let str = "b1 b1 b2 b1";
-  t.is(NMajiangAlgo._is4A(pais(str)), false);
-});
-test(`3 should _is4A  false`, function(t) {
-  let str = "b1 b1 b1 b2";
-  t.is(NMajiangAlgo._is4A(pais(str)), false);
-});
-test(`is and del ABC`, function(t) {
-  let str = "b1 b1 b2 b3";
-  t.is(NMajiangAlgo.isAndDelABC(pais(str)), true);
-});
-test(`is and del ABC error`, function(t) {
-  let str = "";
-  t.throws(()=>{NMajiangAlgo.isAndDelABC(pais(str))}, /为空/);
-});
-
-test(`get all jiangArr`, function(t) {
-  let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b8 b8 b9";
-  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [0,1,2,7]);
-});
-test(`get all jiangArr empty`, function(t) {
-  let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9";
-  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), []);
-});
-
-// test("4 should vlaid4A throw error", function(t) {
-//   let str = "b1";
-//   //   t.is(Majiang._is4A.bind(null, str)).toThrowError(/must have/);
-//   t.throws(NMajiangAlgo._is4A.bind(null, str), /必须等于/);
+// test(`is ABC AAA`, function(t) {
+//   let str = "b2 b3 b4 b5 b5 b5 ";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isJiJuhua(test_arr)
+//   t.is(result, true);
+// });
+// test(`is ABC 4A`, function(t) {
+//   let str = "b2 b3 b4 b5 b5 b5 b5";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isJiJuhua(test_arr)
+//   t.is(result, true);
+// });
+// test(`is ABC 3A少一个false`, function(t) {
+//   let str = "b2 b3 b4 b5 b5 ";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isJiJuhua(test_arr)
+//   t.is(result, false);
 // });
 
-// test("should isABCorAAA true", function(t) {
-//   t.is(NMajiangAlgo.isABCorAAA("b1 b1 b1"), true);
-// });
-// test("should isABCorAAA true", function(t) {
-//   t.is(NMajiangAlgo.isABCorAAA("b1 b2 b3"), true);
-// });
-// test("should isABCorAAA true", function(t) {
-//   t.is(NMajiangAlgo.isABCorAAA("b1 b1 b1 b1"), true);
-// });
-// test("should isABCorAAA true", function(t) {
-//   t.is(NMajiangAlgo.isABCorAAA("b1 b1 b1 t1"), false);
-// });
-// test("should isABCorAAA false", function(t) {
-//   t.is(NMajiangAlgo.isABCorAAA("b1 b2 b3 t3"), false);
-// });
 
-// test("should isABC true", function(t) {
-//   t.is(NMajiangAlgo.isABC("b1 b2 b3"), true);
+// test(`is and del 4A`, function(t) {
+//   let str = "b1 b1 b1 b1 b2";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isAndDel4A(test_arr)
+//   t.is(!!result, true);
+//   t.deepEqual(result.remainArr, [1])
 // });
-// test("should isABC true", function(t) {
-//   t.is(NMajiangAlgo.isABC("f7 f8 f9"), true);
+// test(`is and del 4A 数量不够`, function(t) {
+//   let str = "b1 b1 b1";
+//   let test_arr = pais(str)
+//   t.is(NMajiangAlgo.isAndDel4A(test_arr), false);
 // });
-// test("should isABC false", function(t) {
-//   t.is(NMajiangAlgo.isABC("b1 b2 b4"), false);
+// test(`is and del 4A 非4A`, function(t) {
+//   let str = "b1 b1 b2 b3";
+//   t.is(NMajiangAlgo.isAndDel4A(pais(str)), false);
 // });
-
-// // test("只有两个值，isABC抛出错误", function (t) {
-// //   let str = "b1 b2";
-// //   t.throws(MajiangAlgo.isABC.bind(null, str), /必须/);
+// test(`is and del AAA `, function(t) {
+//   let str = "b1 b1 b1 b1 b2 b3";
+//   let test_arr = pais(str)
+//   const result = NMajiangAlgo.isAndDelAAA(test_arr);
+//   t.is(!!result, true);
+//   t.deepEqual(result.remainArr, [0,1,2])
+// });
+// test(`is and del AAA 开头3不连续`, function(t) {
+//   let str = "b1 b2 b2 b2 b2 b3";
+//   t.is(NMajiangAlgo.isAndDelAAA(pais(str)), false);
+// });
+// test(`is and del ABC`, function(t) {
+//   let str = "b1 b2 b2 b2 b2 b3";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.isAndDelABC(test_arr)
+//   t.is(!!result, true);
+//   t.deepEqual(result.remainArr, [1,1,1])
+// });
+// test(`is and del ABC false`, function(t) {
+//   let str = "b1 b2 b2 b2 b2";
+//   t.is(NMajiangAlgo.isAndDelABC(pais(str)), false);
+// });
+// // test(`is and del ABC, AAA`, function(t) {
+// //   let str = "b1 b1 b1 b1 b2 b3";
+// //   t.is(NMajiangAlgo.isAndDelAAA(pais(str)), true);
+// //   t.is(NMajiangAlgo.isAndDelABC(pais(str)), true);
 // // });
+// test(`is and del ABC error`, function(t) {
+//   let str = "";
+//   t.throws(()=>{NMajiangAlgo.isAndDelAAA(pais(str))}, /为空/);
+// });
+// test(`is and del ABC error`, function(t) {
+//   let str = "";
+//   t.throws(()=>{NMajiangAlgo.isAndDelABC(pais(str))}, /为空/);
+// });
+// test(`is and del 4A error`, function(t) {
+//   let str = "";
+//   t.throws(()=>{NMajiangAlgo.isAndDel4A(pais(str))}, /为空/);
+// });
+
+// test(`get all jiangArr`, function(t) {
+//   let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b8 b8 b9";
+//   t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [0,1,2,7]);
+// });
+// test(`get all jiangArr empty`, function(t) {
+//   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9";
+//   t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), []);
+// });
+
 
 // // describe('2ABC group', function(t) {
 // test("1 should is2ABC true", function(t) {

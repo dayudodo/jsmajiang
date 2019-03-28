@@ -12,7 +12,7 @@ var TIAO: Array<Pai> = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
 var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-var ZHIPAI: Array<Pai> = [31, 32, 33];
+var ZHIPAI: Array<Pai> = [30, 32, 34];
 
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
 
@@ -288,20 +288,20 @@ export class NMajiangAlgo {
   }
 
   /**寻找ABC，223344，这样的也可以找到 */
-  static isAndDelABC(test_arr: Array<Pai>): boolean {
+  static isAndDelABC(test_arr: Array<Pai>): any {
     if (_.isEmpty(test_arr)) {
       throw new Error("test_arr为空");
     }
     let remainArr = test_arr.slice(1, test_arr.length);
     //如果找到第一个元素，删除之，再继续找，比如开头是个2，会找到3
     let pos = remainArr.indexOf(test_arr[0] + 1);
-    if (pos) {
+    if (pos > -1) {
       remainArr.splice(pos, 1);
       pos = remainArr.indexOf(test_arr[0] + 2);//会找到4
-      if (pos) { //找到4就删除
+      if (pos > -1) { //找到4就删除
         remainArr.splice(pos, 1);
-        test_arr = remainArr //改变了原数组值，并不喜欢
-        return true
+        // console.log("remainArr", remainArr);
+        return { remainArr: remainArr }
       } else {
         return false
       }
@@ -309,26 +309,68 @@ export class NMajiangAlgo {
       return false;
     }
   }
+  /**判断是否是AAA，查找法哪怕你没有排序也可以找到3A */
+  static isAndDelAAA(test_arr: Array<Pai>): any {
+    if (_.isEmpty(test_arr)) {
+      throw new Error("test_arr为空");
+    }
+    if (test_arr.length < 3) {
+      return false
+    }
+    let result = test_arr[0] == test_arr[1]
+      && test_arr[1] == test_arr[2]
+    if (result) {
+      return { remainArr: test_arr.slice(3, test_arr.length) }
+    } else {
+      return false
+    }
+  }
+
+  static isAndDel4A(test_arr: Array<Pai>): any {
+    if (_.isEmpty(test_arr)) {
+      throw new Error("test_arr为空");
+    }
+    if (test_arr.length < 4) {
+      return false
+    }
+    let result = test_arr[0] == test_arr[1]
+      && test_arr[1] == test_arr[2]
+      && test_arr[2] == test_arr[3]
+    if (result) {
+      return { remainArr: test_arr.slice(4, test_arr.length) }
+    } else {
+      return false
+    }
+  }
 
   /**是否是几句话，总共只有4句话，外带将！ */
-  static isJuhua(shouPai: Array<Pai>): boolean {
-    //复制此数组，不影响其值
-    let cloneShouPai = _.clone(shouPai);
+  static isJiJuhua(shouPai: Array<Pai>): boolean {
     //检测到最后是个空数组，说明都是几句话！
     if (_.isEmpty(shouPai)) {
       return true;
     }
-    //判断是否是三个连续
-    if (this.isABCorAAA(cloneShouPai.slice(0, 3))) {
+    shouPai = shouPai.sort() //每次都要排序！防止不连续的情况
+    let threeTest = []
+    //判断开头是否是三个连续
+    let result = this.isAndDelAAA(shouPai)
+    if (!!result) {
       // 检测剩下的的是否是几句话
-      return this.isJuhua(shouPai.slice(3, shouPai.length));
+      threeTest.push(this.isJiJuhua(result.remainArr));
     }
-    //判断是否是4个连续
-    else if (this._is4A(shouPai.slice(0, 4))) {
-      return this.isJuhua(shouPai.slice(4, shouPai.length));
-    } else {
-      return false;
+    //判断开头是否是4个连续
+    result = this.isAndDel4A(shouPai)
+    if (!!result) {
+      console.log(result.remainArr);
+      threeTest.push(this.isJiJuhua(result.remainArr))
     }
+    //判断开头是否是ABC
+    result = this.isAndDelABC(shouPai)
+    if (!!result) {
+      threeTest.push(this.isJiJuhua(result.remainArr))
+    }else{
+      return false
+    }
+    return !!threeTest.indexOf(true)
   }
 
   /**只要能胡，就应该是屁胡，包括七对！ */
