@@ -28,9 +28,6 @@ Array.prototype.equalArrays = function (b) {
             return false; // If any differ, arrays not equal
     return true; // Otherwise they are equal
 };
-function getAllJiangArr(result) {
-    return result.join("").match(/(..)\1/g);
-}
 /**获取当前牌的类型，比如饼、条、万、字牌,现在数值不确定，所以要用first, last。 */
 function getMJType(mjNumber) {
     if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
@@ -225,6 +222,20 @@ class NMajiangAlgo {
             return true;
         }
         return false;
+    }
+    /**获取到所有的将牌 */
+    static getAllJiangArr(test_arr) {
+        if (_.isEmpty(test_arr)) {
+            return [];
+        }
+        let allArr = [];
+        for (let index = 0; index < test_arr.length; index += 2) {
+            const jiang = test_arr[index];
+            if (jiang == test_arr[index + 1]) {
+                allArr.push(jiang);
+            }
+        }
+        return allArr;
     }
     /**寻找ABC，223344，这样的也可以找到 */
     static isAndDelABC(test_arr) {

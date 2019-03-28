@@ -25,14 +25,14 @@ declare global {
 }
 
 /**删除找到的第一个元素 */
-Array.prototype.remove = function(val) {
+Array.prototype.remove = function (val) {
   var index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
   }
   return this;
 };
-Array.prototype.equalArrays = function(b) {
+Array.prototype.equalArrays = function (b) {
   if (this.length != b.length) return false; // Different-size arrays not equal
   for (
     var i = 0;
@@ -43,9 +43,7 @@ Array.prototype.equalArrays = function(b) {
   return true; // Otherwise they are equal
 };
 
-function getAllJiangArr(result): Array<string> {
-  return result.join("").match(/(..)\1/g);
-}
+
 /**获取当前牌的类型，比如饼、条、万、字牌,现在数值不确定，所以要用first, last。 */
 function getMJType(mjNumber) {
   if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
@@ -274,6 +272,20 @@ export class NMajiangAlgo {
 
     return false;
   }
+  /**获取到所有的将牌 */
+  static getAllJiangArr(test_arr: Array<Pai>): Array<Pai> {
+    if (_.isEmpty(test_arr)) {
+      return []
+    }
+    let allArr = []
+    for (let index = 0; index < test_arr.length; index += 2) {
+      const jiang = test_arr[index];
+      if (jiang == test_arr[index + 1]) {
+        allArr.push(jiang)
+      }
+    }
+    return allArr
+  }
 
   /**寻找ABC，223344，这样的也可以找到 */
   static isAndDelABC(test_arr: Array<Pai>): boolean {
@@ -282,7 +294,7 @@ export class NMajiangAlgo {
     }
     let remainArr = test_arr.slice(1, test_arr.length);
     //如果找到第一个元素，删除之，再继续找，比如开头是个2，会找到3
-    let pos = remainArr.indexOf(test_arr[0] + 1);    
+    let pos = remainArr.indexOf(test_arr[0] + 1);
     if (pos) {
       remainArr.splice(pos, 1);
       pos = remainArr.indexOf(test_arr[0] + 2);//会找到4
@@ -290,7 +302,7 @@ export class NMajiangAlgo {
         remainArr.splice(pos, 1);
         test_arr = remainArr //改变了原数组值，并不喜欢
         return true
-      }else{
+      } else {
         return false
       }
     } else {

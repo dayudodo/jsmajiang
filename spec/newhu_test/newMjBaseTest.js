@@ -50,9 +50,13 @@ test(`is and del ABC error`, function(t) {
   t.throws(()=>{NMajiangAlgo.isAndDelABC(pais(str))}, /为空/);
 });
 
-test(`is and del ABC`, function(t) {
-  let str = "b1 b1 b2 b2 b3 b3";
-  t.is(NMajiangAlgo.isAndDelABC(pais(str)), true);
+test(`get all jiangArr`, function(t) {
+  let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b8 b8 b9";
+  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [0,1,2,7]);
+});
+test(`get all jiangArr empty`, function(t) {
+  let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9";
+  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), []);
 });
 
 // test("4 should vlaid4A throw error", function(t) {
