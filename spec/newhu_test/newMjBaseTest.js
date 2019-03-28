@@ -3,6 +3,7 @@ import { NMajiangAlgo as NMajiangAlgo } from "../../server_build/server/NMajiang
 import {PaiConvertor} from "../../server_build/server/PaiConverter"
 // var Majiang = require("../server/Majiang");
 // var mj = new Majiang()
+/**f直接将字符串转换成数类麻将数组 */
 function pais(strs) {
   return PaiConvertor.pais(strs)
 }
@@ -40,11 +41,25 @@ test(`3 should _is4A  false`, function(t) {
   let str = "b1 b1 b1 b2";
   t.is(NMajiangAlgo._is4A(pais(str)), false);
 });
-test("4 should vlaid4A throw error", function(t) {
-  let str = "b1";
-  //   t.is(Majiang._is4A.bind(null, str)).toThrowError(/must have/);
-  t.throws(NMajiangAlgo._is4A.bind(null, str), /必须等于/);
+test(`is and del ABC`, function(t) {
+  let str = "b1 b1 b2 b3";
+  t.is(NMajiangAlgo.isAndDelABC(pais(str)), true);
 });
+test(`is and del ABC error`, function(t) {
+  let str = "";
+  t.throws(()=>{NMajiangAlgo.isAndDelABC(pais(str))}, /为空/);
+});
+
+test(`is and del ABC`, function(t) {
+  let str = "b1 b1 b2 b2 b3 b3";
+  t.is(NMajiangAlgo.isAndDelABC(pais(str)), true);
+});
+
+// test("4 should vlaid4A throw error", function(t) {
+//   let str = "b1";
+//   //   t.is(Majiang._is4A.bind(null, str)).toThrowError(/must have/);
+//   t.throws(NMajiangAlgo._is4A.bind(null, str), /必须等于/);
+// });
 
 // test("should isABCorAAA true", function(t) {
 //   t.is(NMajiangAlgo.isABCorAAA("b1 b1 b1"), true);

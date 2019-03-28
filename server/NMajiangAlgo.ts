@@ -3,6 +3,7 @@
 import * as _ from "lodash";
 import chalk from "chalk";
 import * as config from "./config";
+import { join } from "path";
 type Pai = number;
 
 // 全局常量，所有的牌,饼为1，条为2，万为3，中国、发财、白板为不连续的三张牌
@@ -23,14 +24,15 @@ declare global {
   }
 }
 
-Array.prototype.remove = function (val) {
+/**删除找到的第一个元素 */
+Array.prototype.remove = function(val) {
   var index = this.indexOf(val);
   if (index > -1) {
     this.splice(index, 1);
   }
   return this;
 };
-Array.prototype.equalArrays = function (b) {
+Array.prototype.equalArrays = function(b) {
   if (this.length != b.length) return false; // Different-size arrays not equal
   for (
     var i = 0;
@@ -49,12 +51,10 @@ function getMJType(mjNumber) {
   if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
     //饼
     return config.TYPE_BING;
-  }
-  else if (mjNumber >= _.first(TIAO) && mjNumber <= _.last(TIAO)) {
+  } else if (mjNumber >= _.first(TIAO) && mjNumber <= _.last(TIAO)) {
     //条
     return config.TYPE_TIAO;
-  }
-  else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
+  } else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
     //万
     return config.TYPE_ZHIPAI;
   }
@@ -108,16 +108,6 @@ export class NMajiangAlgo {
     return s1 == s2 && s2 == s3 && s3 == s4;
   }
 
-  // static is34A(test_arr) {
-  //   let result = checkValidAndReturnArr(test_arr);
-  //   if (result.length == 3) {
-  //     return this._isAAA(test_arr);
-  //   }
-  //   if (result.length == 4) {
-  //     return this._is4A(test_arr);
-  //   }
-  // }
-
   static isABC(test_arr: Array<Pai>) {
     if (test_arr.length < 3) {
       // throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
@@ -127,19 +117,15 @@ export class NMajiangAlgo {
       s2 = test_arr[1],
       s3 = test_arr[2];
     //判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
-    let isABC =
-      s2 - 1 == s1 &&
-      s2 + 1 == s3
+    let isABC = s2 - 1 == s1 && s2 + 1 == s3;
     return isABC;
   }
 
   static isABCorAAA(test_arr: Array<Pai>) {
     if (test_arr.length == 3) {
       return this._isAAA(test_arr) || this.isABC(test_arr);
-    } else if (test_arr.length == 4) {
-      return this._is4A(test_arr);
     } else {
-      return false
+      return false;
     }
   }
 
@@ -287,6 +273,50 @@ export class NMajiangAlgo {
     }
 
     return false;
+  }
+
+  /**寻找ABC，223344，这样的也可以找到 */
+  static isAndDelABC(test_arr: Array<Pai>): boolean {
+    if (_.isEmpty(test_arr)) {
+      throw new Error("test_arr为空");
+    }
+    let remainArr = test_arr.slice(1, test_arr.length);
+    //如果找到第一个元素，删除之，再继续找，比如开头是个2，会找到3
+    let pos = remainArr.indexOf(test_arr[0] + 1);    
+    if (pos) {
+      remainArr.splice(pos, 1);
+      pos = remainArr.indexOf(test_arr[0] + 2);//会找到4
+      if (pos) { //找到4就删除
+        remainArr.splice(pos, 1);
+        test_arr = remainArr //改变了原数组值，并不喜欢
+        return true
+      }else{
+        return false
+      }
+    } else {
+      return false;
+    }
+  }
+
+  /**是否是几句话，总共只有4句话，外带将！ */
+  static isJuhua(shouPai: Array<Pai>): boolean {
+    //复制此数组，不影响其值
+    let cloneShouPai = _.clone(shouPai);
+    //检测到最后是个空数组，说明都是几句话！
+    if (_.isEmpty(shouPai)) {
+      return true;
+    }
+    //判断是否是三个连续
+    if (this.isABCorAAA(cloneShouPai.slice(0, 3))) {
+      // 检测剩下的的是否是几句话
+      return this.isJuhua(shouPai.slice(3, shouPai.length));
+    }
+    //判断是否是4个连续
+    else if (this._is4A(shouPai.slice(0, 4))) {
+      return this.isJuhua(shouPai.slice(4, shouPai.length));
+    } else {
+      return false;
+    }
   }
 
   /**只要能胡，就应该是屁胡，包括七对！ */

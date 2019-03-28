@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 var BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
 var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
@@ -49,6 +50,9 @@ export class PaiConvertor {
   }
   static ToNumberArr(strs): number[] {
     let strArr = this.getStrArr(strs)
+    if(_.isEmpty(strArr)){
+      return []
+    }
     return strArr.map(item => {
       return this.ToNumber(item);
     });

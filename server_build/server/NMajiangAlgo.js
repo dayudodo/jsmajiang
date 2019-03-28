@@ -11,6 +11,7 @@ var WAN = [20, 21, 22, 23, 24, 25, 26, 27, 28];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
 var ZHIPAI = [31, 32, 33];
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
+/**删除找到的第一个元素 */
 Array.prototype.remove = function (val) {
     var index = this.indexOf(val);
     if (index > -1) {
@@ -73,15 +74,6 @@ class NMajiangAlgo {
         let s1 = test_arr[0], s2 = test_arr[1], s3 = test_arr[2], s4 = test_arr[3];
         return s1 == s2 && s2 == s3 && s3 == s4;
     }
-    // static is34A(test_arr) {
-    //   let result = checkValidAndReturnArr(test_arr);
-    //   if (result.length == 3) {
-    //     return this._isAAA(test_arr);
-    //   }
-    //   if (result.length == 4) {
-    //     return this._is4A(test_arr);
-    //   }
-    // }
     static isABC(test_arr) {
         if (test_arr.length < 3) {
             // throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
@@ -89,16 +81,12 @@ class NMajiangAlgo {
         }
         let s1 = test_arr[0], s2 = test_arr[1], s3 = test_arr[2];
         //判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
-        let isABC = s2 - 1 == s1 &&
-            s2 + 1 == s3;
+        let isABC = s2 - 1 == s1 && s2 + 1 == s3;
         return isABC;
     }
     static isABCorAAA(test_arr) {
         if (test_arr.length == 3) {
             return this._isAAA(test_arr) || this.isABC(test_arr);
-        }
-        else if (test_arr.length == 4) {
-            return this._is4A(test_arr);
         }
         else {
             return false;
@@ -237,6 +225,51 @@ class NMajiangAlgo {
             return true;
         }
         return false;
+    }
+    /**寻找ABC，223344，这样的也可以找到 */
+    static isAndDelABC(test_arr) {
+        if (_.isEmpty(test_arr)) {
+            throw new Error("test_arr为空");
+        }
+        let remainArr = test_arr.slice(1, test_arr.length);
+        //如果找到第一个元素，删除之，再继续找，比如开头是个2，会找到3
+        let pos = remainArr.indexOf(test_arr[0] + 1);
+        if (pos) {
+            remainArr.splice(pos, 1);
+            pos = remainArr.indexOf(test_arr[0] + 2); //会找到4
+            if (pos) { //找到4就删除
+                remainArr.splice(pos, 1);
+                test_arr = remainArr; //改变了原数组值，并不喜欢
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    /**是否是几句话，总共只有4句话，外带将！ */
+    static isJuhua(shouPai) {
+        //复制此数组，不影响其值
+        let cloneShouPai = _.clone(shouPai);
+        //检测到最后是个空数组，说明都是几句话！
+        if (_.isEmpty(shouPai)) {
+            return true;
+        }
+        //判断是否是三个连续
+        if (this.isABCorAAA(cloneShouPai.slice(0, 3))) {
+            // 检测剩下的的是否是几句话
+            return this.isJuhua(shouPai.slice(3, shouPai.length));
+        }
+        //判断是否是4个连续
+        else if (this._is4A(shouPai.slice(0, 4))) {
+            return this.isJuhua(shouPai.slice(4, shouPai.length));
+        }
+        else {
+            return false;
+        }
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
