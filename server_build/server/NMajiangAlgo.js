@@ -389,6 +389,41 @@ class NMajiangAlgo {
         }
         return isHu;
     }
+    /**统计group手牌中已经碰、杠的几句话 */
+    static getJijuhua(group_shoupai) {
+        return (group_shoupai.anGang.length +
+            group_shoupai.mingGang.length +
+            group_shoupai.selfPeng.length +
+            group_shoupai.peng.length);
+    }
+    static HuisQiDui(group_shoupai, na_pai) {
+        //杠过、碰过都不可能再算是七对，也就是门清
+        if (this.getJijuhua(group_shoupai) > 1) {
+            return false;
+        }
+        else {
+            return this._HuisQiDui(group_shoupai.shouPai, na_pai);
+        }
+    }
+    static _HuisQiDui(shou_pai, na_pai) {
+        //判断是否是七对
+        // let result = getArr(shou_pai)
+        //   .concat(na_pai)
+        //   .sort();
+        // if (result.length < 13) {
+        //   return false;
+        //   // throw new Error(`shou_pai${shou_pai} must have 13 values`);
+        // }
+        // // console.log(result)
+        // for (var i = 0; i < result.length; i += 2) {
+        //   if (result[i] == result[i + 1]) {
+        //     continue;
+        //   } else {
+        //     return false;
+        //   }
+        // }
+        // return true;
+    }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
 //# sourceMappingURL=NMajiangAlgo.js.map

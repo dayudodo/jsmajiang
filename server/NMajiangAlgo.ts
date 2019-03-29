@@ -443,76 +443,44 @@ export class NMajiangAlgo {
     return isHu
   }
 
-  // /**统计group手牌中已经碰、杠的几句话 */
-  // private static getJijuhua(group_shoupai: GroupConstructor) {
-  //   return (
-  //     group_shoupai.anGang.length +
-  //     group_shoupai.mingGang.length +
-  //     group_shoupai.selfPeng.length +
-  //     group_shoupai.peng.length
-  //   );
-  // }
+  /**统计group手牌中已经碰、杠的几句话 */
+  private static getJijuhua(group_shoupai: GroupConstructor) {
+    return (
+      group_shoupai.anGang.length +
+      group_shoupai.mingGang.length +
+      group_shoupai.selfPeng.length +
+      group_shoupai.peng.length
+    );
+  }
 
-  // /** 仅能用来检测4ABC的情况 */
-  // static _HuisPihu(shou_pai: Array<Pai>, na_pai?: Pai) {
-  //   let result = getArr(shou_pai)
-  //     .concat(na_pai)
-  //     .sort();
-  //   if (result.length < 14) {
-  //     // console.warn(`只能用来检测4ABC的情况，${shou_pai}`)
-  //     return false;
-  //   }
-  //   let allJiang = getAllJiangArr(result);
-  //   let is_hu = false;
-  //   let reg_four = /(..)\1\1\1/g;
-  //   let reg_three = /(..)\1\1/g;
-  //   // console.log(allJiang)
-  //   //循环的目的是因为可能胡不止一张牌
-  //   if (this._HuisQiDui(shou_pai, na_pai)) {
-  //     return true;
-  //   }
-  //   if (allJiang) {
-  //     allJiang.forEach(item => {
-  //       // console.log(item)
-  //       var newstr = result.join("");
-  //       //去掉这两个将,item是这样的"b1b1","didi"
-  //       newstr = newstr.replace(item, "");
-  //       if (this.is4ABC(newstr)) {
-  //         is_hu = true;
-  //       }
-  //     });
-  //   }
-  //   return is_hu;
-  // }
+  static HuisQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
+    //杠过、碰过都不可能再算是七对，也就是门清
+    if (this.getJijuhua(group_shoupai) > 1) {
+      return false;
+    } else {
+      return this._HuisQiDui(group_shoupai.shouPai, na_pai);
+    }
+  }
 
-  // static HuisQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
-  //   //杠过、碰过都不可能再算是七对，也就是门清
-  //   if (this.getJijuhua(group_shoupai) > 1) {
-  //     return false;
-  //   } else {
-  //     return this._HuisQiDui(group_shoupai.shouPai, na_pai);
-  //   }
-  // }
-
-  // static _HuisQiDui(shou_pai: Array<Pai>, na_pai: Pai) {
-  //   //判断是否是七对
-  //   let result = getArr(shou_pai)
-  //     .concat(na_pai)
-  //     .sort();
-  //   if (result.length < 13) {
-  //     return false;
-  //     // throw new Error(`shou_pai${shou_pai} must have 13 values`);
-  //   }
-  //   // console.log(result)
-  //   for (var i = 0; i < result.length; i += 2) {
-  //     if (result[i] == result[i + 1]) {
-  //       continue;
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
+  static _HuisQiDui(shou_pai: Array<Pai>, na_pai: Pai) {
+    //判断是否是七对
+    // let result = getArr(shou_pai)
+    //   .concat(na_pai)
+    //   .sort();
+    // if (result.length < 13) {
+    //   return false;
+    //   // throw new Error(`shou_pai${shou_pai} must have 13 values`);
+    // }
+    // // console.log(result)
+    // for (var i = 0; i < result.length; i += 2) {
+    //   if (result[i] == result[i + 1]) {
+    //     continue;
+    //   } else {
+    //     return false;
+    //   }
+    // }
+    // return true;
+  }
   // static HuisNongQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
   //   let result = getArr(group_shoupai.shouPai)
   //     .concat(na_pai)

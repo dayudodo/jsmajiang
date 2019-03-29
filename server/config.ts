@@ -12,7 +12,8 @@ declare global {
     sendmsg(msg): void;
   }
   /**定义个pai类型的别名，以后会变！ */
-  type Pai = string;
+  // type Pai = string;
+  type Pai = number
   /**事件类型，以后可能改为数值 */
   type EVENT_TYPE = string;
 }
@@ -35,10 +36,12 @@ WebSocket.prototype.sendmsg = function(msg: any) {
   this.send(JSON.stringify(msg));
 };
 
-const BING = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9"];
-const TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
+var BING: Array<Pai> = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
+var TIAO: Array<Pai> = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
+//卡五星里面暂时用不上这个万，只有上面的两种可以使用
+var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-const ZHIPAI = ["zh", "fa", "di"];
+var ZHIPAI: Array<Pai> = [30, 32, 34];
 export const TYPE_BING = 0
 export const TYPE_TIAO = 1
 export const TYPE_ZHIPAI = 2
