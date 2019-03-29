@@ -277,14 +277,14 @@ export class NMajiangAlgo {
     if (_.isEmpty(test_arr)) {
       return []
     }
-    let allArr = []
-    for (let index = 0; index < test_arr.length; index += 2) {
+    let allArr = new Set()
+    for (let index = 0; index < test_arr.length; index++) {
       const jiang = test_arr[index];
       if (jiang == test_arr[index + 1]) {
-        allArr.push(jiang)
+        allArr.add(jiang)
       }
     }
-    return allArr
+    return Array.from(allArr)
   }
 
   /**寻找ABC，223344，这样的也可以找到 */
@@ -344,10 +344,10 @@ export class NMajiangAlgo {
   }
 
   /**是否是几句话，总共只有4句话，外带将！ */
-  static isJiJuhua(shouPai: Array<Pai>): boolean {
+  static isJiJuhua(shouPai: Array<Pai>, first = true): boolean {
     //检测到最后是个空数组，说明都是几句话！
     if (_.isEmpty(shouPai)) {
-      return true;
+      return first ? false : true
     }
     shouPai = shouPai.sort() //每次都要排序！防止不连续的情况
     // let threeTest = []
@@ -356,8 +356,8 @@ export class NMajiangAlgo {
     result = this.isAndDelABC(shouPai)
     if (!!result) {
       // console.log(result.remainArr);
-      //如果结果是true,返回，否则还要进行下面的检测
-      if (this.isJiJuhua(result.remainArr)) {
+      //如果结果是true,返回，否则还要进行下面的检测, 并告诉剩下的数组并非是初次检测
+      if (this.isJiJuhua(result.remainArr, false)) {
         return true
       }
     }
@@ -365,7 +365,7 @@ export class NMajiangAlgo {
     result = this.isAndDel4A(shouPai)
     if (!!result) {
       // console.log(result.remainArr);
-      if (this.isJiJuhua(result.remainArr)) {
+      if (this.isJiJuhua(result.remainArr, false)) {
         return true
       }
     }
@@ -373,7 +373,7 @@ export class NMajiangAlgo {
     //判断开头是否是三个连续
     if (!!result) {
       // 检测剩下的的是否是几句话
-      return this.isJiJuhua(result.remainArr)
+      return this.isJiJuhua(result.remainArr, false)
     } else {
       return false
     }
@@ -382,8 +382,8 @@ export class NMajiangAlgo {
   /**统计有几句话，最多只有4句话，将除外！ */
   static countJiJuhua(shouPai: Array<Pai>, first = true): number {
     //检测到最后是个空数组，说明都是几句话！但，头回不能是个空！
-    if (_.isEmpty(shouPai) ) {
-      return first? -1: 0
+    if (_.isEmpty(shouPai)) {
+      return first ? -1 : 0
     }
     shouPai = shouPai.sort() //每次都要排序！防止不连续的情况
     // let threeTest = []
@@ -396,7 +396,7 @@ export class NMajiangAlgo {
       //如果结果是true,返回，否则还要进行下面的检测
       let ret = this.countJiJuhua(result.remainArr, false)
       countJuHua += ret
-      
+
     }
     //判断开头是否是4个连续，首先检测这个，从大的开始检测
     result = this.isAndDel4A(shouPai)
@@ -411,69 +411,32 @@ export class NMajiangAlgo {
       // 检测剩下的的是否是几句话
       ++countJuHua
       countJuHua += this.countJiJuhua(result.remainArr, false)
-    } 
+    }
     return countJuHua
-    
+
   }
 
-  /**只要能胡，就应该是屁胡，包括七对！ */
-  // static HuisPihu(group_shoupai: GroupConstructor, na_pai?: Pai): boolean {
-  //   // return this._HuisPihu(group_shoupai.shouPai, na_pai);
-  //   let jijuhua = NMajiangAlgo.getJijuhua(group_shoupai);
-  //   let result = group_shoupai.shouPai
-  //     .concat(na_pai)
-  //     .sort();
-  //   if (jijuhua > 4) {
-  //     console.warn(`!!!会有超过4句话的牌？${group_shoupai}`);
-  //     return false;
-  //   }
-  //   //如果是4句话，看最后一句是否是将，如果是，自然就是屁胡了。
-  //   if (jijuhua == 4) {
-  //     return this.isAA(result);
-  //   }
-  //   if (this.HuisQiDui(group_shoupai, na_pai)) {
-  //     return true;
-  //   }
-  //   let allJiang = getAllJiangArr(result);
-  //   let is_hu = false;
-  //   // console.log(allJiang)
-  //   //循环的目的是因为可能胡不止一张牌
-  //   if (allJiang) {
-  //     allJiang.forEach(jiang => {
-  //       // console.log(item)
-  //       var newstr = result.join("");
-  //       //去掉这两个将,item是这样的"b1b1","didi"
-  //       newstr = newstr.replace(jiang, "");
-  //       var caller: Function;
-  //       //其实只需要检测3- jijuha, 因为在卡五星里面已经删除掉了带有卡5的一句话！
-  //       switch (jijuhua) {
-  //         case 3:
-  //           // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
-  //           caller = this.isABCorAAA;
-  //           break;
-  //         case 2:
-  //           caller = this.is2ABC;
-  //           break;
-  //         case 1:
-  //           caller = this.is3ABC;
-  //           break;
-  //         case 0:
-  //           caller = this.is4ABC;
-  //           break;
-  //         default:
-  //           throw new Error(`jijuha:${jijuhua}的值只能是0-3 `);
-  //       }
-  //       // if(jiang == "b1b1"){
-  //       //   console.log(getArr(newstr));
-  //       // }
-  //       if (caller && caller.call(this, newstr)) {
-  //         is_hu = true;
-  //       }
-  //     });
-  //   }
-  //   return is_hu;
-  //   // return this._HuisPihu(this.flat_shou_pai(group_shoupai), na_pai);
-  // }
+  /**数字版本屁胡，todo:包括七对！ */
+  static HuIsPihu(shouPai: Array<Pai>, na_pai?: Pai): boolean {
+    let cloneShouPai = _.clone(shouPai.concat(na_pai)).sort()
+    let allJiang = this.getAllJiangArr(cloneShouPai)
+    console.log(cloneShouPai, allJiang);
+    
+    let isHu = false
+    if (allJiang) {
+      allJiang.forEach(jiang => {
+        //删除牌里面的将牌，因为是排序好了的，所以一次删除两个即可！
+        let index = cloneShouPai.indexOf(jiang)
+        cloneShouPai.splice(index, 2)
+        isHu = this.isJiJuhua(cloneShouPai)
+        if(isHu){
+          return true
+        }
+      })
+    }
+    return false
+  }
+
   // /**统计group手牌中已经碰、杠的几句话 */
   // private static getJijuhua(group_shoupai: GroupConstructor) {
   //   return (

@@ -8,12 +8,12 @@ function pais(strs) {
   return PaiConvertor.pais(strs)
 }
 
-test(`is ABC AAA`, function(t) {
-  let str = "b2 b3 b4 b5 b5 b5 ";
-  let test_arr = pais(str)
-  let result = NMajiangAlgo.countJiJuhua(test_arr)
-  t.is(result, 2);
-});
+// test(`is ABC AAA`, function(t) {
+//   let str = "b2 b3 b4 b5 b5 b5 ";
+//   let test_arr = pais(str)
+//   let result = NMajiangAlgo.countJiJuhua(test_arr)
+//   t.is(result, 2);
+// });
 // test(`is ABC 4A`, function(t) {
 //   let str = "b2 b3 b4 b5 b5 b5 b5";
 //   let test_arr = pais(str)
@@ -84,14 +84,14 @@ test(`is ABC AAA`, function(t) {
 //   t.throws(()=>{NMajiangAlgo.isAndDel4A(pais(str))}, /为空/);
 // });
 
-// test(`get all jiangArr`, function(t) {
-//   let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b8 b8 b9";
-//   t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [0,1,2,7]);
-// });
-// test(`get all jiangArr empty`, function(t) {
-//   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9";
-//   t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), []);
-// });
+test(`get all jiangArr`, function(t) {
+  let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b8 b8 b9";
+  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [0,1,2,7]);
+});
+test(`get all jiangArr empty`, function(t) {
+  let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9";
+  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), []);
+});
 
 
 // // describe('2ABC group', function(t) {

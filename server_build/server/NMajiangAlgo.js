@@ -228,14 +228,14 @@ class NMajiangAlgo {
         if (_.isEmpty(test_arr)) {
             return [];
         }
-        let allArr = [];
-        for (let index = 0; index < test_arr.length; index += 2) {
+        let allArr = new Set();
+        for (let index = 0; index < test_arr.length; index++) {
             const jiang = test_arr[index];
             if (jiang == test_arr[index + 1]) {
-                allArr.push(jiang);
+                allArr.add(jiang);
             }
         }
-        return allArr;
+        return Array.from(allArr);
     }
     /**寻找ABC，223344，这样的也可以找到 */
     static isAndDelABC(test_arr) {
@@ -296,10 +296,10 @@ class NMajiangAlgo {
         }
     }
     /**是否是几句话，总共只有4句话，外带将！ */
-    static isJiJuhua(shouPai) {
+    static isJiJuhua(shouPai, first = true) {
         //检测到最后是个空数组，说明都是几句话！
         if (_.isEmpty(shouPai)) {
-            return true;
+            return first ? false : true;
         }
         shouPai = shouPai.sort(); //每次都要排序！防止不连续的情况
         // let threeTest = []
@@ -308,8 +308,8 @@ class NMajiangAlgo {
         result = this.isAndDelABC(shouPai);
         if (!!result) {
             // console.log(result.remainArr);
-            //如果结果是true,返回，否则还要进行下面的检测
-            if (this.isJiJuhua(result.remainArr)) {
+            //如果结果是true,返回，否则还要进行下面的检测, 并告诉剩下的数组并非是初次检测
+            if (this.isJiJuhua(result.remainArr, false)) {
                 return true;
             }
         }
@@ -317,7 +317,7 @@ class NMajiangAlgo {
         result = this.isAndDel4A(shouPai);
         if (!!result) {
             // console.log(result.remainArr);
-            if (this.isJiJuhua(result.remainArr)) {
+            if (this.isJiJuhua(result.remainArr, false)) {
                 return true;
             }
         }
@@ -325,7 +325,7 @@ class NMajiangAlgo {
         //判断开头是否是三个连续
         if (!!result) {
             // 检测剩下的的是否是几句话
-            return this.isJiJuhua(result.remainArr);
+            return this.isJiJuhua(result.remainArr, false);
         }
         else {
             return false;
@@ -364,6 +364,25 @@ class NMajiangAlgo {
             countJuHua += this.countJiJuhua(result.remainArr, false);
         }
         return countJuHua;
+    }
+    /**数字版本屁胡，todo:包括七对！ */
+    static HuIsPihu(shouPai, na_pai) {
+        let cloneShouPai = _.clone(shouPai.concat(na_pai)).sort();
+        let allJiang = this.getAllJiangArr(cloneShouPai);
+        console.log(cloneShouPai, allJiang);
+        let isHu = false;
+        if (allJiang) {
+            allJiang.forEach(jiang => {
+                //删除牌里面的将牌，因为是排序好了的，所以一次删除两个即可！
+                let index = cloneShouPai.indexOf(jiang);
+                cloneShouPai.splice(index, 2);
+                isHu = this.isJiJuhua(cloneShouPai);
+                if (isHu) {
+                    return true;
+                }
+            });
+        }
+        return false;
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
