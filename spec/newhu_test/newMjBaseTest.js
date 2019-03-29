@@ -8,12 +8,11 @@ function pais(strs) {
   return PaiConvertor.pais(strs)
 }
 
-
 test(`is ABC AAA`, function(t) {
   let str = "b2 b3 b4 b5 b5 b5 ";
   let test_arr = pais(str)
-  let result = NMajiangAlgo.isJiJuhua(test_arr)
-  t.is(result, true);
+  let result = NMajiangAlgo.countJiJuhua(test_arr)
+  t.is(result, 2);
 });
 // test(`is ABC 4A`, function(t) {
 //   let str = "b2 b3 b4 b5 b5 b5 b5";
@@ -113,48 +112,8 @@ test(`is ABC AAA`, function(t) {
 //   t.is(NMajiangAlgo.is2ABC(str), true);
 // });
 
-// test("2 should is2ABC true", function(t) {
-//   let str = getArr("b1 b2 b2 b3 b3 b4")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("3 should is2ABC true", function(t) {
-//   let str = getArr("b1 b1 b1 t3 t4 t5")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("4 should is2ABC 非杠", function(t) {
-//   let str = getArr("b1 b2 b3 b3 b3 b3")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("4.0 should is2ABC 非杠", function(t) {
-//   let str = getArr("b4 b5 b5 b5 b5 b6")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
 
-// //7张带杠的检测
-// test("4.1 should is2ABC，前ABC，杠在后", function(t) {
-//   let str =getArr( "b1 b2 b3 t3 t3 t3 t3")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("4.2 is2ABC 一杠，杠在前，后三AAA", function(t) {
-//   let str = getArr("t1 t1 t1 t1 b3 b3 b3")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("4.3 is2ABC 一杠，杠在前，后ABC", function(t) {
-//   let str = getArr("b1 b1 b1 b1 t1 t2 t3")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("4.4 is2ABC 双杠", function(t) {
-//   let str = getArr("t1 t1 t1 t1 b3 b3 b3 b3")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("4.5 is2ABC 7张牌 false", function(t) {
-//   let str = getArr("t1 t1 t1 t1 b1 b3 b3")
-//   t.is(NMajiangAlgo.is2ABC(str), false);
-// });
-// test("4.6 is2ABC 8张牌 false", function(t) {
-//   let str = getArr("t1 t1 t1 t1 b1 b3 b3 b3")
-//   t.is(NMajiangAlgo.is2ABC(str), false);
-// });
+
 
 // test("5 should is2ABC true", function(t) {
 //   let str = getArr("b1 b2 b3 zh zh zh")
@@ -176,18 +135,7 @@ test(`is ABC AAA`, function(t) {
 //   let str = getArr("fa fa fa b1 t1 zh")
 //   t.is(NMajiangAlgo.is2ABC(str), false);
 // });
-// test("is2ABC 7张牌，一杠，前三为ABC", function(t) {
-//   let str = getArr("b1 b2 b3 b5 b5 b5 b5")
-//   t.is(NMajiangAlgo.is2ABC(str), true);
-// });
-// test("is2ABC 7张牌，一杠，前三为ABC", function(t) {
-//   let str = getArr("t1 t1 t1 t2 t3 t4 t5")
-//   t.is(NMajiangAlgo.is2ABC(str), false);
-// });
-// test("is2ABC 8张牌，一杠，false", function(t) {
-//   let str = getArr("b2 b2 b2 b2 t1 t1 t1 t2")
-//   t.is(NMajiangAlgo.is2ABC(str), false);
-// });
+
 
 // test("不能杠b1", function(t) {
 //   let str = getArr("zh zh di di b1 b2 b3 t2 t2 t2 fa fa fa")

@@ -352,7 +352,6 @@ export class NMajiangAlgo {
     shouPai = shouPai.sort() //每次都要排序！防止不连续的情况
     // let threeTest = []
     let result: any
-
     //判断开头是否是ABC
     result = this.isAndDelABC(shouPai)
     if (!!result) {
@@ -362,7 +361,6 @@ export class NMajiangAlgo {
         return true
       }
     }
-
     //判断开头是否是4个连续，首先检测这个，从大的开始检测
     result = this.isAndDel4A(shouPai)
     if (!!result) {
@@ -371,7 +369,6 @@ export class NMajiangAlgo {
         return true
       }
     }
-
     result = this.isAndDelAAA(shouPai)
     //判断开头是否是三个连续
     if (!!result) {
@@ -380,7 +377,43 @@ export class NMajiangAlgo {
     } else {
       return false
     }
+  }
 
+  /**统计有几句话，最多只有4句话，将除外！ */
+  static countJiJuhua(shouPai: Array<Pai>, first = true): number {
+    //检测到最后是个空数组，说明都是几句话！但，头回不能是个空！
+    if (_.isEmpty(shouPai) ) {
+      return first? -1: 0
+    }
+    shouPai = shouPai.sort() //每次都要排序！防止不连续的情况
+    // let threeTest = []
+    let countJuHua = 0
+    let result: any
+    //判断开头是否是ABC
+    result = this.isAndDelABC(shouPai)
+    if (!!result) {
+      ++countJuHua
+      //如果结果是true,返回，否则还要进行下面的检测
+      let ret = this.countJiJuhua(result.remainArr, false)
+      countJuHua += ret
+      
+    }
+    //判断开头是否是4个连续，首先检测这个，从大的开始检测
+    result = this.isAndDel4A(shouPai)
+    if (!!result) {
+      ++countJuHua
+      // console.log(result.remainArr);
+      countJuHua += this.countJiJuhua(result.remainArr, false)
+    }
+    result = this.isAndDelAAA(shouPai)
+    //判断开头是否是三个连续
+    if (!!result) {
+      // 检测剩下的的是否是几句话
+      ++countJuHua
+      countJuHua += this.countJiJuhua(result.remainArr, false)
+    } 
+    return countJuHua
+    
   }
 
   /**只要能胡，就应该是屁胡，包括七对！ */
