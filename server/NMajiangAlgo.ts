@@ -418,23 +418,29 @@ export class NMajiangAlgo {
 
   /**数字版本屁胡，todo:包括七对！ */
   static HuIsPihu(shouPai: Array<Pai>, na_pai?: Pai): boolean {
-    let cloneShouPai = _.clone(shouPai.concat(na_pai)).sort()
+    let cloneShouPai = _.orderBy(_.clone(shouPai.concat(na_pai)))
+    if (cloneShouPai.length < 14) { //不够14张，自然有问题，不可能胡！最少的也是3*4+2
+      return false
+    }
     let allJiang = this.getAllJiangArr(cloneShouPai)
-    console.log(cloneShouPai, allJiang);
-    
+    // console.log(cloneShouPai, allJiang);
+
     let isHu = false
     if (allJiang) {
-      allJiang.forEach(jiang => {
+      allJiang.some(jiang => {
         //删除牌里面的将牌，因为是排序好了的，所以一次删除两个即可！
-        let index = cloneShouPai.indexOf(jiang)
-        cloneShouPai.splice(index, 2)
-        isHu = this.isJiJuhua(cloneShouPai)
-        if(isHu){
-          return true
+        let newClone = _.clone(cloneShouPai)
+        let index = newClone.indexOf(jiang)
+        newClone.splice(index, 2)
+
+        isHu = this.isJiJuhua(newClone)
+        if (isHu) {
+          // console.log('hu:', jiang);
+          return true;
         }
       })
     }
-    return false
+    return isHu
   }
 
   // /**统计group手牌中已经碰、杠的几句话 */
