@@ -218,12 +218,12 @@ class Player {
     }
     /**能否胡pai_name */
     canHu(pai_name) {
-        if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        // if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
+        //   return true;
+        // } else {
+        //   return false;
+        // }
+        return true;
     }
     /**是否是大胡 */
     isDaHu(pai_name) {
@@ -231,7 +231,8 @@ class Player {
     }
     /** 玩家手牌数组，从group_shou_pai中生成 */
     get flat_shou_pai() {
-        return MajiangAlgo_1.MajiangAlgo.flat_shou_pai(this.group_shou_pai);
+        // return MajiangAlgo.flat_shou_pai(this.group_shou_pai);
+        return [];
     }
     /** 从牌数组中删除一张牌 */
     delete_pai(arr, pai) {
@@ -267,13 +268,15 @@ class Player {
     }
     /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
     canPeng(pai) {
-        return MajiangAlgo_1.MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai, this.is_liang);
+        // return MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai, this.is_liang);
+        return true;
     }
     /**能杠吗？分碰了之后杠还是本来就有三张牌！最简单的自然是使用flat_shou_pai */
     canGang(pai) {
         let selfMo = this.mo_pai != null;
         //能否杠还能分你是自摸碰还是求人碰，selfPeng是可以随便杠的，但是求人碰则得自己摸牌才能杠！
-        return MajiangAlgo_1.MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, selfMo);
+        // return MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, selfMo);
+        return true;
     }
     confirm_peng(pai) {
         this.group_shou_pai.peng.push(pai);

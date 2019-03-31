@@ -112,7 +112,21 @@ test(`get all jiangArr empty`, function(t) {
 //   t.is(NMajiangAlgo.is2ABC(str), true);
 // });
 
+test("判断一色", function (t) {
+  let str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b7 b7 b7";
+  //   let na_pai = "t9";
+  let na_pai = pais("b7");
+  let group_shoupai = {
+    anGang: [],
+    mingGang: [],
+    peng: [],
+    selfPeng: [], shouPai: pais(str)
+  };
+  t.is(NMajiangAlgo.isYise(group_shoupai.shouPai.concat(na_pai)), true);
+  na_pai = pais('t7')
+  t.is(NMajiangAlgo.isYise(group_shoupai.shouPai.concat(na_pai)), false);
 
+});
 
 
 // test("5 should is2ABC true", function(t) {

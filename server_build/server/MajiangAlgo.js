@@ -354,7 +354,7 @@ class MajiangAlgo {
             return false;
         }
         else {
-            return this._HuisQiDui(group_shoupai.shouPai, na_pai);
+            // return this._HuisQiDui(group_shoupai.shouPai, na_pai);
         }
     }
     static _HuisQiDui(shou_pai, na_pai) {
@@ -396,7 +396,7 @@ class MajiangAlgo {
     /**是否是清一色屁胡，而七对的清一色需要使用isYise! */
     static HuisYise(group_shoupai, na_pai) {
         if (MajiangAlgo.isOnlyFlatShouPai(group_shoupai)) {
-            return MajiangAlgo._HuisYise(group_shoupai.shouPai, na_pai);
+            // return MajiangAlgo._HuisYise(group_shoupai.shouPai, na_pai);
         }
         else {
             let unionArr = this.flat_shou_pai(group_shoupai);
@@ -427,7 +427,7 @@ class MajiangAlgo {
             // throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
             return false;
         }
-        return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
+        // return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
     }
     /**管你几句话，只要是剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ */
     static _HuisPengpeng(shou_pai, na_pai) {
@@ -527,10 +527,13 @@ class MajiangAlgo {
                 //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
             }
             else {
-                let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: result }, single_pai);
-                if (!_.isEmpty(hupai_typesCode)) {
-                    hupai_dict[single_pai] = hupai_typesCode;
-                }
+                // let hupai_typesCode = this.HupaiTypeCodeArr(
+                //   { anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: result },
+                //   single_pai
+                // );
+                // if (!_.isEmpty(hupai_typesCode)) {
+                //   hupai_dict[single_pai] = hupai_typesCode;
+                // }
             }
         }
         let all_hupai_zhang = _.keys(hupai_dict);
@@ -579,7 +582,7 @@ class MajiangAlgo {
         //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
         let jijuhua = this.getJijuhua(group_shoupai);
         // console.log(jijuhua);
-        return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
+        // return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
     }
     /**带将的1,2,3,4ABC检测，貌似只是为卡五星服务！ */
     static _jiangNABC(shou_pai, jijuhua) {
@@ -771,16 +774,15 @@ class MajiangAlgo {
     /**明四归 */
     static HuisMingSiGui(group_shou_pai, na_pai, is_liang) {
         if (this.HuisPihu(group_shou_pai, na_pai)) {
-            if (group_shou_pai.peng.includes(na_pai)) {
-                return true;
-            }
+            // if (group_shou_pai.peng.includes(na_pai)) {
+            //   return true;
+            // }
             //如果亮牌，并且存在三张同样的na_pai这也是明四归
-            if (is_liang && this.exist3A(group_shou_pai.shouPai, na_pai)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            // if (is_liang && this.exist3A(group_shou_pai.shouPai, na_pai)) {
+            //   return true;
+            // } else {
+            //   return false;
+            // }
         }
         else {
             return false;
@@ -792,18 +794,17 @@ class MajiangAlgo {
     /**暗四归 */
     static HuisAnSiGui(group_shou_pai, na_pai, is_liang) {
         if (this.HuisPihu(group_shou_pai, na_pai)) {
-            if (group_shou_pai.selfPeng.includes(na_pai)) {
-                return true;
-            }
-            //如果手牌里面有三张na_pai, 还要看是否亮牌，亮了就不是暗四归了！
-            if (this.exist3A(group_shou_pai.shouPai, na_pai)) {
-                if (is_liang) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
+            // if (group_shou_pai.selfPeng.includes(na_pai)) {
+            //   return true;
+            // }
+            // //如果手牌里面有三张na_pai, 还要看是否亮牌，亮了就不是暗四归了！
+            // if (this.exist3A(group_shou_pai.shouPai, na_pai)) {
+            //   if (is_liang) {
+            //     return false;
+            //   } else {
+            //     return true;
+            //   }
+            // }
             return false;
         }
         else {
@@ -816,9 +817,9 @@ class MajiangAlgo {
         if (this.HuisYise(group_shoupai, na_pai)) {
             _huArr.push(config.HuisYise);
         }
-        if (this.HuisKaWuXing(group_shoupai, na_pai)) {
-            _huArr.push(config.HuisKaWuXing);
-        }
+        // if (this.HuisKaWuXing(group_shoupai, na_pai)) {
+        //   _huArr.push(config.HuisKaWuXing);
+        // }
         if (this.HuisQiDui(group_shoupai, na_pai)) {
             _huArr.push(config.HuisQidui);
         }
@@ -936,28 +937,25 @@ class MajiangAlgo {
         //peng, selfPeng其实都可以先拿出来，等牌够了再去杠，不过很多有人会这么做吧。
         let prepare_gang = group_shoupai.peng.some(pai => group_shoupai.shouPai.includes(pai)) ||
             group_shoupai.selfPeng.some(pai => group_shoupai.shouPai.includes(pai));
-        if (group_shoupai.selfPeng.includes(pai_name) || prepare_gang) {
-            return true;
-        }
-        if (isLiang) {
-            //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
-            if (group_shoupai.peng.includes(pai_name) && selfMo) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-        else {
-            //没有亮牌
-            //看手牌里面是否有三张牌！如果是自己摸的牌，那么需要先从手牌里面移走再去检测，因为player.mo_pai时已经添加进手牌了
-            if (selfMo) {
-                return MajiangAlgo._canGang(group_shoupai.shouPai.remove(pai_name), pai_name);
-            }
-            else {
-                return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
-            }
-        }
+        // if (group_shoupai.selfPeng.includes(pai_name) || prepare_gang) {
+        //   return true;
+        // }
+        // if (isLiang) {
+        //   //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
+        //   if (group_shoupai.peng.includes(pai_name) && selfMo) {
+        //     return true;
+        //   } else {
+        //     return false;
+        //   }
+        // } else {
+        //   //没有亮牌
+        //   //看手牌里面是否有三张牌！如果是自己摸的牌，那么需要先从手牌里面移走再去检测，因为player.mo_pai时已经添加进手牌了
+        //   if (selfMo) {
+        //     return MajiangAlgo._canGang(group_shoupai.shouPai.remove(pai_name), pai_name);
+        //   } else {
+        //     return MajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
+        //   }
+        // }
     }
 }
 exports.MajiangAlgo = MajiangAlgo;

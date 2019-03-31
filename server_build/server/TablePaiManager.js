@@ -167,7 +167,7 @@ class TablePaiManager {
         // });
         //保证最后一张牌是di
         allpais.remove("di");
-        allpais[allpais.length - 1] = "di";
+        // allpais[allpais.length - 1] = "di";
         newPais = newPais.concat(allpais);
         return newPais;
     }

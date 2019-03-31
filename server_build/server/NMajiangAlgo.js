@@ -7,7 +7,7 @@ const config = require("./config");
 var BING = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
 var TIAO = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
-var WAN = [20, 21, 22, 23, 24, 25, 26, 27, 28];
+// var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
 var ZHIPAI = [30, 32, 34];
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
@@ -39,196 +39,18 @@ function getMJType(mjNumber) {
         return config.TYPE_TIAO;
     }
     else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
-        //万
+        //字牌
         return config.TYPE_ZHIPAI;
     }
 }
 /**麻将胡牌算法 */
 class NMajiangAlgo {
-    /*
-  可以把b1b1b1或者说b1 b1 b1转换成双字符规则数组["b1","b1","b1"]
-  */
-    static isAA(test_arr) {
-        // if (test_arr.length != 2) {
-        //   throw new Error(`test_arr:  ${test_arr} must have 2 values`);
-        // }
-        if (_.isEmpty(test_arr)) {
-            return false;
-        }
-        return test_arr[0] == test_arr[1];
-    }
-    static _isAAA(test_arr) {
-        if (test_arr.length != 3) {
-            throw new Error(`test_arr: ${test_arr} 必须等于3`);
-        }
-        let s1 = test_arr[0], s2 = test_arr[1], s3 = test_arr[2];
-        return s1 == s2 && s2 == s3;
-    }
-    static _is4A(test_arr) {
-        if (test_arr.length != 4) {
-            throw new Error(`test_arr: ${test_arr}必须等于4`);
-        }
-        let s1 = test_arr[0], s2 = test_arr[1], s3 = test_arr[2], s4 = test_arr[3];
-        return s1 == s2 && s2 == s3 && s3 == s4;
-    }
-    static isABC(test_arr) {
-        if (test_arr.length < 3) {
-            // throw new Error(`test_arr: ${test_arr} 必须大于等于3`);
-            return false;
-        }
-        let s1 = test_arr[0], s2 = test_arr[1], s3 = test_arr[2];
-        //判断首字母是否相同(判断相同花色)以及 是否是1，2，3这样的顺序
-        let isABC = s2 - 1 == s1 && s2 + 1 == s3;
-        return isABC;
-    }
-    static isABCorAAA(test_arr) {
-        if (test_arr.length == 3) {
-            return this._isAAA(test_arr) || this.isABC(test_arr);
-        }
-        else {
-            return false;
-        }
-    }
-    /**是否是2句话，最复杂！ */
-    static is2ABC(test_arr) {
-        //like 123456 or 122334,233445这样的牌型
-        if (test_arr.length < 6) {
-            return false;
-        }
-        if (test_arr.length < 4) {
-            //为啥不是6呢？因为在3ABC里面有可能会出现fa fa fa t1 t2 t3 t4 t5 t6这样的情况
-            //后面的4个被切掉，前面就不够6个了，自然不是3ABC
-            //为啥不是5呢？在小三元的检测里面也会有少于6个的情况。手牌为b1 b1 b1 b2 b3 di di di fa fa zh zh zh
-            throw new Error(`test_arr: ${test_arr} 必须大于等于4`);
-        }
-        let s1 = test_arr[0], s2 = test_arr[1], s3 = test_arr[2], s4 = test_arr[3], s5 = test_arr[4], s6 = test_arr[5];
-        let startThree = test_arr.slice(0, 3);
-        let afterThree = test_arr.slice(3, test_arr.length);
-        //前三和后面的几个，比如b1 b2 b3 zh zh zh zh
-        let beforeThree = test_arr.slice(0, test_arr.length - 3);
-        let endThree = test_arr.slice(test_arr.length - 3, test_arr.length);
-        //前四和后面的几个，比如b1 b1 b1 b1 t1 t2 t3
-        let startFour = test_arr.slice(0, 4);
-        let afterFour = test_arr.slice(4, test_arr.length);
-        //特殊情况，比如112233的情况？
-        if (test_arr.length == 6) {
-            //如果是正规的6张牌
-            if (s1 == s2 && s3 == s4 && s5 == s6) {
-                return this.isABC([s1, s3, s5]);
-            }
-            if (this.isABCorAAA(startThree) && this.isABCorAAA(afterThree)) {
-                return true;
-            }
-            else {
-                //交换2,3 比如将122334中间的两个交换过来，再检查
-                let first3 = [s1, s2, s4];
-                let after3 = [s3, s5, s6];
-                if (this.isABCorAAA(first3) && this.isABCorAAA(after3)) {
-                    return true;
-                }
-                //b4 b5 b5 b5 b5 b6 则也需要交换一下
-                first3 = [s1, s2, s6];
-                after3 = [s3, s4, s5];
-                if (this.isABCorAAA(first3) && this.isABCorAAA(after3)) {
-                    return true;
-                }
-                return false;
-            }
-            //如果是有杠的牌, 三种情况，二个杠， 前杠后ABC，前ABC后杠
-        }
-        else {
-            if (this.isABCorAAA(startThree) && this.isABCorAAA(afterThree)) {
-                // console.log("startThree,afterThree ",startThree,afterThree)
-                return true;
-            }
-            if (this.isABCorAAA(startFour) && this.isABCorAAA(afterFour)) {
-                // console.log("startFour,afterFour ", startFour, afterFour)
-                return true;
-            }
-            if (this.isABCorAAA(beforeThree) && this.isABCorAAA(endThree)) {
-                // console.log("beforeThree,endThree ", beforeThree, endThree)
-                return true;
-            }
-        }
-        return false;
-    }
-    static is3ABC(test_arr) {
-        if (test_arr.length < 9) {
-            return false;
-        }
-        if (test_arr.length < 8) {
-            throw new Error(`test_arr: ${test_arr}必须大于或等于8`);
-        }
-        if (test_arr.length > 13) {
-            //有可能是3杠
-            throw new Error(`test_arr: ${test_arr}必须小于或等于12`);
-        }
-        //前三
-        let startThree = test_arr.slice(0, 3);
-        let afterThree = test_arr.slice(3, test_arr.length);
-        //前四
-        let startFour = test_arr.slice(0, 4);
-        let afterFour = test_arr.slice(4, test_arr.length);
-        //后三
-        let beforeThree = test_arr.slice(0, test_arr.length - 3);
-        let lastThree = test_arr.slice(test_arr.length - 3, test_arr.length);
-        //后四
-        let beforeFour = test_arr.slice(0, test_arr.length - 4);
-        let lastFour = test_arr.slice(test_arr.length - 4, test_arr.length);
-        if (this.isABCorAAA(startThree) && this.is2ABC(afterThree)) {
-            // console.log("startThree, afterThree ", startThree, afterThree);
-            return true;
-        }
-        if (this.isABCorAAA(startFour) && this.is2ABC(afterFour)) {
-            // console.log("startFour, afterFour ", startFour, afterFour);
-            return true;
-        }
-        if (this.is2ABC(beforeThree) && this.isABCorAAA(lastThree)) {
-            // console.log("beforeThree, lastThree ", beforeThree, lastThree);
-            return true;
-        }
-        if (this.is2ABC(beforeFour) && this.isABCorAAA(lastFour)) {
-            // console.log("beforeFour, lastFour ", beforeFour, lastFour);
-            return true;
-        }
-        return false;
-    }
-    static is4ABC(test_arr) {
-        if (test_arr.length < 9) {
-            throw new Error(`test_arr: ${test_arr} must large than 9 values`);
-        }
-        let startThree = test_arr.slice(0, 3);
-        let afterThree = test_arr.slice(3, test_arr.length);
-        //取出后三个和前面的几张牌
-        // let beforeThree = result.slice(0, result.length - 3);
-        // let lastThree = result.slice(result.length - 3, result.length);
-        let startFour = test_arr.slice(0, 4);
-        let afterFour = test_arr.slice(4, test_arr.length);
-        if (this.isABCorAAA(startThree) && this.is3ABC(afterThree)) {
-            return true;
-        }
-        if (this.isABCorAAA(startFour) && this.is3ABC(afterFour)) {
-            return true;
-        }
-        //前6和后6的算法
-        let startSix = test_arr.slice(0, 6);
-        let afterSix = test_arr.slice(6, test_arr.length);
-        if (this.is2ABC(startSix) && this.is2ABC(afterSix)) {
-            return true;
-        }
-        let beforeSix = test_arr.slice(0, test_arr.length - 6);
-        let endSix = test_arr.slice(test_arr.length - 6, test_arr.length);
-        if (this.is2ABC(beforeSix) && this.is2ABC(endSix)) {
-            return true;
-        }
-        return false;
-    }
     /**获取到所有的将牌 */
     static getAllJiangArr(test_arr) {
         if (_.isEmpty(test_arr)) {
             return [];
         }
-        let allArr = new Set();
+        let allArr = new Set(); //有可能检测到相同的，所以使用set保证唯一
         for (let index = 0; index < test_arr.length; index++) {
             const jiang = test_arr[index];
             if (jiang == test_arr[index + 1]) {
@@ -301,7 +123,7 @@ class NMajiangAlgo {
         if (_.isEmpty(shouPai)) {
             return first ? false : true;
         }
-        shouPai = shouPai.sort(); //每次都要排序！防止不连续的情况
+        shouPai = _.orderBy(shouPai); //每次都要排序！防止不连续的情况
         // let threeTest = []
         let result;
         //判断开头是否是ABC
@@ -396,6 +218,7 @@ class NMajiangAlgo {
             group_shoupai.selfPeng.length +
             group_shoupai.peng.length);
     }
+    /**判断七对 */
     static HuisQiDui(group_shoupai, na_pai) {
         //杠过、碰过都不可能再算是七对，也就是门清
         if (this.getJijuhua(group_shoupai) > 1) {
@@ -405,24 +228,216 @@ class NMajiangAlgo {
             return this._HuisQiDui(group_shoupai.shouPai, na_pai);
         }
     }
-    static _HuisQiDui(shou_pai, na_pai) {
-        //判断是否是七对
-        // let result = getArr(shou_pai)
-        //   .concat(na_pai)
-        //   .sort();
-        // if (result.length < 13) {
-        //   return false;
-        //   // throw new Error(`shou_pai${shou_pai} must have 13 values`);
-        // }
-        // // console.log(result)
-        // for (var i = 0; i < result.length; i += 2) {
-        //   if (result[i] == result[i + 1]) {
-        //     continue;
-        //   } else {
-        //     return false;
-        //   }
-        // }
-        // return true;
+    static _HuisQiDui(shouPai, na_pai) {
+        let cloneShouPai;
+        if (na_pai) {
+            cloneShouPai = _.orderBy(_.clone(shouPai.concat(na_pai)));
+        }
+        else {
+            cloneShouPai = _.orderBy(shouPai);
+        }
+        // console.log(cloneShouPai);
+        if (cloneShouPai.length < 14) {
+            return false;
+        }
+        let count = 0;
+        for (let i = 0; i < cloneShouPai.length; i += 2) {
+            if (cloneShouPai[i] == cloneShouPai[i + 1]) {
+                count++;
+            }
+        }
+        return count == 7;
+    }
+    static exits4A(shouPai) {
+        for (let i = 0; i < shouPai.length; i++) {
+            const pai = shouPai[i];
+            if (pai == shouPai[i + 1]
+                && shouPai[i + 1] == shouPai[i + 2]
+                && shouPai[i + 2] == shouPai[i + 3]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**是否是龙七对，也就是里面有个4A */
+    static HuisNongQiDui(group_shoupai, na_pai) {
+        let cloneShouPai = _.orderBy(_.clone(group_shoupai.shouPai.concat(na_pai)));
+        if (this._HuisQiDui(group_shoupai.shouPai, na_pai)) {
+            return this.exits4A(cloneShouPai);
+        }
+    }
+    /**是否是清一色屁胡，而七对的清一色需要使用isYise! */
+    static HuisYise(group_shoupai, na_pai) {
+        let onlyShouPai = this.flat_shou_pai(group_shoupai).concat(na_pai);
+        // console.log("this.isYise(onlyShouPai):",this.isYise(onlyShouPai));
+        // console.log("this.HuIsPihu(onlyShouPai)",this.HuIsPihu(onlyShouPai));
+        return this.isYise(onlyShouPai);
+    }
+    /**判断是否是同一花色 */
+    static isYise(test_arr) {
+        let cloneArr = _.clone(test_arr);
+        let firstType = getMJType(cloneArr[0]);
+        // console.log("cloneArr, firstType", cloneArr, firstType);
+        // console.log("alltypes", cloneArr.map(item=>getMJType(item)));
+        for (let i = 1; i < cloneArr.length; i++) {
+            const thisType = getMJType(cloneArr[i]);
+            if (thisType == firstType) {
+                continue;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+    // private static _HuisYise(shou_pai: Array<Pai>, na_pai) {
+    //   let result = getArr(shou_pai)
+    //     .concat(na_pai)
+    //     .sort();
+    //   // if (result.length < 14) {
+    //   //   throw new Error(`shou_pai: ${shou_pai}  must larger than 14 values`);
+    //   // }
+    //   //不仅要是一色而且还得满足屁胡
+    //   return this.isYise(result) && this._HuisPihu(shou_pai, na_pai);
+    // }
+    // /**是否是碰碰胡 */
+    // static HuisPengpeng(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
+    //   let len = this.flat_shou_pai(group_shoupai).push(na_pai);
+    //   if (len < 14) {
+    //     // throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
+    //     return false;
+    //   }
+    //   return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
+    // }
+    // /**管你几句话，只要是剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ */
+    // private static _HuisPengpeng(shou_pai: Array<Pai>, na_pai) {
+    //   let result = getArr(shou_pai)
+    //     .concat(na_pai)
+    //     .sort();
+    //   //把所有三个或四个相同的干掉，看最后剩下的是否是将
+    //   let reg = /(..)\1\1\1?/g;
+    //   let jiang = result.join("").replace(reg, "");
+    //   if (jiang.length != 4) {
+    //     return false;
+    //   }
+    //   return this.isAA(getArr(jiang));
+    // }
+    /**平手牌，指13张牌，将其它的碰、杠都转换成一维手牌数组！ */
+    static flat_shou_pai(group_shou_pai) {
+        let onlyShouPai = [];
+        group_shou_pai.anGang.forEach(pai => {
+            for (let i = 0; i < 4; i++) {
+                onlyShouPai.push(pai);
+            }
+        });
+        group_shou_pai.mingGang.forEach(pai => {
+            for (let i = 0; i < 4; i++) {
+                onlyShouPai.push(pai);
+            }
+        });
+        group_shou_pai.peng.forEach(pai => {
+            for (let i = 0; i < 3; i++) {
+                onlyShouPai.push(pai);
+            }
+        });
+        group_shou_pai.selfPeng.forEach(pai => {
+            for (let i = 0; i < 3; i++) {
+                onlyShouPai.push(pai);
+            }
+        });
+        onlyShouPai = onlyShouPai.concat(group_shou_pai.shouPai);
+        return onlyShouPai.sort();
+    }
+    // /**
+    //  * group手牌胡哪些牌
+    //  * @param group_shoupai
+    //  * @param is_liang 是否亮牌了
+    //  */
+    // static HuWhatGroupPai(group_shoupai: GroupConstructor, is_liang): hupaiConstructor {
+    //   let hupai_dict = {};
+    //   for (var i = 0; i < all_single_pai.length; i++) {
+    //     let single_pai = all_single_pai[i];
+    //     let newShouPai: Array<Pai> = this.flat_shou_pai(group_shoupai)
+    //       .concat(single_pai)
+    //       .sort();
+    //     // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
+    //     let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
+    //     // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
+    //     if (isFiveRepeat) {
+    //       continue;
+    //     } else {
+    //       let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, single_pai, is_liang);
+    //       if (!_.isEmpty(hupai_typesCode)) {
+    //         hupai_dict[single_pai] = hupai_typesCode;
+    //       }
+    //     }
+    //   }
+    //   let all_hupai_zhang = _.keys(hupai_dict);
+    //   let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
+    //   let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
+    //   //如果hupai_data为空，sortBy也会返回空
+    //   //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
+    //   if (_.isEmpty(all_hupai_zhang)) {
+    //     return {
+    //       all_hupai_zhang: [],
+    //       all_hupai_typesCode: [],
+    //       hupai_dict: {}
+    //     };
+    //   }
+    //   return {
+    //     all_hupai_zhang: all_hupai_zhang.sort(),
+    //     all_hupai_typesCode: all_hupai_typesCode.sort(),
+    //     hupai_dict: hupai_dict
+    //   };
+    // }
+    // /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
+    // static HuWhatPai(shou_pai: Array<Pai>): hupaiConstructor {
+    //   let result: Array<Pai> = getArr(shou_pai);
+    //   let hupai_dict = {};
+    //   for (var i = 0; i < all_single_pai.length; i++) {
+    //     let single_pai = all_single_pai[i];
+    //     let newShouPai: Array<Pai> = result.concat(single_pai).sort();
+    //     // console.log(newstr)
+    //     let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
+    //     if (isFiveRepeat) {
+    //       continue;
+    //       // console.log(newstr.match(/(..)\1\1\1\1/g))
+    //       // throw new Error('irregular Pai, record in database, maybe Hacker.')
+    //       //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
+    //     } else {
+    //       let hupai_typesCode = this.HupaiTypeCodeArr(
+    //         { anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: result },
+    //         single_pai
+    //       );
+    //       if (!_.isEmpty(hupai_typesCode)) {
+    //         hupai_dict[single_pai] = hupai_typesCode;
+    //       }
+    //     }
+    //   }
+    //   let all_hupai_zhang = _.keys(hupai_dict);
+    //   let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
+    //   let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
+    //   //如果hupai_data为空，sortBy也会返回空
+    //   //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
+    //   if (_.isEmpty(all_hupai_zhang)) {
+    //     return {
+    //       all_hupai_zhang: [],
+    //       all_hupai_typesCode: [],
+    //       hupai_dict: {}
+    //     };
+    //   }
+    //   return {
+    //     all_hupai_zhang: all_hupai_zhang.sort(),
+    //     all_hupai_typesCode: all_hupai_typesCode.sort(),
+    //     hupai_dict: hupai_dict
+    //   };
+    // }
+    /**group手牌中只有手牌，anGang, mingGang, peng都为空 */
+    static isOnlyShouPai(group_shoupai) {
+        return (group_shoupai.anGang.length == 0 &&
+            group_shoupai.mingGang.length == 0 &&
+            group_shoupai.selfPeng.length == 0 &&
+            group_shoupai.peng.length == 0);
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
