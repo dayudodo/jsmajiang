@@ -266,13 +266,13 @@ class NMajiangAlgo {
             return this.exits4A(cloneShouPai);
         }
     }
-    /**是否是清一色屁胡，而七对的清一色需要使用isYise! */
-    static HuisYise(group_shoupai, na_pai) {
-        let onlyShouPai = this.flat_shou_pai(group_shoupai).concat(na_pai);
-        // console.log("this.isYise(onlyShouPai):",this.isYise(onlyShouPai));
-        // console.log("this.HuIsPihu(onlyShouPai)",this.HuIsPihu(onlyShouPai));
-        return this.isYise(onlyShouPai);
-    }
+    // /**是否是清一色屁胡，而七对的清一色需要使用isYise! */
+    // static HuisYise(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
+    //     let onlyShouPai = this.flat_shou_pai(group_shoupai).concat(na_pai);
+    //     // console.log("this.isYise(onlyShouPai):",this.isYise(onlyShouPai));
+    //     // console.log("this.HuIsPihu(onlyShouPai)",this.HuIsPihu(onlyShouPai));
+    //     return this.isYise(onlyShouPai)
+    // }
     /**判断是否是同一花色 */
     static isYise(test_arr) {
         let cloneArr = _.clone(test_arr);

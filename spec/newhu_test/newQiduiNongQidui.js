@@ -32,8 +32,9 @@ test("清一色并龙七对", function (t) {
     peng: [],
     selfPeng: [], shouPai: pais(str)
   };
-  t.is(NMajiangAlgo.HuisYise(group_shoupai, na_pai), true);
-  // t.is(NMajiangAlgo.HuisNongQiDui(group_shoupai, na_pai), true);
+  // t.is(NMajiangAlgo.HuisYise(group_shoupai, na_pai), true);
+  t.is(NMajiangAlgo.isYise(group_shoupai.shouPai.concat(na_pai)), true);
+  t.is(NMajiangAlgo.HuisNongQiDui(group_shoupai, na_pai), true);
 });
 // test("龙七对true", function (t) {
 //   let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9";
