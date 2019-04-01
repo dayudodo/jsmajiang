@@ -254,7 +254,7 @@ export class NMajiangAlgo {
   }
 
   /**判断七对 */
-  static HuisQiDui(group_shoupai: GroupConstructor, na_pai: Pai) {
+  static HuisQiDui(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
     //杠过、碰过都不可能再算是七对，也就是门清
     if (this.getJijuhua(group_shoupai) > 1) {
       return false;
@@ -266,13 +266,12 @@ export class NMajiangAlgo {
   static _HuisQiDui(shouPai: Array<Pai>, na_pai?: Pai) {
 
     let cloneShouPai: any;
-    if(na_pai){
+    if (na_pai) {
       cloneShouPai = _.orderBy(_.clone(shouPai.concat(na_pai)))
-    }else{
+    } else {
       cloneShouPai = _.orderBy(shouPai)
     }
     // console.log(cloneShouPai);
-    
     if (cloneShouPai.length < 14) {
       return false
     }
@@ -284,6 +283,8 @@ export class NMajiangAlgo {
     }
     return count == 7
   }
+
+  /**是否存在4A */
   static exits4A(shouPai: Array<Pai>): boolean {
     for (let i = 0; i < shouPai.length; i++) {
       const pai = shouPai[i];
@@ -318,48 +319,76 @@ export class NMajiangAlgo {
     // console.log("alltypes", cloneArr.map(item=>getMJType(item)));
     for (let i = 1; i < cloneArr.length; i++) {
       const thisType = getMJType(cloneArr[i])
-      if(thisType == firstType){
+      if (thisType == firstType) {
         continue
-      }else{
+      } else {
         return false
       }
     }
     return true
   }
 
-  // private static _HuisYise(shou_pai: Array<Pai>, na_pai) {
-  //   let result = getArr(shou_pai)
-  //     .concat(na_pai)
-  //     .sort();
-  //   // if (result.length < 14) {
-  //   //   throw new Error(`shou_pai: ${shou_pai}  must larger than 14 values`);
-  //   // }
-  //   //不仅要是一色而且还得满足屁胡
-  //   return this.isYise(result) && this._HuisPihu(shou_pai, na_pai);
-  // }
-  // /**是否是碰碰胡 */
-  // static HuisPengpeng(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
-  //   let len = this.flat_shou_pai(group_shoupai).push(na_pai);
-  //   if (len < 14) {
-  //     // throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
-  //     return false;
-  //   }
-  //   return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
-  // }
+  /**是否是3A或者4A，其实和是几句话差不多！ */
+  static is3Aor4A(shouPai: Array<Pai>, first = true): boolean {
+    //检测到最后是个空数组，说明都是几句话！
+    if (_.isEmpty(shouPai)) {
+      return first ? false : true
+    }
+    shouPai = _.orderBy(shouPai) //每次都要排序！防止不连续的情况
+    // let threeTest = []
+    let result: any
+    //判断开头是否是4个连续，首先检测这个，从大的开始检测
+    result = this.isAndDel4A(shouPai)
+    if (!!result) {
+      // console.log(result.remainArr);
+      if (this.is3Aor4A(result.remainArr, false)) {
+        return true
+      }
+    }
+    result = this.isAndDelAAA(shouPai)
+    //判断开头是否是三个连续
+    if (!!result) {
+      // 检测剩下的的是否是几句话
+      return this.is3Aor4A(result.remainArr, false)
+    } else {
+      return false
+    }
+  }
 
-  // /**管你几句话，只要是剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ */
-  // private static _HuisPengpeng(shou_pai: Array<Pai>, na_pai) {
-  //   let result = getArr(shou_pai)
-  //     .concat(na_pai)
-  //     .sort();
-  //   //把所有三个或四个相同的干掉，看最后剩下的是否是将
-  //   let reg = /(..)\1\1\1?/g;
-  //   let jiang = result.join("").replace(reg, "");
-  //   if (jiang.length != 4) {
-  //     return false;
-  //   }
-  //   return this.isAA(getArr(jiang));
-  // }
+  /**剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ todo: 可以与判断几句话合并*/
+  static HuisPengPeng(group_shoupai: GroupConstructor, na_pai?: Pai): boolean {
+    let flatShou = this.flat_shou_pai(group_shoupai)
+    let cloneShouPai = _.orderBy(_.clone(flatShou.concat(na_pai)))
+    // console.log(cloneShouPai);
+    if (cloneShouPai.length < 14) { //不够14张，不可能胡！
+      console.warn("牌不够14张：", flatShou);
+      return false
+    }
+    return this._HuisPengPeng(cloneShouPai)
+  }
+
+
+  private static _HuisPengPeng(shouPai: Array<Pai>): boolean {
+    // let cloneShouPai = _.orderBy(_.clone(shouPai.concat(na_pai)))
+    //判断除了将之外是否都是连续的3A,4A。
+    let allJiang = this.getAllJiangArr(shouPai)
+    let isHu = false
+    if (allJiang) {
+      allJiang.some(jiang => {
+        //删除牌里面的将牌，因为是排序好了的，所以一次删除两个即可！
+        let newClone = _.clone(shouPai)
+        let index = newClone.indexOf(jiang)
+        newClone.splice(index, 2)
+
+        isHu = this.is3Aor4A(newClone)
+        if (isHu) {
+          // console.log('hu:', jiang);
+          return true;
+        }
+      })
+    }
+    return isHu
+  }
 
   /**平手牌，指13张牌，将其它的碰、杠都转换成一维手牌数组！ */
   static flat_shou_pai(group_shou_pai: GroupConstructor): Array<Pai> {
@@ -503,57 +532,36 @@ export class NMajiangAlgo {
   // //   return _.uniq(arr1);
   // // }
 
-  // /**是否是卡五星
-  //  * @param na_pai 这张牌是否是4，6中间的牌
-  //  */
-  // public static HuisKaWuXing(group_shoupai: GroupConstructor, na_pai: Pai) {
-  //   //几句话，b1b1b1, b1b2b3, zh zh zh zh都算是一句话！
-  //   let jijuhua = this.getJijuhua(group_shoupai);
-  //   // console.log(jijuhua);
-  //   return this._HuisKaWuXing(group_shoupai.shouPai, na_pai, jijuhua);
-  // }
-
-  // /**带将的1,2,3,4ABC检测，貌似只是为卡五星服务！ */
-  // private static _jiangNABC(shou_pai: Array<Pai>, jijuhua: number) {
-  //   let result = getArr(shou_pai);
-  //   let allJiang = getAllJiangArr(result);
-  //   let is_hu = false;
-  //   // console.log(allJiang)
-  //   //循环的目的是因为可能胡不止一张牌
-  //   if (allJiang) {
-  //     allJiang.forEach(jiang => {
-  //       // console.log(item)
-  //       var newstr = result.join("");
-  //       //去掉这两个将,item是这样的"b1b1","didi"
-  //       newstr = newstr.replace(jiang, "");
-  //       var caller: Function;
-  //       //其实只需要检测3- jijuha, 因为在卡五星里面已经删除掉了带有卡5的一句话！
-  //       switch (jijuhua) {
-  //         case 3:
-  //           // 特殊的3句话，因为检测卡五星的时候又删除了一句话，最后只剩下一对将，删除掉newstr就成空了。
-  //           if (_.isEmpty(newstr)) {
-  //             is_hu = true;
-  //           }
-  //           break;
-  //         case 2:
-  //           caller = this.isABCorAAA;
-  //           break;
-  //         case 1:
-  //           caller = this.is2ABC;
-  //           break;
-  //         case 0:
-  //           caller = this.is3ABC;
-  //           break;
-  //         default:
-  //           throw new Error(`jijuha:${jijuhua}的值只能是0-3 `);
-  //       }
-  //       if (caller && caller.call(this, newstr)) {
-  //         is_hu = true;
-  //       }
-  //     });
-  //   }
-  //   return is_hu;
-  // }
+  /**是否是卡五星
+   * @param na_pai 这张牌是否是4，6中间的牌
+   */
+  public static HuisKaWuXing(group_shoupai: GroupConstructor, na_pai: Pai) {
+    //首先检测是否是5筒或者5条，不是就肯定不是卡五星
+    if (na_pai != 4 && na_pai != 14) {
+      return false
+    } else {
+      //取出这个5的左边及右边，再看剩下的是否是几句话。
+      let flatShou = this.flat_shou_pai(group_shoupai)
+      let newClone = _.orderBy(_.clone(flatShou.concat(na_pai)))
+      let allJiang = this.getAllJiangArr(newClone)
+      let isHu = false
+      allJiang.some(jiang=>{
+        let index = newClone.indexOf(jiang)
+        newClone.splice(index, 2)
+        //删除卡三星的三张牌
+        newClone.remove(na_pai-1)
+        newClone.remove(na_pai)
+        newClone.remove(na_pai+1)
+        //看剩下的牌是否是几句话
+        isHu = this.isJiJuhua(newClone)
+        if (isHu) {
+          // console.log('hu:', jiang);
+          return true;
+        }
+      })
+      return false
+    }
+  }
 
   // private static _HuisKaWuXing(shou_pai: Array<Pai>, na_pai: Pai, jijuhua: number) {
   //   //就卡五星来说，大于3句话就肯定不是卡五了，最多三句话！四句话就没办法胡卡五，只能听将！

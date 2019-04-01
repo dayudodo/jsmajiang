@@ -248,6 +248,7 @@ class NMajiangAlgo {
         }
         return count == 7;
     }
+    /**是否存在4A */
     static exits4A(shouPai) {
         for (let i = 0; i < shouPai.length; i++) {
             const pai = shouPai[i];
@@ -290,38 +291,64 @@ class NMajiangAlgo {
         }
         return true;
     }
-    // private static _HuisYise(shou_pai: Array<Pai>, na_pai) {
-    //   let result = getArr(shou_pai)
-    //     .concat(na_pai)
-    //     .sort();
-    //   // if (result.length < 14) {
-    //   //   throw new Error(`shou_pai: ${shou_pai}  must larger than 14 values`);
-    //   // }
-    //   //不仅要是一色而且还得满足屁胡
-    //   return this.isYise(result) && this._HuisPihu(shou_pai, na_pai);
-    // }
-    // /**是否是碰碰胡 */
-    // static HuisPengpeng(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
-    //   let len = this.flat_shou_pai(group_shoupai).push(na_pai);
-    //   if (len < 14) {
-    //     // throw new Error(`${group_shoupai} 碰碰胡检测少于14张`);
-    //     return false;
-    //   }
-    //   return this._HuisPengpeng(group_shoupai.shouPai, na_pai);
-    // }
-    // /**管你几句话，只要是剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ */
-    // private static _HuisPengpeng(shou_pai: Array<Pai>, na_pai) {
-    //   let result = getArr(shou_pai)
-    //     .concat(na_pai)
-    //     .sort();
-    //   //把所有三个或四个相同的干掉，看最后剩下的是否是将
-    //   let reg = /(..)\1\1\1?/g;
-    //   let jiang = result.join("").replace(reg, "");
-    //   if (jiang.length != 4) {
-    //     return false;
-    //   }
-    //   return this.isAA(getArr(jiang));
-    // }
+    /**是否是3A或者4A，其实和是几句话差不多！ */
+    static is3Aor4A(shouPai, first = true) {
+        //检测到最后是个空数组，说明都是几句话！
+        if (_.isEmpty(shouPai)) {
+            return first ? false : true;
+        }
+        shouPai = _.orderBy(shouPai); //每次都要排序！防止不连续的情况
+        // let threeTest = []
+        let result;
+        //判断开头是否是4个连续，首先检测这个，从大的开始检测
+        result = this.isAndDel4A(shouPai);
+        if (!!result) {
+            // console.log(result.remainArr);
+            if (this.is3Aor4A(result.remainArr, false)) {
+                return true;
+            }
+        }
+        result = this.isAndDelAAA(shouPai);
+        //判断开头是否是三个连续
+        if (!!result) {
+            // 检测剩下的的是否是几句话
+            return this.is3Aor4A(result.remainArr, false);
+        }
+        else {
+            return false;
+        }
+    }
+    /**剩下的shouPai去掉重复之后只剩下将，就是碰碰胡了！ todo: 可以与判断几句话合并*/
+    static HuisPengPeng(group_shoupai, na_pai) {
+        let flatShou = this.flat_shou_pai(group_shoupai);
+        let cloneShouPai = _.orderBy(_.clone(flatShou.concat(na_pai)));
+        // console.log(cloneShouPai);
+        if (cloneShouPai.length < 14) { //不够14张，不可能胡！
+            console.warn("牌不够14张：", flatShou);
+            return false;
+        }
+        return this._HuisPengPeng(cloneShouPai);
+    }
+    static _HuisPengPeng(shouPai) {
+        // let cloneShouPai = _.orderBy(_.clone(shouPai.concat(na_pai)))
+        //判断除了将之外是否都是连续的3A,4A。
+        let allJiang = this.getAllJiangArr(shouPai);
+        let isHu = false;
+        if (allJiang) {
+            allJiang.some(jiang => {
+                //删除牌里面的将牌，因为是排序好了的，所以一次删除两个即可！
+                let newClone = _.clone(shouPai);
+                let index = newClone.indexOf(jiang);
+                newClone.splice(index, 2);
+                isHu = this.is3Aor4A(newClone);
+                if (isHu) {
+                    // console.log('hu:', jiang);
+                    return true;
+                }
+            });
+        }
+        return isHu;
+    }
     /**平手牌，指13张牌，将其它的碰、杠都转换成一维手牌数组！ */
     static flat_shou_pai(group_shou_pai) {
         let onlyShouPai = [];
@@ -438,6 +465,51 @@ class NMajiangAlgo {
             group_shoupai.mingGang.length == 0 &&
             group_shoupai.selfPeng.length == 0 &&
             group_shoupai.peng.length == 0);
+    }
+    // // static all_hupai_zhang(shou_pai) {
+    // //   let hupai_data = this.HuWhatPai(shou_pai);
+    // //   return _.map(hupai_data, item => item.hupai_zhang);
+    // // }
+    // // static all_hupai_types(shou_pai) {
+    // //   let hupai_data = this.HuWhatPai(shou_pai);
+    // //   let arr1 = [];
+    // //   hupai_data.forEach(item => {
+    // //     item.hupai_types.forEach(h_type => {
+    // //       arr1.push(h_type);
+    // //     });
+    // //   });
+    // //   return _.uniq(arr1);
+    // // }
+    /**是否是卡五星
+     * @param na_pai 这张牌是否是4，6中间的牌
+     */
+    static HuisKaWuXing(group_shoupai, na_pai) {
+        //首先检测是否是5筒或者5条，不是就肯定不是卡五星
+        if (na_pai != 4 && na_pai != 14) {
+            return false;
+        }
+        else {
+            //取出这个5的左边及右边，再看剩下的是否是几句话。
+            let flatShou = this.flat_shou_pai(group_shoupai);
+            let newClone = _.orderBy(_.clone(flatShou.concat(na_pai)));
+            let allJiang = this.getAllJiangArr(newClone);
+            let isHu = false;
+            allJiang.some(jiang => {
+                let index = newClone.indexOf(jiang);
+                newClone.splice(index, 2);
+                //删除卡三星的三张牌
+                newClone.remove(na_pai - 1);
+                newClone.remove(na_pai);
+                newClone.remove(na_pai + 1);
+                //看剩下的牌是否是几句话
+                isHu = this.isJiJuhua(newClone);
+                if (isHu) {
+                    // console.log('hu:', jiang);
+                    return true;
+                }
+            });
+            return false;
+        }
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
