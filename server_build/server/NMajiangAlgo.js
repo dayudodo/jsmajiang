@@ -485,22 +485,42 @@ class NMajiangAlgo {
      */
     static HuisKaWuXing(group_shoupai, na_pai) {
         //首先检测是否是5筒或者5条，不是就肯定不是卡五星
+        console.log(group_shoupai, na_pai);
         if (na_pai != 4 && na_pai != 14) {
             return false;
         }
         else {
             //取出这个5的左边及右边，再看剩下的是否是几句话。
             let flatShou = this.flat_shou_pai(group_shoupai);
-            let newClone = _.orderBy(_.clone(flatShou.concat(na_pai)));
-            let allJiang = this.getAllJiangArr(newClone);
+            let cloneShou = _.orderBy(flatShou.concat(na_pai));
+            let allJiang = this.getAllJiangArr(cloneShou);
             let isHu = false;
             allJiang.some(jiang => {
+                let newClone = _.clone(cloneShou);
                 let index = newClone.indexOf(jiang);
                 newClone.splice(index, 2);
                 //删除卡三星的三张牌
-                newClone.remove(na_pai - 1);
-                newClone.remove(na_pai);
-                newClone.remove(na_pai + 1);
+                console.log("before remove", newClone);
+                index = newClone.indexOf(na_pai - 1);
+                if (index > -1) { //如果没有3，那么肯定不是卡王星
+                    console.log(index);
+                    newClone.splice(index, 1);
+                }
+                else {
+                    return false;
+                }
+                index = newClone.indexOf(na_pai);
+                newClone.splice(index, 1);
+                index = newClone.indexOf(na_pai + 1);
+                if (index > -1) {
+                    console.log(index);
+                    newClone.splice(index, 1);
+                }
+                else {
+                    return false;
+                }
+                newClone.splice(index, 1);
+                console.log(newClone);
                 //看剩下的牌是否是几句话
                 isHu = this.isJiJuhua(newClone);
                 if (isHu) {
