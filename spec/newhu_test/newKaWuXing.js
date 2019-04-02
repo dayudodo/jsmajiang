@@ -73,7 +73,7 @@ test("胡五条但不是卡", function (t) {
   t.is(NMajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
   // t.is(NMajiangAlgo.HuisPihu(str, na_pai), true);
 });
-test("group卡五星", function (t) {
+test("单将剩一手卡五星", function (t) {
   let str = "b1 b1 b4 b6";
   var na_pai = to_number("b5")
   let group_shoupai = {

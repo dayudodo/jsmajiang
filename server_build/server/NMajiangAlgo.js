@@ -190,6 +190,7 @@ class NMajiangAlgo {
     //   }
     //   return countJuHua
     // }
+    /**检测玩家组牌是否是屁胡 */
     static HuIsPihu(group_shoupai, na_pai) {
         let cloneShou = _.orderBy(group_shoupai.shouPai.concat(na_pai));
         //如果是单挑将呢？比如全部都碰了，现在只胡一张将牌？所以要先检查有几句话
