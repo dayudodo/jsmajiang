@@ -1,5 +1,5 @@
 {
-  "presets": ["react", "es2015", "stage-1"],
+  "presets": [ "env"],
   "plugins": ["transform-es2015-modules-umd"],
   "auxiliaryCommentBefore": "istanbul ignore next"
 }

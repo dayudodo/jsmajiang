@@ -92,7 +92,7 @@ test("碰碰糊带3杠少将", function(t) {
   };
   t.is(NMajiangAlgo.HuisPengPeng(group_shoupai, na_pai), true);
 });
-test("碰碰糊带3杠少将", function(t) {
+test("碰碰糊带3杠少将2", function(t) {
   let str = "b2 zh zh zh zh t1 t1 t1";
   let na_pai = pais("b2")
   let group_shoupai = {
@@ -104,7 +104,7 @@ test("碰碰糊带3杠少将", function(t) {
   };
   t.is(NMajiangAlgo.HuisPengPeng(group_shoupai, na_pai), true);
 });
-test("碰碰糊带3杠少将", function(t) {
+test("碰碰糊带3杠少将3", function(t) {
   let str = "b2 t1 t1 t1";
   let na_pai = pais("b2")
   let group_shoupai = {
@@ -164,7 +164,7 @@ test("碰碰糊带2杠少将 false", function(t) {
   };
   t.is(NMajiangAlgo.HuisPengPeng(group_shoupai, na_pai), false);
 });
-test("碰碰糊带2杠少将 false", function(t) {
+test("碰碰糊带2杠少将 false 2", function(t) {
   let str = "b2 t1 t1 t1";
   let na_pai = pais("fa")
   let group_shoupai = {

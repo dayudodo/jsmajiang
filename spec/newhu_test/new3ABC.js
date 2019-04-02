@@ -70,13 +70,13 @@ test("is3ABC 十一张, 前二杠 ", function(t) {
   let result = NMajiangAlgo.isJiJuhua(test_arr);
   t.is(result, true);
 });
-test("is3ABC 十一张, 后二杠 ", function(t) {
+test("is3ABC 十一张, 后二杠2 ", function(t) {
   let str = "b1 b1 b1 t1 t1 t1 t1 zh zh zh zh";
   let test_arr = pais(str);
   let result = NMajiangAlgo.isJiJuhua(test_arr);
   t.is(result, true);
 });
-test("is3ABC 十一张, 后二杠 ", function(t) {
+test("is3ABC 十一张, 后二杠1 ", function(t) {
   let str = "b3 b4 b5 di di di di zh zh zh zh";
   let test_arr = pais(str);
   let result = NMajiangAlgo.isJiJuhua(test_arr);
@@ -131,7 +131,7 @@ test("is3ABC 11张牌，false", function(t) {
   let result = NMajiangAlgo.isJiJuhua(test_arr)
   t.is(result, false);
 });
-test("is3ABC 11张牌，false", function(t) {
+test("is3ABC 11张牌，false 2", function(t) {
   let str = "b2 b2 b2 b2 t1 t1 t1 t2 t3 t4 t5";
   let test_arr = pais(str)
   let result = NMajiangAlgo.isJiJuhua(test_arr)

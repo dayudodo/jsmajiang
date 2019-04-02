@@ -311,7 +311,7 @@ class NMajiangAlgo {
     }
     /**是否是3A或者4A，其实和isJiJuHua程序差不多！ */
     static is3Aor4A(shouPai, first = true) {
-        console.log("is3Aor4A shouPai:", shouPai);
+        // console.log("is3Aor4A shouPai:", shouPai);
         //检测到最后是个空数组，说明都是几句话！
         if (_.isEmpty(shouPai)) {
             return first ? false : true;

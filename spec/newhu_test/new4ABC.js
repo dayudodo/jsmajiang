@@ -10,7 +10,7 @@ function pais(strs) {
 
 
 //is4ABC group
-test("is4ABC 12张牌", function (t) {
+test("is4ABC 12张牌 1", function (t) {
   let str = "b1 b2 b3 fa fa fa t1 t2 t3 t4 t5 t6";
   let test_arr = pais(str);
   let result = NMajiangAlgo.isJiJuhua(test_arr);
@@ -53,7 +53,7 @@ test("is4ABC 12 false", function (t) {
   let result = NMajiangAlgo.isJiJuhua(test_arr);
   t.is(result, false);
 });
-test("is4ABC 12张牌", function (t) {
+test("is4ABC 12张牌2", function (t) {
   let str = "b1 b2 b3 fa fa fa t1 t2 t3 t4 t5 t6";
   let test_arr = pais(str);
   let result = NMajiangAlgo.isJiJuhua(test_arr);
@@ -78,7 +78,7 @@ test("is4ABC 13张牌，中间错位", function (t) {
   let result = NMajiangAlgo.isJiJuhua(test_arr);
   t.is(result, true);
 });
-test("is4ABC 13张牌，中间错位", function (t) {
+test("is4ABC 13张牌，中间错位2", function (t) {
   let str = "b1 b1 b1 b3 b3 b4 b4 b5 b5 t1 t1 t1 t1";
   let test_arr = pais(str);
   let result = NMajiangAlgo.isJiJuhua(test_arr);
