@@ -20,7 +20,7 @@ test("屁胡", function (t) {
       selfPeng:[], shouPai: pais(str)
     };
     // console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-    t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), true);
+    t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
   });
   test("屁胡1杠5张false", function (t) {
     let str = "b1 b2 b3 b4 b5 b6 t4 t5 t6 fa fa fa fa fa zh";
@@ -32,7 +32,7 @@ test("屁胡", function (t) {
       selfPeng:[], shouPai: pais(str)
     };
     // console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-    t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), false);
+    t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), false);
   });
   test("group单杠屁胡，其中四张连续并非杠", function (t) {
     let str = "b2 b3 b4 di di di fa zh zh zh";
@@ -43,7 +43,7 @@ test("屁胡", function (t) {
       peng: [],
       selfPeng:[], shouPai: pais(str)
     }
-    t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), true);
+    t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
   });
   test("group不是清一色", function (t) {
     let str = "b3 b4 b7 b8";
@@ -55,8 +55,8 @@ test("屁胡", function (t) {
       selfPeng:[], shouPai: pais(str)
     }
     //b1 b1 b1 b1 b2 b2 b2 b3 b4 b5 b5 b5 b7 b8 b9
-    // t.is(NMajiangAlgo._HuIsPihu(NMajiangAlgo.flat_shou_pai(grou_shoupai)),true)
-    t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), false);
+    // t.is(NMajiangAlgo._HuisPihu(NMajiangAlgo.flat_shou_pai(grou_shoupai)),true)
+    t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), false);
   });
   test("flat可胡，group不能", function (t) {
     let str = "b3 b4 t4 t5"
@@ -70,7 +70,7 @@ test("屁胡", function (t) {
     //b1 b1 b1 b1 b2 b2   b2 b3 b4   t3 t4 t5   fa fa fa fa
     let flatShou = NMajiangAlgo.flat_shou_pai(group_shoupai)
     t.is(NMajiangAlgo.jiangJiJuhua(flatShou, na_pai),true)
-    t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), false);
+    t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), false);
   });
   
   test("屁胡 胡将", function (t) {
@@ -82,5 +82,5 @@ test("屁胡", function (t) {
       peng:pais( ['b5', 'b2']),
       selfPeng:[], shouPai: pais(str)
     }
-    t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), true);
+    t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
   });

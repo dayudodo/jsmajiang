@@ -4,12 +4,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
 const config = require("./config");
 // 全局常量，所有的牌,饼为1，条为2，万为3，中国、发财、白板为不连续的三张牌
-var BING = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
-var TIAO = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
+var BING = [1, 2, 3, 4, 5, 6, 7, 8, 9]; //小于10的就是饼
+var TIAO = [11, 12, 13, 14, 15, 16, 17, 18, 19]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
-// var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28];
+var WAN = [21, 22, 23, 24, 25, 26, 27, 28, 29];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-var ZHIPAI = [30, 32, 34];
+var ZHIPAI = [31, 33, 35];
 var all_single_pai = BING.concat(TIAO).concat(ZHIPAI);
 /**删除找到的第一个元素 */
 Array.prototype.remove = function (val) {
@@ -191,7 +191,7 @@ class NMajiangAlgo {
     //   return countJuHua
     // }
     /**检测玩家组牌是否是屁胡 */
-    static HuIsPihu(group_shoupai, na_pai) {
+    static HuisPihu(group_shoupai, na_pai) {
         let cloneShou = _.orderBy(group_shoupai.shouPai.concat(na_pai));
         //如果是单挑将呢？比如全部都碰了，现在只胡一张将牌？所以要先检查有几句话
         if (this.getJijuhua(group_shoupai) == 4) {
@@ -293,8 +293,14 @@ class NMajiangAlgo {
     //     // console.log("this.HuIsPihu(onlyShouPai)",this.HuIsPihu(onlyShouPai));
     //     return this.isYise(onlyShouPai)
     // }
+    /**是否是一色，并不判断是否是胡 */
+    static IsYise(group_shoupai, na_pai) {
+        let flatShou = this.flat_shou_pai(group_shoupai);
+        let cloneShouPai = _.orderBy(flatShou.concat(na_pai));
+        return this._isYise(cloneShouPai);
+    }
     /**判断是否是同一花色 */
-    static isYise(test_arr) {
+    static _isYise(test_arr) {
         let cloneArr = _.clone(test_arr);
         let firstType = getMJType(cloneArr[0]);
         // console.log("cloneArr, firstType", cloneArr, firstType);
@@ -395,48 +401,49 @@ class NMajiangAlgo {
         onlyShouPai = onlyShouPai.concat(group_shou_pai.shouPai);
         return onlyShouPai.sort();
     }
-    // /**
-    //  * group手牌胡哪些牌
-    //  * @param group_shoupai
-    //  * @param is_liang 是否亮牌了
-    //  */
-    // static HuWhatGroupPai(group_shoupai: GroupConstructor, is_liang): hupaiConstructor {
-    //   let hupai_dict = {};
-    //   for (var i = 0; i < all_single_pai.length; i++) {
-    //     let single_pai = all_single_pai[i];
-    //     let newShouPai: Array<Pai> = this.flat_shou_pai(group_shoupai)
-    //       .concat(single_pai)
-    //       .sort();
-    //     // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
-    //     let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
-    //     // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
-    //     if (isFiveRepeat) {
-    //       continue;
-    //     } else {
-    //       let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, single_pai, is_liang);
-    //       if (!_.isEmpty(hupai_typesCode)) {
-    //         hupai_dict[single_pai] = hupai_typesCode;
-    //       }
-    //     }
-    //   }
-    //   let all_hupai_zhang = _.keys(hupai_dict);
-    //   let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
-    //   let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
-    //   //如果hupai_data为空，sortBy也会返回空
-    //   //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
-    //   if (_.isEmpty(all_hupai_zhang)) {
-    //     return {
-    //       all_hupai_zhang: [],
-    //       all_hupai_typesCode: [],
-    //       hupai_dict: {}
-    //     };
-    //   }
-    //   return {
-    //     all_hupai_zhang: all_hupai_zhang.sort(),
-    //     all_hupai_typesCode: all_hupai_typesCode.sort(),
-    //     hupai_dict: hupai_dict
-    //   };
-    // }
+    /**
+     * group手牌胡哪些牌
+     * @param group_shoupai
+     * @param is_liang 是否亮牌了
+     */
+    static HuWhatGroupPai(group_shoupai, is_liang) {
+        let hupai_dict = {};
+        for (var i = 0; i < all_single_pai.length; i++) {
+            let single_pai = all_single_pai[i];
+            let newShouPai = this.flat_shou_pai(group_shoupai)
+                .concat(single_pai)
+                .sort();
+            // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
+            let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
+            // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
+            if (isFiveRepeat) {
+                continue;
+            }
+            else {
+                let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, single_pai, is_liang);
+                if (!_.isEmpty(hupai_typesCode)) {
+                    hupai_dict[single_pai] = hupai_typesCode;
+                }
+            }
+        }
+        let all_hupai_zhang = _.keys(hupai_dict).map(v => parseInt(v));
+        let flatten_hupai_data = _.flatten(_.values(hupai_dict));
+        let all_hupai_typesCode = _.uniq(flatten_hupai_data);
+        //如果hupai_data为空，sortBy也会返回空
+        //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
+        if (_.isEmpty(all_hupai_zhang)) {
+            return {
+                all_hupai_zhang: [],
+                all_hupai_typesCode: [],
+                hupai_dict: {}
+            };
+        }
+        return {
+            all_hupai_zhang: all_hupai_zhang.sort(),
+            all_hupai_typesCode: all_hupai_typesCode.sort(),
+            hupai_dict: hupai_dict
+        };
+    }
     // /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
     // static HuWhatPai(shou_pai: Array<Pai>): hupaiConstructor {
     //   let result: Array<Pai> = getArr(shou_pai);
@@ -509,7 +516,7 @@ class NMajiangAlgo {
             throw new Error("na_pai并非是数值");
         }
         let isHu = false;
-        if (na_pai != 4 && na_pai != 14) { //是否是5筒或者5条，不是就肯定不是卡五星
+        if (na_pai != 5 && na_pai != 15) { //是否是5筒或者5条，不是就肯定不是卡五星
             return false;
         }
         else {
@@ -555,6 +562,213 @@ class NMajiangAlgo {
             });
             return isHu;
         }
+    }
+    // private static _HuisKaWuXing(shou_pai: Array<Pai>, na_pai: Pai, jijuhua: number) {
+    //   //就卡五星来说，大于3句话就肯定不是卡五了，最多三句话！四句话就没办法胡卡五，只能听将！
+    //   if (jijuhua > 3) {
+    //     return false;
+    //   }
+    //   let result: Array<Pai> = getArr(shou_pai)
+    //     .concat(na_pai)
+    //     .sort();
+    //   // if (result.length < 14) {
+    //   //   throw new Error(`shou_pai${shou_pai} must larger than 14 values`);
+    //   // }
+    //   //胡牌但是并不是碰胡也不是将牌，就是卡五星,或者胡牌并且两边有4，5，也是卡五星，如果是45556的情况？
+    //   if (na_pai[1] != "5") {
+    //     return false;
+    //   } else {
+    //     let four = na_pai[0] + "4";
+    //     let six = na_pai[0] + "6";
+    //     let is_huwu = result.includes(four) && result.includes(six);
+    //     //去掉这三张牌，看剩下的是否符合手牌规则
+    //     if (is_huwu) {
+    //       let after_delete_kawa = result
+    //         .remove(na_pai)
+    //         .remove(four)
+    //         .remove(six)
+    //         .sort();
+    //       // console.log(after_delete_kawa);
+    //       return this._jiangNABC(after_delete_kawa, jijuhua);
+    //     } else {
+    //       return false;
+    //     }
+    //   }
+    // }
+    // //只能重复两次，不能重复三次！
+    // static isRepeatTwiceOnly(shou_pai_str, str) {
+    //   if (typeof shou_pai_str != "string") {
+    //     throw new Error(chalk.red("isRepeatTwiceOnly首参数必须是字符串！"));
+    //   }
+    //   let m = shou_pai_str.match(new RegExp(`(${str})+`));
+    //   if (m && m[0]) {
+    //     return m[0].length == 4; //如果不等于4说明并不是重复了2次！
+    //   }
+    //   return false;
+    // }
+    /**是否是小三元
+     * 小三元是zh, fa, di中有一对将，其它为刻子，比如zh zh, fa fa fa, di di di。。。就是小三元了
+     */
+    static HuisXiaoShanYuan(group_shoupai, na_pai) {
+        return this._HuisXiaoShanYuan(this.flat_shou_pai(group_shoupai), na_pai);
+    }
+    static _HuisXiaoShanYuan(shou_arr, na_pai) {
+        let cloneShouPai = _.orderBy(_.clone(shou_arr).concat(na_pai));
+        if (cloneShouPai.length < 14) {
+            throw new Error(`shou_pai: ${shou_arr} must larger than 14 values`);
+        }
+        // console.log("====================================");
+        // console.log(result);
+        // console.log(this._HuisPihu(shou_pai, na_pai));
+        // console.log("====================================");
+        let allZhiPai = cloneShouPai.filter(v => v > 30);
+        //少于8张字牌肯定不是卡五星
+        if (allZhiPai.length < 2 + 3 + 3) {
+            return false;
+        }
+        //统计字牌出现的次数，比如
+        // c1=_.countBy([31,31,33,33,33,35,35,35], i=>i)
+        // =>{31: 2, 33: 3, 35: 3}
+        let countZhiPai = _.countBy(allZhiPai, i => i);
+        //取得他们的次数并排序[2,3,3]
+        let values = _.values(countZhiPai).sort();
+        //如果有将并且其它两类大于2，也就是3或者4张
+        if (values[0] == 2 && values[1] > 2 && values[2] > 2) {
+            //得到所有的非字牌，这时候不需要再去判断将了，因为小三元里面肯定有一个将！
+            let remainPais = cloneShouPai.filter(v => v < 30);
+            return this.isJiJuhua(remainPais);
+        }
+        else {
+            //屁胡都不是，自然也不是小三元了
+            return false;
+        }
+    }
+    // /**只判断三个即可，这也包括了四个的情况！
+    //  * 大三元其实最好判断了，三个一样的zh,fa,di检测即可！
+    //  */
+    // static HuisDaShanYuan(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
+    //   return this._HuisDaShanYuan(this.flat_shou_pai(group_shoupai), na_pai);
+    // }
+    // static _HuisDaShanYuan(shou_pai: Array<Pai>, na_pai: Pai): boolean {
+    //   //
+    //   let result: Array<Pai> = getArr(shou_pai)
+    //     .concat(na_pai)
+    //     .sort();
+    //   if (result.length < 14) {
+    //     throw new Error(`str${shou_pai} must larger than 14 values`);
+    //   }
+    //   if (this._HuisPihu(result)) {
+    //     let shouStr = result.join("");
+    //     let isDa = false;
+    //     //只要判断是否有上面的三种即可！
+    //     let [zhReg3, zhReg4, faReg3, faReg4, diReg3, diReg4] = [
+    //       new RegExp("zhzhzh"),
+    //       new RegExp("zhzhzhzh"),
+    //       new RegExp("fafafa"),
+    //       new RegExp("fafafafa"),
+    //       new RegExp("dididi"),
+    //       new RegExp("didididi")
+    //     ];
+    //     if (
+    //       (zhReg3.test(shouStr) || zhReg4.test(shouStr)) &&
+    //       (faReg3.test(shouStr) || faReg4.test(shouStr)) &&
+    //       (diReg3.test(shouStr) || diReg4.test(shouStr))
+    //     ) {
+    //       isDa = true;
+    //     }
+    //     return isDa;
+    //   }
+    //   //屁胡都不是，自然也不是大三元了
+    //   return false;
+    // }
+    // //杠上开花，自己杠了个牌，然后胡了,要与玩家杠之后联系上。
+    // static _HuisGangShangKai(shou_pai, na_pai, isSelfGang) {
+    //   //杠了之后才会去检测是否胡，还得检测是哪种胡！
+    //   if (isSelfGang) {
+    //     //还得知道是哪种胡！但肯定不会是七对类型的。返回的其实就应该是整个胡牌的情况，杠上开会在胡牌的基础上多算番
+    //     return this.HupaiTypeCodeArr(shou_pai, na_pai);
+    //   }
+    //   return false;
+    // }
+    // //杠上炮，别人打的杠牌，你可以胡, other_pai看是否是别人打的。
+    // static HuisGangShangPao(shou_pai, na_pai, isOtherDaGangpai) {
+    //   if (isOtherDaGangpai) {
+    //     return this.HupaiTypeCodeArr(shou_pai, na_pai);
+    //   }
+    //   return false;
+    // }
+    // /**明四归 */
+    // static HuisMingSiGui(group_shou_pai: GroupConstructor, na_pai: Pai, is_liang: boolean) {
+    //   if (this.HuisPihu(group_shou_pai, na_pai)) {
+    //     if (group_shou_pai.peng.includes(na_pai)) {
+    //       return true;
+    //     }
+    //     //如果亮牌，并且存在三张同样的na_pai这也是明四归
+    //     if (is_liang && this.exist3A(group_shou_pai.shouPai, na_pai)) {
+    //       return true;
+    //     } else {
+    //       return false;
+    //     }
+    //   } else {
+    //     return false;
+    //   }
+    // }
+    // static exist3A(shou_pai: Array<Pai>, pai_name: Pai) {
+    //   return shou_pai.filter(pai => pai == pai_name).length === 3;
+    // }
+    // /**暗四归 */
+    // static HuisAnSiGui(group_shou_pai: GroupConstructor, na_pai: Pai, is_liang: boolean) {
+    //   if (this.HuisPihu(group_shou_pai, na_pai)) {
+    //     if (group_shou_pai.selfPeng.includes(na_pai)) {
+    //       return true;
+    //     }
+    //     //如果手牌里面有三张na_pai, 还要看是否亮牌，亮了就不是暗四归了！
+    //     if (this.exist3A(group_shou_pai.shouPai, na_pai)) {
+    //       if (is_liang) {
+    //         return false;
+    //       } else {
+    //         return true;
+    //       }
+    //     }
+    //     return false;
+    //   } else {
+    //     return false;
+    //   }
+    // }
+    /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
+    static HupaiTypeCodeArr(group_shoupai, na_pai, is_liang = false) {
+        let _huArr = [];
+        if (this.IsYise(group_shoupai, na_pai)) {
+            _huArr.push(config.IsYise);
+        }
+        if (this.HuisKaWuXing(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisKaWuXing);
+        }
+        if (this.HuisQiDui(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisQidui);
+        }
+        if (this.HuisNongQiDui(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisNongQiDui);
+        }
+        if (this.HuisPengPeng(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisPengpeng);
+        }
+        if (this.HuisXiaoShanYuan(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisXiaoShanYuan);
+        }
+        // if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
+        //   _huArr.push(config.HuisDaShanYuan);
+        // }
+        // if (this.HuisMingSiGui(group_shoupai, na_pai, is_liang)) {
+        //   _huArr.push(config.HuisMingSiGui);
+        // }
+        // if (this.HuisAnSiGui(group_shoupai, na_pai, is_liang)) {
+        //   _huArr.push(config.HuisAnSiGui);
+        // }
+        if (this.HuisPihu(group_shoupai, na_pai)) {
+            _huArr.push(config.HuisPihu);
+        }
+        return _huArr;
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;

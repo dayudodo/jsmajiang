@@ -17,12 +17,12 @@ var WebSocket = require("ws");
 WebSocket.prototype.sendmsg = function (msg) {
     this.send(JSON.stringify(msg));
 };
-var BING = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
-var TIAO = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
+var BING = [1, 2, 3, 4, 5, 6, 7, 8, 9]; //小于10的就是饼
+var TIAO = [11, 12, 13, 14, 15, 16, 17, 18, 19]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
-var WAN = [20, 21, 22, 23, 24, 25, 26, 27, 28];
+var WAN = [21, 22, 23, 24, 25, 26, 27, 28, 29];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-var ZHIPAI = [30, 32, 34];
+var ZHIPAI = [31, 33, 35];
 exports.TYPE_BING = 0;
 exports.TYPE_TIAO = 1;
 exports.TYPE_ZHIPAI = 2;
@@ -62,7 +62,7 @@ exports.have_top = true;
 // });
 // console.log(output);
 //start自动生成代码, 运行上面的代码
-exports.HuisYise = 0;
+exports.IsYise = 0; //只判断是否是一色，还需要配合其它进行计算！
 exports.HuisKaWuXing = 1;
 exports.HuisQidui = 2;
 exports.HuisNongQiDui = 3;
@@ -89,7 +89,7 @@ exports.HuisGangShangGang = 17;
 //end自动生成代码
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 exports.HuPaiSheet = [
-    { type: exports.HuisYise, name: "清一色", multiple: 4 },
+    { type: exports.IsYise, name: "清一色", multiple: 4 },
     { type: exports.HuisKaWuXing, name: "卡五星", multiple: 4 },
     { type: exports.HuisQidui, name: "七对", multiple: 4 },
     //因为龙七对之前会先检测是否是七对，所以龙七对倍数是4，合起来就是8了

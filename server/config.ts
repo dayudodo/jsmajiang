@@ -36,12 +36,12 @@ WebSocket.prototype.sendmsg = function(msg: any) {
   this.send(JSON.stringify(msg));
 };
 
-var BING: Array<Pai> = [0, 1, 2, 3, 4, 5, 6, 7, 8]; //小于10的就是饼
-var TIAO: Array<Pai> = [10, 11, 12, 13, 14, 15, 16, 17, 18]; //大于10并且小于20的是条
+var BING: Array<Pai> = [1, 2, 3, 4, 5, 6, 7, 8, 9]; //小于10的就是饼
+var TIAO: Array<Pai> = [ 11, 12, 13, 14, 15, 16, 17, 18, 19]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
-var WAN: Array<Pai> = [20, 21, 22, 23, 24, 25, 26, 27, 28];
+var WAN: Array<Pai> = [21, 22, 23, 24, 25, 26, 27, 28, 29];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
-var ZHIPAI: Array<Pai> = [30, 32, 34];
+var ZHIPAI: Array<Pai> = [31, 33, 35];
 export const TYPE_BING = 0
 export const TYPE_TIAO = 1
 export const TYPE_ZHIPAI = 2
@@ -91,7 +91,7 @@ export var have_top = true
 // });
 // console.log(output);
 //start自动生成代码, 运行上面的代码
-export const HuisYise = 0;
+export const IsYise = 0; //只判断是否是一色，还需要配合其它进行计算！
 export const HuisKaWuXing = 1;
 export const HuisQidui = 2;
 export const HuisNongQiDui = 3;
@@ -120,7 +120,7 @@ export const HuisGangShangGang = 17;
 
 //此表中的type其实就是Majinang类中判断胡的方法，名称一致！
 export const HuPaiSheet = [
-  { type: HuisYise, name: "清一色", multiple: 4 },
+  { type: IsYise, name: "清一色", multiple: 4 },
   { type: HuisKaWuXing, name: "卡五星", multiple: 4 },
   { type: HuisQidui, name: "七对", multiple: 4 },
   //因为龙七对之前会先检测是否是七对，所以龙七对倍数是4，合起来就是8了

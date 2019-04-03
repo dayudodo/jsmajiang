@@ -26,8 +26,8 @@
     "ws": "^5.1.1"
   },
   "devDependencies": {
-    "ava": "latest",
-    "babel-cli": "latest",
+    "ava": "^1.4.1",
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^6.0.4",
     "babel-loader": "^7.1.4",

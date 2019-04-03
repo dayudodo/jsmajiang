@@ -84,11 +84,11 @@ function pais(strs) {
 //   t.throws(()=>{NMajiangAlgo.isAndDel4A(pais(str))}, /为空/);
 // });
 
-test(`get all jiangArr`, function(t) {
+test(`getAllJiangArr have four value`, function(t) {
   let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b8 b8 b9";
-  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [0,1,2,7]);
+  t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), [1,2,3,8]);
 });
-test(`get all jiangArr empty`, function(t) {
+test(`getAllJiangArr empty`, function(t) {
   let str = "b1 b2 b3 b4 b5 b6 b7 b8 b9";
   t.deepEqual(NMajiangAlgo.getAllJiangArr(pais(str)), []);
 });
@@ -122,9 +122,9 @@ test("判断一色", function (t) {
     peng: [],
     selfPeng: [], shouPai: pais(str)
   };
-  t.is(NMajiangAlgo.isYise(group_shoupai.shouPai.concat(na_pai)), true);
+  t.is(NMajiangAlgo.IsYise(group_shoupai, na_pai), true);
   na_pai = pais('t7')
-  t.is(NMajiangAlgo.isYise(group_shoupai.shouPai.concat(na_pai)), false);
+  t.is(NMajiangAlgo.IsYise(group_shoupai, na_pai), false);
 
 });
 

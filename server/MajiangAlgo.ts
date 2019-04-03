@@ -884,7 +884,7 @@ export class MajiangAlgo {
   static HupaiTypeCodeArr(group_shoupai: GroupConstructor, na_pai: Pai, is_liang = false): Array<number> {
     let _huArr = [];
     if (this.HuisYise(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisYise);
+      _huArr.push(config.IsYise);
     }
     // if (this.HuisKaWuXing(group_shoupai, na_pai)) {
     //   _huArr.push(config.HuisKaWuXing);
@@ -960,7 +960,7 @@ export class MajiangAlgo {
       return false;
     }
     if (
-      hupaicodeArr.includes(config.HuisYise) ||
+      hupaicodeArr.includes(config.IsYise) ||
       hupaicodeArr.includes(config.HuisKaWuXing) ||
       hupaicodeArr.includes(config.HuisQidui) ||
       hupaicodeArr.includes(config.HuisNongQiDui) ||

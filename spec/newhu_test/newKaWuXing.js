@@ -97,7 +97,7 @@ test("flat可胡，但group非卡五星", function (t) {
     selfPeng: [],
     shouPai: pais(str)
   };
-  t.is(NMajiangAlgo.HuIsPihu(group_shoupai, na_pai), true);
+  t.is(NMajiangAlgo.HuisPihu(group_shoupai, na_pai), true);
   t.is(NMajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
 });
 test("单胡5将，group非卡五星", function (t) {

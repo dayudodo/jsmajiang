@@ -33,7 +33,7 @@ test("清一色并龙七对", function (t) {
     selfPeng: [], shouPai: pais(str)
   };
   // t.is(NMajiangAlgo.HuisYise(group_shoupai, na_pai), true);
-  t.is(NMajiangAlgo.isYise(group_shoupai.shouPai.concat(na_pai)), true);
+  t.is(NMajiangAlgo.IsYise(group_shoupai,na_pai), true);
   t.is(NMajiangAlgo.HuisNongQiDui(group_shoupai, na_pai), true);
 });
 // test("龙七对true", function (t) {
