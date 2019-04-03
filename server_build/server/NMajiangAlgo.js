@@ -737,16 +737,26 @@ class NMajiangAlgo {
         if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
             _huArr.push(config.HuisDaShanYuan);
         }
-        // if (this.HuisMingSiGui(group_shoupai, na_pai, is_liang)) {
-        //   _huArr.push(config.HuisMingSiGui);
-        // }
-        // if (this.HuisAnSiGui(group_shoupai, na_pai, is_liang)) {
-        //   _huArr.push(config.HuisAnSiGui);
-        // }
+        if (this.HuisMingSiGui(group_shoupai, na_pai, is_liang)) {
+            _huArr.push(config.HuisMingSiGui);
+        }
+        if (this.HuisAnSiGui(group_shoupai, na_pai, is_liang)) {
+            _huArr.push(config.HuisAnSiGui);
+        }
         if (this.HuisPihu(group_shoupai, na_pai)) {
             _huArr.push(config.HuisPihu);
         }
         return _huArr;
+    }
+    /**获取到所有胡牌类型的名称 */
+    static HuPaiNames(group_shoupai, na_pai) {
+        let result = [];
+        // console.log(group_shoupai);
+        // console.log("this.HupaiTypeCodeArr(group_shoupai, na_pai):",this.HupaiTypeCodeArr(group_shoupai, na_pai));
+        this.HupaiTypeCodeArr(group_shoupai, na_pai).forEach(item => {
+            result.push(config.HuPaiSheet[item].name);
+        });
+        return result;
     }
 }
 exports.NMajiangAlgo = NMajiangAlgo;
