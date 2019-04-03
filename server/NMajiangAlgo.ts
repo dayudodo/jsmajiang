@@ -725,44 +725,44 @@ export class NMajiangAlgo {
   //   }
   //   return false;
   // }
-  // /**明四归 */
-  // static HuisMingSiGui(group_shou_pai: GroupConstructor, na_pai: Pai, is_liang: boolean) {
-  //   if (this.HuisPihu(group_shou_pai, na_pai)) {
-  //     if (group_shou_pai.peng.includes(na_pai)) {
-  //       return true;
-  //     }
-  //     //如果亮牌，并且存在三张同样的na_pai这也是明四归
-  //     if (is_liang && this.exist3A(group_shou_pai.shouPai, na_pai)) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else {
-  //     return false;
-  //   }
-  // }
-  // static exist3A(shou_pai: Array<Pai>, pai_name: Pai) {
-  //   return shou_pai.filter(pai => pai == pai_name).length === 3;
-  // }
-  // /**暗四归 */
-  // static HuisAnSiGui(group_shou_pai: GroupConstructor, na_pai: Pai, is_liang: boolean) {
-  //   if (this.HuisPihu(group_shou_pai, na_pai)) {
-  //     if (group_shou_pai.selfPeng.includes(na_pai)) {
-  //       return true;
-  //     }
-  //     //如果手牌里面有三张na_pai, 还要看是否亮牌，亮了就不是暗四归了！
-  //     if (this.exist3A(group_shou_pai.shouPai, na_pai)) {
-  //       if (is_liang) {
-  //         return false;
-  //       } else {
-  //         return true;
-  //       }
-  //     }
-  //     return false;
-  //   } else {
-  //     return false;
-  //   }
-  // }
+  /**明四归 */
+  static HuisMingSiGui(group_shou_pai: GroupConstructor, na_pai: Pai, is_liang: boolean) {
+    if (this.HuisPihu(group_shou_pai, na_pai)) {
+      if (group_shou_pai.peng.includes(na_pai)) {
+        return true;
+      }
+      //如果亮牌，并且存在三张同样的na_pai这也是明四归
+      if (is_liang && this.exist3A(group_shou_pai.shouPai, na_pai)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  static exist3A(shou_pai: Array<Pai>, pai_name: Pai) {
+    return shou_pai.filter(pai => pai == pai_name).length === 3;
+  }
+  /**暗四归 */
+  static HuisAnSiGui(group_shou_pai: GroupConstructor, na_pai: Pai, is_liang: boolean) {
+    if (this.HuisPihu(group_shou_pai, na_pai)) {
+      if (group_shou_pai.selfPeng.includes(na_pai)) {
+        return true;
+      }
+      //如果手牌里面有三张na_pai, 还要看是否亮牌，亮了就不是暗四归了！
+      if (this.exist3A(group_shou_pai.shouPai, na_pai)) {
+        if (is_liang) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      return false;
+    }
+  }
 
   /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
   static HupaiTypeCodeArr(
@@ -789,9 +789,9 @@ export class NMajiangAlgo {
     if (this.HuisXiaoShanYuan(group_shoupai, na_pai)) {
       _huArr.push(config.HuisXiaoShanYuan);
     }
-    // if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
-    //   _huArr.push(config.HuisDaShanYuan);
-    // }
+    if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
+      _huArr.push(config.HuisDaShanYuan);
+    }
     // if (this.HuisMingSiGui(group_shoupai, na_pai, is_liang)) {
     //   _huArr.push(config.HuisMingSiGui);
     // }
