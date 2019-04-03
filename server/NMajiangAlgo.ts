@@ -8,7 +8,7 @@ type Pai = number;
 
 // 全局常量，所有的牌,饼为1，条为2，万为3，中国、发财、白板为不连续的三张牌
 var BING: Array<Pai> = [1, 2, 3, 4, 5, 6, 7, 8, 9]; //小于10的就是饼
-var TIAO: Array<Pai> = [ 11, 12, 13, 14, 15, 16, 17, 18, 19]; //大于10并且小于20的是条
+var TIAO: Array<Pai> = [11, 12, 13, 14, 15, 16, 17, 18, 19]; //大于10并且小于20的是条
 //卡五星里面暂时用不上这个万，只有上面的两种可以使用
 var WAN: Array<Pai> = [21, 22, 23, 24, 25, 26, 27, 28, 29];
 // 中风、发财、白板(电视)，为避免首字母重复，白板用电视拼音，字牌
@@ -223,10 +223,10 @@ export class NMajiangAlgo {
     let cloneShou = _.orderBy(group_shoupai.shouPai.concat(na_pai))
     //如果是单挑将呢？比如全部都碰了，现在只胡一张将牌？所以要先检查有几句话
     if (this.getJijuhua(group_shoupai) == 4) {
-      if(group_shoupai.shouPai[0] == na_pai){ //单胡将
+      if (group_shoupai.shouPai[0] == na_pai) { //单胡将
         return true
       }
-    }else{ //少于4句话
+    } else { //少于4句话
       return this.jiangJiJuhua(cloneShou)
     }
   }
@@ -234,9 +234,9 @@ export class NMajiangAlgo {
   /**只是检测有将牌+几句话的情况，不限制数量 */
   static jiangJiJuhua(test_arr: Array<Pai>, na_pai?: Pai): boolean {
     let cloneShouPai: Array<Pai>;
-    if(na_pai && na_pai > -1){
+    if (na_pai && na_pai > -1) {
       cloneShouPai = _.orderBy(_.clone(test_arr.concat(na_pai)))
-    }else{
+    } else {
       cloneShouPai = _.orderBy(_.clone(test_arr))
     }
     let allJiang = this.getAllJiangArr(cloneShouPai)
@@ -468,7 +468,7 @@ export class NMajiangAlgo {
         }
       }
     }
-    let all_hupai_zhang = _.keys(hupai_dict).map(v=>parseInt(v));
+    let all_hupai_zhang = _.keys(hupai_dict).map(v => parseInt(v));
     let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
     let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
     //如果hupai_data为空，sortBy也会返回空
@@ -662,9 +662,10 @@ export class NMajiangAlgo {
    * 小三元是zh, fa, di中有一对将，其它为刻子，比如zh zh, fa fa fa, di di di。。。就是小三元了
    */
   static HuisXiaoShanYuan(group_shoupai: GroupConstructor, na_pai: Pai) {
-    return this._HuisXiaoShanYuan(this.flat_shou_pai(group_shoupai), na_pai);
+    return this._HuisWhichShanYuan(this.flat_shou_pai(group_shoupai), na_pai, 2);
   }
-  static _HuisXiaoShanYuan(shou_arr: Array<Pai>, na_pai: Pai) {
+  /**小三元检测 */
+  static _HuisWhichShanYuan(shou_arr: Array<Pai>, na_pai: Pai, which: number = 2) {
     let cloneShouPai = _.orderBy(_.clone(shou_arr).concat(na_pai))
     if (cloneShouPai.length < 14) {
       throw new Error(`shou_pai: ${shou_arr} must larger than 14 values`);
@@ -673,66 +674,40 @@ export class NMajiangAlgo {
     // console.log(result);
     // console.log(this._HuisPihu(shou_pai, na_pai));
     // console.log("====================================");
-    let allZhiPai = cloneShouPai.filter(v=>v>30)
+    let allZhiPai = cloneShouPai.filter(v => v > 30)
     //少于8张字牌肯定不是卡五星
-    if(allZhiPai.length< 2+3+3){
+    if (allZhiPai.length < which + 3 + 3) {
       return false
     }
     //统计字牌出现的次数，比如
     // c1=_.countBy([31,31,33,33,33,35,35,35], i=>i)
     // =>{31: 2, 33: 3, 35: 3}
-    let countZhiPai = _.countBy(allZhiPai, i=>i)
+    let countZhiPai = _.countBy(allZhiPai, i => i)
     //取得他们的次数并排序[2,3,3]
     let values = _.values(countZhiPai).sort()
     //如果有将并且其它两类大于2，也就是3或者4张
-    if(values[0] == 2 && values[1] > 2 && values[2] > 2 ){
-    //得到所有的非字牌，这时候不需要再去判断将了，因为小三元里面肯定有一个将！
-      let remainPais = cloneShouPai.filter(v=>v<30)
-      return this.isJiJuhua(remainPais)
+    if (values[0] == which && values[1] > 2 && values[2] > 2) {
+      //得到所有的非字牌，这时候不需要再去判断将了，因为小三元里面肯定有一个将！
+      let remainPais = cloneShouPai.filter(v => v < 30)
+      if (which == 2) { //小三元只需要检测剩下的牌是否是几句话即可！
+        return this.isJiJuhua(remainPais)
+      }
+      else if (which == 3) { //大三元要检测剩下带将的几句话
+        return this.jiangJiJuhua(remainPais)
+      }
     } else {
       //屁胡都不是，自然也不是小三元了
       return false;
     }
   }
 
-  // /**只判断三个即可，这也包括了四个的情况！
-  //  * 大三元其实最好判断了，三个一样的zh,fa,di检测即可！
-  //  */
-  // static HuisDaShanYuan(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
-  //   return this._HuisDaShanYuan(this.flat_shou_pai(group_shoupai), na_pai);
-  // }
-  // static _HuisDaShanYuan(shou_pai: Array<Pai>, na_pai: Pai): boolean {
-  //   //
-  //   let result: Array<Pai> = getArr(shou_pai)
-  //     .concat(na_pai)
-  //     .sort();
-  //   if (result.length < 14) {
-  //     throw new Error(`str${shou_pai} must larger than 14 values`);
-  //   }
-  //   if (this._HuisPihu(result)) {
-  //     let shouStr = result.join("");
-  //     let isDa = false;
-  //     //只要判断是否有上面的三种即可！
-  //     let [zhReg3, zhReg4, faReg3, faReg4, diReg3, diReg4] = [
-  //       new RegExp("zhzhzh"),
-  //       new RegExp("zhzhzhzh"),
-  //       new RegExp("fafafa"),
-  //       new RegExp("fafafafa"),
-  //       new RegExp("dididi"),
-  //       new RegExp("didididi")
-  //     ];
-  //     if (
-  //       (zhReg3.test(shouStr) || zhReg4.test(shouStr)) &&
-  //       (faReg3.test(shouStr) || faReg4.test(shouStr)) &&
-  //       (diReg3.test(shouStr) || diReg4.test(shouStr))
-  //     ) {
-  //       isDa = true;
-  //     }
-  //     return isDa;
-  //   }
-  //   //屁胡都不是，自然也不是大三元了
-  //   return false;
-  // }
+  /**只判断三个即可，这也包括了四个的情况！
+   * 大三元其实最好判断了，三个一样的zh,fa,di检测即可！
+   */
+  static HuisDaShanYuan(group_shoupai: GroupConstructor, na_pai: Pai): boolean {
+    return this._HuisWhichShanYuan(this.flat_shou_pai(group_shoupai), na_pai, 3);
+  }
+
 
   // //杠上开花，自己杠了个牌，然后胡了,要与玩家杠之后联系上。
   // static _HuisGangShangKai(shou_pai, na_pai, isSelfGang) {

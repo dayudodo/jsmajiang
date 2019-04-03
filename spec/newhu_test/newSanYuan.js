@@ -28,7 +28,7 @@ test("should 小三元", t => {
         selfPeng: [], shouPai: pais(str)
     };
     t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), true);
-    // t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
+    t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
 });
 test("group should 小三元", t => {
     let str = "fa b1 b1 b1 b2 b3 fa";
@@ -40,7 +40,7 @@ test("group should 小三元", t => {
         selfPeng: [], shouPai: pais(str)
     };
     t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), true);
-    // t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
+    t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
 });
 test("should 大三元", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh fa fa";
@@ -52,7 +52,7 @@ test("should 大三元", t => {
     selfPeng:[], shouPai: pais(str)
   };
   t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
-//   t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
+  t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
 });
 test("should 大三元, 三元有杠", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh zh fa fa";
@@ -64,7 +64,7 @@ test("should 大三元, 三元有杠", t => {
     selfPeng:[], shouPai: pais(str)
   };
   t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
-//   t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
+  t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
 });
 test("小三元碰碰胡", t => {
   let str = "t2 t2 di di";
@@ -76,19 +76,19 @@ test("小三元碰碰胡", t => {
     selfPeng:[], shouPai: pais(str)
   };
   t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), true);
-//   t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
+  t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
 });
-// test("should 大三元", t => {
-//   let str = "fa fa b1 b1 b1 b2 b3 di di di zh zh zh ";
-//   let na_pai = "fa";
-//   let group_shoupai = {
-//     anGang: [],
-//     mingGang: [],
-//     peng: [],
-//     selfPeng:[], shouPai: pais(str)
-//   };
-//   t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
-// });
+test("should 大三元2", t => {
+  let str = "fa fa b1 b1 b1 b2 b3 di di di zh zh zh ";
+  let na_pai = to_number("fa")
+  let group_shoupai = {
+    anGang: [],
+    mingGang: [],
+    peng: [],
+    selfPeng:[], shouPai: pais(str)
+  };
+  t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), true);
+});
 
 test("should not 大小三元", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh t1 t1";
@@ -100,7 +100,7 @@ test("should not 大小三元", t => {
     selfPeng:[], shouPai: pais(str)
   };
   t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
-//   t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
+  t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
 });
 test("should not 大小三元2", t => {
   let str = "b1 b1 b1 b2 b3 di di di zh zh zh t1 t1";
@@ -112,5 +112,5 @@ test("should not 大小三元2", t => {
     selfPeng:[], shouPai: pais(str)
   };
   t.is(NMajiangAlgo.HuisXiaoShanYuan(group_shoupai, na_pai), false);
-//   t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
+  t.is(NMajiangAlgo.HuisDaShanYuan(group_shoupai, na_pai), false);
 });
