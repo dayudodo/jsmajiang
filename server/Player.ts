@@ -391,7 +391,7 @@ export class Player {
     this.calculateHu();
   }
 
-  /**确定自碰牌，将三张pai从shouPai中移动到selfPeng之中！ */
+  /**亮牌时需要确定自碰牌，将三张pai从shouPai中移动到selfPeng之中！这样还有机会杠，并且不会展示 */
   confirm_selfPeng(pai: Pai) {
     this._mo_pai = null
     for (var i = 0; i < 3; i++) {

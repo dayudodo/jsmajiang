@@ -830,7 +830,7 @@ export class NMajiangAlgo {
     let countPai = shouPai.filter(pai => pai == pai_name);
     return countPai.length === 2;
   }
-  /**能杠吗？ */
+  /**能杠吗？用来检测group_shoupai中的shouPai, 也就是剩下没有碰、杠的牌 */
   static _canGang(shouPai: Array<Pai>, pai_name: Pai) {
     //判断手牌中是否有na_pai三张
     let countPai = shouPai.filter(pai => pai == pai_name);
@@ -839,7 +839,7 @@ export class NMajiangAlgo {
   /**
    * group牌能杠吗？
    * @param group_shoupai
-   * @param pai_name
+   * @param pai_name 能否杠此牌
    * @param isLiang 是否亮了
    * @param selfMo 是否是自己摸的牌
    */
@@ -853,31 +853,33 @@ export class NMajiangAlgo {
     // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
     //todo: 先碰再杠也可以，前端还要有所变化，让玩家选择要杠哪个牌！因为可能会有多个！
     //peng, selfPeng其实都可以先拿出来，等牌够了再去杠，不过很多有人会这么做吧。
-    let prepare_gang =
-      group_shoupai.peng.some(pai => group_shoupai.shouPai.includes(pai)) ||
-      group_shoupai.selfPeng.some(pai => group_shoupai.shouPai.includes(pai));
-    if (group_shoupai.selfPeng.includes(pai_name) || prepare_gang) {
+    // 要扛也只能扛一个，扛牌不可能多于1个
+    // let prepare_gang =
+    //   group_shoupai.peng.some(pai => pai == pai_name) ||
+    //   group_shoupai.selfPeng.some(pai => pai== pai_name);
+    let result = false
+    //不管啥情况 ，只要selfPeng里面包括这张pai_name, 那么就肯定可以扛！ 
+    //selfPeng只有在用户亮的时候才会出现！
+    if (group_shoupai.selfPeng.includes(pai_name)) {
+      if(!isLiang){
+        throw new Error(`已经有selfPeng了，居然还没有亮牌？${group_shoupai}`)
+      }
       return true;
     }
-    // if (isLiang) {
-    //   //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
-    //   if (group_shoupai.peng.includes(pai_name) && selfMo) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // } else {
-    //   //没有亮牌
-    //   //看手牌里面是否有三张牌！如果是自己摸的牌，那么需要先从手牌里面移走再去检测，因为player.mo_pai时已经添加进手牌了
-    //   if (selfMo) {
-    //     return NMajiangAlgo._canGang(group_shoupai.shouPai.remove(pai_name), pai_name);
-    //   } else {
-    //     return NMajiangAlgo._canGang(group_shoupai.shouPai, pai_name);
-    //   }
-    // }
-    if(selfMo){ //如果是自己摸牌，判断下碰里面还有手牌里面的。
-      
-
+    // 如果selfPeng里面不包括这张pai_name
+    if (isLiang) {
+      //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
+      if (group_shoupai.peng.includes(pai_name) && selfMo) {
+        result = true
+      } else {
+        result = false
+      }
+    } else {
+      //没有亮牌
+      //看手牌里面是否有三张牌！是否是自己摸的不重要，只要自己手里有三张就能扛
+      let countPai = group_shoupai.shouPai.filter(v=>v == pai_name).length
+      result = countPai === 3
     }
+    return result
   }
 }
