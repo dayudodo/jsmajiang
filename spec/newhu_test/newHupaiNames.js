@@ -77,7 +77,7 @@ test("七对 龙七对 屁胡", function (t) {
   t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["七对", "龙七对"]);
 });
 test("小三元 屁胡", function (t) {
-  let str = "fa b1 b1 b1 b2 b3 di di di zh zh zh fa";
+  let str = "b1 b1 b1 b2 b3 di di di zh zh zh fa fa";
   let na_pai = to_number("b1")
   let group_shoupai = {
     anGang: [],
@@ -87,7 +87,8 @@ test("小三元 屁胡", function (t) {
     shouPai: pais(str)
   };
   console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["小三元", "屁胡"]);
+  console.log(NMajiangAlgo.HupaiTypeCodeArr(group_shoupai, na_pai));
+  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["小三元", "暗四归","屁胡"]);
 });
 test("大三元 屁胡", function (t) {
   let str = "b1 b1 b2 b3 di di di zh zh zh fa fa fa";

@@ -251,8 +251,9 @@ class Player {
     set mo_pai(pai) {
         this._mo_pai = pai;
         this.after_mo_gang_dapai = false;
-        this.group_shou_pai.shouPai.push(pai);
-        this.group_shou_pai.shouPai.sort();
+        //扛或者碰之后就会清除_mo_pai,由他们来添加这张摸牌
+        // this.group_shou_pai.shouPai.push(pai);
+        // this.group_shou_pai.shouPai.sort();
     }
     get mo_pai() {
         return this._mo_pai;
@@ -279,16 +280,18 @@ class Player {
         return true;
     }
     confirm_peng(pai) {
+        this._mo_pai = null;
         this.group_shou_pai.peng.push(pai);
-        //从手牌中删除三张牌，因为把别人的牌当成是mo_pai加入了手牌！
+        //从手牌中删除二张牌，因为把别人的牌当成是mo_pai加入了手牌！
         //这样的话其它玩家liang, guo之后就知道碰玩家是摸牌的人了！
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.shouPai.sort();
     }
     /**杠别人的牌是明杠 */
     confirm_mingGang(pai) {
+        this._mo_pai = null;
         this.after_mo_gang_dapai = false;
         this.group_shou_pai.mingGang.push(pai);
         //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
@@ -298,7 +301,7 @@ class Player {
         this.group_shou_pai.selfPeng.remove(pai);
         //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
         //不过自己摸牌其实是属于暗杠的范围了
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 3; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.shouPai.sort();
@@ -307,10 +310,11 @@ class Player {
     }
     /**自己摸的牌就是暗杠了*/
     confirm_anGang(pai) {
+        this._mo_pai = null;
         this.after_mo_gang_dapai = false;
         //首先从手牌中删除四！张牌，
         // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 3; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.anGang.push(pai);
@@ -318,8 +322,9 @@ class Player {
         //杠之后需要重新算下胡牌！
         this.calculateHu();
     }
-    /**确定自碰牌，将pai从shouPai中移动到selfPeng之中！ */
+    /**亮牌时需要确定自碰牌，将三张pai从shouPai中移动到selfPeng之中！这样还有机会杠，并且不会展示 */
     confirm_selfPeng(pai) {
+        this._mo_pai = null;
         for (var i = 0; i < 3; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
@@ -337,6 +342,11 @@ class Player {
         //如果打的牌与摸牌相同，不用重复计算，就算是以前手牌里面有，其实也相当于是打了张摸牌
         let shouPaiChanged = pai_name != this.mo_pai;
         if (shouPaiChanged) {
+            //手牌变化也说明这张牌有用，需要看mo_pai是否为空
+            //不为空就需要把这张摸牌添加到shouPai中！如果已经碰了或者扛了，那么就不需要再次添加！
+            if (this._mo_pai != null) {
+                this.group_shou_pai.shouPai.push(this._mo_pai);
+            }
             this.group_shou_pai.shouPai.sort();
             this.calculateHu();
         }

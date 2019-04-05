@@ -131,12 +131,12 @@ export const HuPaiSheet = [
   { type: HuisGangShangKai, name: "杠上开花", multiple: 2 },
   { type: HuisGangShangPao, name: "杠上炮", multiple: 2 },
   { type: HuisPihu, name: "屁胡", multiple: 1 },
+  //特殊的两种胡牌算番，亮倒呢是要把所有本金的胡分翻倍！包括下面的杠其实都是不包括multiple的
+  { type: HuisZiMo, name: "自摸" },
   //自摸比较特殊，不算番，而是其它两家出钱！自摸是胡上加番的方式，并非基本胡
   //象屁胡、七对、碰碰、卡五星是基本的
   { type: HuisMingSiGui, name: "明四归", multiple: 2 },
   { type: HuisAnSiGui, name: "暗四归", multiple: 4 },
-  //特殊的两种胡牌算番，亮倒呢是要把所有本金的胡分翻倍！包括下面的杠其实都是不包括multiple的
-  { type: HuisZiMo, name: "自摸" },
   { type: HuisLiangDao, name: "亮倒" },
   //自己摸杠分两种情况，完全手起4个，两家出，如果碰了一个，后来再找一个，这叫擦炮。
   //放在胡里面是因为也算是一种胡，收钱了么

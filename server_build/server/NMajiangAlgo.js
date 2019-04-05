@@ -563,49 +563,6 @@ class NMajiangAlgo {
             return isHu;
         }
     }
-    // private static _HuisKaWuXing(shou_pai: Array<Pai>, na_pai: Pai, jijuhua: number) {
-    //   //就卡五星来说，大于3句话就肯定不是卡五了，最多三句话！四句话就没办法胡卡五，只能听将！
-    //   if (jijuhua > 3) {
-    //     return false;
-    //   }
-    //   let result: Array<Pai> = getArr(shou_pai)
-    //     .concat(na_pai)
-    //     .sort();
-    //   // if (result.length < 14) {
-    //   //   throw new Error(`shou_pai${shou_pai} must larger than 14 values`);
-    //   // }
-    //   //胡牌但是并不是碰胡也不是将牌，就是卡五星,或者胡牌并且两边有4，5，也是卡五星，如果是45556的情况？
-    //   if (na_pai[1] != "5") {
-    //     return false;
-    //   } else {
-    //     let four = na_pai[0] + "4";
-    //     let six = na_pai[0] + "6";
-    //     let is_huwu = result.includes(four) && result.includes(six);
-    //     //去掉这三张牌，看剩下的是否符合手牌规则
-    //     if (is_huwu) {
-    //       let after_delete_kawa = result
-    //         .remove(na_pai)
-    //         .remove(four)
-    //         .remove(six)
-    //         .sort();
-    //       // console.log(after_delete_kawa);
-    //       return this._jiangNABC(after_delete_kawa, jijuhua);
-    //     } else {
-    //       return false;
-    //     }
-    //   }
-    // }
-    // //只能重复两次，不能重复三次！
-    // static isRepeatTwiceOnly(shou_pai_str, str) {
-    //   if (typeof shou_pai_str != "string") {
-    //     throw new Error(chalk.red("isRepeatTwiceOnly首参数必须是字符串！"));
-    //   }
-    //   let m = shou_pai_str.match(new RegExp(`(${str})+`));
-    //   if (m && m[0]) {
-    //     return m[0].length == 4; //如果不等于4说明并不是重复了2次！
-    //   }
-    //   return false;
-    // }
     /**是否是小三元
      * 小三元是zh, fa, di中有一对将，其它为刻子，比如zh zh, fa fa fa, di di di。。。就是小三元了
      */
@@ -655,22 +612,22 @@ class NMajiangAlgo {
     static HuisDaShanYuan(group_shoupai, na_pai) {
         return this._HuisWhichShanYuan(this.flat_shou_pai(group_shoupai), na_pai, 3);
     }
-    // //杠上开花，自己杠了个牌，然后胡了,要与玩家杠之后联系上。
-    // static _HuisGangShangKai(shou_pai, na_pai, isSelfGang) {
-    //   //杠了之后才会去检测是否胡，还得检测是哪种胡！
-    //   if (isSelfGang) {
-    //     //还得知道是哪种胡！但肯定不会是七对类型的。返回的其实就应该是整个胡牌的情况，杠上开会在胡牌的基础上多算番
-    //     return this.HupaiTypeCodeArr(shou_pai, na_pai);
-    //   }
-    //   return false;
-    // }
-    // //杠上炮，别人打的杠牌，你可以胡, other_pai看是否是别人打的。
-    // static HuisGangShangPao(shou_pai, na_pai, isOtherDaGangpai) {
-    //   if (isOtherDaGangpai) {
-    //     return this.HupaiTypeCodeArr(shou_pai, na_pai);
-    //   }
-    //   return false;
-    // }
+    //杠上开花，自己杠了个牌，然后胡了,要与玩家杠之后联系上。
+    static _HuisGangShangKai(group_shoupai, na_pai, isSelfGang) {
+        //杠了之后才会去检测是否胡，还得检测是哪种胡！
+        if (isSelfGang) {
+            //还得知道是哪种胡！但肯定不会是七对类型的。返回的其实就应该是整个胡牌的情况，杠上开会在胡牌的基础上多算番
+            return this.HupaiTypeCodeArr(group_shoupai, na_pai);
+        }
+        return false;
+    }
+    //杠上炮，别人打的杠牌，你可以胡, other_pai看是否是别人打的。
+    static HuisGangShangPao(group_shoupai, na_pai, isOtherDaGangpai) {
+        if (isOtherDaGangpai) {
+            return this.HupaiTypeCodeArr(group_shoupai, na_pai);
+        }
+        return false;
+    }
     /**明四归 */
     static HuisMingSiGui(group_shou_pai, na_pai, is_liang) {
         if (this.HuisPihu(group_shou_pai, na_pai)) {
@@ -756,6 +713,112 @@ class NMajiangAlgo {
         this.HupaiTypeCodeArr(group_shoupai, na_pai).forEach(item => {
             result.push(config.HuPaiSheet[item].name);
         });
+        return result;
+    }
+    /**胡牌文字描述 */
+    static HuPaiNamesFrom(hupaicodeArr) {
+        return hupaicodeArr.map(code => {
+            // return config.HuPaiSheet[item].name;
+            return config.HuPaiSheet.find(item => item.type == code).name;
+        });
+    }
+    static GangNamesFrom(gangCodeArr, is_win) {
+        let result = [];
+        let name;
+        gangCodeArr.forEach(code => {
+            if (is_win) {
+                name = config.GangWinSheet.find(item => item.type === code).name;
+                result.push(name);
+            }
+            else {
+                name = config.GangLoseSheet.find(item => item.type === code).name;
+                result.push(name);
+            }
+        });
+        return result;
+    }
+    // /**放炮文字描述 */
+    // static LoseNamesFrom(loseData: any[]): string[] {
+    //   let loseCodesArr = loseData.map(item => item.type);
+    //   return loseCodesArr.map(code => {
+    //     return config.GangLoseSheet.find(item => item.type == code).name;
+    //   });
+    // }
+    /**通过胡的类型码数组来判断是否是大胡*/
+    static isDaHu(hupaicodeArr) {
+        if (!hupaicodeArr) {
+            return false;
+        }
+        if (hupaicodeArr.includes(config.IsYise) ||
+            hupaicodeArr.includes(config.HuisKaWuXing) ||
+            hupaicodeArr.includes(config.HuisQidui) ||
+            hupaicodeArr.includes(config.HuisNongQiDui) ||
+            hupaicodeArr.includes(config.HuisPengpeng) ||
+            hupaicodeArr.includes(config.HuisXiaoShanYuan) ||
+            hupaicodeArr.includes(config.HuisDaShanYuan) ||
+            hupaicodeArr.includes(config.HuisMingSiGui) ||
+            hupaicodeArr.includes(config.HuisAnSiGui)) {
+            return true;
+        }
+        return false;
+    }
+    /**能碰吗？ */
+    static canPeng(shouPai, pai_name, isLiang) {
+        //如果玩家已经亮牌，就不再检测手牌里面是否能碰了！
+        if (isLiang) {
+            return false;
+        }
+        //判断下玩家手牌中是否有两张na_pai即可
+        let countPai = shouPai.filter(pai => pai == pai_name);
+        return countPai.length === 2;
+    }
+    /**能杠吗？用来检测group_shoupai中的shouPai, 也就是剩下没有碰、杠的牌 */
+    static _canGang(shouPai, pai_name) {
+        //判断手牌中是否有na_pai三张
+        let countPai = shouPai.filter(pai => pai == pai_name);
+        return countPai.length === 3;
+    }
+    /**
+     * group牌能杠吗？
+     * @param group_shoupai
+     * @param pai_name 能否杠此牌
+     * @param isLiang 是否亮了
+     * @param selfMo 是否是自己摸的牌
+     */
+    static canGang(group_shoupai, pai_name, isLiang, selfMo = false) {
+        //如果直接用flat_shou_pai来进行判断，其实还是有问题的，比如玩家碰了b1, 但是手牌里面还有1个是用于另一手牌！
+        // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
+        //todo: 先碰再杠也可以，前端还要有所变化，让玩家选择要杠哪个牌！因为可能会有多个！
+        //peng, selfPeng其实都可以先拿出来，等牌够了再去杠，不过很多有人会这么做吧。
+        // 要扛也只能扛一个，扛牌不可能多于1个
+        // let prepare_gang =
+        //   group_shoupai.peng.some(pai => pai == pai_name) ||
+        //   group_shoupai.selfPeng.some(pai => pai== pai_name);
+        let result = false;
+        //不管啥情况 ，只要selfPeng里面包括这张pai_name, 那么就肯定可以扛！ 
+        //selfPeng只有在用户亮的时候才会出现！
+        if (group_shoupai.selfPeng.includes(pai_name)) {
+            if (!isLiang) {
+                throw new Error(`已经有selfPeng了，居然还没有亮牌？${group_shoupai}`);
+            }
+            return true;
+        }
+        // 如果selfPeng里面不包括这张pai_name
+        if (isLiang) {
+            //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
+            if (group_shoupai.peng.includes(pai_name) && selfMo) {
+                result = true;
+            }
+            else {
+                result = false;
+            }
+        }
+        else {
+            //没有亮牌
+            //看手牌里面是否有三张牌！是否是自己摸的不重要，只要自己手里有三张就能扛
+            let countPai = group_shoupai.shouPai.filter(v => v == pai_name).length;
+            result = countPai === 3;
+        }
         return result;
     }
 }
