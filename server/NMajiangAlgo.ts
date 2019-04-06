@@ -822,7 +822,8 @@ export class NMajiangAlgo {
 
   /**能碰吗？ */
   static canPeng(shouPai: Array<Pai>, pai_name: Pai, isLiang: boolean) {
-    //如果玩家已经亮牌，就不再检测手牌里面是否能碰了！
+    //如果玩家已经亮牌，就不再检测手牌里面是否能碰了！如果有三张，玩家可以选择成为selfPeng，或者亮牌
+    // 这样也不能再碰
     if (isLiang) {
       return false;
     }
@@ -830,7 +831,7 @@ export class NMajiangAlgo {
     let countPai = shouPai.filter(pai => pai == pai_name);
     return countPai.length === 2;
   }
-  /**能杠吗？用来检测group_shoupai中的shouPai, 也就是剩下没有碰、杠的牌 */
+  /**检测group_shoupai中的shouPai是否能扛, 也就是检测剩下的没有碰、杠的牌 */
   static _canGang(shouPai: Array<Pai>, pai_name: Pai) {
     //判断手牌中是否有na_pai三张
     let countPai = shouPai.filter(pai => pai == pai_name);
@@ -841,7 +842,7 @@ export class NMajiangAlgo {
    * @param group_shoupai
    * @param pai_name 能否杠此牌
    * @param isLiang 是否亮了
-   * @param selfMo 是否是自己摸的牌
+   * @param selfMo 是否是自己摸的牌，默认非自己摸牌
    */
   static canGang(
     group_shoupai: GroupConstructor,
@@ -861,25 +862,24 @@ export class NMajiangAlgo {
     //不管啥情况 ，只要selfPeng里面包括这张pai_name, 那么就肯定可以扛！ 
     //selfPeng只有在用户亮的时候才会出现！
     if (group_shoupai.selfPeng.includes(pai_name)) {
-      if(!isLiang){
+      if (!isLiang) {
         throw new Error(`已经有selfPeng了，居然还没有亮牌？${group_shoupai}`)
       }
       return true;
     }
     // 如果selfPeng里面不包括这张pai_name
-    if (isLiang) {
-      //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
-      if (group_shoupai.peng.includes(pai_name) && selfMo) {
-        result = true
-      } else {
-        result = false
-      }
-    } else {
+    //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！不管有没有亮！
+    if (group_shoupai.peng.includes(pai_name) && selfMo) {
+      return true;
+    }
+    if (!isLiang) {
       //没有亮牌
       //看手牌里面是否有三张牌！是否是自己摸的不重要，只要自己手里有三张就能扛
-      let countPai = group_shoupai.shouPai.filter(v=>v == pai_name).length
+      let countPai = group_shoupai.shouPai.filter(v => v == pai_name).length
       result = countPai === 3
     }
+    //最后，手里面是否已经有四张相同的牌了？
+    
     return result
   }
 }
