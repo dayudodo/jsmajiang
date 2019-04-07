@@ -70,7 +70,8 @@ class NMajiangAlgo {
         if (pos > -1) {
             remainArr.splice(pos, 1);
             pos = remainArr.indexOf(test_arr[0] + 2); //会找到4
-            if (pos > -1) { //找到4就删除
+            if (pos > -1) {
+                //找到4就删除
                 remainArr.splice(pos, 1);
                 // console.log("remainArr", remainArr);
                 return { remainArr: remainArr };
@@ -91,8 +92,7 @@ class NMajiangAlgo {
         if (test_arr.length < 3) {
             return false;
         }
-        let result = test_arr[0] == test_arr[1]
-            && test_arr[1] == test_arr[2];
+        let result = test_arr[0] == test_arr[1] && test_arr[1] == test_arr[2];
         if (result) {
             return { remainArr: test_arr.slice(3, test_arr.length) };
         }
@@ -107,9 +107,9 @@ class NMajiangAlgo {
         if (test_arr.length < 4) {
             return false;
         }
-        let result = test_arr[0] == test_arr[1]
-            && test_arr[1] == test_arr[2]
-            && test_arr[2] == test_arr[3];
+        let result = test_arr[0] == test_arr[1] &&
+            test_arr[1] == test_arr[2] &&
+            test_arr[2] == test_arr[3];
         if (result) {
             return { remainArr: test_arr.slice(4, test_arr.length) };
         }
@@ -123,7 +123,8 @@ class NMajiangAlgo {
         if (_.isEmpty(shouPai)) {
             return first ? false : true;
         }
-        else if (shouPai.length < 3) { //不为空，但是少于3张牌，肯定不是几句话,算法提速！
+        else if (shouPai.length < 3) {
+            //不为空，但是少于3张牌，肯定不是几句话,算法提速！
             return false;
         }
         shouPai = _.orderBy(shouPai); //每次都要排序！防止不连续的情况
@@ -195,11 +196,13 @@ class NMajiangAlgo {
         let cloneShou = _.orderBy(group_shoupai.shouPai.concat(na_pai));
         //如果是单挑将呢？比如全部都碰了，现在只胡一张将牌？所以要先检查有几句话
         if (this.getJijuhua(group_shoupai) == 4) {
-            if (group_shoupai.shouPai[0] == na_pai) { //单胡将
+            if (group_shoupai.shouPai[0] == na_pai) {
+                //单胡将
                 return true;
             }
         }
-        else { //少于4句话
+        else {
+            //少于4句话
             return this.jiangJiJuhua(cloneShou);
         }
     }
@@ -271,9 +274,9 @@ class NMajiangAlgo {
     static exits4A(shouPai) {
         for (let i = 0; i < shouPai.length; i++) {
             const pai = shouPai[i];
-            if (pai == shouPai[i + 1]
-                && shouPai[i + 1] == shouPai[i + 2]
-                && shouPai[i + 2] == shouPai[i + 3]) {
+            if (pai == shouPai[i + 1] &&
+                shouPai[i + 1] == shouPai[i + 2] &&
+                shouPai[i + 2] == shouPai[i + 3]) {
                 return true;
             }
         }
@@ -349,7 +352,8 @@ class NMajiangAlgo {
         let flatShou = this.flat_shou_pai(group_shoupai);
         let cloneShouPai = _.orderBy(_.clone(flatShou.concat(na_pai)));
         // console.log(cloneShouPai);
-        if (cloneShouPai.length < 14) { //不够14张，不可能胡！
+        if (cloneShouPai.length < 14) {
+            //不够14张，不可能胡！
             console.warn("牌不够14张：", flatShou);
             return false;
         }
@@ -516,7 +520,8 @@ class NMajiangAlgo {
             throw new Error("na_pai并非是数值");
         }
         let isHu = false;
-        if (na_pai != 5 && na_pai != 15) { //是否是5筒或者5条，不是就肯定不是卡五星
+        if (na_pai != 5 && na_pai != 15) {
+            //是否是5筒或者5条，不是就肯定不是卡五星
             return false;
         }
         else {
@@ -530,7 +535,8 @@ class NMajiangAlgo {
                 newClone.splice(index, 2);
                 //删除卡三星的三张牌
                 index = newClone.indexOf(na_pai - 1);
-                if (index > -1) { //如果没有3，那么肯定不是卡王星
+                if (index > -1) {
+                    //如果没有3，那么肯定不是卡王星
                     newClone.splice(index, 1);
                 }
                 else {
@@ -594,10 +600,12 @@ class NMajiangAlgo {
         if (values[0] == which && values[1] > 2 && values[2] > 2) {
             //得到所有的非字牌，这时候不需要再去判断将了，因为小三元里面肯定有一个将！
             let remainPais = cloneShouPai.filter(v => v < 30);
-            if (which == 2) { //小三元只需要检测剩下的牌是否是几句话即可！
+            if (which == 2) {
+                //小三元只需要检测剩下的牌是否是几句话即可！
                 return this.isJiJuhua(remainPais);
             }
-            else if (which == 3) { //大三元要检测剩下带将的几句话
+            else if (which == 3) {
+                //大三元要检测剩下带将的几句话
                 return this.jiangJiJuhua(remainPais);
             }
         }
@@ -764,7 +772,8 @@ class NMajiangAlgo {
     }
     /**能碰吗？ */
     static canPeng(shouPai, pai_name, isLiang) {
-        //如果玩家已经亮牌，就不再检测手牌里面是否能碰了！
+        //如果玩家已经亮牌，就不再检测手牌里面是否能碰了！如果有三张，玩家可以选择成为selfPeng，或者亮牌
+        // 这样也不能再碰
         if (isLiang) {
             return false;
         }
@@ -772,7 +781,7 @@ class NMajiangAlgo {
         let countPai = shouPai.filter(pai => pai == pai_name);
         return countPai.length === 2;
     }
-    /**能杠吗？用来检测group_shoupai中的shouPai, 也就是剩下没有碰、杠的牌 */
+    /**检测group_shoupai中的shouPai是否能扛, 也就是检测剩下的没有碰、杠的牌 */
     static _canGang(shouPai, pai_name) {
         //判断手牌中是否有na_pai三张
         let countPai = shouPai.filter(pai => pai == pai_name);
@@ -783,42 +792,30 @@ class NMajiangAlgo {
      * @param group_shoupai
      * @param pai_name 能否杠此牌
      * @param isLiang 是否亮了
-     * @param selfMo 是否是自己摸的牌
+     * @param selfMo 是否是自己摸的牌，默认非自己摸牌
      */
     static canGang(group_shoupai, pai_name, isLiang, selfMo = false) {
-        //如果直接用flat_shou_pai来进行判断，其实还是有问题的，比如玩家碰了b1, 但是手牌里面还有1个是用于另一手牌！
-        // 如果考虑吃的情况，可能是需要用下面的办法，如果只是卡五星，貌似只用flat也可以了
-        //todo: 先碰再杠也可以，前端还要有所变化，让玩家选择要杠哪个牌！因为可能会有多个！
-        //peng, selfPeng其实都可以先拿出来，等牌够了再去杠，不过很多有人会这么做吧。
-        // 要扛也只能扛一个，扛牌不可能多于1个
-        // let prepare_gang =
-        //   group_shoupai.peng.some(pai => pai == pai_name) ||
-        //   group_shoupai.selfPeng.some(pai => pai== pai_name);
         let result = false;
-        //不管啥情况 ，只要selfPeng里面包括这张pai_name, 那么就肯定可以扛！ 
+        //不管啥情况 ，只要selfPeng里面包括这张pai_name, 那么就肯定可以扛！
         //selfPeng只有在用户亮的时候才会出现！
         if (group_shoupai.selfPeng.includes(pai_name)) {
-            if (!isLiang) {
-                throw new Error(`已经有selfPeng了，居然还没有亮牌？${group_shoupai}`);
-            }
+            // if (!isLiang) {
+            //   throw new Error(`已经有selfPeng了，居然还没有亮牌？${group_shoupai}`)
+            // }
             return true;
         }
         // 如果selfPeng里面不包括这张pai_name
-        if (isLiang) {
-            //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！！
-            if (group_shoupai.peng.includes(pai_name) && selfMo) {
-                result = true;
-            }
-            else {
-                result = false;
-            }
+        //如果亮牌了那么碰里面包括自己摸的牌，说明是个擦炮！不管有没有亮！
+        if (group_shoupai.peng.includes(pai_name) && selfMo) {
+            return true;
         }
-        else {
+        if (!isLiang) {
             //没有亮牌
             //看手牌里面是否有三张牌！是否是自己摸的不重要，只要自己手里有三张就能扛
             let countPai = group_shoupai.shouPai.filter(v => v == pai_name).length;
             result = countPai === 3;
         }
+        //最后，手里面是否已经有四张相同的牌了？
         return result;
     }
 }

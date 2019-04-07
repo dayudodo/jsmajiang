@@ -230,7 +230,8 @@ class Room {
         else if (ignore_filter) {
             //哪怕是忽略过滤器，sidePlayer也不能显示出其它人的selfPeng及暗杠
             player_data["group_shou_pai"]["selfPeng"] = [];
-            player_data["group_shou_pai"]["selfPengCount"] = player.group_shou_pai.selfPeng.length;
+            player_data["group_shou_pai"]["selfPengCount"] =
+                player.group_shou_pai.selfPeng.length;
             player_data["group_shou_pai"]["anGang"] = [];
             player_data["group_shou_pai"]["anGangCount"] = player.group_shou_pai.anGang.length;
             return player_data;
@@ -518,6 +519,7 @@ class Room {
             console.dir(this.dapai_player.gang_lose_data);
         }
         else {
+            ;
             `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`;
         }
     }
@@ -993,7 +995,7 @@ class Room {
         //通知所有人房主解散了
         this.broadcast(g_events.server_dissolve, {});
         socket.disconnect();
-        return 'ok';
+        return "ok";
     }
 }
 exports.Room = Room;

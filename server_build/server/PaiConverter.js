@@ -8,7 +8,7 @@ var ZHIPAI = ["zh", "fa", "di"];
 //数字麻将表，加速版本
 var N_BING = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 var N_TIAO = [11, 12, 13, 14, 15, 16, 17, 18, 19];
-var N_WAN = [21, 22, 23, 24, 25, 26, 27, 28, 29];
+// var N_WAN = [21, 22, 23, 24, 25, 26, 27, 28, 29];
 var N_ZHIPAI = [31, 33, 35];
 class PaiConvertor {
     static getStrArr(strs) {

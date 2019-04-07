@@ -5,10 +5,10 @@ var TIAO = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"];
 var ZHIPAI = ["zh", "fa", "di"];
 
 //数字麻将表，加速版本
-var N_BING = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-var N_TIAO = [11, 12, 13, 14, 15, 16, 17, 18, 19]
-var N_WAN = [21, 22, 23, 24, 25, 26, 27, 28, 29]
-var N_ZHIPAI = [31, 33, 35]
+var N_BING = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+var N_TIAO = [11, 12, 13, 14, 15, 16, 17, 18, 19];
+// var N_WAN = [21, 22, 23, 24, 25, 26, 27, 28, 29];
+var N_ZHIPAI = [31, 33, 35];
 
 export class PaiConvertor {
   static getStrArr(strs): Array<string> {
@@ -50,16 +50,16 @@ export class PaiConvertor {
     }
   }
   static ToNumberArr(strs): number[] {
-    let strArr = this.getStrArr(strs)
+    let strArr = this.getStrArr(strs);
     if (_.isEmpty(strArr)) {
-      return []
+      return [];
     }
     return strArr.map(item => {
       return this.ToNumber(item);
     });
   }
   static pais(strs): number[] {
-    return this.ToNumberArr(strs)
+    return this.ToNumberArr(strs);
   }
   static ToShou(str: string): string {
     return `shou_${this.ToNumber(str)}.png`;
