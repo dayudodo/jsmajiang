@@ -425,6 +425,10 @@ export class Player {
   /**计算各种胡牌的状态 */
   calculateHu() {
     //只要手牌改变，其实都是需要重新计算胡牌！
+    //todo: 如果已经亮牌，则不再继续计算胡牌，但是要确认你首先打了一张牌之后再选择亮
+    // if(this.is_liang){ 
+    //   return
+    // }
     let shoupai_changed = true;
     if (shoupai_changed) {
       this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai, this.is_liang);

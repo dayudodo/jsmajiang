@@ -43,15 +43,15 @@ Array.prototype.equalArrays = function(b) {
   return true; // Otherwise they are equal
 };
 
-/**获取当前牌的类型，比如饼、条、万、字牌,现在数值不确定，所以要用first, last。 */
+/**获取当前牌的类型，比如饼、条、万、字牌 */
 function getMJType(mjNumber) {
-  if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
+  if (mjNumber >= 1 && mjNumber <= 9) {
     //饼
     return config.TYPE_BING;
-  } else if (mjNumber >= _.first(TIAO) && mjNumber <= _.last(TIAO)) {
+  } else if (mjNumber >= 11 && mjNumber <= 19) {
     //条
     return config.TYPE_TIAO;
-  } else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
+  } else if (mjNumber >= 31 && mjNumber <= 35) {
     //字牌
     return config.TYPE_ZHIPAI;
   }
