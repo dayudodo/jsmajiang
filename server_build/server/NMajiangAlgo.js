@@ -28,17 +28,17 @@ Array.prototype.equalArrays = function (b) {
             return false; // If any differ, arrays not equal
     return true; // Otherwise they are equal
 };
-/**获取当前牌的类型，比如饼、条、万、字牌,现在数值不确定，所以要用first, last。 */
+/**获取当前牌的类型，比如饼、条、万、字牌 */
 function getMJType(mjNumber) {
-    if (mjNumber >= _.first(BING) && mjNumber <= _.last(BING)) {
+    if (mjNumber >= 1 && mjNumber <= 9) {
         //饼
         return config.TYPE_BING;
     }
-    else if (mjNumber >= _.first(TIAO) && mjNumber <= _.last(TIAO)) {
+    else if (mjNumber >= 11 && mjNumber <= 19) {
         //条
         return config.TYPE_TIAO;
     }
-    else if (mjNumber >= _.first(ZHIPAI) && mjNumber <= _.last(ZHIPAI)) {
+    else if (mjNumber >= 31 && mjNumber <= 35) {
         //字牌
         return config.TYPE_ZHIPAI;
     }
@@ -270,17 +270,20 @@ class NMajiangAlgo {
         }
         return count == 7;
     }
-    /**是否存在4A */
-    static exits4A(shouPai) {
-        for (let i = 0; i < shouPai.length; i++) {
-            const pai = shouPai[i];
-            if (pai == shouPai[i + 1] &&
-                shouPai[i + 1] == shouPai[i + 2] &&
-                shouPai[i + 2] == shouPai[i + 3]) {
-                return true;
+    /**统计一下有几个4A，分别是什么 */
+    static count4A(shouPai) {
+        let result = [];
+        let count = _.countBy(shouPai, n => n);
+        for (let i in count) {
+            if (count[i] == 4) {
+                result.push(i);
             }
         }
-        return false;
+        return result;
+    }
+    /**是否存在4A */
+    static exits4A(shouPai) {
+        return !_.isEmpty(this.count4A(shouPai));
     }
     /**是否是龙七对，也就是里面有个4A */
     static HuisNongQiDui(group_shoupai, na_pai) {
@@ -448,48 +451,43 @@ class NMajiangAlgo {
             hupai_dict: hupai_dict
         };
     }
-    // /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
-    // static HuWhatPai(shou_pai: Array<Pai>): hupaiConstructor {
-    //   let result: Array<Pai> = getArr(shou_pai);
-    //   let hupai_dict = {};
-    //   for (var i = 0; i < all_single_pai.length; i++) {
-    //     let single_pai = all_single_pai[i];
-    //     let newShouPai: Array<Pai> = result.concat(single_pai).sort();
-    //     // console.log(newstr)
-    //     let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
-    //     if (isFiveRepeat) {
-    //       continue;
-    //       // console.log(newstr.match(/(..)\1\1\1\1/g))
-    //       // throw new Error('irregular Pai, record in database, maybe Hacker.')
-    //       //貌似屁胡已经包括了碰碰胡，还需要整理下，为啥龙七对不能包括在内呢？怪事儿。
-    //     } else {
-    //       let hupai_typesCode = this.HupaiTypeCodeArr(
-    //         { anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: result },
-    //         single_pai
-    //       );
-    //       if (!_.isEmpty(hupai_typesCode)) {
-    //         hupai_dict[single_pai] = hupai_typesCode;
-    //       }
-    //     }
-    //   }
-    //   let all_hupai_zhang = _.keys(hupai_dict);
-    //   let flatten_hupai_data: Array<number> = _.flatten(_.values(hupai_dict));
-    //   let all_hupai_typesCode: Array<number> = _.uniq(flatten_hupai_data);
-    //   //如果hupai_data为空，sortBy也会返回空
-    //   //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
-    //   if (_.isEmpty(all_hupai_zhang)) {
-    //     return {
-    //       all_hupai_zhang: [],
-    //       all_hupai_typesCode: [],
-    //       hupai_dict: {}
-    //     };
-    //   }
-    //   return {
-    //     all_hupai_zhang: all_hupai_zhang.sort(),
-    //     all_hupai_typesCode: all_hupai_typesCode.sort(),
-    //     hupai_dict: hupai_dict
-    //   };
-    // }
+    /**胡什么牌，不仅要知道胡什么牌，还得知道是什么胡！*/
+    static HuWhatPai(shou_pai) {
+        let hupai_dict = {};
+        let newShouPai = _.clone(shou_pai);
+        for (var i = 0; i < all_single_pai.length; i++) {
+            let na_pai = all_single_pai[i];
+            // 是否已经存在4个single_pai? 如果存在，肯定不会胡这张牌！
+            let already4A = this.count4A(shou_pai).includes(na_pai);
+            if (already4A) {
+                continue;
+            }
+            else {
+                let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: newShouPai }, na_pai);
+                if (!_.isEmpty(hupai_typesCode)) {
+                    // 保存胡牌及胡牌类型到hupai_dict中
+                    hupai_dict[na_pai] = hupai_typesCode;
+                }
+            }
+        }
+        let all_hupai_zhang = _.keys(hupai_dict).map(n => parseInt(n));
+        let flatten_hupai_data = _.flatten(_.values(hupai_dict));
+        let all_hupai_typesCode = _.uniq(flatten_hupai_data);
+        //如果hupai_data为空，sortBy也会返回空
+        //哪怕是个空，也要返回其基本的数据结构，因为可能会有数组的判断在里面
+        if (_.isEmpty(all_hupai_zhang)) {
+            return {
+                all_hupai_zhang: [],
+                all_hupai_typesCode: [],
+                hupai_dict: {}
+            };
+        }
+        return {
+            all_hupai_zhang: all_hupai_zhang.sort(),
+            all_hupai_typesCode: all_hupai_typesCode.sort(),
+            hupai_dict: hupai_dict
+        };
+    }
     /**group手牌中只有手牌，anGang, mingGang, peng都为空 */
     static isOnlyShouPai(group_shoupai) {
         return (group_shoupai.anGang.length == 0 &&
