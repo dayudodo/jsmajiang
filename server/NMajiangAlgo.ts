@@ -25,14 +25,14 @@ declare global {
 }
 
 /**删除找到的第一个元素 */
-Array.prototype.remove = function(val) {
+Array.prototype.remove = function (val) {
   var index = this.indexOf(val)
   if (index > -1) {
     this.splice(index, 1)
   }
   return this
 }
-Array.prototype.equalArrays = function(b) {
+Array.prototype.equalArrays = function (b) {
   if (this.length != b.length) return false // Different-size arrays not equal
   for (
     var i = 0;
@@ -343,12 +343,11 @@ export class NMajiangAlgo {
 
   /**判断是否是同一花色 */
   private static _isYise(test_arr: Array<Pai>): boolean {
-    let cloneArr = _.clone(test_arr)
-    let firstType = getMJType(cloneArr[0])
+    let firstType = getMJType(test_arr[0])
     // console.log("cloneArr, firstType", cloneArr, firstType);
     // console.log("alltypes", cloneArr.map(item=>getMJType(item)));
-    for (let i = 1; i < cloneArr.length; i++) {
-      const thisType = getMJType(cloneArr[i])
+    for (let i = 1; i < test_arr.length; i++) {
+      const thisType = getMJType(test_arr[i])
       if (thisType == firstType) {
         continue
       } else {
@@ -497,8 +496,8 @@ export class NMajiangAlgo {
       }
     }
     return {
-      all_hupai_zhang: all_hupai_zhang.sort(),
-      all_hupai_typesCode: all_hupai_typesCode.sort(),
+      all_hupai_zhang: _.orderBy(all_hupai_zhang),
+      all_hupai_typesCode: _.orderBy(all_hupai_typesCode),
       hupai_dict: hupai_dict
     }
   }
@@ -546,8 +545,8 @@ export class NMajiangAlgo {
       }
     }
     return {
-      all_hupai_zhang: all_hupai_zhang.sort(),
-      all_hupai_typesCode: all_hupai_typesCode.sort(),
+      all_hupai_zhang: _.orderBy(all_hupai_zhang),
+      all_hupai_typesCode: _.orderBy(all_hupai_typesCode),
       hupai_dict: hupai_dict
     }
   }
@@ -602,21 +601,25 @@ export class NMajiangAlgo {
         newClone.splice(index, 2)
         //删除卡三星的三张牌
         index = newClone.indexOf(na_pai - 1)
-        if (index > -1) {
-          //如果没有3，那么肯定不是卡王星
+        if (index > -1) { //如果没有3，那么肯定不是卡王星
           newClone.splice(index, 1)
         } else {
           return false
         }
         index = newClone.indexOf(na_pai)
-        newClone.splice(index, 1)
+        if (index > -1) { //5也可能是将，删除后就找不到喽！
+          newClone.splice(index, 1)
+        } else {
+          return false
+        }
         index = newClone.indexOf(na_pai + 1)
         if (index > -1) {
           newClone.splice(index, 1)
         } else {
           return false
         }
-        // console.log("删除卡三张后：", newClone);
+
+        // console.log("将，删除卡三张后：", jiang, newClone);
         //将删除掉，卡五星也删除之后为空，类似于b1 b2 t4 t5 t6这种特殊情况也是卡五星
         if (newClone.length == 0) {
           isHu = true
@@ -770,40 +773,42 @@ export class NMajiangAlgo {
     na_pai: Pai,
     is_liang = false
   ): Array<number> {
-    let _huArr = []
+    let huArr = []
 
     if (this.HuisKaWuXing(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisKaWuXing)
+      huArr.push(config.HuisKaWuXing)
     }
     if (this.HuisQiDui(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisQidui)
+      huArr.push(config.HuisQidui)
     }
     if (this.HuisNongQiDui(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisNongQiDui)
+      huArr.push(config.HuisNongQiDui)
     }
     if (this.HuisPengPeng(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisPengpeng)
+      huArr.push(config.HuisPengpeng)
     }
     if (this.HuisXiaoShanYuan(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisXiaoShanYuan)
+      huArr.push(config.HuisXiaoShanYuan)
     }
     if (this.HuisDaShanYuan(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisDaShanYuan)
+      huArr.push(config.HuisDaShanYuan)
     }
     if (this.HuisMingSiGui(group_shoupai, na_pai, is_liang)) {
-      _huArr.push(config.HuisMingSiGui)
+      huArr.push(config.HuisMingSiGui)
     }
     if (this.HuisAnSiGui(group_shoupai, na_pai, is_liang)) {
-      _huArr.push(config.HuisAnSiGui)
+      huArr.push(config.HuisAnSiGui)
     }
     if (this.HuisPihu(group_shoupai, na_pai)) {
-      _huArr.push(config.HuisPihu)
+      huArr.push(config.HuisPihu)
     }
-    //如果有胡，再去检测是否是清一色
-    if (!_.isEmpty(_huArr) && this.IsYise(group_shoupai, na_pai)) {
-      _huArr.push(config.IsYise)
+    //如果有胡，才去检测是否是清一色
+    if (!_.isEmpty(huArr) && this.IsYise(group_shoupai, na_pai)) {
+      huArr.push(config.IsYise)
     }
-    return _.orderBy(_huArr) 
+    // console.log(_huArr.map(n=>typeof n));
+    
+    return _.orderBy(huArr)
   }
   /**获取到所有胡牌类型的名称 */
   static HuPaiNames(group_shoupai: GroupConstructor, na_pai: Pai) {

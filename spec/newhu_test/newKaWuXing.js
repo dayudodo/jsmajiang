@@ -9,6 +9,8 @@ function pais(strs) {
 function to_number(str){
   return PaiConvertor.ToNumber(str)
 }
+
+
 test("卡五星", function (t) {
   let str = "b1 b1 b1 b2 b2 b2 b4 b6 t3 t3 t3 t5 t5";
   let na_pai = to_number("b5")
@@ -21,6 +23,7 @@ test("卡五星", function (t) {
   };
   t.is(NMajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), true);
 });
+
 test("三杠卡五星", function (t) {
   let str = "b1 b1 b1 b1 b2 b2 b2 b2 b4 b6 t3 t3 t3 t3 t5 t5";
   let na_pai = to_number("b5")
@@ -72,6 +75,18 @@ test("胡五条但不是卡", function (t) {
   };
   t.is(NMajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
   // t.is(NMajiangAlgo.HuisPihu(str, na_pai), true);
+});
+test("卡五星不能胡b5", function (t) {
+  let str = "b1 b1 b2 b2 b3 b3 b4 b5 b6 b7 b7 b7 b8";
+  let na_pai = to_number("b5")
+  let group_shoupai = {
+    anGang: [],
+    mingGang: [],
+    peng: [],
+    selfPeng: [],
+    shouPai: pais(str)
+  };
+  t.is(NMajiangAlgo.HuisKaWuXing(group_shoupai, na_pai), false);
 });
 test("单将剩一手卡五星", function (t) {
   let str = "b1 b1 b4 b6";
