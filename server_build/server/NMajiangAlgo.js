@@ -416,20 +416,22 @@ class NMajiangAlgo {
     static HuWhatGroupPai(group_shoupai, is_liang) {
         let hupai_dict = {};
         for (var i = 0; i < all_single_pai.length; i++) {
-            let single_pai = all_single_pai[i];
+            let na_pai = all_single_pai[i];
             let newShouPai = this.flat_shou_pai(group_shoupai)
-                .concat(single_pai)
+                .concat(na_pai)
                 .sort();
-            // let isFiveRepeat = /(..)\1\1\1\1\1/g.test(newShouPaiStr);
-            let isFiveRepeat = newShouPai.filter(pai => pai == single_pai).length === 5;
-            // let isFiveRepeat = _.countBy(newShouPai, pai=>pai == single_pai).true === 5
-            if (isFiveRepeat) {
+            // 是否已经存在4个single_pai? 如果存在，肯定不会胡这张牌！
+            let already4A = this.count4A(newShouPai).includes(na_pai);
+            //不能再做为将的牌
+            let cannotJiang = group_shoupai.anGang.includes(na_pai) ||
+                group_shoupai.mingGang.includes(na_pai);
+            if (already4A || cannotJiang) {
                 continue;
             }
             else {
-                let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, single_pai, is_liang);
+                let hupai_typesCode = this.HupaiTypeCodeArr(group_shoupai, na_pai, is_liang);
                 if (!_.isEmpty(hupai_typesCode)) {
-                    hupai_dict[single_pai] = hupai_typesCode;
+                    hupai_dict[na_pai] = hupai_typesCode;
                 }
             }
         }
@@ -463,7 +465,14 @@ class NMajiangAlgo {
                 continue;
             }
             else {
-                let hupai_typesCode = this.HupaiTypeCodeArr({ anGang: [], mingGang: [], peng: [], selfPeng: [], shouPai: newShouPai }, na_pai);
+                let hupai_typesCode = this.HupaiTypeCodeArr({
+                    anGang: [],
+                    mingGang: [],
+                    peng: [],
+                    selfPeng: [],
+                    shouPai: newShouPai
+                }, na_pai);
+                //如果没有胡牌码
                 if (!_.isEmpty(hupai_typesCode)) {
                     // 保存胡牌及胡牌类型到hupai_dict中
                     hupai_dict[na_pai] = hupai_typesCode;
@@ -679,9 +688,6 @@ class NMajiangAlgo {
     /**胡牌类型码数组，象杠上开花是多算番的胡，并不是基本的胡牌*/
     static HupaiTypeCodeArr(group_shoupai, na_pai, is_liang = false) {
         let _huArr = [];
-        if (this.IsYise(group_shoupai, na_pai)) {
-            _huArr.push(config.IsYise);
-        }
         if (this.HuisKaWuXing(group_shoupai, na_pai)) {
             _huArr.push(config.HuisKaWuXing);
         }
@@ -709,7 +715,11 @@ class NMajiangAlgo {
         if (this.HuisPihu(group_shoupai, na_pai)) {
             _huArr.push(config.HuisPihu);
         }
-        return _huArr;
+        //如果有胡，再去检测是否是清一色
+        if (!_.isEmpty(_huArr) && this.IsYise(group_shoupai, na_pai)) {
+            _huArr.push(config.IsYise);
+        }
+        return _.orderBy(_huArr);
     }
     /**获取到所有胡牌类型的名称 */
     static HuPaiNames(group_shoupai, na_pai) {

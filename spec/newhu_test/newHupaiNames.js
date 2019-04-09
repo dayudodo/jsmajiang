@@ -88,7 +88,7 @@ test("小三元 屁胡", function (t) {
   };
   console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
   console.log(NMajiangAlgo.HupaiTypeCodeArr(group_shoupai, na_pai));
-  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["小三元", "暗四归","屁胡"]);
+  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["小三元", "屁胡","暗四归"]);
 });
 test("大三元 屁胡", function (t) {
   let str = "b1 b1 b2 b3 di di di zh zh zh fa fa fa";
