@@ -48,7 +48,8 @@ export class ScoreManager {
             all_hupaiTypesCode.remove(config.HuisPihu);
           }
           score = this.count_hu_score(all_hupaiTypesCode);
-
+          console.log(all_hupaiTypesCode, score);
+          
           if (hu_player.is_liang) {
             score = score * 2;
             console.log(`${hu_player.username}亮倒，分数*2： ${score}`);

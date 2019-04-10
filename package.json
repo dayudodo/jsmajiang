@@ -51,7 +51,7 @@
   },
   "ava": {
     "files": [
-      "spec/newhu_test/*.js"
+      "spec/score/*.js"
     ],
     "require": [
       "babel-register"
