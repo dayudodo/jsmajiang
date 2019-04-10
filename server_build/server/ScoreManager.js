@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
-const MajiangAlgo_1 = require("./MajiangAlgo");
+const NMajiangAlgo_1 = require("./NMajiangAlgo");
 //每一个玩家的数据保存在此类中
 const config = require("./config");
 const chalk_1 = require("chalk");
@@ -166,7 +166,7 @@ class ScoreManager {
             score += this.scoreOf(code);
         });
         console.log("====================================");
-        console.log("胡：%s, 分值：%s", MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(typesCode), score);
+        console.log("胡：%s, 分值：%s", NMajiangAlgo_1.NMajiangAlgo.HuPaiNamesFrom(typesCode), score);
         console.log("====================================");
         return score;
     }

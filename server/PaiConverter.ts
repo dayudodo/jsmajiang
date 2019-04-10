@@ -46,7 +46,7 @@ export class PaiConvertor {
       return N_ZHIPAI[index];
     }
     if (index == -1) {
-      throw new Error(`错误的参数${str}`);
+      throw new Error(`错误的参数：${str}，是否已经转换过了？`);
     }
   }
   static ToNumberArr(strs): number[] {
