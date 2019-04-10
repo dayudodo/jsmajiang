@@ -38,7 +38,7 @@ exports.IS_TING = 1;
 exports.IS_LIANG = 2;
 /**是否封顶，貌似满上其实就是封顶，不算多算了，比如七对自摸是满的，8倍？ */
 exports.has_top = false;
-/**基本分数，貌似都是上百的算 */
+/**基本分数，平时玩的小，5块起步 */
 exports.base_score = 5;
 /**是否有漂，一般都会有，比如5定5，定5 意思就是定漂5块钱，赢多进5块，输多出5块 */
 exports.have_piao = true;
@@ -115,7 +115,7 @@ exports.HuPaiSheet = [
     //下面两种其它两家给钱！
     { type: exports.HuisCaPao, name: "擦炮" },
     { type: exports.HuisAnGang, name: "暗杠" },
-    { type: exports.HuisGangShangGang, name: "杠上杠" },
+    { type: exports.HuisGangShangGang, name: "杠上杠" }
 ];
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
 exports.GangWinSheet = [
@@ -123,7 +123,7 @@ exports.GangWinSheet = [
     //下面两种其它两家给钱！
     { type: exports.HuisCaPao, name: "擦炮", multiple: 1 },
     { type: exports.HuisAnGang, name: "暗杠", multiple: 2 },
-    { type: exports.HuisGangShangGang, name: "杠上杠", multiple: 2 },
+    { type: exports.HuisGangShangGang, name: "杠上杠", multiple: 2 }
 ];
 exports.LoseGang = 0;
 exports.LoseGangShangGang = 1;
@@ -139,6 +139,7 @@ exports.GangLoseSheet = [
     // { type: LosePihuPao, name: "放屁胡炮", multiple: 1 },
     // { type: LoseDaHuPao, name: "放大胡炮", multiple: 1 },
     { type: exports.LoseAnGang, name: "被暗杠", multiple: 2 },
-    { type: exports.LoseCaPao, name: "被擦炮", multiple: 1 },
+    { type: exports.LoseCaPao, name: "被擦炮", multiple: 1 }
+    // { type: LoseZiMo, name: "被自摸", multiple: 1 },
 ];
 //# sourceMappingURL=config.js.map

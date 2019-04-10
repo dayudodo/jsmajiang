@@ -16,14 +16,15 @@ class ScoreManager {
         // 每个玩家都要算一次扛分，且杠分不算漂，也没有倍率，就是固定的
         //得分其实是个总程序，其它的应该直接用方法名称写出代码的意义所在
         ScoreManager.count_players_gang_score(players);
-        //是否封顶
+        //是否封顶，最高也就是8倍，比如5*8=40块钱封顶
         let top_score, base_top_score = config.base_score * 8;
-        if (config.have_piao) {
+        if (config.have_piao) { //如果有漂的话，赢家双倍，输家也是双倍
             top_score = base_top_score + config.piao_score * 2;
         }
         else {
             top_score = base_top_score;
         }
+        //有可能一炮双响，二个人都胡
         let all_hu_players = players.filter(p => true == p.is_hu);
         all_hu_players.forEach(hu_player => {
             let all_hupaiTypesCode = hu_player.hupai_typesCode();
@@ -105,6 +106,7 @@ class ScoreManager {
         });
         //todo: 平局
     }
+    /**计算房间内所有玩家的杠分，无论是赢杠还是输杠*/
     static count_players_gang_score(players) {
         players.forEach(p => {
             let gang_win_score = this.count_gang_score(p.gang_win_codes, true);
@@ -129,7 +131,7 @@ class ScoreManager {
             hu_player.oneju_score += config.piao_score * 2;
         }
     }
-    /** gangCodes中的所有杠分 */
+    /** gangCodes中的所有杠分，可能赢杠，也可能放杠 */
     static count_gang_score(gangCodes, is_win) {
         /**某种杠code的分数 */
         let gangScoreOf = (code) => {
