@@ -50,7 +50,7 @@ export class ScoreManager {
             all_hupaiTypesCode.remove(config.HuisPihu);
           }
           score = this.count_hu_score(all_hupaiTypesCode);
-          console.log("all_hupaiTypesCode, score:",all_hupaiTypesCode, score);
+          console.log(`all_hupaiTypesCode:${all_hupaiTypesCode}, score:${score}`)
           
           if (hu_player.is_liang) {
             score = score * 2;
@@ -136,7 +136,7 @@ export class ScoreManager {
       p.oneju_score -= gang_lose_score;
       if (gang_lose_score > 0) {
         console.log(
-          chalk.red(`${p.username}的出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`)
+          chalk.magenta(`${p.username}的出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`)
         );
       }
     });
