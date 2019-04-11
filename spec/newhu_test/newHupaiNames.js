@@ -48,7 +48,7 @@ test("清一色 碰碰胡 屁胡", function (t) {
     shouPai: pais(str)
   };
   // console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["清一色", "碰碰胡", "屁胡"]);
+  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["清一色", "碰碰胡"]);
 });
 test("清一色 七对 屁胡", function (t) {
   let str = "b1 b1 b2 b2 b3 b3 b4 b4 b5 b5 b6 b6 b7";
@@ -61,7 +61,7 @@ test("清一色 七对 屁胡", function (t) {
     shouPai: pais(str)
   };
   // console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["清一色", "七对", "屁胡"]);
+  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["清一色", "七对"]);
 });
 test("七对 龙七对 屁胡", function (t) {
   let str = "b1 b1 b2 b2 fa fa fa fa t1 t1 t4 t4 t9";
@@ -86,11 +86,11 @@ test("小三元 屁胡", function (t) {
     selfPeng: [],
     shouPai: pais(str)
   };
-  console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-  console.log(NMajiangAlgo.HupaiTypeCodeArr(group_shoupai, na_pai));
-  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["小三元", "屁胡","暗四归"]);
+  // console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
+  // console.log(NMajiangAlgo.HupaiTypeCodeArr(group_shoupai, na_pai));
+  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["小三元", "暗四归"]);
 });
-test("大三元 屁胡", function (t) {
+test("大三元屁胡", function (t) {
   let str = "b1 b1 b2 b3 di di di zh zh zh fa fa fa";
   let na_pai = to_number("b1")
   let group_shoupai = {
@@ -101,7 +101,7 @@ test("大三元 屁胡", function (t) {
     shouPai: pais(str)
   };
 //   console.log(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai));
-  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["大三元", "屁胡"]);
+  t.deepEqual(NMajiangAlgo.HuPaiNames(group_shoupai, na_pai), ["大三元"]);
 });
 
 // //todo: [ '卡五星', '屁胡' ]

@@ -183,8 +183,7 @@ test("group后碰碰胡听牌只胡一", function(t) {
     shouPai: pais(str)
   }
   t.deepEqual(NMajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_typesCode, [
-    config.HuisPengpeng,
-    config.HuisPihu
+    config.HuisPengpeng
   ])
   t.deepEqual(
     NMajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_zhang,
@@ -256,7 +255,6 @@ test("大小三元 b1 b4 fa", function(t) {
   t.deepEqual(allCodes, [
     config.HuisXiaoShanYuan,
     config.HuisDaShanYuan,
-    config.HuisPihu,
     config.HuisAnSiGui
   ])
   t.deepEqual(
@@ -276,7 +274,6 @@ test("大小三元group b1 b4 fa", function(t) {
   t.deepEqual(NMajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_typesCode, [
     config.HuisXiaoShanYuan,
     config.HuisDaShanYuan,
-    config.HuisPihu,
     config.HuisAnSiGui
   ])
   t.deepEqual(
@@ -295,8 +292,7 @@ test("大小三元group 并碰碰胡", function(t) {
   }
   t.deepEqual(NMajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_typesCode, [
     config.HuisPengpeng,
-    config.HuisXiaoShanYuan,
-    config.HuisPihu
+    config.HuisXiaoShanYuan
   ])
   t.deepEqual(
     NMajiangAlgo.HuWhatGroupPai(group_shoupai).all_hupai_zhang,

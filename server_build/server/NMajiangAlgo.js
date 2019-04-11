@@ -715,7 +715,8 @@ class NMajiangAlgo {
         if (this.HuisAnSiGui(group_shoupai, na_pai, is_liang)) {
             huArr.push(config.HuisAnSiGui);
         }
-        if (this.HuisPihu(group_shoupai, na_pai)) {
+        //只有不是大胡的时候才去检测屁胡！
+        if (_.isEmpty(huArr) && this.HuisPihu(group_shoupai, na_pai)) {
             huArr.push(config.HuisPihu);
         }
         //如果有胡，才去检测是否是清一色

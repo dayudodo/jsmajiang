@@ -37,6 +37,7 @@ export class ScoreManager {
       //单独的屁胡是不可能胡的，最小的胡也是屁胡+自摸！
       if (hu_player.is_zimo) {
         //自摸后需要扣除其它两个玩家的相应分数！分数算在胡家手中。
+        console.log(`${hu_player.username}自摸，开始计算其它两家的分数。。。`);
         this.other_players(hu_player, players).forEach(p => {
           let score = 0;
           //是否只包括屁胡，其实有三种情况！
@@ -44,6 +45,7 @@ export class ScoreManager {
             _.isEqual([config.HuisPihu], all_hupaiTypesCode) ||
             _.isEqual([config.HuisPihu, config.HuisZiMo], all_hupaiTypesCode) ||
             _.isEqual([config.HuisPihu, config.HuisLiangDao], all_hupaiTypesCode);
+            //已经有其它胡了，不再把屁胡的分数加上
           if (!onlyIncludePiHu) {
             all_hupaiTypesCode.remove(config.HuisPihu);
           }

@@ -15,7 +15,7 @@ config.base_score = 5 //5块钱
 config.have_piao = true
 config.piao_score = 5 //定漂5块
 
-test.beforeEach(t => {
+function init(){
   player1 = new Player({
     group_shou_pai: {
       anGang: [],
@@ -62,10 +62,12 @@ test.beforeEach(t => {
     username: "tom3",
     user_id: 10003
   })
-})
+}
+
 
 //
 test("杠上开花放炮", function(t) {
+  init()
   ScoreManager.cal_oneju_score([player1, player2, player3])
   console.log(
     `各自分数： 
@@ -78,6 +80,7 @@ test("杠上开花放炮", function(t) {
   t.deepEqual(player2.oneju_score, -20)
 })
 test("杠上开花自摸", function(t) {
+  init()
   player1.is_zimo = true
   player2.is_fangpao = false
   ScoreManager.cal_oneju_score([player1, player2, player3])

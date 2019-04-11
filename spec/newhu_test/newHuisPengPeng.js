@@ -164,7 +164,7 @@ test("碰碰糊带2杠少将 false", function(t) {
   };
   t.is(NMajiangAlgo.HuisPengPeng(group_shoupai, na_pai), false);
 });
-test("碰碰糊带2杠少将 false 2", function(t) {
+test("碰碰糊带2杠少将false2", function(t) {
   let str = "b2 t1 t1 t1";
   let na_pai = pais("fa")
   let group_shoupai = {
