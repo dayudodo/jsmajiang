@@ -129,16 +129,14 @@ export class ScoreManager {
       p.oneju_score += gang_win_score;
       if (gang_win_score > 0) {
         console.log(
-          chalk.green(`${p.username}的
-        赢杠：${p.gang_win_names}，分值：${gang_win_score}`)
+          chalk.green(`${p.username}的赢杠：${p.gang_win_names}，分值：${gang_win_score}`)
         );
       }
       let gang_lose_score = this.count_gang_score(p.gang_lose_codes, false);
       p.oneju_score -= gang_lose_score;
       if (gang_lose_score > 0) {
         console.log(
-          chalk.red(`${p.username}的
-        出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`)
+          chalk.red(`${p.username}的出杠钱有：${p.gang_lose_names}，分值：${gang_lose_score}`)
         );
       }
     });
