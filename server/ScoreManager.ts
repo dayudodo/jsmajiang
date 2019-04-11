@@ -50,7 +50,7 @@ export class ScoreManager {
             all_hupaiTypesCode.remove(config.HuisPihu);
           }
           score = this.count_hu_score(all_hupaiTypesCode);
-          console.log(all_hupaiTypesCode, score);
+          console.log("all_hupaiTypesCode, score:",all_hupaiTypesCode, score);
           
           if (hu_player.is_liang) {
             score = score * 2;
