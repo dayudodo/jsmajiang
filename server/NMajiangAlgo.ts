@@ -22,6 +22,16 @@ declare global {
     remove(o): T[]
     equalArrays(o): boolean
   }
+  interface hupaiConstructor {
+    /**所有的胡牌类型码 */
+    all_hupai_typesCode: Array<number>;
+    /**所有的胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。*/
+    all_hupai_zhang: Array<Pai>;
+    /**胡牌字典，哪个牌是什么胡，如果为空自然是没胡喽。
+     * 内部数据类似于：hupai_dict['b1'] = [0,9]，表明是胡b1,并且还是七对，屁胡
+     */
+    hupai_dict: {};
+  }
 }
 
 /**删除找到的第一个元素 */
@@ -844,13 +854,14 @@ export class NMajiangAlgo {
     return result
   }
 
-  // /**放炮文字描述 */
-  // static LoseNamesFrom(loseData: any[]): string[] {
-  //   let loseCodesArr = loseData.map(item => item.type);
-  //   return loseCodesArr.map(code => {
-  //     return config.GangLoseSheet.find(item => item.type == code).name;
-  //   });
-  // }
+  /**放炮文字描述 */
+  static LoseNamesFrom(loseData: any[]): string[] {
+    let loseCodesArr = loseData.map(item => item.type);
+    return loseCodesArr.map(code => {
+      return config.GangLoseSheet.find(item => item.type == code).name;
+    });
+  }
+
   /**通过胡的类型码数组来判断是否是大胡*/
   static isDaHu(hupaicodeArr: Array<number>) {
     if (!hupaicodeArr) {

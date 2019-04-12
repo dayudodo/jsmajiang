@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import { MajiangAlgo } from "./MajiangAlgo";
+import {NMajiangAlgo}  from "./NMajiangAlgo";
 import { ScoreManager } from "./ScoreManager";
 //每一个玩家的数据保存在此类中
 import * as config from "./config";
@@ -173,7 +173,7 @@ export class Player {
 
   /**到底要出哪些杠钱的名称！包括屁胡炮，大胡炮 */
   get lose_names(): string[] {
-    return MajiangAlgo.LoseNamesFrom(this.gang_lose_data);
+    return NMajiangAlgo.LoseNamesFrom(this.gang_lose_data);
   }
   /**出杠钱的数字代码 */
   get gang_lose_codes(): number[] {
@@ -181,15 +181,15 @@ export class Player {
   }
   /**赢了哪些杠 */
   get gang_win_names(): string[] {
-    return MajiangAlgo.GangNamesFrom(this.gang_win_codes, true);
+    return NMajiangAlgo.GangNamesFrom(this.gang_win_codes, true);
   }
   /**放了哪些杠 */
   get gang_lose_names(): string[] {
-    return MajiangAlgo.GangNamesFrom(this.gang_lose_codes, false);
+    return NMajiangAlgo.GangNamesFrom(this.gang_lose_codes, false);
   }
   /**胡了哪些项目 */
   get all_win_names(): string[] {
-    return MajiangAlgo.HuPaiNamesFrom(this.all_win_codes);
+    return NMajiangAlgo.HuPaiNamesFrom(this.all_win_codes);
   }
   /**返回所有赢代码，如果没胡，只返回杠的 */
   get all_win_codes(): number[] {
@@ -292,7 +292,7 @@ export class Player {
 
   /**是否是大胡 */
   isDaHu(pai_name: Pai): boolean {
-    return MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
+    return NMajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
   }
 
   /** 玩家手牌数组，从group_shou_pai中生成 */
@@ -431,7 +431,7 @@ export class Player {
     // }
     let shoupai_changed = true;
     if (shoupai_changed) {
-      this.hupai_data = MajiangAlgo.HuWhatGroupPai(this.group_shou_pai, this.is_liang);
+      this.hupai_data = NMajiangAlgo.HuWhatGroupPai(this.group_shou_pai, this.is_liang);
     }
   }
 }

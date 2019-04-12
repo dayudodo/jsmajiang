@@ -2,7 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const config = require("./config");
 const _ = require("lodash");
-const MajiangAlgo_1 = require("./MajiangAlgo");
+const PaiConvertor_1 = require("./PaiConvertor");
+/**直接将字符串转换成数类麻将数组 */
+function pais(strs) {
+    return PaiConvertor_1.PaiConvertor.pais(strs);
+}
+function to_number(str) {
+    return PaiConvertor_1.PaiConvertor.ToNumber(str);
+}
 Array.prototype.remove = function (val) {
     var index = this.indexOf(val);
     if (index > -1) {
@@ -23,9 +30,9 @@ class TablePaiManager {
     /**检测两家都亮牌后的发牌情况！或者两家都过的发牌情况 */
     static player23_liangTest() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
-        var player2 = MajiangAlgo_1.getArr("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
-        var player3 = MajiangAlgo_1.getArr("b7 b8 b9 t1 t2 t3 t4 t5 t6 t7 di di di");
+        var player1 = pais("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+        var player2 = pais("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
+        var player3 = pais("b7 b8 b9 t1 t2 t3 t4 t5 t6 t7 di di di");
         var newPais = [];
         newPais = newPais.concat(player1);
         newPais = newPais.concat(player2);
@@ -46,9 +53,9 @@ class TablePaiManager {
     /**除了暗四归，还能检测亮牌 */
     static player2_anSiGui() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
-        var player2 = MajiangAlgo_1.getArr("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
-        var player3 = MajiangAlgo_1.getArr("b2 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
+        var player1 = pais("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+        var player2 = pais("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
+        var player3 = pais("b2 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
         var newPais = [];
         newPais = newPais.concat(player1);
         newPais = newPais.concat(player2);
@@ -68,9 +75,9 @@ class TablePaiManager {
     }
     static player2_mingSiGui() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
-        var player2 = MajiangAlgo_1.getArr("b1 b1 b9 t1 t1 t2 t3 t6 t7 t8 zh zh zh");
-        var player3 = MajiangAlgo_1.getArr("b1 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
+        var player1 = pais("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+        var player2 = pais("b1 b1 b9 t1 t1 t2 t3 t6 t7 t8 zh zh zh");
+        var player3 = pais("b1 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
         var newPais = [];
         newPais = newPais.concat(player1);
         newPais = newPais.concat(player2);
@@ -91,10 +98,10 @@ class TablePaiManager {
     /**开局双杠，他人放杠，测试杠选择 */
     static player1_3gang() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b1 b1 b1 b2 b2 b2 b2 di di di t1 t9");
-        var player2 = MajiangAlgo_1.getArr("b3 t1 t1 t1 t4 t6 zh zh zh fa fa fa di");
-        var player3 = MajiangAlgo_1.getArr("t2 t2 t3 t3 t4 t5 t6 t6 t7 t7 t8 b8 b9");
-        //发牌需要有个顺序，不能使用getArr
+        var player1 = pais("b1 b1 b1 b1 b2 b2 b2 b2 di di di t1 t9");
+        var player2 = pais("b3 t1 t1 t1 t4 t6 zh zh zh fa fa fa di");
+        var player3 = pais("t2 t2 t3 t3 t4 t5 t6 t6 t7 t7 t8 b8 b9");
+        //发牌需要有个顺序，不能使用pais
         // var fa_pais = "t2 di".split(" ")
         var newPais = [];
         newPais = newPais.concat(player1);
@@ -115,10 +122,10 @@ class TablePaiManager {
     }
     static playe3_gangshangGang() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b4 b5 b6 b7 b8 b8 t9 fa");
-        var player2 = MajiangAlgo_1.getArr("t1 t1 t1 t3 t4 t6 zh zh zh fa fa fa di");
-        var player3 = MajiangAlgo_1.getArr("b1 b5 b6 b7 b8 b9 t1 t2 t7 t7 di di di");
-        //发牌需要有个顺序，不能使用getArr
+        var player1 = pais("b1 b1 b2 b2 b3 b4 b5 b6 b7 b8 b8 t9 fa");
+        var player2 = pais("t1 t1 t1 t3 t4 t6 zh zh zh fa fa fa di");
+        var player3 = pais("b1 b5 b6 b7 b8 b9 t1 t2 t7 t7 di di di");
+        //发牌需要有个顺序，不能使用pais
         // var fa_pais = "t2 di".split(" ")
         var newPais = [];
         newPais = newPais.concat(player1);
@@ -143,10 +150,10 @@ class TablePaiManager {
     /**玩家2杠上花*/
     static playe2_gangshangHua() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-        var player2 = MajiangAlgo_1.getArr("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
-        var player3 = MajiangAlgo_1.getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
-        //发牌需要有个顺序，不能使用getArr
+        var player1 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
+        var player2 = pais("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
+        var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
+        //发牌需要有个顺序，不能使用pais
         // var fa_pais = "t2 di".split(" ")
         var newPais = [];
         newPais = newPais.concat(player1);
@@ -174,10 +181,10 @@ class TablePaiManager {
     /**庄家摸牌能天胡*/
     static zhuang_mopai_hu() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-        var player2 = MajiangAlgo_1.getArr("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
-        var player3 = MajiangAlgo_1.getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
-        //发牌需要有个顺序，不能使用getArr
+        var player1 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
+        var player2 = pais("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
+        var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
+        //发牌需要有个顺序，不能使用pais
         var fa_pais = "t2 di".split(" ");
         var newPais = [];
         newPais = newPais.concat(player1);
@@ -202,10 +209,10 @@ class TablePaiManager {
     /**庄家摸牌能杠*/
     static zhuang_mopai_gang() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("t1 t1 t1 t1 t7 b8 b9 zh zh fa di di di");
-        var player2 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-        var player3 = MajiangAlgo_1.getArr("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
-        var fa_pais = MajiangAlgo_1.getArr("di");
+        var player1 = pais("t1 t1 t1 t1 t7 b8 b9 zh zh fa di di di");
+        var player2 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
+        var player3 = pais("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
+        var fa_pais = pais("di");
         var newPais = [];
         newPais = newPais.concat(player1);
         newPais = newPais.concat(player2);
@@ -229,8 +236,8 @@ class TablePaiManager {
     /**七对放炮 */
     static qidiu_ting() {
         var allpais = TablePaiManager.fapai_random();
-        var player1 = MajiangAlgo_1.getArr("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
-        var player2 = MajiangAlgo_1.getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 b9");
+        var player1 = pais("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
+        var player2 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 b9");
         var newPais = [];
         newPais = newPais.concat(player1);
         newPais = newPais.concat(player2);

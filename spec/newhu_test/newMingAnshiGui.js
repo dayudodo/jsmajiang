@@ -1,6 +1,6 @@
 import test from "ava";
 import { NMajiangAlgo } from "../../server_build/server/NMajiangAlgo";
-import { PaiConvertor } from "../../server_build/server/PaiConverter";
+import { PaiConvertor } from "../../server_build/server/PaiConvertor";
 /**直接将字符串转换成数类麻将数组 */
 function pais(strs) {
     return PaiConvertor.pais(strs)

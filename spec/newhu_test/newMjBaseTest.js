@@ -1,6 +1,6 @@
 import test from "ava";
 import { NMajiangAlgo as NMajiangAlgo } from "../../server_build/server/NMajiangAlgo";
-import {PaiConvertor} from "../../server_build/server/PaiConverter"
+import {PaiConvertor} from "../../server_build/server/PaiConvertor"
 // var Majiang = require("../server/Majiang");
 // var mj = new Majiang()
 /**f直接将字符串转换成数类麻将数组 */

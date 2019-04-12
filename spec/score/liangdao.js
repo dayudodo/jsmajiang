@@ -1,7 +1,7 @@
 import test from "ava"
 import { Player } from "../../server_build/server/player"
 import { ScoreManager } from "../../server_build/server/ScoreManager"
-import { PaiConvertor } from "../../server_build/server/PaiConverter"
+import { PaiConvertor } from "../../server_build/server/PaiConvertor"
 import * as config from "../../server_build/server/config"
 /**直接将字符串转换成数类麻将数组 */
 function pais(strs) {

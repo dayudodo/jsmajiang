@@ -758,13 +758,13 @@ class NMajiangAlgo {
         });
         return result;
     }
-    // /**放炮文字描述 */
-    // static LoseNamesFrom(loseData: any[]): string[] {
-    //   let loseCodesArr = loseData.map(item => item.type);
-    //   return loseCodesArr.map(code => {
-    //     return config.GangLoseSheet.find(item => item.type == code).name;
-    //   });
-    // }
+    /**放炮文字描述 */
+    static LoseNamesFrom(loseData) {
+        let loseCodesArr = loseData.map(item => item.type);
+        return loseCodesArr.map(code => {
+            return config.GangLoseSheet.find(item => item.type == code).name;
+        });
+    }
     /**通过胡的类型码数组来判断是否是大胡*/
     static isDaHu(hupaicodeArr) {
         if (!hupaicodeArr) {

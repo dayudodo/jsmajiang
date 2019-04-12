@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const _ = require("lodash");
-const MajiangAlgo_1 = require("./MajiangAlgo");
+const NMajiangAlgo_1 = require("./NMajiangAlgo");
 //每一个玩家的数据保存在此类中
 const config = require("./config");
 class Player {
@@ -109,7 +109,7 @@ class Player {
     }
     /**到底要出哪些杠钱的名称！包括屁胡炮，大胡炮 */
     get lose_names() {
-        return MajiangAlgo_1.MajiangAlgo.LoseNamesFrom(this.gang_lose_data);
+        return NMajiangAlgo_1.NMajiangAlgo.LoseNamesFrom(this.gang_lose_data);
     }
     /**出杠钱的数字代码 */
     get gang_lose_codes() {
@@ -117,15 +117,15 @@ class Player {
     }
     /**赢了哪些杠 */
     get gang_win_names() {
-        return MajiangAlgo_1.MajiangAlgo.GangNamesFrom(this.gang_win_codes, true);
+        return NMajiangAlgo_1.NMajiangAlgo.GangNamesFrom(this.gang_win_codes, true);
     }
     /**放了哪些杠 */
     get gang_lose_names() {
-        return MajiangAlgo_1.MajiangAlgo.GangNamesFrom(this.gang_lose_codes, false);
+        return NMajiangAlgo_1.NMajiangAlgo.GangNamesFrom(this.gang_lose_codes, false);
     }
     /**胡了哪些项目 */
     get all_win_names() {
-        return MajiangAlgo_1.MajiangAlgo.HuPaiNamesFrom(this.all_win_codes);
+        return NMajiangAlgo_1.NMajiangAlgo.HuPaiNamesFrom(this.all_win_codes);
     }
     /**返回所有赢代码，如果没胡，只返回杠的 */
     get all_win_codes() {
@@ -227,7 +227,7 @@ class Player {
     }
     /**是否是大胡 */
     isDaHu(pai_name) {
-        return MajiangAlgo_1.MajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
+        return NMajiangAlgo_1.NMajiangAlgo.isDaHu(this.hupai_data.hupai_dict[pai_name]);
     }
     /** 玩家手牌数组，从group_shou_pai中生成 */
     get flat_shou_pai() {
@@ -362,7 +362,7 @@ class Player {
         // }
         let shoupai_changed = true;
         if (shoupai_changed) {
-            this.hupai_data = MajiangAlgo_1.MajiangAlgo.HuWhatGroupPai(this.group_shou_pai, this.is_liang);
+            this.hupai_data = NMajiangAlgo_1.NMajiangAlgo.HuWhatGroupPai(this.group_shou_pai, this.is_liang);
         }
     }
 }

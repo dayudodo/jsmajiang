@@ -1,6 +1,13 @@
 import * as config from "./config";
 import * as _ from "lodash";
-import { getArr } from "./MajiangAlgo";
+import { PaiConvertor } from "./PaiConvertor"
+/**直接将字符串转换成数类麻将数组 */
+function pais(strs) {
+  return PaiConvertor.pais(strs)
+}
+function to_number(str) {
+  return PaiConvertor.ToNumber(str)
+}
 
 declare global {
   interface Array<T> {
@@ -33,9 +40,9 @@ export class TablePaiManager {
   static player23_liangTest() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
-    var player2 = getArr("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
-    var player3 = getArr("b7 b8 b9 t1 t2 t3 t4 t5 t6 t7 di di di");
+    var player1 = pais("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+    var player2 = pais("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
+    var player3 = pais("b7 b8 b9 t1 t2 t3 t4 t5 t6 t7 di di di");
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
@@ -57,9 +64,9 @@ export class TablePaiManager {
   static player2_anSiGui() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
-    var player2 = getArr("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
-    var player3 = getArr("b2 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
+    var player1 = pais("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+    var player2 = pais("b1 b1 b1 b2 b3 b6 b7 b8 t1 t2 t3 zh zh");
+    var player3 = pais("b2 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
@@ -80,9 +87,9 @@ export class TablePaiManager {
   static player2_mingSiGui() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
-    var player2 = getArr("b1 b1 b9 t1 t1 t2 t3 t6 t7 t8 zh zh zh");
-    var player3 = getArr("b1 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
+    var player1 = pais("b1 b2 b3 b5 b5 b6 b7 b8 b8 t1 t4 t9 fa");
+    var player2 = pais("b1 b1 b9 t1 t1 t2 t3 t6 t7 t8 zh zh zh");
+    var player3 = pais("b1 b5 b6 b7 b8 b9 t1 t4 t6 t7 di di di");
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
@@ -104,10 +111,10 @@ export class TablePaiManager {
   static player1_3gang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b1 b1 b1 b2 b2 b2 b2 di di di t1 t9");
-    var player2 = getArr("b3 t1 t1 t1 t4 t6 zh zh zh fa fa fa di");
-    var player3 = getArr("t2 t2 t3 t3 t4 t5 t6 t6 t7 t7 t8 b8 b9");
-    //发牌需要有个顺序，不能使用getArr
+    var player1 = pais("b1 b1 b1 b1 b2 b2 b2 b2 di di di t1 t9");
+    var player2 = pais("b3 t1 t1 t1 t4 t6 zh zh zh fa fa fa di");
+    var player3 = pais("t2 t2 t3 t3 t4 t5 t6 t6 t7 t7 t8 b8 b9");
+    //发牌需要有个顺序，不能使用pais
     // var fa_pais = "t2 di".split(" ")
     var newPais = [];
     newPais = newPais.concat(player1);
@@ -129,10 +136,10 @@ export class TablePaiManager {
   static playe3_gangshangGang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b1 b2 b2 b3 b4 b5 b6 b7 b8 b8 t9 fa");
-    var player2 = getArr("t1 t1 t1 t3 t4 t6 zh zh zh fa fa fa di");
-    var player3 = getArr("b1 b5 b6 b7 b8 b9 t1 t2 t7 t7 di di di");
-    //发牌需要有个顺序，不能使用getArr
+    var player1 = pais("b1 b1 b2 b2 b3 b4 b5 b6 b7 b8 b8 t9 fa");
+    var player2 = pais("t1 t1 t1 t3 t4 t6 zh zh zh fa fa fa di");
+    var player3 = pais("b1 b5 b6 b7 b8 b9 t1 t2 t7 t7 di di di");
+    //发牌需要有个顺序，不能使用pais
     // var fa_pais = "t2 di".split(" ")
     var newPais = [];
     newPais = newPais.concat(player1);
@@ -159,10 +166,10 @@ export class TablePaiManager {
   static playe2_gangshangHua() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-    var player2 = getArr("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
-    var player3 = getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
-    //发牌需要有个顺序，不能使用getArr
+    var player1 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
+    var player2 = pais("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
+    var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
+    //发牌需要有个顺序，不能使用pais
     // var fa_pais = "t2 di".split(" ")
     var newPais = [];
     newPais = newPais.concat(player1);
@@ -193,10 +200,10 @@ export class TablePaiManager {
   static zhuang_mopai_hu() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-    var player2 = getArr("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
-    var player3 = getArr("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
-    //发牌需要有个顺序，不能使用getArr
+    var player1 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
+    var player2 = pais("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
+    var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
+    //发牌需要有个顺序，不能使用pais
     var fa_pais = "t2 di".split(" ");
     var newPais = [];
     newPais = newPais.concat(player1);
@@ -222,10 +229,10 @@ export class TablePaiManager {
   static zhuang_mopai_gang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("t1 t1 t1 t1 t7 b8 b9 zh zh fa di di di");
-    var player2 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
-    var player3 = getArr("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
-    var fa_pais = getArr("di");
+    var player1 = pais("t1 t1 t1 t1 t7 b8 b9 zh zh fa di di di");
+    var player2 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa");
+    var player3 = pais("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
+    var fa_pais = pais("di");
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
@@ -250,8 +257,8 @@ export class TablePaiManager {
   static qidiu_ting() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = getArr("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
-    var player2 = getArr("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 b9");
+    var player1 = pais("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
+    var player2 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 b9");
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
