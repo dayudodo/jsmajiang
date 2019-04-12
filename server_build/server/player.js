@@ -155,7 +155,10 @@ class Player {
         // } else {
         //   return this.lose_names.join(" ");
         // }
-        return { win_info: this.all_win_names.join(" "), lose_info: this.lose_names.join(" ") };
+        return {
+            win_info: this.all_win_names.join(" "),
+            lose_info: this.lose_names.join(" ")
+        };
     }
     /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
     get result_shou_pai() {
@@ -184,37 +187,19 @@ class Player {
         let output = [];
         output = output.concat(this.group_shou_pai.peng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
         output = output.concat(this.group_shou_pai.selfPeng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
-        output = output.concat(this.PaiArr4A());
-        return output;
-    }
-    /**返回group手牌中出现4次的牌！ */
-    PaiArr4A() {
-        let result = _.countBy(this.group_shou_pai.shouPai);
-        let output = [];
-        for (const key in result) {
-            if (result[key] == 4) {
-                output.push(key);
-            }
-        }
+        output = output.concat(NMajiangAlgo_1.NMajiangAlgo.count4A(this.group_shou_pai.shouPai));
         return output;
     }
     /**返回group手牌中出现3次的牌！ */
     PaiArr3A() {
-        let result = _.countBy(this.group_shou_pai.shouPai);
-        let output = [];
-        for (const key in result) {
-            if (result[key] == 3) {
-                output.push(key);
-            }
-        }
-        return output;
+        return NMajiangAlgo_1.NMajiangAlgo.count3A(this.group_shou_pai.shouPai);
     }
     /**摸牌后四张，用于判断暗四归，暗杠，在group手牌中存在3张相同的牌，因为mo_pai后会添加到shouPai中，
      * 所以需要检查数量是否为4
      */
     isMoHouSi(pai_name) {
         let countPai = this.group_shou_pai.shouPai.filter(pai => pai == pai_name);
-        return countPai.length === 4 || this.group_shou_pai.selfPeng.includes(pai_name);
+        return (countPai.length === 4 || this.group_shou_pai.selfPeng.includes(pai_name));
     }
     /**能否胡pai_name */
     canHu(pai_name) {
@@ -357,7 +342,7 @@ class Player {
     calculateHu() {
         //只要手牌改变，其实都是需要重新计算胡牌！
         //todo: 如果已经亮牌，则不再继续计算胡牌，但是要确认你首先打了一张牌之后再选择亮
-        // if(this.is_liang){ 
+        // if(this.is_liang){
         //   return
         // }
         let shoupai_changed = true;
@@ -367,7 +352,14 @@ class Player {
     }
 }
 /**可以返回到客户端的玩家属性数组 */
-Player.filter_properties = ["username", "user_id", "seat_index", "group_shou_pai", "arr_dapai", "is_liang"];
+Player.filter_properties = [
+    "username",
+    "user_id",
+    "seat_index",
+    "group_shou_pai",
+    "arr_dapai",
+    "is_liang"
+];
 /**胜负属性组 */
 Player.result_properties = [
     "user_id",

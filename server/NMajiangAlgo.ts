@@ -24,25 +24,25 @@ declare global {
   }
   interface hupaiConstructor {
     /**所有的胡牌类型码 */
-    all_hupai_typesCode: Array<number>;
+    all_hupai_typesCode: Array<number>
     /**所有的胡牌张，玩家胡的啥牌，便于分析，尤其象卡五星这种，不能算错喽。*/
-    all_hupai_zhang: Array<Pai>;
+    all_hupai_zhang: Array<Pai>
     /**胡牌字典，哪个牌是什么胡，如果为空自然是没胡喽。
      * 内部数据类似于：hupai_dict['b1'] = [0,9]，表明是胡b1,并且还是七对，屁胡
      */
-    hupai_dict: {};
+    hupai_dict: {}
   }
 }
 
 /**删除找到的第一个元素 */
-Array.prototype.remove = function (val) {
+Array.prototype.remove = function(val) {
   var index = this.indexOf(val)
   if (index > -1) {
     this.splice(index, 1)
   }
   return this
 }
-Array.prototype.equalArrays = function (b) {
+Array.prototype.equalArrays = function(b) {
   if (this.length != b.length) return false // Different-size arrays not equal
   for (
     var i = 0;
@@ -312,13 +312,25 @@ export class NMajiangAlgo {
     return count == 7
   }
 
-  /**统计一下有几个4A，分别是什么 */
+  /**统计一下有哪几个3A */
+  static count3A(shouPai: Array<Pai>): Array<Pai> {
+    let result: number[] = []
+    let count = _.countBy(shouPai, n => n)
+    for (let i in count) {
+      if (count[i] == 3) {
+        result.push(parseInt(i))
+      }
+    }
+    return result
+  }
+
+  /**统计一下有哪几个4A */
   static count4A(shouPai: Array<Pai>): Array<Pai> {
-    let result = []
+    let result: number[] = []
     let count = _.countBy(shouPai, n => n)
     for (let i in count) {
       if (count[i] == 4) {
-        result.push(i)
+        result.push(parseInt(i))
       }
     }
     return result
@@ -611,13 +623,15 @@ export class NMajiangAlgo {
         newClone.splice(index, 2)
         //删除卡三星的三张牌
         index = newClone.indexOf(na_pai - 1)
-        if (index > -1) { //如果没有3，那么肯定不是卡王星
+        if (index > -1) {
+          //如果没有3，那么肯定不是卡王星
           newClone.splice(index, 1)
         } else {
           return false
         }
         index = newClone.indexOf(na_pai)
-        if (index > -1) { //5也可能是将，删除后就找不到喽！
+        if (index > -1) {
+          //5也可能是将，删除后就找不到喽！
           newClone.splice(index, 1)
         } else {
           return false
@@ -818,7 +832,7 @@ export class NMajiangAlgo {
       huArr.push(config.IsYise)
     }
     // console.log(_huArr.map(n=>typeof n));
-    
+
     return _.orderBy(huArr)
   }
   /**获取到所有胡牌类型的名称 */
@@ -856,10 +870,10 @@ export class NMajiangAlgo {
 
   /**放炮文字描述 */
   static LoseNamesFrom(loseData: any[]): string[] {
-    let loseCodesArr = loseData.map(item => item.type);
+    let loseCodesArr = loseData.map(item => item.type)
     return loseCodesArr.map(code => {
-      return config.GangLoseSheet.find(item => item.type == code).name;
-    });
+      return config.GangLoseSheet.find(item => item.type == code).name
+    })
   }
 
   /**通过胡的类型码数组来判断是否是大胡*/

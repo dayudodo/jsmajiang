@@ -270,13 +270,24 @@ class NMajiangAlgo {
         }
         return count == 7;
     }
-    /**统计一下有几个4A，分别是什么 */
+    /**统计一下有哪几个3A */
+    static count3A(shouPai) {
+        let result = [];
+        let count = _.countBy(shouPai, n => n);
+        for (let i in count) {
+            if (count[i] == 3) {
+                result.push(parseInt(i));
+            }
+        }
+        return result;
+    }
+    /**统计一下有哪几个4A */
     static count4A(shouPai) {
         let result = [];
         let count = _.countBy(shouPai, n => n);
         for (let i in count) {
             if (count[i] == 4) {
-                result.push(i);
+                result.push(parseInt(i));
             }
         }
         return result;
@@ -541,14 +552,16 @@ class NMajiangAlgo {
                 newClone.splice(index, 2);
                 //删除卡三星的三张牌
                 index = newClone.indexOf(na_pai - 1);
-                if (index > -1) { //如果没有3，那么肯定不是卡王星
+                if (index > -1) {
+                    //如果没有3，那么肯定不是卡王星
                     newClone.splice(index, 1);
                 }
                 else {
                     return false;
                 }
                 index = newClone.indexOf(na_pai);
-                if (index > -1) { //5也可能是将，删除后就找不到喽！
+                if (index > -1) {
+                    //5也可能是将，删除后就找不到喽！
                     newClone.splice(index, 1);
                 }
                 else {
