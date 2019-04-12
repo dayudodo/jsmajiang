@@ -148,8 +148,9 @@ export const HuPaiSheet = [
 ]
 
 //在这儿才是真正的结算表！特殊的杠，就算是不胡也是要算钱的！
+//普通的杠应该也是2倍，10块钱
 export const GangWinSheet = [
-  { type: HuisGang, name: "扛", multiple: 1 },
+  { type: HuisGang, name: "扛", multiple: 2 },
   //下面两种其它两家给钱！
   { type: HuisCaPao, name: "擦炮", multiple: 1 },
   { type: HuisAnGang, name: "暗杠", multiple: 2 },

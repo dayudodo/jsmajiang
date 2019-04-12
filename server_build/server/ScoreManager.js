@@ -59,10 +59,10 @@ class ScoreManager {
                     }
                     //分数添加到胡家里面
                     hu_player.oneju_score += score;
-                    console.log(`增加${hu_player.username}分数：${score}`);
+                    console.log(`增加${hu_player.username}胡分数：${score}，其总积分:${hu_player.oneju_score}`);
                     //扣掉其它两个玩家的分数，还要看亮倒的情况
                     p.oneju_score -= score;
-                    console.log(`扣除${p.username}分数：${score}`);
+                    console.log(`扣除${p.username}胡分数：${score},其总积分：${p.oneju_score}`);
                     //漂单独算，貌似玩家单独还可以设置！其实也可以强制漂，这由庄家决定。创建房间的人可以设定漂
                     //如果已经封顶，不再计算漂
                     if (score < top_score) {

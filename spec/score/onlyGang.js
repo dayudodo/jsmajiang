@@ -55,48 +55,17 @@ function init() {
     username: "tom3",
     user_id: 10003
   })
-}
-
-// test("5定5 屁胡自摸进30,外带1杠5, 2暗杠+擦炮，可怜的3", function(t) {
-//   init()
-//   player1.is_hu = true
-//   player1.is_zimo = true
-//   player1.hupai_zhang = to_number("t9")
-//   player1.hupai_data = {
-//     hupai_dict: { 19: [config.HuisPihu] }
-//   }
-
-//   //给player1放了个普通杠
-//   player1.saveGang(player2, to_number("b2"))
-//   //player2有个暗杠
-//   player2.saveAnGang([player1, player3], to_number("b3"))
-//   //给player2还有个擦炮
-//   player2.saveCaPao([player1, player3], to_number("b4"))
-//   ScoreManager.cal_oneju_score([player1, player2, player3])
-//   console.log(
-//     `各自分数： 
-//     ${player1.username}:${player1.oneju_score}  
-//     ${player2.username}:${player2.oneju_score}  
-//     ${player3.username}:${player3.oneju_score}`
-//   )
-//   t.deepEqual(player1.oneju_score, 20)
-// })
-
-test("5， 没漂，自摸屁胡进10", function(t) {
-  init()
-  player1.is_hu = true
-  player1.is_zimo = true
-  player1.hupai_zhang = to_number("t9")
-  player1.hupai_data = {
-    hupai_dict: { 19: [config.HuisPihu] }
-  } //给player1放了个普通杠
+  //player1有个player2放的普通杠
   player1.saveGang(player2, to_number("b2"))
   //player2有个暗杠
   player2.saveAnGang([player1, player3], to_number("b3"))
-  //给player2还有个擦炮
+  //player2还有个擦炮
   player2.saveCaPao([player1, player3], to_number("b4"))
-  config.have_piao = false
+}
 
+//杠钱是固定的，不算漂
+test("只有杠钱，没人赢", function(t) {
+  init()
   ScoreManager.cal_oneju_score([player1, player2, player3])
   console.log(
     `各自分数： 
@@ -104,6 +73,6 @@ test("5， 没漂，自摸屁胡进10", function(t) {
     ${player2.username}:${player2.oneju_score}  
     ${player3.username}:${player3.oneju_score}`
   )
-  // player1屁胡自摸进10+杠10=20， 要出player2的暗杠+擦炮15，自然就是进5块钱了
-  t.deepEqual(player1.oneju_score, 5)
+    //player1进10，出player的暗杠10+擦炮5
+  t.deepEqual(player1.oneju_score, -5)
 })

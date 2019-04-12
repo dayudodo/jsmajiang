@@ -1,3 +1,4 @@
+//测试一炮双响
 import test from "ava"
 import { Player } from "../../server_build/server/player"
 import { ScoreManager } from "../../server_build/server/ScoreManager"
@@ -29,6 +30,12 @@ function init() {
     username: "jack1",
     user_id: 10001
   })
+  player1.is_hu = true
+  player1.is_liang = true
+  player1.hupai_zhang = to_number("t9")
+  player1.hupai_data = {
+    hupai_dict: { 19: [config.HuisPihu] }
+  }
 
   player2 = new Player({
     group_shou_pai: {
@@ -36,15 +43,18 @@ function init() {
       mingGang: pais(["b4"]),
       peng: pais(["di"]),
       selfPeng: [],
-      shouPai: pais(["zh", "zh", "t7", "t8", "fa"])
+      shouPai: pais(["zh", "zh", "t7", "t8"]),
     },
     socket: null,
     username: "rose2",
     user_id: 10002
   })
-
-  //给player1放了个普通杠
-  player1.saveGang(player2, to_number("b2"))
+  player2.is_hu = true
+  player2.is_liang = true
+  player2.hupai_zhang = to_number("t9")
+  player2.hupai_data = {
+    hupai_dict: { 19: [config.HuisPihu] }
+  }
 
   player3 = new Player({
     group_shou_pai: {
@@ -58,14 +68,11 @@ function init() {
     username: "tom3",
     user_id: 10003
   })
-  //player2有个暗杠
-  player2.saveAnGang([player1, player3], to_number("b3"))
-  //给player2还有个擦炮
-  player2.saveCaPao([player1, player3], to_number("b4"))
+  player3.is_fangpao = true
 }
 
-//杠钱是固定的，不算漂
-test("只有杠钱，没人赢", function(t) {
+//
+test("一炮双响", function(t) {
   init()
   ScoreManager.cal_oneju_score([player1, player2, player3])
   console.log(
@@ -74,6 +81,5 @@ test("只有杠钱，没人赢", function(t) {
     ${player2.username}:${player2.oneju_score}  
     ${player3.username}:${player3.oneju_score}`
   )
-
-  t.deepEqual(player1.oneju_score, -10)
+  t.deepEqual(player1.oneju_score, 20)
 })
