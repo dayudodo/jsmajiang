@@ -59,7 +59,19 @@ ava_1.default("应该有两个可以隐藏的3牌", function (t) {
             mingGang: [],
             peng: [],
             selfPeng: [],
-            shouPai: pais(["b2", "b2", "b2", "t1", "t1", "t1", "zh", "zh", "t7", "t8", "t9"]),
+            shouPai: pais([
+                "b2",
+                "b2",
+                "b2",
+                "t1",
+                "t1",
+                "t1",
+                "zh",
+                "zh",
+                "t7",
+                "t8",
+                "t9"
+            ])
         },
         socket: null,
         username: "jack1",
@@ -81,6 +93,7 @@ ava_1.default("group中shouPai不空之边界检查", function (t) {
         user_id: "10001"
     });
     let flat = player.flat_shou_pai;
+    // console.log(flat);
     t.deepEqual(flat, pais("b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t1 t7 t8 t9 zh zh"));
 });
 ava_1.default("正确得到flat_shoupai", function (t) {
@@ -97,6 +110,146 @@ ava_1.default("打牌并碰之后正确得到flat_shoupai", function (t) {
     let flat = player.flat_shou_pai;
     t.deepEqual(flat, pais("b1 b1 b1 b1 b2 b2 b2 b2 b3 b3 b3 t1 t1 t1 zh zh"));
     t.deepEqual(player.arr_dapai, pais("t7 t8 t9"));
+});
+ava_1.default("明杠之后牌正常", function (t) {
+    player = new Player_1.Player({
+        group_shou_pai: {
+            anGang: [],
+            mingGang: [],
+            peng: pais(["b1", "b2"]),
+            selfPeng: [],
+            shouPai: pais(["b1", "b2", "t7", "t7", "t7", "t8", "t9"])
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.mo_pai = to_number("b3");
+    player.da_pai(to_number("t7"));
+    player.mo_pai = to_number("b3");
+    player.da_pai(to_number("t8"));
+    player.mo_pai = to_number("b3");
+    player.da_pai(to_number("t9"));
+    //todo: 按说要扛别人的牌，需要别人打一张才行！
+    player.confirm_mingGang(to_number("b2"));
+    player.confirm_mingGang(to_number("b3"));
+    let flat = player.flat_shou_pai;
+    t.deepEqual(player.group_shou_pai.mingGang, pais("b2 b3"));
+    t.deepEqual(flat, pais("b1 b1 b1 b1 b2 b2 b2 b2 b3 b3 b3 b3 t7 t7"));
+});
+ava_1.default("暗杠之后牌正常", function (t) {
+    player = new Player_1.Player({
+        group_shou_pai: {
+            anGang: [],
+            mingGang: [],
+            peng: pais(["b1", "b2"]),
+            selfPeng: [],
+            shouPai: pais(["b1", "b2", "t7", "t7", "t7", "t8", "t9"])
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.mo_pai = to_number("b3");
+    player.da_pai(to_number("t7"));
+    player.mo_pai = to_number("b3");
+    player.da_pai(to_number("t8"));
+    player.mo_pai = to_number("b3");
+    player.da_pai(to_number("t9"));
+    player.confirm_anGang(to_number("b3"));
+    let flat = player.flat_shou_pai;
+    t.deepEqual(player.group_shou_pai.anGang, pais("b3"));
+    t.deepEqual(flat, pais("b1 b1 b1 b1 b2 b2 b2 b2 b3 b3 b3 b3 t7 t7"));
+});
+ava_1.default("打牌之后正常算出胡牌", function (t) {
+    var player = new Player_1.Player({
+        group_shou_pai: {
+            anGang: pais(["b1"]),
+            mingGang: pais(["b2"]),
+            peng: pais(["t1"]),
+            selfPeng: [],
+            shouPai: pais(["zh", "zh", "t7", "t8", "t9"])
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.da_pai(to_number("t9"));
+    t.deepEqual(player.hupai_data.all_hupai_zhang, pais(["t6", "t9"]));
+});
+ava_1.default("打牌之后能否胡", function (t) {
+    var player = new Player_1.Player({
+        group_shou_pai: {
+            anGang: pais(["b1"]),
+            mingGang: pais(["b2"]),
+            peng: pais(["t1"]),
+            selfPeng: [],
+            shouPai: pais(["zh", "zh", "t7", "t8", "t9"])
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.da_pai(to_number("t9"));
+    let canhu = player.canHu(to_number("t6"));
+    t.is(canhu, true);
+    canhu = player.canHu(to_number("t8"));
+    t.is(canhu, false);
+});
+ava_1.default("打牌之后能否大胡", function (t) {
+    player = new Player_1.Player({
+        group_shou_pai: {
+            anGang: [],
+            mingGang: [],
+            peng: [],
+            selfPeng: [],
+            shouPai: pais("b1 b1 b1 b1 b2 b2 b2 b2 t1 t1 t7 t7 t8 t8")
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.da_pai(to_number("t8"));
+    t.is(player.isDaHu(to_number("t8")), true);
+    t.is(player.isDaHu(to_number("zh")), false);
+});
+ava_1.default("不能扛自己摸的牌", function (t) {
+    player = new Player_1.Player({
+        group_shou_pai: {
+            // anGang: ["zh"],
+            anGang: [],
+            anGangCount: 0,
+            mingGang: [],
+            selfPeng: [],
+            // selfPengCount: 1,
+            peng: [],
+            shouPai: pais("b1 b1 b1 b3 b4 t1 t1 t4 t5 t6 t3 t3 fa fa")
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.mo_pai = to_number("t3");
+    t.is(player.canGang(to_number("t3")), false);
+});
+ava_1.default("可以扛自己摸的牌", function (t) {
+    player = new Player_1.Player({
+        group_shou_pai: {
+            // anGang: ["zh"],
+            anGang: [],
+            anGangCount: 0,
+            mingGang: [],
+            selfPeng: [],
+            // selfPengCount: 1,
+            peng: [],
+            shouPai: pais("b1 b1 b1 b3 b4 t1 t1 t4 t5 t6 t3 t3 t3 fa")
+        },
+        socket: null,
+        username: "jack1",
+        user_id: "10001"
+    });
+    player.mo_pai = to_number("t3");
+    t.is(player.canGang(to_number("t3")), true);
 });
 // var player2 = new Player({
 //     group_shou_pai: {

@@ -253,7 +253,7 @@ export class Player {
   //   return true;
   // }
   /**能够杠的牌，包括peng, selfPeng里面可以自扛以及暗杠的牌 */
-  canGangPais():number[] {
+  canGangPais(): number[] {
     let output: number[] = []
     output = output.concat(
       this.group_shou_pai.peng.filter(pai =>
@@ -284,12 +284,12 @@ export class Player {
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
-    // if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
-    //   return true;
-    // } else {
-    //   return false;
-    // }
-    return true
+    if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
+      return true
+    } else {
+      return false
+    }
+    // return true
   }
 
   /**是否是大胡 */
@@ -299,8 +299,8 @@ export class Player {
 
   /** 玩家手牌数组，从group_shou_pai中生成 */
   get flat_shou_pai(): Array<Pai> {
-    // return MajiangAlgo.flat_shou_pai(this.group_shou_pai);
-    return []
+    return NMajiangAlgo.flat_shou_pai(this.group_shou_pai)
+    // return []
   }
   /** 从牌数组中删除一张牌 */
   private delete_pai(arr: Array<Pai>, pai: Pai): boolean {
@@ -314,9 +314,13 @@ export class Player {
   }
 
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
-   * 一旦打出，则清空
+   * 一旦打出，才会清空
    */
   set mo_pai(pai: Pai) {
+    if (this._mo_pai) {
+      //设置的时候一定要保证其是个空
+      throw new Error(`已经摸过牌:${this._mo_pai}，需要先打一张`)
+    }
     this._mo_pai = pai
     this.after_mo_gang_dapai = false
     //扛或者碰之后就会清除_mo_pai,由他们来添加这张摸牌
@@ -337,15 +341,15 @@ export class Player {
   }
   /**能碰吗？只能是手牌中的才能检测碰，已经碰的牌就不需要再去检测碰了 */
   canPeng(pai: Pai): boolean {
-    // return MajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai, this.is_liang);
-    return true
+    return NMajiangAlgo.canPeng(this.group_shou_pai.shouPai, pai, this.is_liang)
+    // return true
   }
-  /**能杠吗？分碰了之后杠还是本来就有三张牌！最简单的自然是使用flat_shou_pai */
+  /**能杠吗？分碰了之后杠还是本来就有三张牌，亮牌后只有selfPeng可以扛！ */
   canGang(pai: Pai): boolean {
     let selfMo = this.mo_pai != null
     //能否杠还能分你是自摸碰还是求人碰，selfPeng是可以随便杠的，但是求人碰则得自己摸牌才能杠！
-    // return MajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, selfMo);
-    return true
+    return NMajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, selfMo)
+    // return true
   }
 
   confirm_peng(pai: Pai) {
@@ -356,7 +360,8 @@ export class Player {
     for (let i = 0; i < 2; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai)
     }
-    this.group_shou_pai.shouPai.sort()
+    //删除掉重新排序
+    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
   }
   /**杠别人的牌是明杠 */
   confirm_mingGang(pai: Pai) {
@@ -415,6 +420,7 @@ export class Player {
     if (shouPaiChanged) {
       //手牌变化也说明这张牌有用，需要看mo_pai是否为空
       //不为空就需要把这张摸牌添加到shouPai中！如果已经碰了或者扛了，那么就不需要再次添加！
+      //为空可能是碰的或者扛的别人牌，并非是摸牌
       if (this._mo_pai != null) {
         this.group_shou_pai.shouPai.push(this._mo_pai)
       }

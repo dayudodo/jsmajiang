@@ -52,14 +52,14 @@
   },
   "ava": {
     "compileEnhancements": false,
-		"extensions": [
-			"ts"
-		],
+    "extensions": [
+      "ts"
+    ],
     "files": [
       "spec/simulate/*.ts"
     ],
     "require": [
-			"ts-node/register"
-		]
+      "ts-node/register"
+    ]
   }
 }

@@ -467,7 +467,7 @@ export class NMajiangAlgo {
     })
 
     onlyShouPai = onlyShouPai.concat(group_shou_pai.shouPai)
-    return onlyShouPai.sort()
+    return _.orderBy(onlyShouPai)
   }
   /**
    * group手牌胡哪些牌
