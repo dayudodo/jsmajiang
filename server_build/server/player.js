@@ -161,6 +161,7 @@ class Player {
         };
     }
     /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */
+    //胜负最后需要显示的shou_pai, 所有的牌都需要显示出来！
     get result_shou_pai() {
         let result = _.cloneDeep(this.group_shou_pai);
         if (result.anGang.length > 0) {
@@ -295,7 +296,7 @@ class Player {
         for (var i = 0; i < 3; i++) {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
-        this.group_shou_pai.shouPai.sort();
+        this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai);
         //杠之后需要重新算下胡牌！
         this.calculateHu();
     }
@@ -309,7 +310,7 @@ class Player {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.anGang.push(pai);
-        this.group_shou_pai.shouPai.sort();
+        this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai);
         //杠之后需要重新算下胡牌！
         this.calculateHu();
     }
@@ -320,7 +321,7 @@ class Player {
             this.delete_pai(this.group_shou_pai.shouPai, pai);
         }
         this.group_shou_pai.selfPeng.push(pai);
-        this.group_shou_pai.shouPai.sort();
+        this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai);
     }
     /**  从玩家手牌中删除pai并计算胡牌*/
     da_pai(pai_name) {
@@ -339,7 +340,7 @@ class Player {
             if (this._mo_pai != null) {
                 this.group_shou_pai.shouPai.push(this._mo_pai);
             }
-            this.group_shou_pai.shouPai.sort();
+            this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai);
             this.calculateHu();
         }
         this._mo_pai = null; //打牌之后玩家处于非摸牌状态

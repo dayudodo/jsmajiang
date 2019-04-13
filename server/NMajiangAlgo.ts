@@ -878,10 +878,11 @@ export class NMajiangAlgo {
 
   /**通过胡的类型码数组来判断是否是大胡*/
   static isDaHu(hupaicodeArr: Array<number>) {
-    if (!hupaicodeArr) {
+    if (_.isEmpty(hupaicodeArr)) {
       return false
     }
     if (
+      //新版本的一色肯定是大胡，因为清一色的判断是在有胡的基础上才会判断的！
       hupaicodeArr.includes(config.IsYise) ||
       hupaicodeArr.includes(config.HuisKaWuXing) ||
       hupaicodeArr.includes(config.HuisQidui) ||

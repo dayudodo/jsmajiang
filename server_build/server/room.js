@@ -74,27 +74,28 @@ class Room {
     static getId() {
         //todo: 暂时用模拟的功能，每次要创建的时候，其实都是用的数组中的一个名称
         //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
-        return 1;
+        return 1001;
     }
     //用户加入房间，还需要告诉其它的用户我已经加入了
     join_player(person) {
         this.players.push(person);
     }
-    player_enter_room(socket) {
+    player_enter_room(socket, test = false) {
         //首先应该看玩家是否已经 在房间里面了
         let player = this.find_player_by(socket);
-        if (!player) {
+        if (!test && !player) {
             console.warn("玩家未登录，不能加入房间！bug...");
         }
         //首先告诉其它人player进入房间！客户端会添加此玩家
+        let msg = {
+            type: g_events.server_other_player_enter_room,
+            username: player.username,
+            user_id: player.user_id,
+            seat_index: player.seat_index,
+            score: player.score
+        };
         this.other_players(player).forEach(p => {
-            p.socket.sendmsg({
-                type: g_events.server_other_player_enter_room,
-                username: player.username,
-                user_id: player.user_id,
-                seat_index: player.seat_index,
-                score: player.score
-            });
+            p.socket.sendmsg(msg);
         });
         //用户加入房间，肯定是2，3玩家，需要服务器发送时添加其它玩家的数据
         //庄家创建房间时只有一个人，所以不需要另行通知。

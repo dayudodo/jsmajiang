@@ -248,7 +248,7 @@ test("不能扛自己摸的牌", function(t) {
   t.is(player.canGang(to_number("t3")), false)
 });
 
-test("可以扛自己摸的牌", function(t) {
+test("可以扛自己摸的牌,暗杠或者擦炮", function(t) {
   player = new Player({
     group_shou_pai: {
       // anGang: ["zh"],
@@ -266,30 +266,5 @@ test("可以扛自己摸的牌", function(t) {
   });
   player.mo_pai=to_number("t3")
   t.is(player.canGang(to_number("t3")), true)
-
 });
 
-// var player2 = new Player({
-//     group_shou_pai: {
-//       anGang: [],
-//       mingGang: [],
-//       peng: pais(["b1"]),
-//       selfPeng:pais(["b2"]),
-//       shouPai: pais(["b1", "b2", "t7", "t7", "t7","t7","fa"])
-//     },
-//     socket: null,
-//     username: 'rose2',
-//     user_id: '10002'
-//   });
-// var player3 = new Player({
-//     group_shou_pai: {
-//       anGang: [],
-//       mingGang: [],
-//       peng: pais(["b1"]),
-//       selfPeng:pais(["b2"]),
-//       shouPai: pais(["b1", "b2", "t7", "t7", "t7","t7","fa"])
-//     },
-//     socket: null,
-//     username: 'tom3',
-//     user_id: '10003'
-//   });
