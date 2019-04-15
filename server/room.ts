@@ -61,7 +61,7 @@ export class Room {
   //房间创建时间，房间肯定是有限时
   public createTime = Date.now()
   //房间内的所有玩家，人数有上限，定义在config的LIMIT_IN_ROOM中
-  public players: Array<Player> = new Array(config.LIMIT_IN_ROOM)
+  public players: Array<Player> = []
   //房间内的牌
   public cloneTablePais: Array<Pai> = []
   /**当前玩家，哪个打牌哪个就是当前玩家*/
@@ -112,14 +112,36 @@ export class Room {
     //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
     return 1001
   }
+  /**玩家创建房间 */
+  public create_by(person: Player) {
+    if (this.creator) {
+      console.warn(`已经有创建者了，房间只能有一个${person.username}`)
+      return
+    }
+    this.creator = person
+    this.set_dong_jia(person)
+    person.seat_index = 0 //创建者座位号从0开始
+    person.room = this //玩家知道自己在哪个房间！
+  }
   //用户加入房间，还需要告诉其它的用户我已经加入了
   public join_player(person: Player) {
+    //玩家不需要重复添加
+    if (this.players.includes(person)) {
+      console.warn(`玩家不需要重复添加：${person.username}`)
+      return
+    }
+    //座位号增加
+    person.seat_index = this.last_join_player.seat_index + 1 
+    person.room = this
     this.players.push(person)
+    //通知
+    this.player_enter_room(person.socket)
   }
-  public player_enter_room(socket, test=false) {
+  //玩家通知加入房间
+  private player_enter_room(socket) {
     //首先应该看玩家是否已经 在房间里面了
     let player = this.find_player_by(socket)
-    if (!test && !player) {
+    if (!player) {
       console.warn("玩家未登录，不能加入房间！bug...")
     }
     //首先告诉其它人player进入房间！客户端会添加此玩家
@@ -269,7 +291,8 @@ export class Room {
       player_data["group_shou_pai"]["selfPengCount"] =
         player.group_shou_pai.selfPeng.length
       player_data["group_shou_pai"]["anGang"] = []
-      player_data["group_shou_pai"]["anGangCount"] = player.group_shou_pai.anGang.length
+      player_data["group_shou_pai"]["anGangCount"] =
+        player.group_shou_pai.anGang.length
       return player_data
     } else {
       //不是god_player, 也没有忽略过滤器，就全过滤！
@@ -315,7 +338,9 @@ export class Room {
 
     pengPlayer.can_dapai = true
     if (this.all_players_normal()) {
-      console.log(chalk.green(`玩家们正常，碰家：${pengPlayer.username}可以打牌`))
+      console.log(
+        chalk.green(`玩家们正常，碰家：${pengPlayer.username}可以打牌`)
+      )
       pengPlayer.socket.sendmsg({ type: g_events.server_can_dapai })
     }
 
@@ -383,12 +408,18 @@ export class Room {
           console.log(`玩家${gangPlayer.username}自己摸牌${gangPai}可以扛`)
 
           gangPlayer.confirm_anGang(gangPlayer.mo_pai)
-          gangPlayer.saveAnGang(this.other_players(gangPlayer), gangPlayer.mo_pai)
+          gangPlayer.saveAnGang(
+            this.other_players(gangPlayer),
+            gangPlayer.mo_pai
+          )
         } else {
           console.log(`玩家${gangPlayer.username}擦炮 ${gangPai}`)
           //擦炮其实也是一种明杠
           gangPlayer.confirm_mingGang(gangPlayer.mo_pai)
-          gangPlayer.saveCaPao(this.other_players(gangPlayer), gangPlayer.mo_pai)
+          gangPlayer.saveCaPao(
+            this.other_players(gangPlayer),
+            gangPlayer.mo_pai
+          )
         }
       }
       //只要扛了就从后面发牌，并且不用判断是否已经打牌！
@@ -401,7 +432,9 @@ export class Room {
       //杠之后打牌玩家的打牌就跑到杠玩家手中了
       gangPai = this.dapai_player.arr_dapai.pop()
       if (gangPai != this.table_dapai) {
-        throw new Error(`放杠者：${gangPai} 与 table_pai: ${this.table_dapai}不相同？`)
+        throw new Error(
+          `放杠者：${gangPai} 与 table_pai: ${this.table_dapai}不相同？`
+        )
       }
       this.operation_sequence.push({
         who: gangPlayer,
@@ -484,11 +517,16 @@ export class Room {
     player.is_thinking = false
     player.is_liang = true
     //如果liangHidePais有效
-    if (client_message.liangHidePais && client_message.liangHidePais.length > 0) {
+    if (
+      client_message.liangHidePais &&
+      client_message.liangHidePais.length > 0
+    ) {
       let liangHidePais: Array<Pai> = client_message.liangHidePais.sort()
       let rightSelectPais = player.PaiArr3A()
       //所有的牌都应该在PaiArr3A之中，安全检测
-      let normalSelect = liangHidePais.every(pai => rightSelectPais.includes(pai))
+      let normalSelect = liangHidePais.every(pai =>
+        rightSelectPais.includes(pai)
+      )
       if (normalSelect) {
         liangHidePais.forEach(pai => {
           player.confirm_selfPeng(pai)
@@ -579,7 +617,9 @@ export class Room {
     if (this.all_players_normal) {
       //所有玩家都选择完毕才去进行真正的结算
       ScoreManager.cal_oneju_score(this.players)
-      let players = this.players.map(person => this.player_result_filter(person))
+      let players = this.players.map(person =>
+        this.player_result_filter(person)
+      )
       this.players.forEach(p => {
         p.socket.sendmsg({
           type: g_events.server_winner,
@@ -625,7 +665,11 @@ export class Room {
     //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
     this.decideSelectShow(player, pai[0])
 
-    console.log(chalk.cyan("服务器发牌 %s 给：%s"), player.mo_pai, player.username)
+    console.log(
+      chalk.cyan("服务器发牌 %s 给：%s"),
+      player.mo_pai,
+      player.username
+    )
     console.log("房间 %s 牌还有%s张", this.id, this.cloneTablePais.length)
     // player.socket.emit("server_table_fapai", pai);
     player.socket.sendmsg({
@@ -662,7 +706,9 @@ export class Room {
     if (!player.can_dapai) {
       // throw new Error();
       console.log(
-        chalk.red(`房间${this.id} 玩家${player.username} 强制打牌，抓住！！！！`)
+        chalk.red(
+          `房间${this.id} 玩家${player.username} 强制打牌，抓住！！！！`
+        )
       )
       return
     }
@@ -722,7 +768,10 @@ export class Room {
         // let oplayers = this.other_players(player);
         for (let item_player of this.players) {
           //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
-          let canShowSelect: boolean = this.decideSelectShow(item_player, dapai_name)
+          let canShowSelect: boolean = this.decideSelectShow(
+            item_player,
+            dapai_name
+          )
           if (canShowSelect) {
             item_player.is_thinking = true
             canNormalFaPai = false
@@ -827,7 +876,9 @@ export class Room {
       canGangPais = player.canGangPais()
       if (canGangPais.length > 0) {
         isShowGang = true
-        console.log(`房间${this.id} 玩家${player.username}可以自杠牌:${canGangPais}`)
+        console.log(
+          `房间${this.id} 玩家${player.username}可以自杠牌:${canGangPais}`
+        )
       }
     }
 
@@ -839,13 +890,17 @@ export class Room {
         //如果用户亮牌而且可以胡别人打的牌
         if (player.is_liang && player.canHu(pai_name)) {
           isShowHu = true
-          console.log(`房间${this.id} 玩家${player.username}亮牌之后可以胡牌${pai_name}`)
+          console.log(
+            `房间${this.id} 玩家${player.username}亮牌之后可以胡牌${pai_name}`
+          )
         }
         // 大胡也可以显示胡牌
         //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
         if (!isShowHu && player.isDaHu(pai_name)) {
           isShowHu = true
-          console.log(`房间${this.id} 玩家${player.username}可以大胡：${pai_name}`)
+          console.log(
+            `房间${this.id} 玩家${player.username}可以大胡：${pai_name}`
+          )
           //todo: 等待20秒，过时发牌
         }
         if (player.canGang(pai_name)) {
@@ -855,11 +910,15 @@ export class Room {
           if (!_.isEmpty(canGangPais)) {
             canGangPais.push(pai_name)
           }
-          console.log(`房间${this.id} 玩家${player.username}可以杠牌${pai_name}`)
+          console.log(
+            `房间${this.id} 玩家${player.username}可以杠牌${pai_name}`
+          )
         }
         if (player.canPeng(pai_name)) {
           isShowPeng = true
-          console.log(`房间${this.id} 玩家${player.username}可以碰牌${pai_name}`)
+          console.log(
+            `房间${this.id} 玩家${player.username}可以碰牌${pai_name}`
+          )
         }
       } else {
         //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人
@@ -875,7 +934,9 @@ export class Room {
         //摸牌后并没有重复计算胡牌，所以可以使用其判断胡牌！
         if (player.canHu(mo_pai)) {
           isShowHu = true
-          console.log(`房间${this.id} 玩家${player.username}可以自摸胡${mo_pai}`)
+          console.log(
+            `房间${this.id} 玩家${player.username}可以自摸胡${mo_pai}`
+          )
         }
       }
     }
@@ -883,7 +944,9 @@ export class Room {
     let canShowSelect = isShowHu || isShowLiang || isShowGang || isShowPeng
     if (canShowSelect) {
       player.is_thinking = true
-      console.log(`房间${this.id} 玩家${player.username} 可以显示选择对话框，其手牌为:`)
+      console.log(
+        `房间${this.id} 玩家${player.username} 可以显示选择对话框，其手牌为:`
+      )
       puts(player.group_shou_pai)
       console.log(`可以隐藏的牌：${canLiangPais}`)
       console.log(`可以杠的牌：${canGangPais}`)

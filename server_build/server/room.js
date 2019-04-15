@@ -30,7 +30,7 @@ class Room {
         //房间创建时间，房间肯定是有限时
         this.createTime = Date.now();
         //房间内的所有玩家，人数有上限，定义在config的LIMIT_IN_ROOM中
-        this.players = new Array(config.LIMIT_IN_ROOM);
+        this.players = [];
         //房间内的牌
         this.cloneTablePais = [];
         /**当前玩家，哪个打牌哪个就是当前玩家*/
@@ -76,14 +76,36 @@ class Room {
         //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
         return 1001;
     }
+    /**玩家创建房间 */
+    create_by(person) {
+        if (this.creator) {
+            console.warn(`已经有创建者了，房间只能有一个${person.username}`);
+            return;
+        }
+        this.creator = person;
+        this.set_dong_jia(person);
+        person.seat_index = 0; //创建者座位号从0开始
+        person.room = this; //玩家知道自己在哪个房间！
+    }
     //用户加入房间，还需要告诉其它的用户我已经加入了
     join_player(person) {
+        //玩家不需要重复添加
+        if (this.players.includes(person)) {
+            console.warn(`玩家不需要重复添加：${person.username}`);
+            return;
+        }
+        //座位号增加
+        person.seat_index = this.last_join_player.seat_index + 1;
+        person.room = this;
         this.players.push(person);
+        //通知
+        this.player_enter_room(person.socket);
     }
-    player_enter_room(socket, test = false) {
+    //玩家通知加入房间
+    player_enter_room(socket) {
         //首先应该看玩家是否已经 在房间里面了
         let player = this.find_player_by(socket);
-        if (!test && !player) {
+        if (!player) {
             console.warn("玩家未登录，不能加入房间！bug...");
         }
         //首先告诉其它人player进入房间！客户端会添加此玩家
@@ -234,7 +256,8 @@ class Room {
             player_data["group_shou_pai"]["selfPengCount"] =
                 player.group_shou_pai.selfPeng.length;
             player_data["group_shou_pai"]["anGang"] = [];
-            player_data["group_shou_pai"]["anGangCount"] = player.group_shou_pai.anGang.length;
+            player_data["group_shou_pai"]["anGangCount"] =
+                player.group_shou_pai.anGang.length;
             return player_data;
         }
         else {
@@ -442,7 +465,8 @@ class Room {
         player.is_thinking = false;
         player.is_liang = true;
         //如果liangHidePais有效
-        if (client_message.liangHidePais && client_message.liangHidePais.length > 0) {
+        if (client_message.liangHidePais &&
+            client_message.liangHidePais.length > 0) {
             let liangHidePais = client_message.liangHidePais.sort();
             let rightSelectPais = player.PaiArr3A();
             //所有的牌都应该在PaiArr3A之中，安全检测

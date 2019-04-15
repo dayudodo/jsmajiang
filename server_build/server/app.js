@@ -148,14 +148,11 @@ function client_join_room(client_message, socket) {
         }
         else {
             console.log(`用户${_me.username}成功加入房间${room_number}`);
-            //设置其座位号
-            _me.seat_index = room.last_join_player.seat_index + 1;
             //房间会保存玩家信息，玩家也会保存房间信息
             room.join_player(_me);
-            _me.room = room;
             // console.dir(room)
             //通知他人应该是房间的事情！
-            room.player_enter_room(socket);
+            // room.player_enter_room(socket);
         }
     }
     else {
@@ -177,13 +174,10 @@ function client_create_room(client_message, socket) {
         let owner_room = new room_1.Room();
         let room_name = owner_room.id;
         if (room_name) {
-            owner_room.creator = conn.player; //房间中记录下创建者
-            owner_room.set_dong_jia(conn.player); //创建房间者即为东家，初始化时会多一张牉！
-            conn.player.seat_index = 0; //玩家座位号从0开始
-            owner_room.join_player(conn.player); //新建的房间要加入本玩家
+            owner_room.create_by(conn.player);
             conn.room = owner_room; //创建房间后，应该把房间保存到此socket的连接信息中
             console.log(`${conn.player.username}创建了房间${owner_room.id}, seat_index: ${conn.player.seat_index}`);
-            conn.room.player_enter_room(socket);
+            // conn.room.player_enter_room(socket);
             //todo: 供调试用
             global.room = conn.room;
         }
