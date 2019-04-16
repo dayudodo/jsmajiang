@@ -103,6 +103,9 @@ export class Player {
   public score = 0
   /**一局得分 */
   public oneju_score = 0
+  /**玩家财富 */
+  public treasure = {}
+
   /**暗杠数量 */
   public count_anGang = 0
   /**明杠数量 */

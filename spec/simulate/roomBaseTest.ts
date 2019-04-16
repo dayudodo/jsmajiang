@@ -73,7 +73,8 @@ var player3 = new Player({
   username: "tom3",
   user_id: "10003"
 })
-room.join_player(player1)
+// room.join_player(player1)
+room.create_by(player1)
 room.join_player(player2)
 room.join_player(player3)
 

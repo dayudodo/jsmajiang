@@ -43,6 +43,8 @@ class Player {
         this.score = 0;
         /**一局得分 */
         this.oneju_score = 0;
+        /**玩家财富 */
+        this.treasure = {};
         /**暗杠数量 */
         this.count_anGang = 0;
         /**明杠数量 */

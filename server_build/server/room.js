@@ -86,9 +86,23 @@ class Room {
         this.set_dong_jia(person);
         person.seat_index = 0; //创建者座位号从0开始
         person.room = this; //玩家知道自己在哪个房间！
+        this.players.push(person);
+        //todo: 客户端要有相应的变化！
+        person.socket.sendmsg({
+            type: g_events.server_create_room_ok,
+            room_id: this.id,
+            username: person.username,
+            user_id: person.user_id,
+            seat_index: person.seat_index,
+            east: person.east,
+            treasure: person.treasure
+        });
     }
     //用户加入房间，还需要告诉其它的用户我已经加入了
     join_player(person) {
+        if (_.isEmpty(this.players)) {
+            throw new Error('用户加入之前，一定要先创建房间！');
+        }
         //玩家不需要重复添加
         if (this.players.includes(person)) {
             console.warn(`玩家不需要重复添加：${person.username}`);
