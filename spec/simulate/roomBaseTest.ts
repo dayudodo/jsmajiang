@@ -12,6 +12,9 @@ import _ = require("lodash");
 function pais(strs): number[] {
   return PaiConvertor.pais(strs)
 }
+function orderPais(strs) {
+  return _.orderBy(pais(strs))
+}
 function to_number(str) {
   return PaiConvertor.ToNumber(str)
 }
@@ -44,7 +47,7 @@ var player1 = new Player({
     mingGang: [],
     peng: [],
     selfPeng: [],
-    shouPai: pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa")
+    shouPai: []
   },
   socket: new SocketTest("jack1"),
   username: "jack1",
@@ -57,7 +60,7 @@ var player2 = new Player({
     mingGang: [],
     peng: [],
     selfPeng: [],
-    shouPai: pais("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di")
+    shouPai: []
   },
   socket: new SocketTest("rose2"),
   username: "rose2",
@@ -69,7 +72,7 @@ var player3 = new Player({
     mingGang: [],
     peng: [],
     selfPeng: [],
-    shouPai: pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9")
+    shouPai: []
   },
   socket: new SocketTest("tom3"),
   username: "tom3",
@@ -86,11 +89,14 @@ test("用户全部加入房间", function(t) {
   t.is(room.players_count, 3)
 })
 
+//开始游戏之前要先准备一下
+room.players.forEach(item=>item.ready = true)
 room.server_game_start(TablePaiManager.zhuang_mopai_gang())
+
 test("服务器发牌后player1手牌能扛", function(t) {
-  let shou1 = _.orderBy(pais("b8 b9 t1 t1 t1 t1 t7 zh zh fa di di di"))
-  let shou2 = _.orderBy(pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa"))
-  let shou3 = _.orderBy(pais("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9"))
+  let shou1 = orderPais("b8 b9 t1 t1 t1 t1 t7 zh zh fa di di di")
+  let shou2 = orderPais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 fa")
+  let shou3 = orderPais("b4 b5 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9")
   t.deepEqual(player1.group_shou_pai.shouPai, shou1)
   t.deepEqual(player2.group_shou_pai.shouPai, shou2)
   t.deepEqual(player3.group_shou_pai.shouPai, shou3)
@@ -100,6 +106,8 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.is(player1.is_thinking, true)
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
-  // t.deepEqual(player1.canGangPais(), [11,35])
-  // t.is(player1.rema)
+  
+  player1.da_pai(to_number('t1'))
+  t.deepEqual(player1.canGangPais(),[to_number('di')])
+
 })

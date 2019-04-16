@@ -1054,6 +1054,10 @@ export class Room {
     })
   }
   server_game_start(clonePais: Pai[]=TablePaiManager.zhuang_mopai_gang()) {
+    //如果没有准备好，返回！
+    if(!this.all_ready){
+      return
+    }
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //todo: 仅供测试用的发牌器

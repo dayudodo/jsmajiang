@@ -1,4 +1,5 @@
 node_modules
 spec/coverage
 build/
+server_build/
 .DS_Store
