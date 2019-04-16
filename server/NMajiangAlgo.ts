@@ -951,4 +951,32 @@ export class NMajiangAlgo {
     //最后，手里面是否已经有四张相同的牌了？
     return result
   }
+
+  /**
+   * 能够在peng, selfPeng里可以自扛以及暗杠的牌，扛别人的牌要用canGang方法
+   * @param group_shoupai
+   * @param mo_pai 玩家摸到的牌
+   */
+  static canGangPais(group_shoupai: GroupConstructor, mo_pai: Pai): number[] {
+    let output: number[] = []
+    //peng里面是否包含shouPai中的一张，自己摸的，还要判断下有没有mo_pai!
+    output = output.concat(
+      group_shoupai.peng.filter(pai => group_shoupai.shouPai.includes(pai))
+    )
+    //自己隐藏的selfPeng里面是否包含shouPai中的自摸牌？
+    output = output.concat(
+      group_shoupai.selfPeng.filter(pai => group_shoupai.shouPai.includes(pai))
+    )
+    if (!_.isEmpty(mo_pai)) {
+      if (group_shoupai.peng.includes(mo_pai)) {
+        output.concat(mo_pai)
+      }
+      if (group_shoupai.selfPeng.includes(mo_pai)) {
+        output.concat(mo_pai)
+      }
+    }
+    //最后看看shouPai里面有没有带4A的，尤其是刚起的牌一定要统计
+    output = output.concat(NMajiangAlgo.count4A(group_shoupai.shouPai))
+    return output
+  }
 }

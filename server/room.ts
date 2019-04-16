@@ -112,7 +112,7 @@ export class Room {
     //正规的自然是要生成几个唯一的数字了，然后还要分享到微信之中让其它人加入
     return 1001
   }
-  /**玩家创建房间 */
+  /**玩家创建房间并发送消息 */
   public create_by(person: Player) {
     if (this.creator) {
       console.warn(`已经有创建者了，房间只能有一个${person.username}`)
@@ -1053,11 +1053,11 @@ export class Room {
       right_player: { group_shou_pai: rightGroup }
     })
   }
-  server_game_start() {
+  server_game_start(clonePais: Pai[]=TablePaiManager.zhuang_mopai_gang()) {
     //初始化牌面
     //todo: 转为正式版本 this.clone_pai = _.shuffle(config.all_pai);
     //todo: 仅供测试用的发牌器
-    this.cloneTablePais = TablePaiManager.zhuang_mopai_gang()
+    this.cloneTablePais = clonePais
     //开始给所有人发牌，并给东家多发一张
     if (!this.zhuang_jia) {
       throw new Error(chalk.red("房间${id}没有东家，检查代码！"))
@@ -1065,8 +1065,8 @@ export class Room {
     //先把所有玩家的牌准备好！
     this.players.forEach((p, index) => {
       //玩家收到的牌保存好，以便服务器进行分析，每次都需要排序下，便于分析和查看
-      p.group_shou_pai.shouPai = this.cloneTablePais.splice(0, 13).sort()
-      //发牌完毕就要计算胡了
+      p.group_shou_pai.shouPai = _.orderBy(this.cloneTablePais.splice(0, 13))
+      //发牌完毕就要计算胡了，会有人可能天胡，或者起手就听牌
       p.calculateHu()
     })
     // 再进行相关的消息发送！

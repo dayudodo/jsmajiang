@@ -185,13 +185,9 @@ class Player {
     //   // return this.gang_lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
     //   return true;
     // }
-    /**能够杠的牌，包括peng, selfPeng里面可以自扛以及暗杠的牌 */
+    /**能够杠的牌*/
     canGangPais() {
-        let output = [];
-        output = output.concat(this.group_shou_pai.peng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
-        output = output.concat(this.group_shou_pai.selfPeng.filter(pai => this.group_shou_pai.shouPai.includes(pai)));
-        output = output.concat(NMajiangAlgo_1.NMajiangAlgo.count4A(this.group_shou_pai.shouPai));
-        return output;
+        return NMajiangAlgo_1.NMajiangAlgo.canGangPais(this.group_shou_pai, this.mo_pai);
     }
     /**返回group手牌中出现3次的牌！ */
     PaiArr3A() {
