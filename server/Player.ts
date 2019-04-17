@@ -356,20 +356,26 @@ export class Player {
     //删除掉重新排序
     this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
   }
-  /**杠别人的牌是明杠 */
-  confirm_mingGang(pai: Pai) {
+  /**
+   * 杠别人的牌是明杠
+   * @param da_pai 其他人打牌
+   */
+  confirm_mingGang(da_pai: Pai) {
+    if(!this.canGang(da_pai)){
+      throw new Error(`无法扛${da_pai}`);
+    }
     this._mo_pai = null
     this.after_mo_gang_dapai = false
-    this.group_shou_pai.mingGang.push(pai)
+    this.group_shou_pai.mingGang.push(da_pai)
     //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
     //如果是碰了之后杠，需要删除这张碰牌
-    this.group_shou_pai.peng.remove(pai)
+    this.group_shou_pai.peng.remove(da_pai)
     //包括亮牌中的selfPeng，因为peng, selfPeng里面只可能有一个，所以都删除不会出错！
-    this.group_shou_pai.selfPeng.remove(pai)
+    this.group_shou_pai.selfPeng.remove(da_pai)
     //当自己摸牌杠的时候，其实是需要删除4次的！好在delete_pai找不到的时候并不会出错！
     //不过自己摸牌其实是属于暗杠的范围了
     for (var i = 0; i < 3; i++) {
-      this.delete_pai(this.group_shou_pai.shouPai, pai)
+      this.delete_pai(this.group_shou_pai.shouPai, da_pai)
     }
     this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
     //杠之后需要重新算下胡牌！
@@ -422,6 +428,7 @@ export class Player {
     }
     this._mo_pai = null //打牌之后玩家处于非摸牌状态
     this.after_mo_gang_dapai = true
+    this.can_dapai = false //打过后就不能再打牌了！
   }
   /**计算各种胡牌的状态 */
   calculateHu() {

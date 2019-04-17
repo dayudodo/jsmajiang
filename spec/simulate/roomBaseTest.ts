@@ -6,7 +6,7 @@ import { PaiConvertor } from "../../server/PaiConvertor"
 import * as config from "../../server/config"
 import chalk from "chalk"
 import { TablePaiManager } from "../../server/TablePaiManager"
-import _ = require("lodash");
+import _ = require("lodash")
 
 /**直接将字符串转换成数类麻将数组 */
 function pais(strs): number[] {
@@ -90,7 +90,7 @@ test("用户全部加入房间", function(t) {
 })
 
 //开始游戏之前要先准备一下
-room.players.forEach(item=>item.ready = true)
+room.players.forEach(item => (item.ready = true))
 room.server_game_start(TablePaiManager.zhuang_mopai_gang())
 
 test("服务器发牌后player1手牌能扛", function(t) {
@@ -106,8 +106,18 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.is(player1.is_thinking, true)
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
-  
-  player1.da_pai(to_number('t1'))
-  t.deepEqual(player1.canGangPais(),[to_number('di')])
 
+  player1.da_pai(to_number("t7"))
+  //打牌之后不能再打，要等其它人操作了！
+  t.is(player1.can_dapai, false)
+  //打牌后mo_pai应该为空！
+  t.is(player1.mo_pai, null)
+
+  //应该不会听胡
+  t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
+  t.deepEqual(player1.canGangPais(), orderPais("t1 di"))
+  t.deepEqual(player3.canGang(to_number("t7")), true)
+  player3.confirm_mingGang(to_number("t7"))
+  //player3扛之后，其会成为当前player
+  t.is(room.current_player, player3)
 })
