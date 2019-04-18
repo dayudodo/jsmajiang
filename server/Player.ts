@@ -355,6 +355,8 @@ export class Player {
     }
     //删除掉重新排序
     this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    //碰了之后能够打牌
+    this.can_dapai = true
   }
   /**
    * 杠别人的牌是明杠
@@ -380,6 +382,8 @@ export class Player {
     this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
     //杠之后需要重新算下胡牌！
     this.calculateHu()
+    //碰了之后能够打牌
+    this.can_dapai = true
   }
 
   /**自己摸的牌就是暗杠了*/
@@ -395,16 +399,20 @@ export class Player {
     this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
     //杠之后需要重新算下胡牌！
     this.calculateHu()
+    //碰了之后能够打牌
+    this.can_dapai = true
   }
 
   /**亮牌时需要确定自碰牌，将三张pai从shouPai中移动到selfPeng之中！这样还有机会杠，并且不会展示 */
   confirm_selfPeng(pai: Pai) {
+    //这个操作只会出现在玩家亮牌以后
     this._mo_pai = null
     for (var i = 0; i < 3; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai)
     }
     this.group_shou_pai.selfPeng.push(pai)
     this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    // this.can_dapai = true
   }
 
   /**  从玩家手牌中删除pai并计算胡牌*/

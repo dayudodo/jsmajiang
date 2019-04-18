@@ -77,7 +77,7 @@ function client_confirm_liang(client_message, socket) {
 function client_confirm_mingGang(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 选择杠牌`);
-  player.room.client_confirm_mingGang(client_message, socket);
+  player.room.client_confirm_gang(client_message, socket);
 }
 function client_confirm_peng(client_message, socket) {
   let player = g_lobby.find_player_by(socket);

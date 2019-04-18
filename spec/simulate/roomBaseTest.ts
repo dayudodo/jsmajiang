@@ -102,12 +102,15 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player3.group_shou_pai.shouPai, shou3)
   t.deepEqual(player1.canGangPais(), [11])
   t.deepEqual(player1.mo_pai, 35)
+  //摸牌后是可以打牌的
+  t.is(player1.can_dapai, true)
   //只有一个玩家可以在思考中！
   t.is(player1.is_thinking, true)
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
 
-  player1.da_pai(to_number("t7"))
+  // player1.da_pai(to_number("t7"))
+  room.client_da_pai(player1.socket, to_number('t7'))
   //打牌之后不能再打，要等其它人操作了！
   t.is(player1.can_dapai, false)
   //打牌后mo_pai应该为空！
@@ -117,7 +120,10 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
   t.deepEqual(player1.canGangPais(), orderPais("t1 di"))
   t.deepEqual(player3.canGang(to_number("t7")), true)
-  player3.confirm_mingGang(to_number("t7"))
+  //操作都应该是由room来发送的
+  room.client_confirm_gang({
+    selectedPai: to_number('t7')
+  }, player3.socket)
   //player3扛之后，其会成为当前player
   t.is(room.current_player, player3)
 })

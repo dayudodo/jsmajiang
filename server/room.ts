@@ -377,7 +377,7 @@ export class Room {
   }
 
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
-  client_confirm_mingGang(client_message, socket) {
+  client_confirm_gang(client_message, socket) {
     let gangPlayer = this.find_player_by(socket)
     gangPlayer.is_thinking = false
     //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
@@ -726,6 +726,8 @@ export class Room {
       )
       return
     }
+    //取消玩家的思考状态
+    player.is_thinking = false
     //能否正常给下一家发牌
     let canNormalFaPai = true
 
@@ -736,8 +738,6 @@ export class Room {
     if (this.all_players_normal()) {
       //帮玩家记录下打的是哪个牌,保存在player.used_pai之中
       player.da_pai(dapai_name)
-      //打牌后不能再打牌！
-      player.can_dapai = false
       //记录此玩家的打牌操作
       this.operation_sequence.push({
         who: player,
