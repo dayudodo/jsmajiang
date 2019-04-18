@@ -104,7 +104,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player1.mo_pai, 35)
   //摸牌后是可以打牌的
   t.is(player1.can_dapai, true)
-  //只有一个玩家可以在思考中！
+  //并且在思考中，其它玩家没有思考状态！
   t.is(player1.is_thinking, true)
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
@@ -119,7 +119,10 @@ test("服务器发牌后player1手牌能扛", function(t) {
   //应该不会听胡
   t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
   t.deepEqual(player1.canGangPais(), orderPais("t1 di"))
+  //可以扛，并且可以扛的牌里面包括t7
   t.deepEqual(player3.canGang(to_number("t7")), true)
+  t.deepEqual(player3.canGangPais(), [17])
+
   //操作都应该是由room来发送的
   room.client_confirm_gang({
     selectedPai: to_number('t7')
