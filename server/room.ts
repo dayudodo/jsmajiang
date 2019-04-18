@@ -25,12 +25,7 @@ enum Operate {
 declare global {
   /**在console中输出一个对象的全部内容 */
   function puts(o: any): void
-  interface SelectConstructor {
-    isShowHu: boolean
-    isShowLiang: boolean
-    isShowGang: boolean
-    isShowPeng: boolean
-  }
+
 
   interface Operation {
     /**哪个 玩家在操作 */

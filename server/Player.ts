@@ -22,15 +22,13 @@ declare global {
     /**手牌计数 */
     shouPaiCount?: number
   }
-  /**玩家状态，做为玩家可以操作的唯一证据！ */
-  // enum playerStatus {
-  //   can_dapai,
-  //   can_peng,
-  //   can_gang,
-  //   can_ting,
-  //   can_liang,
-  //   can_hu
-  // }
+
+  interface SelectConstructor {
+    isShowHu: boolean
+    isShowLiang: boolean
+    isShowGang: boolean
+    isShowPeng: boolean
+  }
 }
 
 export class Player {
@@ -79,6 +77,8 @@ export class Player {
   private _mo_pai = null
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = [] //打过的牌有哪些，断线后可以重新发送此数据
+  /**玩家可以选择的操作数组 */
+  public arr_select: SelectConstructor
 
   /** 玩家是否亮牌，只在可以听胡的时候才能亮牌, 注意，胡里面也包括有亮的信息*/
   public is_liang = false
@@ -259,7 +259,7 @@ export class Player {
   // }
   /**能够杠的牌*/
   canGangPais(): number[] {
-    return NMajiangAlgo.canGangPais(this.group_shou_pai,this.mo_pai)
+    return NMajiangAlgo.canGangPais(this.group_shou_pai, this.mo_pai)
   }
 
   /**返回group手牌中出现3次的牌！ */
@@ -363,8 +363,8 @@ export class Player {
    * @param da_pai 其他人打牌
    */
   confirm_mingGang(da_pai: Pai) {
-    if(!this.canGang(da_pai)){
-      throw new Error(`无法扛${da_pai}`);
+    if (!this.canGang(da_pai)) {
+      throw new Error(`无法扛${da_pai}`)
     }
     this._mo_pai = null
     this.after_mo_gang_dapai = false
