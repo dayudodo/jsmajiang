@@ -959,11 +959,13 @@ export class Room {
       puts(player.group_shou_pai)
       console.log(`可以隐藏的牌：${canLiangPais}`)
       console.log(`可以杠的牌：${canGangPais}`)
-
+      //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
+      //打牌之后应该清空此可选择菜单数组
+      player.arr_select = [isShowHu, isShowLiang, isShowGang, isShowPeng]
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       player.socket.sendmsg({
         type: g_events.server_can_select,
-        select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng],
+        select_opt: player.arr_select,
         canLiangPais: canLiangPais,
         canGangPais: canGangPais
       })

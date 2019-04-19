@@ -23,12 +23,12 @@ declare global {
     shouPaiCount?: number
   }
 
-  interface SelectConstructor {
-    isShowHu: boolean
-    isShowLiang: boolean
-    isShowGang: boolean
-    isShowPeng: boolean
-  }
+  // interface SelectConstructor {
+  //   isShowHu: boolean
+  //   isShowLiang: boolean
+  //   isShowGang: boolean
+  //   isShowPeng: boolean
+  // }
 }
 
 export class Player {
@@ -78,7 +78,7 @@ export class Player {
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = [] //打过的牌有哪些，断线后可以重新发送此数据
   /**玩家可以选择的操作数组 */
-  public arr_select: SelectConstructor
+  public arr_select: Array<boolean> = []
 
   /** 玩家是否亮牌，只在可以听胡的时候才能亮牌, 注意，胡里面也包括有亮的信息*/
   public is_liang = false
@@ -437,6 +437,7 @@ export class Player {
     this._mo_pai = null //打牌之后玩家处于非摸牌状态
     this.after_mo_gang_dapai = true
     this.can_dapai = false //打过后就不能再打牌了！
+    this.arr_select = [] //打牌之后，先清空，再去检测是否还能有选择菜单，比如亮牌
   }
   /**计算各种胡牌的状态 */
   calculateHu() {

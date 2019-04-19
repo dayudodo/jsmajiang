@@ -102,6 +102,8 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player3.group_shou_pai.shouPai, shou3)
   t.deepEqual(player1.canGangPais(), [11])
   t.deepEqual(player1.mo_pai, 35)
+  //摸牌之后可以显示选择菜单[isShowHu, isShowLiang, isShowGang, isShowPeng]
+  t.deepEqual(player1.arr_select, [false,false,true,false])
   //摸牌后是可以打牌的
   t.is(player1.can_dapai, true)
   //并且在思考中，其它玩家没有思考状态！
