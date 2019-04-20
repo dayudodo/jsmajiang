@@ -2,13 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Current TS File",
             "type": "node",
             "request": "launch",
-            "name": "启动程序",
-            "program": "${workspaceFolder}/server_build/server/app.js",
+            "program": "${workspaceRoot}/node_modules/ts-node/dist/bin.js",
+            "args": [
+                "${relativeFile}"
+            ],
             "cwd": "${workspaceRoot}",
-            // "preLaunchTask": "tsc",
-            // "console": "internalConsole"
+            "protocol": "inspector"
         }
     ]
 }

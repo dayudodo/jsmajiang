@@ -100,10 +100,14 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player1.group_shou_pai.shouPai, shou1)
   t.deepEqual(player2.group_shou_pai.shouPai, shou2)
   t.deepEqual(player3.group_shou_pai.shouPai, shou3)
-  t.deepEqual(player1.canGangPais(), [11])
-  t.deepEqual(player1.mo_pai, 35)
+  //游戏一开始就会摸一张di
+  t.deepEqual(player1.mo_pai, to_number("di"))
+
+  //摸牌后有两个扛可以选择
+  t.deepEqual(player1.canGangPais(), [11, 35])
   //摸牌之后可以显示选择菜单[isShowHu, isShowLiang, isShowGang, isShowPeng]
-  t.deepEqual(player1.arr_select, [false,false,true,false])
+  //这个顺序其实也是个优先级，如果两个玩家都有选择菜单，那么还需要确定优先级，胡、亮、杠、碰这样的顺序
+  // t.deepEqual(player1.arr_select, [false,false,true,false])
   //摸牌后是可以打牌的
   t.is(player1.can_dapai, true)
   //并且在思考中，其它玩家没有思考状态！
@@ -111,24 +115,29 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
 
-  // player1.da_pai(to_number("t7"))
+  // 调用打牌的时候需要通过房间来打牌，不能直接调用player.da_pai!
   room.client_da_pai(player1.socket, to_number('t7'))
   //打牌之后不能再打，要等其它人操作了！
   t.is(player1.can_dapai, false)
-  //打牌后mo_pai应该为空！
+  //打牌后mo_pai应该为空！自然，其它的也是为空的！
   t.is(player1.mo_pai, null)
+  t.is(player2.mo_pai, null)
+  t.is(player3.mo_pai, null)
 
-  //应该不会听胡
+  //player不会听胡
   t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
-  t.deepEqual(player1.canGangPais(), orderPais("t1 di"))
-  //可以扛，并且可以扛的牌里面包括t7
+  //可以扛player1打的牌，并且可以扛的牌里面包括t7
   t.deepEqual(player3.canGang(to_number("t7")), true)
-  t.deepEqual(player3.canGangPais(), [17])
+  //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
+  t.deepEqual(player3.canGangPais(), [])
+  //但是，其arr_select里面应该有数据
+  t.deepEqual(player3.arr_select, [false,false,true,false])
+  t.deepEqual(player3.is_thinking, true)
 
-  //操作都应该是由room来发送的
-  room.client_confirm_gang({
-    selectedPai: to_number('t7')
-  }, player3.socket)
-  //player3扛之后，其会成为当前player
-  t.is(room.current_player, player3)
+  // //操作都应该是由room来发送的
+  // room.client_confirm_gang({
+  //   selectedPai: to_number('t7')
+  // }, player3.socket)
+  // //player3扛之后，其会成为当前player
+  // t.is(room.current_player, player3)
 })

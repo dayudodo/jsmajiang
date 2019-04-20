@@ -128,7 +128,7 @@ test("明杠之后牌正常", function(t) {
       mingGang: [],
       peng: pais(["b1", "b2"]),
       selfPeng: [],
-      shouPai: pais(["b1", "b2", "t7", "t7", "t7", "t8", "t9"])
+      shouPai: pais(["b1","b2", "t7", "t7", "t7", "t8", "t9"])
     },
     socket: null,
     username: "jack1",
@@ -140,11 +140,12 @@ test("明杠之后牌正常", function(t) {
   player.da_pai(to_number("t8"))
   player.mo_pai = to_number("b3")
   player.da_pai(to_number("t9"))
-  //todo: 按说要扛别人的牌，需要别人打一张才行！
-  player.confirm_mingGang(to_number("b2"))
+  //todo: 要扛别人的牌，需要别人打一张才行！
+  // player.confirm_mingGang(to_number("b2"))
+  player.mo_pai = to_number('b3')
   player.confirm_mingGang(to_number("b3"))
   let flat = player.flat_shou_pai
-  t.deepEqual(player.group_shou_pai.mingGang, pais("b2 b3"))
+  t.deepEqual(player.group_shou_pai.mingGang, pais("b3"))
   t.deepEqual(flat, pais("b1 b1 b1 b1 b2 b2 b2 b2 b3 b3 b3 b3 t7 t7"))
 })
 

@@ -264,7 +264,7 @@ export class Player {
 
   /**返回group手牌中出现3次的牌！ */
   PaiArr3A() {
-    return NMajiangAlgo.count3A(this.group_shou_pai.shouPai)
+    return NMajiangAlgo.all3Apais(this.group_shou_pai.shouPai)
   }
   /**摸牌后四张，用于判断暗四归，暗杠，在group手牌中存在3张相同的牌，因为mo_pai后会添加到shouPai中，
    * 所以需要检查数量是否为4

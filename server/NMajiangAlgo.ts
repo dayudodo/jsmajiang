@@ -313,9 +313,9 @@ export class NMajiangAlgo {
   }
 
   /**统计一下有哪几个3A */
-  static count3A(shouPai: Array<Pai>): Array<Pai> {
+  static all3Apais(arr_pai: Array<Pai>): Array<Pai> {
     let result: number[] = []
-    let count = _.countBy(shouPai, n => n)
+    let count = _.countBy(arr_pai, n => n)
     for (let i in count) {
       if (count[i] == 3) {
         result.push(parseInt(i))
@@ -325,9 +325,9 @@ export class NMajiangAlgo {
   }
 
   /**统计一下有哪几个4A */
-  static count4A(shouPai: Array<Pai>): Array<Pai> {
+  static all4Apais(arr_pai: Array<Pai>): Array<Pai> {
     let result: number[] = []
-    let count = _.countBy(shouPai, n => n)
+    let count = _.countBy(arr_pai, n => n)
     for (let i in count) {
       if (count[i] == 4) {
         result.push(parseInt(i))
@@ -338,7 +338,7 @@ export class NMajiangAlgo {
 
   /**是否存在4A */
   static exits4A(shouPai: Array<Pai>): boolean {
-    return !_.isEmpty(this.count4A(shouPai))
+    return !_.isEmpty(this.all4Apais(shouPai))
   }
 
   /**是否是龙七对，也就是里面有个4A */
@@ -487,7 +487,7 @@ export class NMajiangAlgo {
         .sort()
 
       // 是否已经存在4个single_pai? 如果存在，肯定不会胡这张牌！
-      let already4A = this.count4A(newShouPai).includes(na_pai)
+      let already4A = this.all4Apais(newShouPai).includes(na_pai)
       //不能再做为将的牌
       let cannotJiang =
         group_shoupai.anGang.includes(na_pai) ||
@@ -533,7 +533,7 @@ export class NMajiangAlgo {
       let na_pai = all_single_pai[i]
 
       // 是否已经存在4个single_pai? 如果存在，肯定不会胡这张牌！
-      let already4A = this.count4A(shou_pai).includes(na_pai)
+      let already4A = this.all4Apais(shou_pai).includes(na_pai)
       if (already4A) {
         continue
       } else {
@@ -764,8 +764,15 @@ export class NMajiangAlgo {
       return false
     }
   }
-  static exist3A(shou_pai: Array<Pai>, pai_name: Pai) {
-    return shou_pai.filter(pai => pai == pai_name).length === 3
+  /**
+   * 是否存在pai_name的3张重复牌？
+   * @param arr_pai
+   * @param pai_name 牌名称
+   */
+  static exist3A(arr_pai: Array<Pai>, pai_name: Pai) {
+    console.log("arr_pai.filter(pai => pai == pai_name)",arr_pai.filter(pai => pai == pai_name));
+    
+    return arr_pai.filter(pai => pai == pai_name).length === 3
   }
   /**暗四归 */
   static HuisAnSiGui(
@@ -958,6 +965,7 @@ export class NMajiangAlgo {
    * @param mo_pai 玩家摸到的牌
    */
   static canGangPais(group_shoupai: GroupConstructor, mo_pai: Pai): number[] {
+
     let output: number[] = []
     //peng里面是否包含shouPai中的一张，自己摸的，还要判断下有没有mo_pai!
     output = output.concat(
@@ -967,16 +975,23 @@ export class NMajiangAlgo {
     output = output.concat(
       group_shoupai.selfPeng.filter(pai => group_shoupai.shouPai.includes(pai))
     )
-    if (!_.isEmpty(mo_pai)) {
+    //mo_pai不为空，那么还要判断peng,selfPeng里面是否包含mo_pai!
+    if (mo_pai != null) {
       if (group_shoupai.peng.includes(mo_pai)) {
-        output.concat(mo_pai)
+        output.push(mo_pai)
       }
       if (group_shoupai.selfPeng.includes(mo_pai)) {
-        output.concat(mo_pai)
+        output.push(mo_pai)
+      }
+      // console.log("group_shoupai.shouPai, mo_pai:",group_shoupai.shouPai, mo_pai);
+      
+      //如果摸牌可以在shouPai中找到3个，自然也是可以扛的！
+      if ( this.exist3A(group_shoupai.shouPai, mo_pai)) {
+        output.push(mo_pai)
       }
     }
-    //最后看看shouPai里面有没有带4A的，尤其是刚起的牌一定要统计
-    output = output.concat(NMajiangAlgo.count4A(group_shoupai.shouPai))
-    return output
+    //最后看看shouPai里面有没有本来就是4A的，有可能留着以后再扛
+    output = output.concat(NMajiangAlgo.all4Apais(group_shoupai.shouPai))
+    return _.orderBy(output)
   }
 }
