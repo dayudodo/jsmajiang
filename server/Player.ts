@@ -259,7 +259,7 @@ export class Player {
   // }
   /**能够杠的牌*/
   canGangPais(): number[] {
-    return NMajiangAlgo.canGangPais(this.group_shou_pai, this.mo_pai)
+    return NMajiangAlgo.canZhiGangPais(this.group_shou_pai, this.mo_pai)
   }
 
   /**返回group手牌中出现3次的牌！ */
@@ -338,7 +338,7 @@ export class Player {
     // return true
   }
   /**能杠吗？分碰了之后杠还是本来就有三张牌，亮牌后只有selfPeng可以扛！ */
-  canGang(pai: Pai): boolean {
+  canGangOther(pai: Pai): boolean {
     let selfMo = this.mo_pai != null
     //能否杠还能分你是自摸碰还是求人碰，selfPeng是可以随便杠的，但是求人碰则得自己摸牌才能杠！
     return NMajiangAlgo.canGang(this.group_shou_pai, pai, this.is_liang, selfMo)
@@ -363,7 +363,7 @@ export class Player {
    * @param da_pai 其他人打牌
    */
   confirm_mingGang(da_pai: Pai) {
-    if (!this.canGang(da_pai)) {
+    if (!this.canGangOther(da_pai)) {
       throw new Error(`无法扛${da_pai}`)
     }
     this._mo_pai = null

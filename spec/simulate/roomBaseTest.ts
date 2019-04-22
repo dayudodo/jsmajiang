@@ -127,7 +127,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   //player不会听胡
   t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
   //可以扛player1打的牌，并且可以扛的牌里面包括t7
-  t.deepEqual(player3.canGang(to_number("t7")), true)
+  t.deepEqual(player3.canGangOther(to_number("t7")), true)
   //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
   t.deepEqual(player3.canGangPais(), [])
   //但是，其arr_select里面应该有数据

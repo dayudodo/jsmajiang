@@ -246,7 +246,7 @@ test("不能扛自己摸的牌", function(t) {
     user_id: "10001"
   });
   player.mo_pai=to_number("t3")
-  t.is(player.canGang(to_number("t3")), false)
+  t.is(player.canGangOther(to_number("t3")), false)
 });
 
 test("可以扛自己摸的牌,暗杠或者擦炮", function(t) {
@@ -266,6 +266,6 @@ test("可以扛自己摸的牌,暗杠或者擦炮", function(t) {
     user_id: "10001"
   });
   player.mo_pai=to_number("t3")
-  t.is(player.canGang(to_number("t3")), true)
+  t.is(player.canGangOther(to_number("t3")), true)
 });
 

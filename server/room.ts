@@ -912,7 +912,7 @@ export class Room {
           )
           //todo: 等待20秒，过时发牌
         }
-        if (player.canGang(pai_name)) {
+        if (player.canGangOther(pai_name)) {
           isShowGang = true
           //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
           //如果canGangPais为空，那么就不要让用户选择！

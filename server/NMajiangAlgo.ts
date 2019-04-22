@@ -964,7 +964,7 @@ export class NMajiangAlgo {
    * @param group_shoupai
    * @param mo_pai 玩家摸到的牌
    */
-  static canGangPais(group_shoupai: GroupConstructor, mo_pai: Pai): number[] {
+  static canZhiGangPais(group_shoupai: GroupConstructor, mo_pai: Pai): number[] {
 
     let output: number[] = []
     //peng里面是否包含shouPai中的一张，自己摸的，还要判断下有没有mo_pai!
