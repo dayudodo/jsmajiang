@@ -104,7 +104,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player1.mo_pai, to_number("di"))
 
   //摸牌后有两个扛可以选择
-  t.deepEqual(player1.canGangPais(), [11, 35])
+  t.deepEqual(player1.canZhiGangPais(), [11, 35])
   //摸牌之后可以显示选择菜单[isShowHu, isShowLiang, isShowGang, isShowPeng]
   //这个顺序其实也是个优先级，如果两个玩家都有选择菜单，那么还需要确定优先级，胡、亮、杠、碰这样的顺序
   // t.deepEqual(player1.arr_select, [false,false,true,false])
@@ -129,7 +129,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   //可以扛player1打的牌，并且可以扛的牌里面包括t7
   t.deepEqual(player3.canGangOther(to_number("t7")), true)
   //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
-  t.deepEqual(player3.canGangPais(), [])
+  t.deepEqual(player3.canZhiGangPais(), [])
   //但是，其arr_select里面应该有数据
   t.deepEqual(player3.arr_select, [false,false,true,false])
   t.deepEqual(player3.is_thinking, true)

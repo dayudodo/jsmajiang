@@ -120,8 +120,12 @@ export class Player {
   public hupai_data: hupaiConstructor
   /**最后胡的是哪张牌 */
   public hupai_zhang: Pai = null
-  // /**玩家现在的状态，控制了玩家可以进行的操作，比如在能打牌的时候才能打 */
-  // public can_status: playerStatus;
+  public _allGangPais: Array<Pai> = []
+  /**所有的扛牌，内部计算 */
+  get allGangPais(){
+    return this._allGangPais
+  }
+
 
   /**摸扛之后是否打牌 */
   public after_mo_gang_dapai = false
@@ -257,12 +261,12 @@ export class Player {
   //   // return this.gang_lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
   //   return true;
   // }
-  /**能够杠的牌*/
-  canGangPais(): number[] {
+  /**能够自己杠的牌*/
+  canZhiGangPais(): number[] {
     return NMajiangAlgo.canZhiGangPais(this.group_shou_pai, this.mo_pai)
   }
 
-  /**返回group手牌中出现3次的牌！ */
+  /**返回group.shouPai中出现3次的牌！ */
   PaiArr3A() {
     return NMajiangAlgo.all3Apais(this.group_shou_pai.shouPai)
   }
@@ -453,5 +457,48 @@ export class Player {
         this.is_liang
       )
     }
+  }
+  /**别人打的牌，看自己能有哪些操作 */
+  kanPan(pai_name: Pai){
+    let selfMo = this.mo_pai != null
+    let isOtherDapai = !selfMo
+    let isShowHu: boolean = false,
+    isShowLiang: boolean = false,
+    isShowGang: boolean = false,
+    isShowPeng: boolean = false
+    //能否胡
+    if (this.canHu(pai_name)) {
+      isShowHu = true
+      console.log(
+        `房间${this.room.id} 玩家${this.username}可以自摸胡${pai_name}`
+      )
+    }
+    //能否亮
+    //能否扛，里面的两种扛都已经包括了is_liang， selfMo的检测！
+    let allGangPais = this.canZhiGangPais()
+    if (allGangPais.length > 0) {
+      isShowGang = true
+      console.log(
+        `房间${this.room.id} 玩家${this.username}可以自杠牌:${allGangPais}`
+      )
+    }
+    if (isOtherDapai && this.canGangOther(pai_name)) { //如果能够扛其它人的牌
+      isShowGang = true
+      //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
+      //todo:如果canGangPais为空，那么就不要让用户选择！如果只有一个，也不需要用户选择，直接扛
+      allGangPais.push(pai_name)
+      console.log(
+        `房间${this.room.id} 玩家${this.username}可以的牌${allGangPais}`
+      )
+    }
+    this._allGangPais = allGangPais
+    //能否碰，如果没有亮才能检测碰
+    if (!this.is_liang && this.canPeng(pai_name)) {
+      isShowPeng = true
+      console.log(
+        `房间${this.room.id} 玩家${this.username}可以碰牌${pai_name}`
+      )
+    }
+
   }
 }

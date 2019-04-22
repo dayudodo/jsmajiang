@@ -385,11 +385,11 @@ export class Room {
     }
     //对参数进行检查！
     if (selectedPai) {
-      if (!gangPlayer.canGangPais().includes(selectedPai)) {
+      if (!gangPlayer.canZhiGangPais().includes(selectedPai)) {
         throw new Error(
           `玩家：${
             gangPlayer.username
-          }可以杠的牌${gangPlayer.canGangPais()}并不包括${selectedPai}`
+          }可以杠的牌${gangPlayer.canZhiGangPais()}并不包括${selectedPai}`
         )
       }
     }
@@ -864,7 +864,7 @@ export class Room {
       isShowPeng: boolean = false
     /**客户端亮之后可以隐藏的牌*/
     let canLiangPais: Array<Pai> = []
-    let canGangPais: Array<Pai> = []
+    let allGangPais: Array<Pai> = []
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
     //此种情况也包括了pai_name为空的情况！意思就是只检测能否亮牌！
@@ -880,13 +880,13 @@ export class Room {
 
     //如果玩家自己有杠，也是可以杠的，哪怕是别人打了牌！貌似有点儿小问题，啥呢？每次打牌我都不杠，这也叫气死个人！
     //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
-    //摸牌后才会检测自扛的情况
+    //不管摸不摸牌，都会检测有没有自扛的牌，因为玩家可能留着以后再扛
     if (player.mo_pai) {
-      canGangPais = player.canGangPais()
-      if (canGangPais.length > 0) {
+      allGangPais = player.canZhiGangPais()
+      if (allGangPais.length > 0) {
         isShowGang = true
         console.log(
-          `房间${this.id} 玩家${player.username}可以自杠牌:${canGangPais}`
+          `房间${this.id} 玩家${player.username}可以自杠牌:${allGangPais}`
         )
       }
     }
@@ -912,15 +912,13 @@ export class Room {
           )
           //todo: 等待20秒，过时发牌
         }
-        if (player.canGangOther(pai_name)) {
+        if (player.canGangOther(pai_name)) { //如果能够扛其它人的牌
           isShowGang = true
           //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
-          //如果canGangPais为空，那么就不要让用户选择！
-          if (!_.isEmpty(canGangPais)) {
-            canGangPais.push(pai_name)
-          }
+          //todo:如果canGangPais为空，那么就不要让用户选择！如果只有一个，也不需要用户选择，直接扛
+          allGangPais.push(pai_name)
           console.log(
-            `房间${this.id} 玩家${player.username}可以杠牌${pai_name}`
+            `房间${this.id} 玩家${player.username}可以的牌${allGangPais}`
           )
         }
         if (player.canPeng(pai_name)) {
@@ -958,7 +956,7 @@ export class Room {
       )
       puts(player.group_shou_pai)
       console.log(`可以隐藏的牌：${canLiangPais}`)
-      console.log(`可以杠的牌：${canGangPais}`)
+      console.log(`可以杠的牌：${allGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
       //打牌之后应该清空此可选择菜单数组
       player.arr_select = [isShowHu, isShowLiang, isShowGang, isShowPeng]
@@ -967,7 +965,7 @@ export class Room {
         type: g_events.server_can_select,
         select_opt: player.arr_select,
         canLiangPais: canLiangPais,
-        canGangPais: canGangPais
+        canGangPais: allGangPais
       })
     }
     return canShowSelect

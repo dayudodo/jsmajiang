@@ -25,7 +25,7 @@ var player = new Player({
   user_id: "10001"
 })
 test("能够杠的牌有三张", function(t) {
-  let gangPais = player.canGangPais()
+  let gangPais = player.canZhiGangPais()
   // console.log(gangPais)
   let result = pais("b1 b2 t7")
   t.deepEqual(gangPais, result)
