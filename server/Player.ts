@@ -90,6 +90,9 @@ export class Player {
   public is_hu = false
   /**是否放炮 */
   public is_fangpao = false
+  /**全部的牌是否变动过 */
+  public is_grouppai_changed = true
+
 
   /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
   public gang_lose_data = [
@@ -120,7 +123,7 @@ export class Player {
   public hupai_data: hupaiConstructor
   /**最后胡的是哪张牌 */
   public hupai_zhang: Pai = null
-  public _allGangPais: Array<Pai> = []
+  private _allGangPais: Array<Pai> = []
   /**所有的扛牌，内部计算 */
   get allGangPais(){
     return this._allGangPais
@@ -281,6 +284,7 @@ export class Player {
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
+    this.calculateHu()
     if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
       return true
     } else {
@@ -427,8 +431,9 @@ export class Player {
       throw new Error(`${this.username}打了张非法牌？${pai_name}`)
     }
     //如果打的牌与摸牌相同，不用重复计算，就算是以前手牌里面有，其实也相当于是打了张摸牌
-    let shouPaiChanged = pai_name != this.mo_pai
-    if (shouPaiChanged) {
+    //如果拿的是别人的牌，那么mo_pai为空，自然牌也改变了，需要重新算胡
+    this.is_grouppai_changed = pai_name != this.mo_pai
+    if (this.is_grouppai_changed) {
       //手牌变化也说明这张牌有用，需要看mo_pai是否为空
       //不为空就需要把这张摸牌添加到shouPai中！如果已经碰了或者扛了，那么就不需要再次添加！
       //为空可能是碰的或者扛的别人牌，并非是摸牌
@@ -445,13 +450,13 @@ export class Player {
   }
   /**计算各种胡牌的状态 */
   calculateHu() {
-    //只要手牌改变，其实都是需要重新计算胡牌！
+    //手牌改变，都需要重新计算胡牌！
     //todo: 如果已经亮牌，则不再继续计算胡牌，但是要确认你首先打了一张牌之后再选择亮
     // if(this.is_liang){
     //   return
     // }
-    let shoupai_changed = true
-    if (shoupai_changed) {
+    let changed = true
+    if (changed) {
       this.hupai_data = NMajiangAlgo.HuWhatGroupPai(
         this.group_shou_pai,
         this.is_liang
@@ -459,7 +464,7 @@ export class Player {
     }
   }
   /**别人打的牌，看自己能有哪些操作 */
-  kanPan(pai_name: Pai){
+  kanPai(pai_name: Pai){
     let selfMo = this.mo_pai != null
     let isOtherDapai = !selfMo
     let isShowHu: boolean = false,

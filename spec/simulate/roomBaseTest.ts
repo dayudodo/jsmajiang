@@ -130,6 +130,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player3.canGangOther(to_number("t7")), true)
   //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
   t.deepEqual(player3.canZhiGangPais(), [])
+  t.deepEqual(player3.allGangPais, [17])
   //但是，其arr_select里面应该有数据
   t.deepEqual(player3.arr_select, [false,false,true,false])
   t.deepEqual(player3.is_thinking, true)
