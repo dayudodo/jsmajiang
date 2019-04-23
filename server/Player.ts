@@ -93,7 +93,6 @@ export class Player {
   /**全部的牌是否变动过 */
   public is_grouppai_changed = true
 
-
   /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
   public gang_lose_data = [
     // {type: config.FangGang, pai:''},
@@ -125,10 +124,14 @@ export class Player {
   public hupai_zhang: Pai = null
   private _allGangPais: Array<Pai> = []
   /**所有的扛牌，内部计算 */
-  get allGangPais(){
+  get allGangPais() {
     return this._allGangPais
   }
-
+  private _allHidePais: Array<Pai> = []
+  /**获取到所有能隐藏的牌，放入selfPeng中 */
+  get allHidePais() {
+    return this._allHidePais
+  }
 
   /**摸扛之后是否打牌 */
   public after_mo_gang_dapai = false
@@ -290,7 +293,6 @@ export class Player {
     } else {
       return false
     }
-    // return true
   }
 
   /**是否是大胡 */
@@ -463,32 +465,78 @@ export class Player {
       )
     }
   }
+
   /**别人打的牌，看自己能有哪些操作 */
-  kanPai(pai_name: Pai){
+  kanOtherDapai(pai_name: Pai) {
     let selfMo = this.mo_pai != null
     let isOtherDapai = !selfMo
     let isShowHu: boolean = false,
-    isShowLiang: boolean = false,
-    isShowGang: boolean = false,
-    isShowPeng: boolean = false
+      isShowLiang: boolean = false,
+      isShowGang: boolean = false,
+      isShowPeng: boolean = false
     //能否胡
-    if (this.canHu(pai_name)) {
-      isShowHu = true
-      console.log(
-        `房间${this.room.id} 玩家${this.username}可以自摸胡${pai_name}`
-      )
-    }
+    isShowHu = this.decideShowHu(pai_name)
     //能否亮
+    isShowLiang = this.decideShowLiang()
     //能否扛，里面的两种扛都已经包括了is_liang， selfMo的检测！
+    isShowGang = this.decideShowGang(isOtherDapai, pai_name)
+    //能否碰，如果没有亮才能检测碰
+    isShowPeng = this.decideShowPeng(pai_name)
+  }
+
+  private decideShowLiang() {
+    this._allHidePais = this.getAllHidePais()
+    if (this._allHidePais.length > 0) {
+      return true
+    }
+    return false
+  }
+
+  /**获取到所有的隐藏牌selfPeng */
+  getAllHidePais(): Array<Pai> {
+    //如果没亮而且玩家没有摸牌，才去检测亮。如果不选择隐藏牌，那么就会全部亮出来！貌似不能再扛了？
+    if (!this.is_liang && !this.mo_pai) {
+      this.calculateHu()
+      if (this.canLiang()) {
+        console.log(`房间${this.room.id} 玩家${this.username}可以亮牌`)
+        puts(this.hupai_data)
+        return this.PaiArr3A()
+      } else {
+        return []
+      }
+    } else {
+      //如果已经亮了，就不能再显示亮或者摸牌了也不能显示亮！
+      return []
+    }
+  }
+
+  private decideShowPeng(pai_name: number): boolean {
+    if (!this.is_liang && this.canPeng(pai_name)) {
+      console.log(`房间${this.room.id} 玩家${this.username}可以碰牌${pai_name}`)
+      return true
+    } else {
+      return false
+    }
+  }
+
+  private decideShowGang(isOtherDapai: boolean, pai_name: number) {
+    this._allGangPais = this.getAllGangPais(isOtherDapai, pai_name)
+    if (this._allGangPais.length > 0) {
+      return true
+    }
+    return false
+  }
+
+  /**获取到所有的杠牌 */
+  private getAllGangPais(isOtherDapai: boolean, pai_name: number): Array<Pai> {
     let allGangPais = this.canZhiGangPais()
     if (allGangPais.length > 0) {
-      isShowGang = true
       console.log(
         `房间${this.room.id} 玩家${this.username}可以自杠牌:${allGangPais}`
       )
     }
-    if (isOtherDapai && this.canGangOther(pai_name)) { //如果能够扛其它人的牌
-      isShowGang = true
+    if (isOtherDapai && this.canGangOther(pai_name)) {
+      //如果能够扛其它人的牌
       //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
       //todo:如果canGangPais为空，那么就不要让用户选择！如果只有一个，也不需要用户选择，直接扛
       allGangPais.push(pai_name)
@@ -496,14 +544,16 @@ export class Player {
         `房间${this.room.id} 玩家${this.username}可以的牌${allGangPais}`
       )
     }
-    this._allGangPais = allGangPais
-    //能否碰，如果没有亮才能检测碰
-    if (!this.is_liang && this.canPeng(pai_name)) {
-      isShowPeng = true
-      console.log(
-        `房间${this.room.id} 玩家${this.username}可以碰牌${pai_name}`
-      )
-    }
+    return allGangPais
+  }
 
+  private decideShowHu(pai_name: number) {
+    if (this.canHu(pai_name)) {
+      console.log(
+        `房间${this.room.id} 玩家${this.username}可以自摸胡${pai_name}`
+      )
+      return true
+    }
+    return false
   }
 }

@@ -961,6 +961,7 @@ export class Room {
       //打牌之后应该清空此可选择菜单数组
       player.arr_select = [isShowHu, isShowLiang, isShowGang, isShowPeng]
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
+      //todo: 客户端需要更新名称allHidePais, allGangPais
       player.socket.sendmsg({
         type: g_events.server_can_select,
         select_opt: player.arr_select,
