@@ -4,6 +4,7 @@ import { Room } from "../../server/room"
 import { Player } from "../../server/Player"
 import { PaiConvertor } from "../../server/PaiConvertor"
 import * as config from "../../server/config"
+import * as g_events from "../../server/events"
 import chalk from "chalk"
 import { TablePaiManager } from "../../server/TablePaiManager"
 import _ = require("lodash")
@@ -25,11 +26,17 @@ function puts(obj: any) {
 class SocketTest {
   public id: any
   public username: string
+  //保存最后一次发送的消息，专门用来检查看是否正确！
+  public arr_msg: Array<object> = []
   constructor(username) {
     this.username = username
     this.id = Math.random()
   }
+  get latest_msg(){
+    return _.last(this.arr_msg)
+  }
   sendmsg(msg) {
+    this.arr_msg.push(msg)
     console.log(`===${this.username} msg==`)
     // for (let key in msg) {
     //   console.log(chalk.green(`${key}: ${msg[key]}`))
@@ -110,30 +117,58 @@ test("服务器发牌后player1手牌能扛", function(t) {
   // t.deepEqual(player1.arr_select, [false,false,true,false])
   //摸牌后是可以打牌的
   t.is(player1.can_dapai, true)
+
   //并且在思考中，其它玩家没有思考状态！
   t.is(player1.is_thinking, true)
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
 
   // 调用打牌的时候需要通过房间来打牌，不能直接调用player.da_pai!
-  room.client_da_pai(player1.socket, to_number('t7'))
+  room.client_da_pai(player1.socket, to_number("t7"))
+
+  //其它两个玩家都要收到打牌的消息
+  t.deepEqual(player2.socket.latest_msg, {
+    type: g_events.server_dapai_other,
+    username: player1.username,
+    user_id: player1.user_id,
+    pai_name: 17
+  })
+
+  //玩家3消息有所不同，因为player1打牌后其会有选择菜单！也就是发了两次消息
+  //倒数第二个应该是其它玩家打牌的消息，
+  t.deepEqual(_.nth(player3.socket.arr_msg, -2), {
+    type: g_events.server_dapai_other,
+    username: player1.username,
+    user_id: player1.user_id,
+    pai_name: 17
+  })
+  // 然后才会出现用户的选择菜单
+  t.deepEqual(player3.socket.latest_msg, {
+    type: g_events.server_can_select,
+    select_opt:[false,false,true,false],
+    canLiangPais: [],
+    canGangPais: [17]
+  })
+
+
+
   //打牌之后不能再打，要等其它人操作了！
   t.is(player1.can_dapai, false)
   //打牌后mo_pai应该为空！自然，其它的也是为空的！
-  t.is(player1.mo_pai, null)
-  t.is(player2.mo_pai, null)
-  t.is(player3.mo_pai, null)
+  // t.is(player1.mo_pai, null)
+  // t.is(player2.mo_pai, null)
+  // t.is(player3.mo_pai, null)
 
-  //player不会听胡
-  t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
-  //可以扛player1打的牌，并且可以扛的牌里面包括t7
-  t.deepEqual(player3.canGangOther(to_number("t7")), true)
-  //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
-  t.deepEqual(player3.canZhiGangPais(), [])
-  t.deepEqual(player3.allGangPais, [17])
-  //但是，其arr_select里面应该有数据
-  t.deepEqual(player3.arr_select, [false,false,true,false])
-  t.deepEqual(player3.is_thinking, true)
+  // //player不会听胡
+  // t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
+  // //可以扛player1打的牌，并且可以扛的牌里面包括t7
+  // t.deepEqual(player3.canGangOther(to_number("t7")), true)
+  // //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
+  // t.deepEqual(player3.canZhiGangPais(), [])
+  // t.deepEqual(player3.allGangPais, [17])
+  // //但是，其arr_select里面应该有数据
+  // t.deepEqual(player3.arr_select, [false, false, true, false])
+  // t.deepEqual(player3.is_thinking, true)
 
   // //操作都应该是由room来发送的
   // room.client_confirm_gang({

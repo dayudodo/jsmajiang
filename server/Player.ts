@@ -426,7 +426,7 @@ export class Player {
   }
 
   /**  从玩家手牌中删除pai并计算胡牌*/
-  da_pai(pai_name: Pai) {
+  daPai(pai_name: Pai) {
     if (this.delete_pai(this.group_shou_pai.shouPai, pai_name)) {
       this.arr_dapai.push(pai_name)
     } else {

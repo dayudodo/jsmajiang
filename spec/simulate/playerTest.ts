@@ -110,10 +110,10 @@ test("正确得到flat_shoupai", function(t) {
 
 test("打牌并碰之后正确得到flat_shoupai", function(t) {
   player.mo_pai = 3
-  player.da_pai(17)
+  player.daPai(17)
   player.mo_pai = 3
-  player.da_pai(18)
-  player.da_pai(19)
+  player.daPai(18)
+  player.daPai(19)
 
   player.confirm_peng(3)
   let flat = player.flat_shou_pai
@@ -135,11 +135,11 @@ test("明杠之后牌正常", function(t) {
     user_id: "10001"
   })
   player.mo_pai = to_number("b3")
-  player.da_pai(to_number("t7"))
+  player.daPai(to_number("t7"))
   player.mo_pai = to_number("b3")
-  player.da_pai(to_number("t8"))
+  player.daPai(to_number("t8"))
   player.mo_pai = to_number("b3")
-  player.da_pai(to_number("t9"))
+  player.daPai(to_number("t9"))
   //todo: 要扛别人的牌，需要别人打一张才行！
   // player.confirm_mingGang(to_number("b2"))
   player.mo_pai = to_number('b3')
@@ -163,11 +163,11 @@ test("暗杠之后牌正常", function(t) {
     user_id: "10001"
   })
   player.mo_pai = to_number("b3")
-  player.da_pai(to_number("t7"))
+  player.daPai(to_number("t7"))
   player.mo_pai = to_number("b3")
-  player.da_pai(to_number("t8"))
+  player.daPai(to_number("t8"))
   player.mo_pai = to_number("b3")
-  player.da_pai(to_number("t9"))
+  player.daPai(to_number("t9"))
   player.confirm_anGang(to_number("b3"))
   let flat = player.flat_shou_pai
   t.deepEqual(player.group_shou_pai.anGang, pais("b3"))
@@ -187,7 +187,7 @@ test("打牌之后正常算出胡牌", function(t) {
     username: "jack1",
     user_id: "10001"
   })
-  player.da_pai(to_number("t9"))
+  player.daPai(to_number("t9"))
   t.deepEqual(player.hupai_data.all_hupai_zhang, pais(["t6", "t9"]))
 })
 
@@ -204,7 +204,7 @@ test("打牌之后能否胡", function(t) {
     username: "jack1",
     user_id: "10001"
   })
-  player.da_pai(to_number("t9"))
+  player.daPai(to_number("t9"))
   let canhu = player.canHu(to_number("t6"))
   t.is(canhu, true)
   canhu = player.canHu(to_number("t8"))
@@ -224,7 +224,7 @@ test("打牌之后能否大胡", function(t) {
     username: "jack1",
     user_id: "10001"
   })
-  player.da_pai(to_number("t8"))
+  player.daPai(to_number("t8"))
   t.is(player.isDaHu(to_number("t8")), true)
   t.is(player.isDaHu(to_number("zh")), false)
 })
