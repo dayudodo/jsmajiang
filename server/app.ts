@@ -36,17 +36,17 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_confirm_peng, client_confirm_peng],
   [g_events.client_confirm_guo, client_confirm_guo],
   [g_events.client_restart_game, client_restart_game],
-  [g_events.client_disslove, client_disslove  ],
+  [g_events.clientCreatorDissolve, clientCreatorDissolve  ],
 ];
 
 
 /**房主解散房间 */
-function client_disslove(client_message, socket) {
+function clientCreatorDissolve(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 解散房间`);
   //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
   //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
-  if('ok'== player.room.client_disslove(g_lobby, client_message, socket)){
+  if('ok'== player.room.clientCreatorDissolve(g_lobby, client_message, socket)){
   }else{
     throw new Error('用户解散房间失败')
   }
@@ -56,7 +56,7 @@ function client_restart_game(client_message, socket) {
   console.log(`房间:${player.room.id} 用户:${player.username} 重新开始游戏`);
   //重启游戏也需要修改g_lobby中保存的玩家信息，便于下面的查找
   //另外，使用socket传递参数其实是最正确的选择，而不是直接找到player!
-  player.room.client_restart_game(g_lobby, client_message, socket);
+  player.room.clientRestartGame(g_lobby, client_message, socket);
 }
 
 function client_confirm_hu(client_message, socket) {
@@ -250,7 +250,7 @@ function client_player_ready(client_message, socket) {
     console.log(chalk.green(`===>房间${room.id}全部玩家准备完毕，可以游戏啦！`));
     // room.send_all_players_message();
     //给所有客户端发牌，room管理所有的牌，g_lobby只是调度！另外，用户没有都进来，room的牌并不需要初始化，节省运算和内存吧。
-    room.server_game_start();
+    room.serverGameStart();
   }
 }
 

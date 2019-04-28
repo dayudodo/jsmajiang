@@ -1027,7 +1027,7 @@ export class Room {
   /**过滤grou_shou_pai,
    * @param ignore_filter 是否忽略此过滤器，用户选择亮牌，就不再需要过滤了。
    */
-  filter_group(player: Player, ignore_filter: boolean = false) {
+  filterGroup(player: Player, ignore_filter: boolean = false) {
     if (ignore_filter) {
       return player.group_shou_pai
     } else {
@@ -1044,8 +1044,8 @@ export class Room {
   }
 
   sendGroupShouPaiOf(p: Player) {
-    let leftGroup = this.filter_group(this.left_player(p))
-    let rightGroup = this.filter_group(this.right_player(p))
+    let leftGroup = this.filterGroup(this.left_player(p))
+    let rightGroup = this.filterGroup(this.right_player(p))
     p.socket.sendmsg({
       type: g_events.server_game_start,
       god_player: { group_shou_pai: p.group_shou_pai },
@@ -1053,7 +1053,7 @@ export class Room {
       right_player: { group_shou_pai: rightGroup }
     })
   }
-  server_game_start(clonePais: Pai[]=TablePaiManager.zhuang_mopai_gang()) {
+  serverGameStart(clonePais: Pai[]=TablePaiManager.zhuang_mopai_gang()) {
     //如果没有准备好，返回！
     if(!this.all_ready){
       return
@@ -1097,7 +1097,7 @@ export class Room {
     this.players.forEach(p => (p.ready = false))
   }
 
-  init_players(lobby: LobbyManager) {
+  initPlayers(lobby: LobbyManager) {
     let newPlayers = []
     this.players.forEach(p => {
       let person = new Player({
@@ -1124,7 +1124,7 @@ export class Room {
   }
 
   //游戏结束后重新开始游戏！
-  client_restart_game(lobby: LobbyManager, client_message, socket: WebSocket) {
+  clientRestartGame(lobby: LobbyManager, client_message, socket: WebSocket) {
     let player = this.find_player_by(socket)
     //todo: 做一简单防护，玩家不能保存两次数据
     MyDataBase.getInstance().save(player)
@@ -1133,12 +1133,12 @@ export class Room {
     let all_confirm_restart = this.players.every(p => true === p.ready)
     if (all_confirm_restart) {
       //清空所有玩家的牌，还是新建player? 哪个速度更快一些呢？可能新建对象会慢吧。
-      this.init_players(lobby)
-      this.server_game_start()
+      this.initPlayers(lobby)
+      this.serverGameStart()
     }
   }
   /**房主解散房间 */
-  client_disslove(lobby: LobbyManager, client_message, socket: any) {
+  clientCreatorDissolve(lobby: LobbyManager, client_message, socket: any) {
     let player = this.find_player_by(socket)
     //如果不是房主，则返回
     if (player.master == false) {

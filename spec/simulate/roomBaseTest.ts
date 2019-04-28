@@ -98,7 +98,7 @@ test("用户全部加入房间", function(t) {
 
 //开始游戏之前要先准备一下
 room.players.forEach(item => (item.ready = true))
-room.server_game_start(TablePaiManager.zhuang_mopai_gang())
+room.serverGameStart(TablePaiManager.zhuang_mopai_gang())
 
 test("服务器发牌后player1手牌能扛", function(t) {
   let shou1 = orderPais("b8 b9 t1 t1 t1 t1 t7 zh zh fa di di di")

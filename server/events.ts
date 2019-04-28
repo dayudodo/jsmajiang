@@ -13,7 +13,7 @@
   export const client_confirm_mingGang = "client_confirm_mingGang"
   export const client_confirm_peng = "client_confirm_peng"
   export const client_confirm_guo = "client_confirm_guo"
-  export const client_disslove = "client_disslove"
+  export const clientCreatorDissolve = "clientCreatorDissolve"
 
   export const server_login = "server_login";
   export const server_welcome = "server_welcome";
