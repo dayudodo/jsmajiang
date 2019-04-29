@@ -133,7 +133,6 @@ test("服务器发牌后player1手牌能扛", function(t) {
     user_id: player1.user_id,
     pai_name: 17
   })
-
   //玩家3消息有所不同，因为player1打牌后其会有选择菜单！也就是发了两次消息
   //倒数第二个应该是其它玩家打牌的消息，
   t.deepEqual(_.nth(player3.socket.arr_msg, -2), {
@@ -151,29 +150,33 @@ test("服务器发牌后player1手牌能扛", function(t) {
   })
 
 
-
   //打牌之后不能再打，要等其它人操作了！
   t.is(player1.can_dapai, false)
   //打牌后mo_pai应该为空！自然，其它的也是为空的！
-  // t.is(player1.mo_pai, null)
-  // t.is(player2.mo_pai, null)
-  // t.is(player3.mo_pai, null)
+  t.is(player1.mo_pai, null)
+  t.is(player2.mo_pai, null)
+  t.is(player3.mo_pai, null)
 
   // //player不会听胡
-  // t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
+  t.deepEqual(player1.hupai_data.all_hupai_zhang, [])
+  t.deepEqual(player2.hupai_data.all_hupai_zhang, [])
+  t.deepEqual(player3.hupai_data.all_hupai_zhang, [])
   // //可以扛player1打的牌，并且可以扛的牌里面包括t7
-  // t.deepEqual(player3.canGangOther(to_number("t7")), true)
+  t.deepEqual(player3.canGangOther(to_number("t7")), true)
   // //能够扛的牌里面不包括t7, 因为其只会检测能否自扛！
-  // t.deepEqual(player3.canZhiGangPais(), [])
+  t.deepEqual(player3.canZhiGangPais(), [])
+  //当在player里面执行canZhiGangPais的时候并不会更新allGangPais数据
   // t.deepEqual(player3.allGangPais, [17])
   // //但是，其arr_select里面应该有数据
-  // t.deepEqual(player3.arr_select, [false, false, true, false])
-  // t.deepEqual(player3.is_thinking, true)
+  t.deepEqual(player3.arr_select, [false, false, true, false])
+  t.deepEqual(player3.is_thinking, true)
 
   // //操作都应该是由room来发送的
   // room.client_confirm_gang({
   //   selectedPai: to_number('t7')
   // }, player3.socket)
+  //所有人都应该收到杠的消息，这是个明杠
+  
   // //player3扛之后，其会成为当前player
   // t.is(room.current_player, player3)
 })
