@@ -132,6 +132,15 @@ export class Player {
   get allHidePais() {
     return this._allHidePais
   }
+  private _other_dapai = {}
+  get otherDapai (){
+    return this._other_dapai
+  }
+  /**记录其他人的打牌 */
+  set otherDapai(dapai){
+    this._other_dapai = dapai
+    //todo: 应该有个消息通知，其它人打牌了！
+  }
 
   /**摸扛之后是否打牌 */
   public after_mo_gang_dapai = false
@@ -148,8 +157,7 @@ export class Player {
     this.user_id = user_id
   }
 
-  //除了我以外的其它玩家
-  public other_players(): Player[] {
+  get otherPlayerInRoom(): Player[] {
     // console.log("查找本玩家%s的其它玩家", person.username);
     return this.room.players.filter(p => p.user_id != this.user_id)
   }
@@ -556,4 +564,6 @@ export class Player {
     }
     return false
   }
+
+
 }
