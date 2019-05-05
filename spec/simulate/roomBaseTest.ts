@@ -125,6 +125,13 @@ test("服务器发牌后player1手牌能扛", function(t) {
 
   // 调用打牌的时候需要通过房间来打牌，不能直接调用player.da_pai!
   room.client_da_pai(player1.socket, to_number("t7"))
+  //其它玩家知道哪个玩家在打牌及打的什么牌
+  t.deepEqual(player2.otherDapai, {
+    pai_name: to_number("t7"), player: player1
+  })
+  t.deepEqual(player3.otherDapai, {
+    pai_name: to_number("t7"), player: player1
+  })
 
   //其它两个玩家都要收到打牌的消息
   t.deepEqual(player2.socket.latest_msg, {

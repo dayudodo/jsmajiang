@@ -943,7 +943,7 @@ export class Room {
       group_shou_pai: player.group_shou_pai
     })
     //告诉其它玩家哪个打牌了, 其它信息用户在加入房间的时候已经发送过了。
-    player.other_players.forEach(p => {
+    player.otherPlayerInRoom.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_dapai_other,
         username: player.username,
