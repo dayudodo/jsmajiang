@@ -140,7 +140,7 @@ function client_da_pai(client_message, socket) {
   let pai: Pai = client_message.pai;
   console.log(chalk.blue(`用户${player.username}打牌:${pai}`));
   //告诉房间，哪个socket打了啥牌
-  player.room.client_da_pai(socket, pai);
+  player.room.client_da_pai(player, pai);
   
 }
 

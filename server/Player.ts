@@ -133,11 +133,11 @@ export class Player {
     return this._allHidePais
   }
   private _other_dapai = {}
-  get otherDapai (){
+  get otherDapai() {
     return this._other_dapai
   }
   /**记录其他人的打牌 */
-  set otherDapai(dapai){
+  set otherDapai(dapai) {
     this._other_dapai = dapai
     //todo: 应该有个消息通知，其它人打牌了！
   }
@@ -157,7 +157,7 @@ export class Player {
     this.user_id = user_id
   }
 
-  get otherPlayerInRoom(): Player[] {
+  get otherPlayersInRoom(): Player[] {
     // console.log("查找本玩家%s的其它玩家", person.username);
     return this.room.players.filter(p => p.user_id != this.user_id)
   }
@@ -365,6 +365,7 @@ export class Player {
 
   confirm_peng(pai: Pai) {
     this._mo_pai = null
+    this.is_thinking = false
     this.group_shou_pai.peng.push(pai)
     //从手牌中删除二张牌，因为把别人的牌当成是mo_pai加入了手牌！
     //这样的话其它玩家liang, guo之后就知道碰玩家是摸牌的人了！
@@ -385,6 +386,7 @@ export class Player {
       throw new Error(`无法扛${da_pai}`)
     }
     this._mo_pai = null
+    this.is_thinking = false
     this.after_mo_gang_dapai = false
     this.group_shou_pai.mingGang.push(da_pai)
     //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
@@ -407,6 +409,7 @@ export class Player {
   /**自己摸的牌就是暗杠了*/
   confirm_anGang(pai: Pai) {
     this._mo_pai = null
+    this.is_thinking = false
     this.after_mo_gang_dapai = false
     //首先从手牌中删除四！张牌，
     // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
@@ -425,6 +428,7 @@ export class Player {
   confirm_selfPeng(pai: Pai) {
     //这个操作只会出现在玩家亮牌以后
     this._mo_pai = null
+    this.is_thinking = false
     for (var i = 0; i < 3; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai)
     }
@@ -492,34 +496,28 @@ export class Player {
     isShowPeng = this.decideShowPeng(pai_name)
   }
 
-  private decideShowLiang() {
-    this._allHidePais = this.getAllHidePais()
-    if (this._allHidePais.length > 0) {
-      return true
-    }
-    return false
-  }
-
-  /**获取到所有的隐藏牌selfPeng */
-  getAllHidePais(): Array<Pai> {
-    //如果没亮而且玩家没有摸牌，才去检测亮。如果不选择隐藏牌，那么就会全部亮出来！貌似不能再扛了？
-    if (!this.is_liang && !this.mo_pai) {
+  /**玩家是否能够亮牌, 并获取到所有的隐藏牌selfPeng */
+  private decideShowLiang(): boolean {
+    //如果已经亮了，自然不能再亮
+    if (this.is_liang) { return false }
+    //玩家没有摸牌，才去检测亮。如果不选择隐藏牌，那么就会全部亮出来！貌似不能再扛了？
+    if (!this.mo_pai) {
       this.calculateHu()
       if (this.canLiang()) {
-        console.log(`房间${this.room.id} 玩家${this.username}可以亮牌`)
+        console.log(`房间${this.room.id} 玩家${this.username}可以亮牌:`)
         puts(this.hupai_data)
-        return this.PaiArr3A()
+        this._allHidePais = this.PaiArr3A()
+        return true
       } else {
-        return []
+        return false
       }
-    } else {
-      //如果已经亮了，就不能再显示亮或者摸牌了也不能显示亮！
-      return []
     }
   }
 
   private decideShowPeng(pai_name: number): boolean {
-    if (!this.is_liang && this.canPeng(pai_name)) {
+    //亮牌了就不能再显示碰了？有隐藏的牌还是可以碰的
+    // if (this.is_liang) { return false }
+    if (this.canPeng(pai_name)) {
       console.log(`房间${this.room.id} 玩家${this.username}可以碰牌${pai_name}`)
       return true
     } else {

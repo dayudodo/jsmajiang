@@ -160,12 +160,12 @@ export class Room {
       seat_index: player.seat_index,
       score: player.score
     }
-    player.otherPlayerInRoom.forEach(p => {
+    player.otherPlayersInRoom.forEach(p => {
       p.socket.sendmsg(msg)
     })
     //用户加入房间，肯定是2，3玩家，需要服务器发送时添加其它玩家的数据
     //庄家创建房间时只有一个人，所以不需要另行通知。
-    let other_players_info = player.otherPlayerInRoom.map(item => {
+    let other_players_info = player.otherPlayersInRoom.map(item => {
       return {
         username: item.username,
         user_id: item.user_id,
@@ -328,17 +328,14 @@ export class Room {
   /**玩家选择碰牌，或者是超时自动跳过！*/
   client_confirm_peng(socket) {
     let pengPlayer = this.find_player_by(socket)
-    pengPlayer.is_thinking = false
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
     let dapai: Pai = this.dapai_player.arr_dapai.pop()
-    //碰也相当于是碰玩家也摸了张牌！
-    pengPlayer.mo_pai = dapai
+    
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     pengPlayer.confirm_peng(dapai)
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
     this.current_player = pengPlayer
 
-    pengPlayer.can_dapai = true
     if (this.isAllPlayersNormal()) {
       console.log(
         chalk.green(`玩家们正常，碰家：${pengPlayer.username}可以打牌`)
@@ -349,7 +346,7 @@ export class Room {
     //给每个人都要发出全部玩家的更新数据，这样最方便！
     this.players.forEach(person => {
       let players = this.players.map(p => {
-        //如果玩家已经亮牌，显示其所有牌！
+        //如果玩家已经亮牌，显示其所有牌，除了hidePais
         if (p.is_liang) {
           return this.player_data_filter(person.socket, p, true)
         } else {
@@ -367,7 +364,6 @@ export class Room {
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_gang(client_message, socket) {
     let gangPlayer = this.find_player_by(socket)
-    gangPlayer.is_thinking = false
     //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
     let selectedPai: Pai = client_message.selectedPai
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
@@ -403,19 +399,19 @@ export class Room {
       //如果是玩家自己摸的4张牌
       if (selectedPai) {
         gangPlayer.confirm_anGang(selectedPai)
-        gangPlayer.saveAnGang(gangPlayer.otherPlayerInRoom, selectedPai)
+        gangPlayer.saveAnGang(gangPlayer.otherPlayersInRoom, selectedPai)
       } else {
         //如果是摸牌之后可以暗杠？不能暗杠就是擦炮了
         if (gangPlayer.isMoHouSi(gangPlayer.mo_pai)) {
           console.log(`玩家${gangPlayer.username}自己摸牌${gangPai}可以扛`)
 
           gangPlayer.confirm_anGang(gangPlayer.mo_pai)
-          gangPlayer.saveAnGang(gangPlayer.otherPlayerInRoom, gangPlayer.mo_pai)
+          gangPlayer.saveAnGang(gangPlayer.otherPlayersInRoom, gangPlayer.mo_pai)
         } else {
           console.log(`玩家${gangPlayer.username}擦炮 ${gangPai}`)
           //擦炮其实也是一种明杠
           gangPlayer.confirm_mingGang(gangPlayer.mo_pai)
-          gangPlayer.saveCaPao(gangPlayer.otherPlayerInRoom, gangPlayer.mo_pai)
+          gangPlayer.saveCaPao(gangPlayer.otherPlayersInRoom, gangPlayer.mo_pai)
         }
       }
       //只要扛了就从后面发牌，并且不用判断是否已经打牌！
@@ -649,7 +645,7 @@ export class Room {
     //发牌给谁，谁就是当前玩家
     this.current_player = player
     //发牌后要清空所有玩家的其它玩家打牌记录，便于进行杠、胡的分析。
-    player.otherPlayerInRoom.forEach(p => (p.otherDapai = {}))
+    player.otherPlayersInRoom.forEach(p => (p.otherDapai = {}))
 
     this.operation_sequence.push({
       who: player,
@@ -675,7 +671,7 @@ export class Room {
       pai: player.mo_pai
     })
     //发牌还应该通知其它玩家以便显示指向箭头，不再是只给当前玩家发消息
-    player.otherPlayerInRoom.forEach(p => {
+    player.otherPlayersInRoom.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_table_fa_pai_other,
         user_id: player.user_id
@@ -700,8 +696,7 @@ export class Room {
   }
 
   /**玩家所在socket打牌pai*/
-  client_da_pai(socket, dapai_name) {
-    let player = this.find_player_by(socket)
+  client_da_pai(player: Player, dapai_name: Pai) {
     if (!player.can_dapai) {
       // throw new Error();
       console.log(
@@ -719,7 +714,7 @@ export class Room {
     //记录下哪个在打牌
     this.dapai_player = player
     //告诉其它两个玩家，谁在打牌，打什么牌
-    player.otherPlayerInRoom.forEach(p => {
+    player.otherPlayersInRoom.forEach(p => {
       p.otherDapai = { pai_name: dapai_name, player: player }
     })
 
@@ -943,7 +938,7 @@ export class Room {
       group_shou_pai: player.group_shou_pai
     })
     //告诉其它玩家哪个打牌了, 其它信息用户在加入房间的时候已经发送过了。
-    player.otherPlayerInRoom.forEach(p => {
+    player.otherPlayersInRoom.forEach(p => {
       p.socket.sendmsg({
         type: g_events.server_dapai_other,
         username: player.username,

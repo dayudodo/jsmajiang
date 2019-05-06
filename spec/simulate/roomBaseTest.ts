@@ -123,14 +123,15 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.is(player2.is_thinking, false)
   t.is(player3.is_thinking, false)
 
+  let pai_name = to_number('t7')
   // 调用打牌的时候需要通过房间来打牌，不能直接调用player.da_pai!
-  room.client_da_pai(player1.socket, to_number("t7"))
+  room.client_da_pai(player1, pai_name)
   //其它玩家知道哪个玩家在打牌及打的什么牌
   t.deepEqual(player2.otherDapai, {
-    pai_name: to_number("t7"), player: player1
+    pai_name: pai_name, player: player1
   })
   t.deepEqual(player3.otherDapai, {
-    pai_name: to_number("t7"), player: player1
+    pai_name: pai_name, player: player1
   })
 
   //其它两个玩家都要收到打牌的消息
@@ -138,7 +139,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
     type: g_events.server_dapai_other,
     username: player1.username,
     user_id: player1.user_id,
-    pai_name: 17
+    pai_name: pai_name
   })
   //玩家3消息有所不同，因为player1打牌后其会有选择菜单！也就是发了两次消息
   //倒数第二个应该是其它玩家打牌的消息，
@@ -146,14 +147,14 @@ test("服务器发牌后player1手牌能扛", function(t) {
     type: g_events.server_dapai_other,
     username: player1.username,
     user_id: player1.user_id,
-    pai_name: 17
+    pai_name: pai_name
   })
   // 然后才会出现用户的选择菜单
   t.deepEqual(player3.socket.latest_msg, {
     type: g_events.server_can_select,
     select_opt:[false,false,true,false],
     canLiangPais: [],
-    canGangPais: [17]
+    canGangPais: [pai_name]
   })
 
 
