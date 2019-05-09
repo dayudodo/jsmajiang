@@ -362,8 +362,8 @@ export class Room {
   }
 
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
-  client_confirm_gang(client_message, socket) {
-    let gangPlayer = this.find_player_by(socket)
+  client_confirm_gang(client_message, gangPlayer: Player) {
+    // let gangPlayer = this.find_player_by(socket)
     //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
     let selectedPai: Pai = client_message.selectedPai
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
@@ -399,19 +399,16 @@ export class Room {
       //如果是玩家自己摸的4张牌
       if (selectedPai) {
         gangPlayer.confirm_anGang(selectedPai)
-        gangPlayer.saveAnGang(gangPlayer.otherPlayersInRoom, selectedPai)
       } else {
         //如果是摸牌之后可以暗杠？不能暗杠就是擦炮了
-        if (gangPlayer.isMoHouSi(gangPlayer.mo_pai)) {
+        if (gangPlayer.canAnGang) {
           console.log(`玩家${gangPlayer.username}自己摸牌${gangPai}可以扛`)
 
           gangPlayer.confirm_anGang(gangPlayer.mo_pai)
-          gangPlayer.saveAnGang(gangPlayer.otherPlayersInRoom, gangPlayer.mo_pai)
         } else {
           console.log(`玩家${gangPlayer.username}擦炮 ${gangPai}`)
           //擦炮其实也是一种明杠
           gangPlayer.confirm_mingGang(gangPlayer.mo_pai)
-          gangPlayer.saveCaPao(gangPlayer.otherPlayersInRoom, gangPlayer.mo_pai)
         }
       }
       //只要扛了就从后面发牌，并且不用判断是否已经打牌！

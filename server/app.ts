@@ -32,7 +32,7 @@ var eventsHandler: [String, Function][] = [
   [g_events.client_confirm_hu, client_confirm_hu],
   // [g_events.client_confirm_ting, client_confirm_ting],
   [g_events.client_confirm_liang, client_confirm_liang],
-  [g_events.client_confirm_mingGang, client_confirm_mingGang],
+  [g_events.client_confirm_gang, client_confirm_gang],
   [g_events.client_confirm_peng, client_confirm_peng],
   [g_events.client_confirm_guo, client_confirm_guo],
   [g_events.client_restart_game, client_restart_game],
@@ -74,10 +74,10 @@ function client_confirm_liang(client_message, socket) {
   console.log(`房间:${player.room.id} 用户:${player.username} 选择亮牌`);
   player.room.client_confirm_liang(client_message, socket);
 }
-function client_confirm_mingGang(client_message, socket) {
+function client_confirm_gang(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 选择杠牌`);
-  player.room.client_confirm_gang(client_message, socket);
+  player.room.client_confirm_gang(client_message, player);
 }
 function client_confirm_peng(client_message, socket) {
   let player = g_lobby.find_player_by(socket);

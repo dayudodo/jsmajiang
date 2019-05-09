@@ -10,7 +10,7 @@
   export const client_confirm_hu = "client_confirm_hu"
   export const client_confirm_ting = "client_confirm_ting"
   export const client_confirm_liang = "client_confirm_liang"
-  export const client_confirm_mingGang = "client_confirm_mingGang"
+  export const client_confirm_gang = "client_confirm_gang"
   export const client_confirm_peng = "client_confirm_peng"
   export const client_confirm_guo = "client_confirm_guo"
   export const clientCreatorDissolve = "clientCreatorDissolve"

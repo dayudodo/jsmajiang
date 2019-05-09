@@ -275,6 +275,9 @@ export class Player {
   //   // return this.gang_lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
   //   return true;
   // }
+  get canAnGang():boolean{
+    return !_.isEmpty(this.canZhiGangPais())
+  }
   /**能够自己杠的牌*/
   canZhiGangPais(): number[] {
     return NMajiangAlgo.canZhiGangPais(this.group_shou_pai, this.mo_pai)
@@ -377,6 +380,31 @@ export class Player {
     //碰了之后能够打牌
     this.can_dapai = true
   }
+
+  confirm_gang(pai_name: Pai){
+    //除了不能扛自己的打牌，其它的都可以扛
+
+  }
+
+  /**自己摸的牌就是暗杠了*/
+  confirm_anGang(pai_name: Pai) {
+    this._mo_pai = null
+    this.is_thinking = false
+    this.after_mo_gang_dapai = false
+    //首先从手牌中删除四！张牌，
+    // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
+    for (var i = 0; i < 3; i++) {
+      this.delete_pai(this.group_shou_pai.shouPai, pai_name)
+    }
+    this.group_shou_pai.anGang.push(pai_name)
+    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    //杠之后需要重新算下胡牌！
+    this.calculateHu()
+    //碰了之后能够打牌
+    this.can_dapai = true
+    //需要通知其它人我暗扛了，这样其它人才会去扣掉扛分
+    this.saveAnGang(this.otherPlayersInRoom, pai_name)
+  }
   /**
    * 杠别人的牌是明杠
    * @param da_pai 其他人打牌
@@ -404,25 +432,11 @@ export class Player {
     this.calculateHu()
     //碰了之后能够打牌
     this.can_dapai = true
+    //需要通知其它人我暗扛了，这样其它人才会去扣掉扛分
+    this.saveCaPao(this.otherPlayersInRoom, da_pai)
   }
 
-  /**自己摸的牌就是暗杠了*/
-  confirm_anGang(pai: Pai) {
-    this._mo_pai = null
-    this.is_thinking = false
-    this.after_mo_gang_dapai = false
-    //首先从手牌中删除四！张牌，
-    // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
-    for (var i = 0; i < 3; i++) {
-      this.delete_pai(this.group_shou_pai.shouPai, pai)
-    }
-    this.group_shou_pai.anGang.push(pai)
-    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
-    //杠之后需要重新算下胡牌！
-    this.calculateHu()
-    //碰了之后能够打牌
-    this.can_dapai = true
-  }
+
 
   /**亮牌时需要确定自碰牌，将三张pai从shouPai中移动到selfPeng之中！这样还有机会杠，并且不会展示 */
   confirm_selfPeng(pai: Pai) {

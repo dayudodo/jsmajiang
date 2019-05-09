@@ -770,8 +770,7 @@ export class NMajiangAlgo {
    * @param pai_name 牌名称
    */
   static exist3A(arr_pai: Array<Pai>, pai_name: Pai) {
-    console.log("arr_pai.filter(pai => pai == pai_name)",arr_pai.filter(pai => pai == pai_name));
-    
+    // console.log("arr_pai.filter(pai => pai == pai_name)",arr_pai.filter(pai => pai == pai_name));
     return arr_pai.filter(pai => pai == pai_name).length === 3
   }
   /**暗四归 */
