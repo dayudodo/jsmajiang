@@ -21,23 +21,23 @@ export class SelectShowQueue {
         //胡first, 杠second, 亮？
         //只可能有一个人能扛，因为就4张牌
         //先按照位置排序
-        newArr = _.orderBy(this.players, p => p.seat_index)
+        this.players = _.orderBy(this.players, ['seat_index'])
         let playerTemp: Player = this.findHuPlayer()
         // 有可能一炮双响，一个个处理，按照玩家位置顺序来
         while (playerTemp) {
-            this.players.remove(playerTemp)
+            _.remove(this.players, playerTemp)
             newArr.push(playerTemp)
             playerTemp = this.findHuPlayer()
         }
         
         playerTemp = this.findLiangPlayer() //
         if(playerTemp){
-            this.players.remove(playerTemp)
+            _.remove(this.players, playerTemp)
             newArr.push(playerTemp)
         }
         playerTemp = this.findGangPlayer() //
         if(playerTemp){
-            this.players.remove(playerTemp)
+            _.remove(this.players, playerTemp)
             newArr.push(playerTemp)
         }
         newArr.push(...this.players)
@@ -57,7 +57,7 @@ export class SelectShowQueue {
         return this.players.find(p => p.arr_select_show[2] == true)
     }
     handleSelectShowOneByOne() {
-        throw new Error("Method not implemented.");
+        console.log('handleSelectShowOneByOne')
     }
     public hasSelectShow(): boolean {
         return this.players.some(p => !_.isEmpty(p.arr_select_show))
