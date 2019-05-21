@@ -8,6 +8,7 @@ import { TablePaiManager } from "./TablePaiManager"
 import { ScoreManager } from "./ScoreManager"
 import { MyDataBase } from "./MyDataBase"
 import { LobbyManager } from "./LobbyManager"
+import { SelectShowQueue } from "./SelectShowQueue"
 
 let room_valid_names = ["ange", "jack", "rose"]
 
@@ -892,12 +893,12 @@ export class Room {
       console.log(`可以杠的牌：${canGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
       //打牌之后应该清空此可选择菜单数组
-      player.arr_select = [isShowHu, isShowLiang, isShowGang, isShowPeng]
+      player.arr_select_show = [isShowHu, isShowLiang, isShowGang, isShowPeng]
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       //todo: 客户端需要更新名称allHidePais, allGangPais
       player.socket.sendmsg({
         type: g_events.server_can_select,
-        select_opt: player.arr_select,
+        select_opt: player.arr_select_show,
         canLiangPais: canLiangPais,
         canGangPais: canGangPais
       })
