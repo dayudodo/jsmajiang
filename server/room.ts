@@ -732,8 +732,8 @@ export class Room {
       this.broadcastServerDapaiInclude(player, dapai_name)
       // this.server_fa_pai(this.next_player);
       // return;
-      let isRoomPaiEmpty = 0 === this.cloneTablePais.length
-      if (isRoomPaiEmpty) {
+      let noPaiInRoom = 0 === this.cloneTablePais.length
+      if (noPaiInRoom) {
         //告诉所有人游戏结束了
         this.players.forEach(p => {
           p.socket.sendmsg({
