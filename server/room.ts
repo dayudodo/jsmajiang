@@ -43,7 +43,7 @@ declare global {
   }
 }
 
-function puts(obj: any) {
+export function puts(obj: any) {
   console.log(util.inspect(obj))
 }
 
@@ -95,6 +95,7 @@ export class Room {
     // { who: this, action: Operate.liang },
     // { who: this, action: Operate.guo }
   ]
+  selectShowQue: SelectShowQueue;
 
   constructor() {
     // 房间新建之后，就会拥有个id了
@@ -199,7 +200,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function(item) {
+    _.remove(this.players, function (item) {
       return item.socket.id == socket.id
     })
   }
@@ -331,7 +332,7 @@ export class Room {
     let pengPlayer = this.find_player_by(socket)
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
     let dapai: Pai = this.dapai_player.arr_dapai.pop()
-    
+
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     pengPlayer.confirm_peng(dapai)
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
@@ -378,7 +379,7 @@ export class Room {
       if (!gangPlayer.canZhiGangPais().includes(selectedPai)) {
         throw new Error(
           `玩家：${
-            gangPlayer.username
+          gangPlayer.username
           }可以杠的牌${gangPlayer.canZhiGangPais()}并不包括${selectedPai}`
         )
       }
@@ -562,6 +563,7 @@ export class Room {
   /**玩家选择胡牌*/
   client_confirm_hu(socket) {
     let player = this.find_player_by(socket)
+    // if (!this.operationValid(player)) { return }
     player.is_hu = true
     player.is_thinking = false //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
@@ -593,8 +595,11 @@ export class Room {
       console.dir(this.hupai_players)
       console.dir(this.dapai_player.gang_lose_data)
     } else {
-      ;`${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
+      ; `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
     }
+  }
+  selectValid(player: Player): boolean {
+    return this.selectShowQue.selectValid(player)
   }
 
   /**所有玩家的牌面返回客户端 */

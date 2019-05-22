@@ -13,7 +13,7 @@ export class SelectShowQueue {
     constructor(players: Player[]) {
         this.players = _.clone(players)
         this.players = this.adjustPrioritybySelectShow()
-        this.handleSelectShowOneByOne()
+        // this.processSelectShowOneByOne()
     }
 
     adjustPrioritybySelectShow() {
@@ -21,7 +21,7 @@ export class SelectShowQueue {
         //胡first, 杠second, 亮？
         //只可能有一个人能扛，因为就4张牌
         //先按照位置排序
-        this.players = _.orderBy(this.players, ['seat_index'])
+        this.players.sort((a,b)=>(a.seat_index > b.seat_index)? 1 : -1 )
         let playerTemp: Player = this.findHuPlayer()
         // 有可能一炮双响，一个个处理，按照玩家位置顺序来
         while (playerTemp) {
@@ -30,12 +30,12 @@ export class SelectShowQueue {
             playerTemp = this.findHuPlayer()
         }
         
-        playerTemp = this.findLiangPlayer() //
+        playerTemp = this.findLiangPlayer()
         if(playerTemp){
             _.remove(this.players, playerTemp)
             newArr.push(playerTemp)
         }
-        playerTemp = this.findGangPlayer() //
+        playerTemp = this.findGangPlayer()
         if(playerTemp){
             _.remove(this.players, playerTemp)
             newArr.push(playerTemp)
@@ -56,11 +56,17 @@ export class SelectShowQueue {
     findGangPlayer(): Player {
         return this.players.find(p => p.arr_select_show[2] == true)
     }
-    handleSelectShowOneByOne() {
-        console.log('handleSelectShowOneByOne')
-    }
-    public hasSelectShow(): boolean {
+
+    hasSelectShow(): boolean {
         return this.players.some(p => !_.isEmpty(p.arr_select_show))
+    }
+    /**玩家的选择是否有效，指点击了胡、亮、杠、碰之类的 */
+    selectValid(player: Player){
+        //这里只检测select操作，打牌并不在其中，玩家执行confirm操作系列是肯定会有selectShow的，起码有1个否则就是逻辑错误了。
+        return this.players[0] == player ? true : false
+    }
+    selectComplete(player:Player){
+        _.remove(this.players, player)
     }
 
 }
