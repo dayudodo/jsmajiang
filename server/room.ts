@@ -328,8 +328,7 @@ export class Room {
     return result
   }
   /**玩家选择碰牌，或者是超时自动跳过！*/
-  client_confirm_peng(socket) {
-    let pengPlayer = this.find_player_by(socket)
+  client_confirm_peng(pengPlayer: Player) {
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
     let dapai: Pai = this.dapai_player.arr_dapai.pop()
 
@@ -502,8 +501,8 @@ export class Room {
   }
 
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
-  client_confirm_liang(client_message, socket) {
-    let player = this.find_player_by(socket)
+  client_confirm_liang(client_message, player: Player) {
+    
     //玩家已经有决定，不再想了。
     player.is_thinking = false
     player.is_liang = true
@@ -548,9 +547,8 @@ export class Room {
   }
 
   //玩家选择放弃，给下一家发牌
-  client_confirm_guo(socket) {
+  client_confirm_guo(player: Player) {
     //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
-    let player = this.find_player_by(socket)
     //玩家有决定了，状态改变
     player.is_thinking = false
     //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
@@ -561,8 +559,8 @@ export class Room {
   }
 
   /**玩家选择胡牌*/
-  client_confirm_hu(socket) {
-    let player = this.find_player_by(socket)
+  client_confirm_hu(player: Player) {
+    
     // if (!this.operationValid(player)) { return }
     player.is_hu = true
     player.is_thinking = false //一炮双响的时候会起作用！

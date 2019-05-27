@@ -1,4 +1,4 @@
-// 专门用来处理selectShow有很多的情况，直接处理完成
+// 专门用来处理selectShow有很多的情况，一个玩家就会产生好几个selectShow
 import * as config from "./config"
 import * as _ from "lodash"
 import chalk from "chalk"
@@ -65,7 +65,7 @@ export class SelectShowQueue {
         //这里只检测select操作，打牌并不在其中，玩家执行confirm操作系列是肯定会有selectShow的，起码有1个否则就是逻辑错误了。
         return this.players[0] == player ? true : false
     }
-    selectComplete(player:Player){
+    selectCompleteBy(player:Player){
         _.remove(this.players, player)
     }
 

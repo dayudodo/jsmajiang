@@ -62,7 +62,7 @@ function client_restart_game(client_message, socket) {
 function client_confirm_hu(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 选择胡牌`);
-  player.room.client_confirm_hu(socket);
+  player.room.client_confirm_hu(player);
 }
 // function client_confirm_ting(client_message, socket) {
 //   let { player, room } = confirmInit(socket);
@@ -72,7 +72,7 @@ function client_confirm_hu(client_message, socket) {
 function client_confirm_liang(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 选择亮牌`);
-  player.room.client_confirm_liang(client_message, socket);
+  player.room.client_confirm_liang(client_message, player);
 }
 function client_confirm_gang(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
@@ -82,12 +82,12 @@ function client_confirm_gang(client_message, socket) {
 function client_confirm_peng(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 选择碰牌`);
-  player.room.client_confirm_peng(socket);
+  player.room.client_confirm_peng(player);
 }
 function client_confirm_guo(client_message, socket) {
   let player = g_lobby.find_player_by(socket);
   console.log(`房间:${player.room.id} 用户:${player.username} 选择过牌`);
-  player.room.client_confirm_guo(socket);
+  player.room.client_confirm_guo(player);
 }
 
 wsserver.on("connection", socket => {

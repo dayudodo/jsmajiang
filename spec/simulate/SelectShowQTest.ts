@@ -101,7 +101,7 @@ test("player2选择操作有效，player1选择操作无效", function (t) {
 })
 test("选择操作完成，只剩下两个玩家可操作", function (t) {
   var selectQue = new SelectShowQueue([player1, player2, player3])
-  selectQue.selectComplete(player2)
+  selectQue.selectCompleteBy(player2)
   t.deepEqual(selectQue.players,[player3, player1])
 })
 
