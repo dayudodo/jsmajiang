@@ -329,6 +329,8 @@ export class Room {
   }
   /**玩家选择碰牌，或者是超时自动跳过！*/
   client_confirm_peng(pengPlayer: Player) {
+    //如果玩家选择操作无效，直接返回
+    if (!this.selectShowQue.selectValid(pengPlayer)) { return }
     //碰之后打牌玩家的打牌就跑到碰玩家手中了
     let dapai: Pai = this.dapai_player.arr_dapai.pop()
 
@@ -364,6 +366,8 @@ export class Room {
 
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_gang(client_message, gangPlayer: Player) {
+    //如果玩家选择操作无效，直接返回
+    if (!this.selectShowQue.selectValid(gangPlayer)) { return }
     // let gangPlayer = this.find_player_by(socket)
     //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
     let selectedPai: Pai = client_message.selectedPai
@@ -482,27 +486,11 @@ export class Room {
     })
   }
 
-  /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
-  private decide_fapai() {
-    if (this.isAllPlayersNormal()) {
-      //都正常且没人摸牌的情况下才能发牌
-      if (this.no_player_mopai()) {
-        this.server_fa_pai(this.next_player)
-      }
-      //这时候才能够告诉摸牌的人你可以打牌
-      // let moPlayer: Player = this.players.find(p => p.mo_pai != null);
-      let moPlayers = this.players.filter(p => p.mo_pai !== null)
-      if (moPlayers && moPlayers.length > 1) {
-        throw new Error(`存在两玩家同时摸牌！${moPlayers}`)
-      }
-      let moPlayer = moPlayers[0]
-      this.decide_can_dapai(moPlayer)
-    }
-  }
 
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, player: Player) {
-    
+    //如果玩家选择操作无效，直接返回
+    if (!this.selectShowQue.selectValid(player)) { return }
     //玩家已经有决定，不再想了。
     player.is_thinking = false
     player.is_liang = true
@@ -559,9 +547,10 @@ export class Room {
   }
 
   /**玩家选择胡牌*/
+  //todo: 选择胡还得看其它玩家更不也胡这张牌
   client_confirm_hu(player: Player) {
-    
-    // if (!this.operationValid(player)) { return }
+    //如果玩家选择操作无效，直接返回
+    if (!this.selectValid(player)) { return }
     player.is_hu = true
     player.is_thinking = false //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
@@ -596,8 +585,23 @@ export class Room {
       ; `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
     }
   }
-  selectValid(player: Player): boolean {
-    return this.selectShowQue.selectValid(player)
+
+  /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
+  private decide_fapai() {
+    if (this.isAllPlayersNormal()) {
+      //都正常且没人摸牌的情况下才能发牌
+      if (this.no_player_mopai()) {
+        this.server_fa_pai(this.next_player)
+      }
+      //这时候才能够告诉摸牌的人你可以打牌
+      // let moPlayer: Player = this.players.find(p => p.mo_pai != null);
+      let moPlayers = this.players.filter(p => p.mo_pai !== null)
+      if (moPlayers && moPlayers.length > 1) {
+        throw new Error(`存在两玩家同时摸牌！${moPlayers}`)
+      }
+      let moPlayer = moPlayers[0]
+      this.decide_can_dapai(moPlayer)
+    }
   }
 
   /**所有玩家的牌面返回客户端 */
@@ -896,12 +900,12 @@ export class Room {
       console.log(`可以杠的牌：${canGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
       //打牌之后应该清空此可选择菜单数组
-      player.arr_select_show = [isShowHu, isShowLiang, isShowGang, isShowPeng]
+      player.arr_selectShow = [isShowHu, isShowLiang, isShowGang, isShowPeng]
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       //todo: 客户端需要更新名称allHidePais, allGangPais
       player.socket.sendmsg({
         type: g_events.server_can_select,
-        select_opt: player.arr_select_show,
+        select_opt: player.arr_selectShow,
         canLiangPais: canLiangPais,
         canGangPais: canGangPais
       })

@@ -1,4 +1,5 @@
 // 专门用来处理selectShow有很多的情况，一个玩家就会产生好几个selectShow
+// 
 import * as config from "./config"
 import * as _ from "lodash"
 import chalk from "chalk"
@@ -16,6 +17,7 @@ export class SelectShowQueue {
         // this.processSelectShowOneByOne()
     }
 
+    //并没有改变玩家数据，与room中的players相比，顺序不同而已。
     adjustPrioritybySelectShow() {
         let newArr = []
         //胡first, 杠second, 亮？
@@ -46,23 +48,24 @@ export class SelectShowQueue {
     //[isShowHu, isShowLiang, isShowGang, isShowPeng]
     /** 找到能胡玩家*/
     findHuPlayer(): Player {
-        return this.players.find(p => p.arr_select_show[0] == true)
+        return this.players.find(p => p.arr_selectShow[0] == true)
     }
     /** 找到能亮玩家*/
     findLiangPlayer(): Player {
-        return this.players.find(p => p.arr_select_show[1] == true)
+        return this.players.find(p => p.arr_selectShow[1] == true)
     }
     /**找到能扛玩家 */
     findGangPlayer(): Player {
-        return this.players.find(p => p.arr_select_show[2] == true)
+        return this.players.find(p => p.arr_selectShow[2] == true)
     }
 
     hasSelectShow(): boolean {
-        return this.players.some(p => !_.isEmpty(p.arr_select_show))
+        return this.players.some(p => !_.isEmpty(p.arr_selectShow))
     }
     /**玩家的选择是否有效，指点击了胡、亮、杠、碰之类的 */
     selectValid(player: Player){
         //这里只检测select操作，打牌并不在其中，玩家执行confirm操作系列是肯定会有selectShow的，起码有1个否则就是逻辑错误了。
+        //如果有双胡呢？任一玩家胡都可以。。
         return this.players[0] == player ? true : false
     }
     selectCompleteBy(player:Player){

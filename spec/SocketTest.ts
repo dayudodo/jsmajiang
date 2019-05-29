@@ -1,5 +1,5 @@
 import _ = require("lodash");
-import { puts } from "./room";
+import { puts } from "../server/room";
 
 export class SocketTest {
   public id: any;

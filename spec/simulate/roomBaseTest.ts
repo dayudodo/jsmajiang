@@ -8,7 +8,7 @@ import * as g_events from "../../server/events"
 import chalk from "chalk"
 import { TablePaiManager } from "../../server/TablePaiManager"
 import _ = require("lodash")
-import { SocketTest } from "../../server/SocketTest";
+import { SocketTest } from "../SocketTest";
 
 /**直接将字符串转换成数类麻将数组 */
 function pais(strs): number[] {
@@ -154,7 +154,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   //当在player里面执行canZhiGangPais的时候并不会更新allGangPais数据
   // t.deepEqual(player3.allGangPais, [17])
   // //但是，其arr_select里面应该有数据
-  t.deepEqual(player3.arr_select_show, [false, false, true, false])
+  t.deepEqual(player3.arr_selectShow, [false, false, true, false])
   t.deepEqual(player3.is_thinking, true)
 
   // //操作都应该是由room来发送的

@@ -3,7 +3,7 @@ import { Room } from "../../server/room"
 import { Player } from "../../server/Player"
 import { PaiConvertor } from "../../server/PaiConvertor"
 import { SelectShowQueue } from "../../server/SelectShowQueue"
-import { SocketTest } from "../../server/SocketTest"
+import { SocketTest } from "../SocketTest"
 import * as config from "../../server/config"
 
 /**直接将字符串转换成数类麻将数组 */
@@ -52,13 +52,13 @@ var player3 = new Player({
 })
 //[isShowHu, isShowLiang, isShowGang, isShowPeng]
 player1.seat_index = 0
-player1.arr_select_show = [false, false, true, false]
+player1.arr_selectShow = [false, false, true, false]
 
 player2.seat_index = 1
-player2.arr_select_show = [false, true, false, false]
+player2.arr_selectShow = [false, true, false, false]
 
 player3.seat_index = 2
-player3.arr_select_show = [true, false, false, false]
+player3.arr_selectShow = [true, false, false, false]
 
 
 test("发现胡", function (t) {
@@ -79,13 +79,13 @@ test("优先级排序正确", function (t) {
 })
 test("双响优先级排序正确", function (t) {
   player1.seat_index = 0
-  player1.arr_select_show = [false, false, true, false]
+  player1.arr_selectShow = [false, false, true, false]
 
   player2.seat_index = 1
-  player2.arr_select_show = [true, false, false, false]
+  player2.arr_selectShow = [true, false, false, false]
 
   player3.seat_index = 2
-  player3.arr_select_show = [true, false, false, false]
+  player3.arr_selectShow = [true, false, false, false]
   var selectQue = new SelectShowQueue([player1, player2, player3])
   t.deepEqual(selectQue.players, [player2, player3, player1])
 })
@@ -106,9 +106,9 @@ test("选择操作完成，只剩下两个玩家可操作", function (t) {
 })
 
 test("任一玩家无selectShow", function (t) {
-  player1.arr_select_show = []
-  player2.arr_select_show = []
-  player3.arr_select_show = []
+  player1.arr_selectShow = []
+  player2.arr_selectShow = []
+  player3.arr_selectShow = []
   var selectQue = new SelectShowQueue([player1, player2, player3])
 
   t.is(selectQue.hasSelectShow(), false)
