@@ -31,6 +31,8 @@
   export const server_dapai_other = "server_dapai_other";
   export const server_dissolve = "server_dissolve";
   export const server_ping = "server_ping";
+  /**当有玩家碰、杠的时候，打牌玩家的牌会消失 */
+  export const server_dapai_disappear = "server_dapai_disappear";
   
   export const server_peng = "server_peng";
   export const server_mingGang = "server_mingGang";

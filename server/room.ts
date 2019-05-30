@@ -65,8 +65,8 @@ export class Room {
   public can_receive_confirm = false
   /** 服务器当前发的牌 */
   // public table_fa_pai: Pai = null;
-  /**当前桌子上的所有人都能看到的打牌，可能是服务器发的，也可能是用户从自己手牌中打出来的。*/
-  public table_dapai: Pai = null
+  /**当前桌子上的所有人都能看到的打牌*/
+  // public table_dapai: Pai = null
   /**发牌给哪个玩家 */
   public fapai_to_who: Player = null
   /**哪个玩家在打牌 */
@@ -327,12 +327,17 @@ export class Room {
     })
     return result
   }
+  /**玩家碰、杠后，打牌玩家打的牌会消失，只是个简单的过程 */
+  public daPaiDisappear(): Pai{
+    this.dapai_player.socket.sendmsg({      type: g_events.server_dapai_disappear    })
+    return this.dapai_player.arr_dapai.pop()
+  }
   /**玩家选择碰牌，或者是超时自动跳过！*/
   client_confirm_peng(pengPlayer: Player) {
     //如果玩家选择操作无效，直接返回
     if (!this.selectShowQue.selectValid(pengPlayer)) { return }
-    //碰之后打牌玩家的打牌就跑到碰玩家手中了
-    let dapai: Pai = this.dapai_player.arr_dapai.pop()
+    //碰之后打牌玩家的打牌就跑到碰玩家手中了，todo: 前端也会有相应的显示，dapai_player的打牌消失了
+    let dapai: Pai = this.daPaiDisappear()
 
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     pengPlayer.confirm_peng(dapai)
@@ -373,7 +378,8 @@ export class Room {
     let selectedPai: Pai = client_message.selectedPai
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
     //如果杠别人的牌，或者杠自己摸的牌
-    if (selectedPai == this.table_dapai || selectedPai == gangPlayer.mo_pai) {
+    let table_dapai = this.daPaiDisappear()
+    if (selectedPai == table_dapai || selectedPai == gangPlayer.mo_pai) {
       //设置为null, 表明不是自己摸的扛或者天生就是4张。
       selectedPai = null
     }
@@ -425,9 +431,9 @@ export class Room {
       //方便的多
       //杠之后打牌玩家的打牌就跑到杠玩家手中了
       gangPai = this.dapai_player.arr_dapai.pop()
-      if (gangPai != this.table_dapai) {
+      if (gangPai != table_dapai) {
         throw new Error(
-          `放杠者：${gangPai} 与 table_pai: ${this.table_dapai}不相同？`
+          `放杠者：${gangPai} 与 table_pai: ${table_dapai}不相同？`
         )
       }
       this.operation_sequence.push({
@@ -550,7 +556,9 @@ export class Room {
   //todo: 选择胡还得看其它玩家更不也胡这张牌
   client_confirm_hu(player: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectValid(player)) { return }
+    if (!this.selectShowQue.selectValid(player)) { return }
+
+    let table_dapai = this.daPaiDisappear()
     player.is_hu = true
     player.is_thinking = false //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
@@ -568,8 +576,8 @@ export class Room {
       this.sendAllResults(player, player.mo_pai)
     }
     //胡别人的打的牌
-    else if (player.canHu(this.table_dapai)) {
-      player.hupai_zhang = this.table_dapai
+    else if (player.canHu(table_dapai)) {
+      player.hupai_zhang = table_dapai
       //记录放炮者
       this.dapai_player.is_fangpao = true
       //看是否是杠牌！
@@ -578,7 +586,7 @@ export class Room {
         //杠上炮，打的杠牌是别人的胡牌
         player.hupai_typesCode().push(config.HuisGangShangPao)
       }
-      this.sendAllResults(player, this.table_dapai)
+      this.sendAllResults(player, table_dapai)
       console.dir(this.hupai_players)
       console.dir(this.dapai_player.gang_lose_data)
     } else {
@@ -734,7 +742,7 @@ export class Room {
         pai: dapai_name
       })
       //房间记录下用户打的牌
-      this.table_dapai = dapai_name
+      // this.table_dapai = dapai_name
       //todo: 有没有人可以碰的？ 有人碰就等待10秒，这个碰的就成了下一家，需要打张牌！
       this.broadcastServerDapaiInclude(player, dapai_name)
       // this.server_fa_pai(this.next_player);
