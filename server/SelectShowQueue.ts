@@ -10,6 +10,7 @@ export class SelectShowQueue {
 
 
 
+
     public players: Player[] = []
     constructor(players: Player[]) {
         this.players = _.clone(players)
@@ -58,7 +59,11 @@ export class SelectShowQueue {
     findGangPlayer(): Player {
         return this.players.find(p => p.arr_selectShow[2] == true)
     }
-
+    selectCompleteBy(player:Player){
+        //选择完毕，则arr_selectshow要清空
+        player.arr_selectShow = []
+        _.remove(this.players, player)
+    }
     hasSelectShow(): boolean {
         return this.players.some(p => !_.isEmpty(p.arr_selectShow))
     }
@@ -68,8 +73,9 @@ export class SelectShowQueue {
         //如果有双胡呢？任一玩家胡都可以。。
         return this.players[0] == player ? true : false
     }
-    selectCompleteBy(player:Player){
-        _.remove(this.players, player)
-    }
+    /** 当所有玩家的arr_selectShow都为空的时候， */
+    isAllPlayersNormal() {
+        return !this.hasSelectShow()
+      }
 
 }

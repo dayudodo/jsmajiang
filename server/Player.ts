@@ -75,6 +75,24 @@ export class Player {
   public seat_index = null //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
 
   private _mo_pai = null
+  /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
+   * 一旦打出，才会清空
+   */
+  set mo_pai(pai: Pai) {
+    if (this._mo_pai) {
+      //设置的时候一定要保证其是个空
+      throw new Error(`已经摸过牌:${this._mo_pai}，需要先打一张`)
+    }
+    this._mo_pai = pai
+    this.after_mo_gang_dapai = false
+    //扛或者碰之后就会清除_mo_pai,由他们来添加这张摸牌
+    // this.group_shou_pai.shouPai.push(pai);
+    // this.group_shou_pai.shouPai.sort();
+  }
+  get mo_pai() {
+    return this._mo_pai
+  }
+  
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = [] //打过的牌有哪些，断线后可以重新发送此数据
   /**玩家可以选择的操作数组 */
@@ -327,23 +345,6 @@ export class Player {
     }
   }
 
-  /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
-   * 一旦打出，才会清空
-   */
-  set mo_pai(pai: Pai) {
-    if (this._mo_pai) {
-      //设置的时候一定要保证其是个空
-      throw new Error(`已经摸过牌:${this._mo_pai}，需要先打一张`)
-    }
-    this._mo_pai = pai
-    this.after_mo_gang_dapai = false
-    //扛或者碰之后就会清除_mo_pai,由他们来添加这张摸牌
-    // this.group_shou_pai.shouPai.push(pai);
-    // this.group_shou_pai.shouPai.sort();
-  }
-  get mo_pai() {
-    return this._mo_pai
-  }
   // /**能否听牌，玩家没亮的时候，屁胡不能听牌！其它情况下是可以的！ */
   // canTing(): boolean {
   //   return this.hupai_data.all_hupai_zhang.length > 0;

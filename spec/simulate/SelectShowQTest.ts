@@ -102,6 +102,7 @@ test("player2选择操作有效，player1选择操作无效", function (t) {
 test("选择操作完成，只剩下两个玩家可操作", function (t) {
   var selectQue = new SelectShowQueue([player1, player2, player3])
   selectQue.selectCompleteBy(player2)
+  t.deepEqual(player2.arr_selectShow, [])
   t.deepEqual(selectQue.players,[player3, player1])
 })
 
@@ -112,4 +113,5 @@ test("任一玩家无selectShow", function (t) {
   var selectQue = new SelectShowQueue([player1, player2, player3])
 
   t.is(selectQue.hasSelectShow(), false)
+  t.is(selectQue.isAllPlayersNormal(), true)
 })

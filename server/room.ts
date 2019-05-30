@@ -65,8 +65,6 @@ export class Room {
   public can_receive_confirm = false
   /** 服务器当前发的牌 */
   // public table_fa_pai: Pai = null;
-  /**当前桌子上的所有人都能看到的打牌*/
-  // public table_dapai: Pai = null
   /**发牌给哪个玩家 */
   public fapai_to_who: Player = null
   /**哪个玩家在打牌 */
@@ -95,7 +93,7 @@ export class Room {
     // { who: this, action: Operate.liang },
     // { who: this, action: Operate.guo }
   ]
-  selectShowQue: SelectShowQueue;
+  selectShowQue: SelectShowQueue
 
   constructor() {
     // 房间新建之后，就会拥有个id了
@@ -200,7 +198,7 @@ export class Room {
   }
   //玩家选择退出房间，应该会有一定的惩罚，如果本局还没有结束
   public exit_room(socket) {
-    _.remove(this.players, function (item) {
+    _.remove(this.players, function(item) {
       return item.socket.id == socket.id
     })
   }
@@ -328,14 +326,17 @@ export class Room {
     return result
   }
   /**玩家碰、杠后，打牌玩家打的牌会消失，只是个简单的过程 */
-  public daPaiDisappear(): Pai{
-    this.dapai_player.socket.sendmsg({      type: g_events.server_dapai_disappear    })
+  public daPaiDisappear(): Pai {
+    this.dapai_player.socket.sendmsg({ type: g_events.server_dapai_disappear })
     return this.dapai_player.arr_dapai.pop()
   }
+
   /**玩家选择碰牌，或者是超时自动跳过！*/
   client_confirm_peng(pengPlayer: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(pengPlayer)) { return }
+    if (!this.selectShowQue.selectValid(pengPlayer)) {
+      return
+    }
     //碰之后打牌玩家的打牌就跑到碰玩家手中了，todo: 前端也会有相应的显示，dapai_player的打牌消失了
     let dapai: Pai = this.daPaiDisappear()
 
@@ -367,12 +368,15 @@ export class Room {
         pengPlayer_user_id: pengPlayer.user_id
       })
     })
+    this.selectShowQue.selectCompleteBy(pengPlayer)
   }
 
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_gang(client_message, gangPlayer: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(gangPlayer)) { return }
+    if (!this.selectShowQue.selectValid(gangPlayer)) {
+      return
+    }
     // let gangPlayer = this.find_player_by(socket)
     //有选择的杠牌说明用户现在有两套可以杠的牌，包括手起4，和别人打的杠牌！
     let selectedPai: Pai = client_message.selectedPai
@@ -388,7 +392,7 @@ export class Room {
       if (!gangPlayer.canZhiGangPais().includes(selectedPai)) {
         throw new Error(
           `玩家：${
-          gangPlayer.username
+            gangPlayer.username
           }可以杠的牌${gangPlayer.canZhiGangPais()}并不包括${selectedPai}`
         )
       }
@@ -490,13 +494,15 @@ export class Room {
         gangPlayer_user_id: gangPlayer.user_id
       })
     })
+    this.selectShowQue.selectCompleteBy(gangPlayer)
   }
-
 
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, player: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(player)) { return }
+    if (!this.selectShowQue.selectValid(player)) {
+      return
+    }
     //玩家已经有决定，不再想了。
     player.is_thinking = false
     player.is_liang = true
@@ -533,15 +539,23 @@ export class Room {
       who: player,
       action: Operate.liang
     })
+    this.selectShowQue.selectCompleteBy(player)
     //还没有发过牌呢，说明是刚开始游戏，庄家亮了。
     //此判断还能防止两家都亮的情况，如果有人摸了牌，就算你亮牌也不会有啥影响，保证只有一个人手里面有摸牌！
     //仅仅依靠最后一个是打牌来进行发牌是不对的，如果遇上了一人打牌后 有人可亮，有人可碰，还没有碰呢，你亮了，结果就发牌了！
     //所以还需要啥呢？没人在思考状态！或者说是正常的状态下！并且有人打牌了，才可以发牌！
-    this.decide_fapai()
+    if (this.selectShowQue.hasSelectShow()) {
+      return
+    } else {
+      this.decide_fapai()
+    }
   }
 
   //玩家选择放弃，给下一家发牌
   client_confirm_guo(player: Player) {
+    if (!this.selectShowQue.selectValid(player)) {
+      return
+    }
     //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
     //玩家有决定了，状态改变
     player.is_thinking = false
@@ -549,14 +563,21 @@ export class Room {
     //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
     //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
     //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
-    this.decide_fapai()
+    this.selectShowQue.selectCompleteBy(player)
+    if (this.selectShowQue.hasSelectShow()) {
+      return
+    } else {
+      this.decide_fapai()
+    }
   }
 
   /**玩家选择胡牌*/
   //todo: 选择胡还得看其它玩家更不也胡这张牌
   client_confirm_hu(player: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(player)) { return }
+    if (!this.selectShowQue.selectValid(player)) {
+      return
+    }
 
     let table_dapai = this.daPaiDisappear()
     player.is_hu = true
@@ -590,7 +611,7 @@ export class Room {
       console.dir(this.hupai_players)
       console.dir(this.dapai_player.gang_lose_data)
     } else {
-      ; `${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
+      ;`${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
     }
   }
 
@@ -705,7 +726,7 @@ export class Room {
 
   /**所有玩家处于正常状态，指房间内所有玩家不是碰、杠、亮、胡选择状态的时候*/
   private isAllPlayersNormal() {
-    return this.players.every(p => p.is_thinking === false)
+    return this.selectShowQue.isAllPlayersNormal()
   }
 
   /**玩家所在socket打牌pai*/
