@@ -1023,7 +1023,7 @@ export class Room {
       right_player: { group_shou_pai: rightGroup }
     })
   }
-  serverGameStart(clonePais: Pai[] = TablePaiManager.zhuang_mopai_gang()) {
+  serverGameStart(clonePais: Pai[] = TablePaiManager.fapai_random()) {
     //如果没有准备好，返回！
     if (!this.all_ready) {
       return

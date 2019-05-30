@@ -115,3 +115,10 @@ test("任一玩家无selectShow", function (t) {
   t.is(selectQue.hasSelectShow(), false)
   t.is(selectQue.isAllPlayersNormal(), true)
 })
+test("players为空也能正常工作", function (t) {
+
+  var selectQue = new SelectShowQueue([])
+
+  t.is(selectQue.hasSelectShow(), false)
+  t.is(selectQue.isAllPlayersNormal(), true)
+})
