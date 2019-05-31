@@ -98,6 +98,7 @@ export class Room {
   constructor() {
     // 房间新建之后，就会拥有个id了
     this.id = Room.getId()
+    this.selectShowQue = new SelectShowQueue()
   }
 
   /**创建一个唯一的房间号，其实可以用redis来生成一个号，就放在内存里面*/
@@ -327,7 +328,9 @@ export class Room {
   }
   /**玩家碰、杠后，打牌玩家打的牌会消失，只是个简单的过程 */
   public daPaiDisappear(): Pai {
-    this.dapai_player.socket.sendmsg({ type: g_events.server_dapai_disappear })
+    this.dapai_player.socket.sendmsg({
+      type: g_events.server_dapai_disappear
+    })
     return this.dapai_player.arr_dapai.pop()
   }
 
@@ -382,7 +385,17 @@ export class Room {
     let selectedPai: Pai = client_message.selectedPai
     //有可能传递过来的杠牌是别人打的牌，这样算杠感觉好麻烦，不够清晰！有啥其它的办法？
     //如果杠别人的牌，或者杠自己摸的牌
-    let table_dapai = this.daPaiDisappear()
+    let table_dapai
+    // console.log('~~~gangPlayer.mo_pai: ', gangPlayer.mo_pai);
+    
+    if (_.isEmpty(this.dapai_player)) {
+      if (_.isNull(gangPlayer.mo_pai ) ) {
+        throw new Error("没人打牌，扛家也没有摸牌，严重错误")
+      }
+      table_dapai = gangPlayer.mo_pai
+    } else {
+      table_dapai = this.daPaiDisappear()
+    }
     if (selectedPai == table_dapai || selectedPai == gangPlayer.mo_pai) {
       //设置为null, 表明不是自己摸的扛或者天生就是4张。
       selectedPai = null
@@ -675,6 +688,7 @@ export class Room {
       console.log(`todo: ${player.username}已经亮牌，客户端应自动打牌，或者胡`)
     }
     //房间记录发牌给谁，以便分析哪个玩家拿牌了但是没有打，说明在等待其它玩家！
+    player.mo_pai = pai[0]
     this.fapai_to_who = player
     //发牌给谁，谁就是当前玩家
     this.current_player = player
@@ -687,7 +701,6 @@ export class Room {
       pai: pai[0]
     })
     //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
-    player.mo_pai = pai[0]
     //在这儿需要计算下胡牌，防止出现扛之后可以亮，但是没有把mo_pai算在内的情况！
     // player.calculateHu()
     //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
@@ -930,6 +943,7 @@ export class Room {
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
       //打牌之后应该清空此可选择菜单数组
       player.arr_selectShow = [isShowHu, isShowLiang, isShowGang, isShowPeng]
+      this.selectShowQue.addAndAdjustPriority(player)
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       //todo: 客户端需要更新名称allHidePais, allGangPais
       player.socket.sendmsg({
