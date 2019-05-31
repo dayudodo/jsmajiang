@@ -73,5 +73,6 @@ room.players.forEach(item => (item.ready = true))
 room.serverGameStart(TablePaiManager.zhuang_mopai_gang())
 
 test('应该有showSelect',function(t){
-    
+    t.deepEqual(player1.arr_selectShow, [false, false, true, false])
+    t.deepEqual(room.selectShowQue.players, [player1, player2, player3])
 })

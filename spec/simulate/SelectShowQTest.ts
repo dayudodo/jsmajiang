@@ -96,8 +96,8 @@ test("任一玩家有selectShow", function (t) {
 })
 test("player2选择操作有效，player1选择操作无效", function (t) {
   var selectQue = new SelectShowQueue([player1, player2, player3])
-  t.is(selectQue.selectValid(player2), true)
-  t.is(selectQue.selectValid(player1), false)
+  t.is(selectQue.canSelect(player2), true)
+  t.is(selectQue.canSelect(player1), false)
 })
 test("选择操作完成，只剩下两个玩家可操作", function (t) {
   var selectQue = new SelectShowQueue([player1, player2, player3])
@@ -121,4 +121,25 @@ test("players为空也能正常工作", function (t) {
 
   t.is(selectQue.hasSelectShow(), false)
   t.is(selectQue.isAllPlayersNormal(), true)
+})
+test("增加player并重新排序", function (t) {
+
+  var selectQue = new SelectShowQueue()
+  player1.arr_selectShow = [false, false, true, false]
+  selectQue.addAndAdjustPriority(player1)
+  t.is(selectQue.hasSelectShow(), true)
+  t.is(selectQue.isAllPlayersNormal(), false)
+  t.deepEqual(selectQue.players, [player1])
+
+  player2.arr_selectShow = [false, true, false, false]
+  selectQue.addAndAdjustPriority(player2)
+  t.deepEqual(selectQue.players, [player2, player1])
+  t.is(selectQue.canSelect(player2), true)
+
+  player3.arr_selectShow = [true, false, false, false]
+  selectQue.addAndAdjustPriority(player3)
+  t.deepEqual(selectQue.players, [player3, player2, player1])
+  t.is(selectQue.canSelect(player2), false)
+  t.is(selectQue.canSelect(player3), true)
+
 })

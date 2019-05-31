@@ -8,7 +8,7 @@ import { Player } from "./player"
 
 export class SelectShowQueue {
   public players: Player[] = []
-  constructor(players: Player[]) {
+  constructor(players: Player[] = []) {
     this.players = _.clone(players)
     this.players = this.adjustPrioritybySelectShow()
     // this.processSelectShowOneByOne()
@@ -17,8 +17,8 @@ export class SelectShowQueue {
   //并没有改变玩家数据，与room中的players相比，顺序不同而已。
   adjustPrioritybySelectShow() {
     if (this.players.length <= 1) {
-      //就一个或者是0干脆直接返回
-      return
+      //就一个或者是0干脆直接返回自己
+      return this.players
     }
     let newArr = []
     //胡first, 杠second, 亮？
@@ -64,14 +64,23 @@ export class SelectShowQueue {
     player.arr_selectShow = []
     _.remove(this.players, player)
   }
+  /**增加一个玩家并且重新排序 */
+  addAndAdjustPriority(player: Player) {
+    if (!_.isEmpty(this.players) && this.players.find(p => p == player)) {
+      return
+    } else {
+      this.players.push(player)
+    }
+    this.players = this.adjustPrioritybySelectShow()
+  }
 
   /**玩家的选择是否有效，指点击了胡、亮、杠、碰之类的 */
-  selectValid(player: Player) {
+  canSelect(player: Player) {
     //这里只检测select操作，打牌并不在其中，玩家执行confirm操作系列是肯定会有selectShow的，起码有1个否则就是逻辑错误了。
     //如果有双胡呢？任一玩家胡都可以。。
-    if (_.isEmpty(this.players)) {
-      return true
-    }
+    // if (_.isEmpty(this.players)) {
+    //   return true
+    // }
     return this.players[0] == player ? true : false
   }
   hasSelectShow(): boolean {
