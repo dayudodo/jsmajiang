@@ -334,7 +334,7 @@ export class Room {
   /**玩家选择碰牌，或者是超时自动跳过！*/
   client_confirm_peng(pengPlayer: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(pengPlayer)) {
+    if (!this.selectShowQue.canSelect(pengPlayer)) {
       return
     }
     //碰之后打牌玩家的打牌就跑到碰玩家手中了，todo: 前端也会有相应的显示，dapai_player的打牌消失了
@@ -374,7 +374,7 @@ export class Room {
   /**玩家选择杠牌，或者是超时自动跳过！其实操作和碰牌是一样的，名称不同而已。*/
   client_confirm_gang(client_message, gangPlayer: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(gangPlayer)) {
+    if (!this.selectShowQue.canSelect(gangPlayer)) {
       return
     }
     // let gangPlayer = this.find_player_by(socket)
@@ -500,7 +500,7 @@ export class Room {
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, player: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(player)) {
+    if (!this.selectShowQue.canSelect(player)) {
       return
     }
     //玩家已经有决定，不再想了。
@@ -553,7 +553,7 @@ export class Room {
 
   //玩家选择放弃，给下一家发牌
   client_confirm_guo(player: Player) {
-    if (!this.selectShowQue.selectValid(player)) {
+    if (!this.selectShowQue.canSelect(player)) {
       return
     }
     //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
@@ -575,7 +575,7 @@ export class Room {
   //todo: 选择胡还得看其它玩家更不也胡这张牌
   client_confirm_hu(player: Player) {
     //如果玩家选择操作无效，直接返回
-    if (!this.selectShowQue.selectValid(player)) {
+    if (!this.selectShowQue.canSelect(player)) {
       return
     }
 
