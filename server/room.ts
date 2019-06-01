@@ -392,7 +392,7 @@ export class Room {
       if (_.isNull(gangPlayer.mo_pai ) ) {
         throw new Error("没人打牌，扛家也没有摸牌，严重错误")
       }
-      table_dapai = gangPlayer.mo_pai
+      table_dapai = gangPlayer.mo_pai //说明是玩家自己摸到的扛牌！
     } else {
       table_dapai = this.daPaiDisappear()
     }
