@@ -48,16 +48,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
-    // newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
@@ -72,16 +67,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
-    // newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
@@ -95,16 +85,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
-    // newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
@@ -121,16 +106,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
-    // newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
@@ -146,16 +126,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
-    // newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     // fa_pais.forEach((pai, index) => {
     //   allpais.remove(pai);
     // });
@@ -176,16 +151,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
-    // newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     // fa_pais.forEach((pai, index) => {
     //   allpais.remove(pai);
     // });
@@ -205,24 +175,17 @@ export class TablePaiManager {
     var player2 = pais("t1 t1 t1 t3 t4 t5 zh zh zh fa fa fa di");
     var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 t9");
     //发牌需要有个顺序，不能使用pais
-    var fa_pais = "t2 di".split(" ");
+    var fa_pais = pais("t2 di")
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
     newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    fa_pais.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3, fa_pais].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
@@ -252,17 +215,20 @@ export class TablePaiManager {
   static qidiu_ting() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = pais("b1 t1 t1 t3 t7 b8 b9 zh zh fa di di di");
-    var player2 = pais("b1 b1 b2 b2 b3 b3 b5 b6 b7 b8 b8 b9 b9");
+    var player1 = pais("b1 b5 t1 t3 t7 b8 b9 zh zh fa di di di");
+    var player2 = pais("b1 b1 b2 b2 b3 b3 b5 b7 b7 b8 b8 b9 b9"); //胡b5七对
+    var player3 = pais("b4 b4 b6 b7 b8 b9 t2 t7 t7 t7 t8 t8 t9");
+    var fa_pais = pais("di");
     var newPais = [];
     newPais = newPais.concat(player1);
     newPais = newPais.concat(player2);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    newPais = newPais.concat(player3);
+    newPais = newPais.concat(fa_pais);
+    [player1, player2, player3, fa_pais].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
@@ -330,10 +296,10 @@ export class TablePaiManager {
     return newPais;
   }
   /**庄家打牌就能亮 */
-  static dapai_liang() {
+  static zhuang_dapai_liang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random();
 
-    var player1 = pais("b1 b2 b3 b4 b5 b9 t4 t4 t6 t7 t8 di di")
+    var player1 = pais("b1 b2 b3 b4 b5 b6 t3 t4 t6 t7 t8 di di")
     var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t3 t6 fa fa di")
     var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 di")
     var fa_pais = pais('t4')
@@ -342,18 +308,11 @@ export class TablePaiManager {
     newPais = newPais.concat(player2);
     newPais = newPais.concat(player3);
     newPais = newPais.concat(fa_pais);
-    player1.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player2.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    player3.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
-    fa_pais.forEach((pai, index) => {
-      allpais.remove(pai);
-    });
+    [player1, player2, player3, fa_pais].forEach(paiItems=>{
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai);
+      });
+    })
     newPais = newPais.concat(allpais);
     return newPais;
   }
