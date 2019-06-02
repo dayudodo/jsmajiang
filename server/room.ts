@@ -626,6 +626,8 @@ export class Room {
     } else {
       ;`${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
     }
+    player.arr_selectShow= []
+    this.selectShowQue.selectCompleteBy(player)
   }
 
   /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
