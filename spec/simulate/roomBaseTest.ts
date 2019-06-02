@@ -92,14 +92,14 @@ test("服务器发牌后player1手牌能扛", function(t) {
   t.deepEqual(player1.canZhiGangPais(), [11, 35])
   //摸牌之后可以显示选择菜单[isShowHu, isShowLiang, isShowGang, isShowPeng]
   //这个顺序其实也是个优先级，如果两个玩家都有选择菜单，那么还需要确定优先级，胡、亮、杠、碰这样的顺序
-  // t.deepEqual(player1.arr_select, [false,false,true,false])
-  //摸牌后是可以打牌的
-  t.is(player1.can_dapai, true)
+  t.deepEqual(player1.arr_selectShow, [false,false,true,false])
+  t.deepEqual(room.selectShowQue.players, [player1])
+  //选择扛
+  room.client_confirm_gang({selectedPai: to_number('di')}, player1)
+    //并且在思考中，其它玩家没有思考状态！
+  t.deepEqual(player2.arr_selectShow, []) //替换了以前的is_thinking
+  t.deepEqual(player2.arr_selectShow, [])
 
-  //并且在思考中，其它玩家没有思考状态！
-  t.is(player1.is_thinking, true)
-  t.is(player2.is_thinking, false)
-  t.is(player3.is_thinking, false)
 
   let pai_name = to_number('t7')
   // 调用打牌的时候需要通过房间来打牌，不能直接调用player.da_pai!

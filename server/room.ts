@@ -517,8 +517,8 @@ export class Room {
       return
     }
     //玩家已经有决定，不再想了。
-    player.is_thinking = false
-    player.is_liang = true
+    // player.is_thinking = false
+    // player.is_liang = true
     //如果liangHidePais有效
     if (
       client_message.liangHidePais &&
@@ -557,10 +557,10 @@ export class Room {
     //此判断还能防止两家都亮的情况，如果有人摸了牌，就算你亮牌也不会有啥影响，保证只有一个人手里面有摸牌！
     //仅仅依靠最后一个是打牌来进行发牌是不对的，如果遇上了一人打牌后 有人可亮，有人可碰，还没有碰呢，你亮了，结果就发牌了！
     //所以还需要啥呢？没人在思考状态！或者说是正常的状态下！并且有人打牌了，才可以发牌！
-    if (this.selectShowQue.hasSelectShow()) {
-      return
-    } else {
+    if (this.selectShowQue.isAllPlayersNormal()) {
       this.decide_fapai()
+    } else {
+      return
     }
   }
 
@@ -732,7 +732,7 @@ export class Room {
 
   /**决定玩家是否可以打牌 todo: 玩家的can_pai作为唯一能够打牌的判断 */
   private decide_can_dapai(player: Player) {
-    player.can_dapai = true
+    // player.can_dapai = true
     if (this.isAllPlayersNormal()) {
       console.log(chalk.green(`玩家们正常，${player.username}可以打牌`))
       player.socket.sendmsg({ type: g_events.server_can_dapai })
@@ -740,25 +740,21 @@ export class Room {
   }
 
   /**所有玩家处于正常状态，指房间内所有玩家不是碰、杠、亮、胡选择状态的时候*/
-  private isAllPlayersNormal() {
+  public isAllPlayersNormal() {
     return this.selectShowQue.isAllPlayersNormal()
   }
 
   /**玩家所在socket打牌pai*/
   client_da_pai(player: Player, dapai_name: Pai) {
-    if (!player.can_dapai) {
+    if (this.selectShowQue.hasSelectShow()) {
       // throw new Error();
       console.log(
         chalk.red(
-          `房间${this.id} 玩家${player.username} 强制打牌，抓住！！！！`
+          `房间${this.id} 玩家${player.username} 无法打牌，房间中存在selectShow`
         )
       )
       return
     }
-    //取消玩家的思考状态
-    player.is_thinking = false
-    //能否正常给下一家发牌
-    let canNormalFaPai = true
 
     //记录下哪个在打牌
     this.dapai_player = player
@@ -794,40 +790,22 @@ export class Room {
         })
         //todo:告诉其它人哪个是赢家或者是平局
       } else {
-        //打完牌之后如果能胡，就可以亮，但是肯定不能胡自己打的牌，另外，亮了之后就不需要再亮了！
-        // if (!player.is_liang) {
-        //   if (player.canLiang()) {
-        //     let isShowHu = false,
-        //       isShowLiang = true,
-        //       isShowGang = false,
-        //       isShowPeng = false;
-        //     player.socket.sendmsg({
-        //       type: g_events.server_can_select,
-        //       select_opt: [isShowHu, isShowLiang, isShowGang, isShowPeng]
-        //     });
-        //   }
-        // }
-
-        //todo: 在玩家选择的时候服务器应该等待，但是如果有多个玩家在选择呢？比如这个打的牌别人可以碰或者杠？
-        //发牌肯定是不可以的，要等玩家选择完牌之后才能正常发牌！
-
         //打牌之后自己也可以听、或者亮的！当然喽，不能胡自己打的牌。所以还是有可能出现三家都在听的情况！
         // let oplayers = this.other_players(player);
-        for (let item_player of this.players) {
-          //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
-          let canShowSelect: boolean = this.decideSelectShow(
-            item_player,
-            dapai_name
-          )
-          if (canShowSelect) {
-            item_player.is_thinking = true
-            canNormalFaPai = false
+        let refreshAllPlayersSelectShow = ()=>{
+          for (let item_player of this.players) {
+            //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
+             this.decideSelectShow(
+              item_player,
+              dapai_name
+            )
           }
         }
+        refreshAllPlayersSelectShow()
         //todo: 打牌玩家其实还可以有操作，亮、自扛，但是不能碰、杠自己打的牌！
 
         //不能胡、杠、碰就发牌给下一个玩家
-        if (canNormalFaPai) {
+        if (this.isAllPlayersNormal()) {
           this.server_fa_pai(this.next_player)
         }
       }
