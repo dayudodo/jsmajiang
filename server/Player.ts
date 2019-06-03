@@ -106,8 +106,10 @@ export class Player {
   public is_zimo = false
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
   // public is_thinking = false
-  /**todo: 是否是胡玩家，确保只有一个 */
-  public is_hu = false
+  /**是否胡了，依赖hupai_zhang */
+  get is_hu(){
+    return this.hupai_zhang!= null
+  }
   /**是否放炮 */
   public is_fangpao = false
   /**全部的牌是否变动过 */
@@ -318,6 +320,9 @@ export class Player {
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
+    if(pai_name == null){
+      console.warn(`canHu参数pai_name为空！`)
+    }
     this.calculateHu()
     if (this.hupai_data.all_hupai_zhang.includes(pai_name)) {
       return true

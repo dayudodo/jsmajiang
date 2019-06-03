@@ -121,5 +121,10 @@ test("庄家打t6一炮双响", function (t) {
   room.client_da_pai(player1, to_number('t6'))
   room.client_confirm_hu(player2)
   t.deepEqual(room.hupai_players, [player2, player3])
+  t.is(player1.is_fangpao, true)
+  t.is(player2.is_hu, true)
+  t.is(player3.is_hu, true)
+  t.deepEqual(player2.hupai_zhang, to_number('t6'))
+  t.deepEqual(player3.hupai_zhang, to_number('t6'))
 })
 test

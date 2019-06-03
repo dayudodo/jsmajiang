@@ -387,9 +387,9 @@ export class Room {
     //如果杠别人的牌，或者杠自己摸的牌
     let table_dapai
     // console.log('~~~gangPlayer.mo_pai: ', gangPlayer.mo_pai);
-    
+
     if (_.isEmpty(this.dapai_player)) {
-      if (_.isNull(gangPlayer.mo_pai ) ) {
+      if (_.isNull(gangPlayer.mo_pai)) {
         throw new Error("没人打牌，扛家也没有摸牌，严重错误")
       }
       table_dapai = gangPlayer.mo_pai //说明是玩家自己摸到的扛牌！
@@ -593,7 +593,7 @@ export class Room {
     }
 
     let table_dapai = this.daPaiDisappear()
-    player.is_hu = true
+    
     // player.is_thinking = false //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
     if (player.mo_pai && player.canHu(player.mo_pai)) {
@@ -611,11 +611,10 @@ export class Room {
     }
     //胡别人的打的牌
     else {
-
       if (player.canHu(table_dapai)) {
         this.recordHuOf(player, table_dapai)
         //剩下的其它玩家是否也能胡？如果是四个人，可能还有一炮三响。
-        let remainPlayer = this.players.find((p) => {
+        let remainPlayer = this.players.find(p => {
           return p != this.dapai_player && p != player
         })
         if (remainPlayer.canHu(table_dapai)) {
@@ -623,29 +622,33 @@ export class Room {
         }
 
         this.sendAllResults(player, table_dapai)
-        console.log(chalk.red('胡牌玩家们的信息：'))
+        console.log(chalk.red("胡牌玩家们的信息："))
         console.dir(this.hupai_players)
-        console.log(chalk.red('放炮玩家信息：'))
+        console.log(chalk.red("放炮玩家信息："))
         console.dir(this.dapai_player.gang_lose_data)
+      } else {
+        console.warn(
+          `${player.user_id}, ${
+            player.username
+          }想胡一张不存在的牌，抓住这家伙！`
+        )
       }
-      // else {
-      //   console.log(`${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`)
     }
   }
 
-    private recordHuOf  (player: Player, table_dapai: number)  {
-      player.hupai_zhang = table_dapai;
-      //记录放炮者
-      this.dapai_player.is_fangpao = true;
-      //看是否是杠牌！
-      let prev2_operation = this.front_operationOf(this.dapai_player, 2);
-      if (prev2_operation && prev2_operation.action == Operate.gang) {
-        //杠上炮，打的杠牌是别人的胡牌
-        player.hupai_typesCode().push(config.HuisGangShangPao);
-      }
-      player.arr_selectShow = []
-      this.selectShowQue.selectCompleteBy(player);
+  private recordHuOf(player: Player, table_dapai: number) {
+    player.hupai_zhang = table_dapai
+    //记录放炮者
+    this.dapai_player.is_fangpao = true
+    //看是否是杠牌！
+    let prev2_operation = this.front_operationOf(this.dapai_player, 2)
+    if (prev2_operation && prev2_operation.action == Operate.gang) {
+      //杠上炮，打的杠牌是别人的胡牌
+      player.hupai_typesCode().push(config.HuisGangShangPao)
     }
+    player.arr_selectShow = []
+    this.selectShowQue.selectCompleteBy(player)
+  }
 
   /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
   private fapai_ifcan() {
@@ -808,13 +811,10 @@ export class Room {
       } else {
         //打牌之后自己也可以听、或者亮的！当然喽，不能胡自己打的牌。所以还是有可能出现三家都在听的情况！
         // let oplayers = this.other_players(player);
-        let refreshAllPlayersSelectShow = ()=>{
+        let refreshAllPlayersSelectShow = () => {
           for (let item_player of this.players) {
             //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
-             this.decideSelectShow(
-              item_player,
-              dapai_name
-            )
+            this.decideSelectShow(item_player, dapai_name)
           }
         }
         refreshAllPlayersSelectShow()
@@ -865,7 +865,9 @@ export class Room {
       if (player.canGangPais.length > 0) {
         isShowGang = true
         console.log(
-          `房间${this.id} 玩家${player.username}可以自杠牌:${player.canGangPais}`
+          `房间${this.id} 玩家${player.username}可以自杠牌:${
+            player.canGangPais
+          }`
         )
       }
     }
