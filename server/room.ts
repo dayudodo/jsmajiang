@@ -610,25 +610,42 @@ export class Room {
       this.sendAllResults(player, player.mo_pai)
     }
     //胡别人的打的牌
-    else if (player.canHu(table_dapai)) {
-      player.hupai_zhang = table_dapai
+    else {
+
+      if (player.canHu(table_dapai)) {
+        this.recordHuOf(player, table_dapai)
+        //剩下的其它玩家是否也能胡？如果是四个人，可能还有一炮三响。
+        let remainPlayer = this.players.find((p) => {
+          return p != this.dapai_player && p != player
+        })
+        if (remainPlayer.canHu(table_dapai)) {
+          this.recordHuOf(remainPlayer, table_dapai)
+        }
+
+        this.sendAllResults(player, table_dapai)
+        console.log(chalk.red('胡牌玩家们的信息：'))
+        console.dir(this.hupai_players)
+        console.log(chalk.red('放炮玩家信息：'))
+        console.dir(this.dapai_player.gang_lose_data)
+      }
+      // else {
+      //   console.log(`${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`)
+    }
+  }
+
+    private recordHuOf  (player: Player, table_dapai: number)  {
+      player.hupai_zhang = table_dapai;
       //记录放炮者
-      this.dapai_player.is_fangpao = true
+      this.dapai_player.is_fangpao = true;
       //看是否是杠牌！
-      let prev2_operation = this.front_operationOf(this.dapai_player, 2)
+      let prev2_operation = this.front_operationOf(this.dapai_player, 2);
       if (prev2_operation && prev2_operation.action == Operate.gang) {
         //杠上炮，打的杠牌是别人的胡牌
-        player.hupai_typesCode().push(config.HuisGangShangPao)
+        player.hupai_typesCode().push(config.HuisGangShangPao);
       }
-      this.sendAllResults(player, table_dapai)
-      console.dir(this.hupai_players)
-      console.dir(this.dapai_player.gang_lose_data)
-    } else {
-      ;`${player.user_id}, ${player.username}想胡一张不存在的牌，抓住这家伙！`
+      player.arr_selectShow = []
+      this.selectShowQue.selectCompleteBy(player);
     }
-    player.arr_selectShow= []
-    this.selectShowQue.selectCompleteBy(player)
-  }
 
   /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
   private fapai_ifcan() {
