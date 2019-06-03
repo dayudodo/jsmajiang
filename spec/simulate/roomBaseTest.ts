@@ -155,7 +155,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   // t.deepEqual(player3.allGangPais, [17])
   // //但是，其arr_select里面应该有数据
   t.deepEqual(player3.arr_selectShow, [false, false, true, false])
-  t.deepEqual(player3.is_thinking, true)
+  t.deepEqual(room.selectShowQue.canSelect(player3), true)
 
   // //操作都应该是由room来发送的
   // room.client_confirm_gang({

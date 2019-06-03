@@ -558,7 +558,7 @@ export class Room {
     //仅仅依靠最后一个是打牌来进行发牌是不对的，如果遇上了一人打牌后 有人可亮，有人可碰，还没有碰呢，你亮了，结果就发牌了！
     //所以还需要啥呢？没人在思考状态！或者说是正常的状态下！并且有人打牌了，才可以发牌！
     if (this.selectShowQue.isAllPlayersNormal()) {
-      this.decide_fapai()
+      this.fapai_ifcan()
     } else {
       return
     }
@@ -571,16 +571,16 @@ export class Room {
     }
     //如果用户是可以胡牌的时候选择过，那么需要删除计算出来的胡牌张！
     //玩家有决定了，状态改变
-    player.is_thinking = false
+    // player.is_thinking = false
     //选择过牌之后，还得判断一下当前情况才好发牌，比如一开始就有了听牌了，这时候选择过，准确的应该是头家可以打牌！
     //同一时间只能有一家可以打牌！服务器要知道顺序！知道顺序之后就好处理了，比如哪一家需要等待，过时之后你才能够打牌！
     //现在的情况非常特殊，两家都在听牌，都可以选择过，要等的话两个都要等。
     //房间玩家手里面都没有摸牌，可以发牌！因为玩家在打牌之后其摸牌为空！
     this.selectShowQue.selectCompleteBy(player)
-    if (this.selectShowQue.hasSelectShow()) {
-      return
+    if (this.selectShowQue.isAllPlayersNormal()) {
+      this.fapai_ifcan()
     } else {
-      this.decide_fapai()
+      return
     }
   }
 
@@ -594,7 +594,7 @@ export class Room {
 
     let table_dapai = this.daPaiDisappear()
     player.is_hu = true
-    player.is_thinking = false //一炮双响的时候会起作用！
+    // player.is_thinking = false //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
     if (player.mo_pai && player.canHu(player.mo_pai)) {
       player.is_zimo = true
@@ -631,7 +631,7 @@ export class Room {
   }
 
   /**决定在何种情况下可以发牌并决定哪个玩家可以打牌！ */
-  private decide_fapai() {
+  private fapai_ifcan() {
     if (this.isAllPlayersNormal()) {
       //都正常且没人摸牌的情况下才能发牌
       if (this.no_player_mopai()) {
@@ -644,7 +644,7 @@ export class Room {
         throw new Error(`存在两玩家同时摸牌！${moPlayers}`)
       }
       let moPlayer = moPlayers[0]
-      this.decide_can_dapai(moPlayer)
+      this.sendClient_can_dapai_ifcan(moPlayer)
     }
   }
 
@@ -726,13 +726,12 @@ export class Room {
         user_id: player.user_id
       })
     })
-    this.decide_can_dapai(player)
+    this.sendClient_can_dapai_ifcan(player)
     return pai[0]
   }
 
   /**决定玩家是否可以打牌 todo: 玩家的can_pai作为唯一能够打牌的判断 */
-  private decide_can_dapai(player: Player) {
-    // player.can_dapai = true
+  private sendClient_can_dapai_ifcan(player: Player) {
     if (this.isAllPlayersNormal()) {
       console.log(chalk.green(`玩家们正常，${player.username}可以打牌`))
       player.socket.sendmsg({ type: g_events.server_can_dapai })
@@ -825,8 +824,9 @@ export class Room {
       isShowGang: boolean = false,
       isShowPeng: boolean = false
     /**客户端亮之后可以隐藏的牌*/
-    let canLiangPais: Array<Pai> = []
-    let canGangPais: Array<Pai> = []
+    //首先要清空能够亮、能扛的牌
+    player.canHidepais = []
+    player.canGangPais = []
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
     //此种情况也包括了pai_name为空的情况！意思就是只检测能否亮牌！
@@ -834,7 +834,7 @@ export class Room {
     if (!player.is_liang && !player.mo_pai) {
       if (player.canLiang()) {
         isShowLiang = true
-        canLiangPais = player.PaiArr3A()
+        player.canHidepais = player.PaiArr3A()
         console.log(`房间${this.id} 玩家${player.username}可以亮牌`)
         puts(player.hupai_data)
       }
@@ -844,11 +844,11 @@ export class Room {
     //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
     //不管摸不摸牌，都会检测有没有自扛的牌，因为玩家可能留着以后再扛
     if (player.mo_pai) {
-      canGangPais = player.canZhiGangPais()
-      if (canGangPais.length > 0) {
+      player.canGangPais = player.canZhiGangPais()
+      if (player.canGangPais.length > 0) {
         isShowGang = true
         console.log(
-          `房间${this.id} 玩家${player.username}可以自杠牌:${canGangPais}`
+          `房间${this.id} 玩家${player.username}可以自杠牌:${player.canGangPais}`
         )
       }
     }
@@ -879,9 +879,9 @@ export class Room {
           isShowGang = true
           //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
           //todo:如果canGangPais为空，那么就不要让用户选择！如果只有一个，也不需要用户选择，直接扛
-          canGangPais.push(pai_name)
+          player.canGangPais.push(pai_name)
           console.log(
-            `房间${this.id} 玩家${player.username}可以的牌${canGangPais}`
+            `房间${this.id} 玩家${player.username}可以的牌${player.canGangPais}`
           )
         }
         if (player.canPeng(pai_name)) {
@@ -913,13 +913,13 @@ export class Room {
 
     let hasOperation = isShowHu || isShowLiang || isShowGang || isShowPeng
     if (hasOperation) {
-      player.is_thinking = true
+      // player.is_thinking = true
       console.log(
         `房间${this.id} 玩家${player.username} 可以显示选择对话框，其手牌为:`
       )
       puts(player.group_shou_pai)
-      console.log(`可以隐藏的牌：${canLiangPais}`)
-      console.log(`可以杠的牌：${canGangPais}`)
+      console.log(`可以隐藏的牌：${player.canHidepais}`)
+      console.log(`可以杠的牌：${player.canGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
       //打牌之后应该清空此可选择菜单数组
       player.arr_selectShow = [isShowHu, isShowLiang, isShowGang, isShowPeng]
@@ -929,8 +929,8 @@ export class Room {
       player.socket.sendmsg({
         type: g_events.server_can_select,
         select_opt: player.arr_selectShow,
-        canLiangPais: canLiangPais,
-        canGangPais: canGangPais
+        canLiangPais: player.canHidepais,
+        canGangPais: player.canGangPais
       })
     }
     return hasOperation

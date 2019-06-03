@@ -11,7 +11,7 @@ declare global {
     /** 扩展发送msg对象 */
     sendmsg(msg): void
   }
-  /**定义个pai类型的别名，以后会变！ */
+  /**定义麻将牌的类型，现为数值型！ */
   // type Pai = string;
   type Pai = number
   /**事件类型，以后可能改为数值 */

@@ -63,6 +63,17 @@ export class SelectShowQueue {
     //选择完毕，则arr_selectshow要清空
     player.arr_selectShow = []
     _.remove(this.players, player)
+    //如果有下一个操作玩家，通知并让其可操作
+    let nextPlayer = _.first(this.players)
+    if(nextPlayer){
+      console.log(chalk.green(`下一个玩家可以选择操作： ${nextPlayer.username}`));
+      nextPlayer.socket.sendmsg({
+        type: g_events.server_can_select,
+        select_opt: player.arr_selectShow,
+        canLiangPais: player.canHidepais,
+        canGangPais: player.canGangPais
+      })
+    }
   }
   /**增加一个玩家并且重新排序 */
   addAndAdjustPriority(player: Player) {

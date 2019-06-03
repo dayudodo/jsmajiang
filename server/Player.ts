@@ -75,6 +75,8 @@ export class Player {
   public seat_index = null //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
 
   private _mo_pai = null
+  canHidepais: Pai[] = []
+  canGangPais: Pai[] = []
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
    * 一旦打出，才会清空
    */
@@ -103,7 +105,7 @@ export class Player {
   /**是否是自摸，其实不能算是一种胡牌，而是一种状态，杠上胡也可以算！加番的一种方式。 */
   public is_zimo = false
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
-  public is_thinking = false
+  // public is_thinking = false
   /**todo: 是否是胡玩家，确保只有一个 */
   public is_hu = false
   /**是否放炮 */
@@ -369,7 +371,7 @@ export class Player {
 
   confirm_peng(pai: Pai) {
     this._mo_pai = null
-    this.is_thinking = false
+    // this.is_thinking = false
     this.group_shou_pai.peng.push(pai)
     //从手牌中删除二张牌，因为把别人的牌当成是mo_pai加入了手牌！
     //这样的话其它玩家liang, guo之后就知道碰玩家是摸牌的人了！
@@ -390,7 +392,7 @@ export class Player {
   /**自己摸的牌就是暗杠了*/
   confirm_anGang(pai_name: Pai) {
     this._mo_pai = null
-    this.is_thinking = false
+    // this.is_thinking = false
     this.after_mo_gang_dapai = false
     //首先从手牌中删除四！张牌，
     // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
@@ -415,7 +417,7 @@ export class Player {
       throw new Error(`无法扛${da_pai}`)
     }
     this._mo_pai = null
-    this.is_thinking = false
+    // this.is_thinking = false
     this.after_mo_gang_dapai = false
     this.group_shou_pai.mingGang.push(da_pai)
     //需要删除杠之前的3张牌，可能存在于peng, selfPeng, shoupai之中！
@@ -443,7 +445,7 @@ export class Player {
   confirm_selfPeng(pai: Pai) {
     //这个操作只会出现在玩家亮牌以后
     this._mo_pai = null
-    this.is_thinking = false
+    // this.is_thinking = false
     for (var i = 0; i < 3; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai)
     }
