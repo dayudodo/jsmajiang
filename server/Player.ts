@@ -75,6 +75,7 @@ export class Player {
   public seat_index = null //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
 
   private _mo_pai = null
+  /**判断玩家能亮的时候，给出玩家能够选择的隐藏牌 */
   canHidepais: Pai[] = []
   canGangPais: Pai[] = []
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
@@ -149,11 +150,11 @@ export class Player {
   get allGangPais() {
     return this._allGangPais
   }
-  private _allHidePais: Array<Pai> = []
-  /**获取到所有能隐藏的牌，放入selfPeng中 */
-  get allHidePais() {
-    return this._allHidePais
-  }
+  // private _allHidePais: Array<Pai> = []
+  // /**获取到所有能隐藏的牌，放入selfPeng中 */
+  // get allHidePais() {
+  //   return this._allHidePais
+  // }
   private _other_dapai = {}
   get otherDapai() {
     return this._other_dapai
@@ -528,7 +529,7 @@ export class Player {
       if (this.canLiang()) {
         console.log(`房间${this.room.id} 玩家${this.username}可以亮牌:`)
         puts(this.hupai_data)
-        this._allHidePais = this.PaiArr3A()
+        // this._allHidePais = this.PaiArr3A()
         return true
       } else {
         return false

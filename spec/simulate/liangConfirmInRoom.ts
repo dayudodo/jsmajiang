@@ -27,7 +27,7 @@ export function puts(obj: any) {
 
 var room: Room, player1: Player, player2: Player, player3: Player
 //使用beforeEach保证每个test之前都会有新的room, players！
-var init = function() {
+var init = function(paisData: Pai[] = TablePaiManager.zhuang_dapai_liang()) {
   room = new Room()
   //玩家必须有socket, 用于传递消息！
   player1 = new Player({
@@ -72,7 +72,7 @@ var init = function() {
   room.join_player(player3)
   //开始游戏之前要先准备一下
   room.players.forEach(item => (item.ready = true))
-  room.serverGameStart(TablePaiManager.zhuang_dapai_liang())
+  room.serverGameStart(paisData)
 }
 
 // [isShowHu, isShowLiang, isShowGang, isShowPeng]
@@ -106,4 +106,16 @@ test("player1选择亮", function(t) {
   t.deepEqual(room.selectShowQue.players, []) //不再有操作选项
   t.deepEqual(player1.hupai_data.all_hupai_zhang, _.sortBy(pais('t4 di')))
   // t.deepEqual(player2.group_shou_pai.peng, pais("fa")) //player2记录下了碰牌
+})
+
+test("player23能亮", function(t) {
+  init(TablePaiManager.player23_liangTest())
+  t.deepEqual(room.selectShowQue.players,[player2,player3])
+  t.deepEqual(player2.arr_selectShow, [false,true,false,false])
+  t.deepEqual(player3.arr_selectShow, [false,true,false,false])
+})
+test("player23能亮, 且选择了隐藏的牌", function(t) {
+  init(TablePaiManager.player23_liangTest())
+  room.client_confirm_liang( {liangHidePais: [to_number('b1')]}, player2) //亮，并且把b1起来
+  t.deepEqual(player2.group_shou_pai.selfPeng, [to_number('b1')])
 })
