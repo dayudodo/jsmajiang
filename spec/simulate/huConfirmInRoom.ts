@@ -27,7 +27,7 @@ export function puts(obj: any) {
 
 var room: Room, player1: Player, player2: Player, player3: Player
 //使用beforeEach保证每个test之前都会有新的room, players！
-var init = function (paisData: Pai[] = TablePaiManager.player2_qidiu_ting()) {
+var init = function(paisData: Pai[] = TablePaiManager.player2_qidiu_ting()) {
   room = new Room()
   //玩家必须有socket, 用于传递消息！
   player1 = new Player({
@@ -76,7 +76,7 @@ var init = function (paisData: Pai[] = TablePaiManager.player2_qidiu_ting()) {
 }
 
 // [isShowHu, isShowLiang, isShowGang, isShowPeng]
-test("player2有selectShow", function (t) {
+test("player2有selectShow", function(t) {
   init()
   t.deepEqual(player2.arr_selectShow, [false, true, false, false]) //一上手，player2就有selectShow，可以听胡
   t.deepEqual(player1.arr_selectShow, [])
@@ -85,14 +85,14 @@ test("player2有selectShow", function (t) {
   t.is(room.selectShowQue.canSelect(player1), false)
   t.is(room.selectShowQue.canSelect(player2), true) //只有player2才可以打牌！
 })
-test("player2选择过，后selectShowQue变为空", function (t) {
+test("player2选择过，后selectShowQue变为空", function(t) {
   init()
   room.client_confirm_guo(player2)
   room.client_confirm_guo(player1) //无效，没反应
   room.client_confirm_guo(player3) //无效，没反应
   t.deepEqual(room.selectShowQue.players, [])
 })
-test("player2可以胡并选择胡", function (t) {
+test("player2可以胡并选择胡", function(t) {
   init()
   room.client_confirm_guo(player2) //七对听胡，选择过
   room.client_confirm_hu(player1) //无效
@@ -100,7 +100,7 @@ test("player2可以胡并选择胡", function (t) {
   player1.can_dapai = true //todo:改为正常的判断
   room.client_da_pai(player1, to_number("b5"))
   //player2可以胡b5
-  t.deepEqual(player2.hupai_data.all_hupai_zhang, _.sortBy(pais('b5')))
+  t.deepEqual(player2.hupai_data.all_hupai_zhang, _.sortBy(pais("b5")))
   //即能胡也可以亮
   t.deepEqual(player2.arr_selectShow, [true, true, false, false])
   t.deepEqual(player1.arr_selectShow, [])
@@ -111,20 +111,34 @@ test("player2可以胡并选择胡", function (t) {
   // t.deepEqual(player2.group_shou_pai.peng, pais("fa")) //player2记录下了碰牌
 })
 
-test("庄家打t6一炮双响", function (t) {
+test("庄家打t6一炮双响", function(t) {
   init(TablePaiManager.zhuang_dapai_shuang())
   //发牌后player2, player3有selectShow
   t.deepEqual(room.selectShowQue.players, [player2, player3])
   room.client_confirm_guo(player2)
   room.client_confirm_guo(player3)
   t.deepEqual(room.selectShowQue.players, [])
-  room.client_da_pai(player1, to_number('t6'))
+  room.client_da_pai(player1, to_number("t6"))
   room.client_confirm_hu(player2)
   t.deepEqual(room.hupai_players, [player2, player3])
   t.is(player1.is_fangpao, true)
   t.is(player2.is_hu, true)
   t.is(player3.is_hu, true)
-  t.deepEqual(player2.hupai_zhang, to_number('t6'))
-  t.deepEqual(player3.hupai_zhang, to_number('t6'))
+  t.deepEqual(player2.hupai_zhang, to_number("t6"))
+  t.deepEqual(player3.hupai_zhang, to_number("t6"))
 })
-test
+test("庄家摸牌就自摸fa", function(t) {
+  init(TablePaiManager.zhuang_mopai_hu())
+  //发牌后player2, player3有selectShow
+  t.deepEqual(room.selectShowQue.players, [player1])
+  t.deepEqual(player1.arr_selectShow, [true, false, false, false]) //摸牌之后直接出现胡选择，也可以过。
+  room.client_confirm_hu(player1)
+  t.deepEqual(room.hupai_players, [player1])
+  // t.deepEqual(room.selectShowQue.players, [])
+  t.is(player1.is_hu, true)
+  t.is(player2.is_hu, false)
+  t.is(player3.is_hu, false)
+  t.is(player2.is_fangpao, false)
+  t.is(player3.is_fangpao, false)
+  t.deepEqual(player1.hupai_zhang, to_number("fa"))
+})

@@ -327,11 +327,15 @@ export class Room {
     return result
   }
   /**玩家碰、杠后，打牌玩家打的牌会消失，只是个简单的过程 */
-  public daPaiDisappear(): Pai {
-    this.dapai_player.socket.sendmsg({
-      type: g_events.server_dapai_disappear
-    })
-    return this.dapai_player.arr_dapai.pop()
+  public daPaiDisappearAndReturnTablePai(): Pai {
+    if (this.dapai_player) {
+      this.dapai_player.socket.sendmsg({
+        type: g_events.server_dapai_disappear
+      })
+      return this.dapai_player.arr_dapai.pop()
+    } else {
+      return null
+    }
   }
 
   /**玩家选择碰牌，或者是超时自动跳过！*/
@@ -341,7 +345,7 @@ export class Room {
       return
     }
     //碰之后打牌玩家的打牌就跑到碰玩家手中了，todo: 前端也会有相应的显示，dapai_player的打牌消失了
-    let dapai: Pai = this.daPaiDisappear()
+    let dapai: Pai = this.daPaiDisappearAndReturnTablePai()
 
     //玩家确认碰牌后将会在group_shou_pai.peng中添加此dapai
     pengPlayer.confirm_peng(dapai)
@@ -394,7 +398,7 @@ export class Room {
       }
       table_dapai = gangPlayer.mo_pai //说明是玩家自己摸到的扛牌！
     } else {
-      table_dapai = this.daPaiDisappear()
+      table_dapai = this.daPaiDisappearAndReturnTablePai()
     }
     if (selectedPai == table_dapai || selectedPai == gangPlayer.mo_pai) {
       //设置为null, 表明不是自己摸的扛或者天生就是4张。
@@ -587,13 +591,16 @@ export class Room {
   /**玩家选择胡牌*/
   //todo: 选择胡还得看其它玩家更不也胡这张牌
   client_confirm_hu(player: Player) {
-    //如果玩家选择操作无效，直接返回
+    //能胡就不用再看其它人的操作了，操作了也无效，不过如果其它人也有胡呢？
     if (!this.selectShowQue.canSelect(player)) {
+      console.warn(
+        "选胡但是无法选择操作，当然可以选择操作的玩家：",
+        this.selectShowQue.players
+      )
       return
     }
+    let table_dapai = this.daPaiDisappearAndReturnTablePai()
 
-    let table_dapai = this.daPaiDisappear()
-    
     // player.is_thinking = false //一炮双响的时候会起作用！
     //自摸，胡自己摸的牌！
     if (player.mo_pai && player.canHu(player.mo_pai)) {
@@ -622,10 +629,6 @@ export class Room {
         }
 
         this.sendAllResults(player, table_dapai)
-        console.log(chalk.red("胡牌玩家们的信息："))
-        console.dir(this.hupai_players)
-        console.log(chalk.red("放炮玩家信息："))
-        console.dir(this.dapai_player.gang_lose_data)
       } else {
         console.warn(
           `${player.user_id}, ${
@@ -633,6 +636,12 @@ export class Room {
           }想胡一张不存在的牌，抓住这家伙！`
         )
       }
+    }
+    console.log(chalk.red("胡牌玩家们的信息："))
+    console.dir(this.hupai_players)
+    if (this.dapai_player) {
+      console.log(chalk.red("放炮玩家信息："))
+      console.dir(this.dapai_player.gang_lose_data)
     }
   }
 
