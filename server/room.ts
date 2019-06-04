@@ -703,22 +703,23 @@ export class Room {
    * @param fromEnd 是否从最后发牌
    */
   server_fa_pai(player: Player, fromEnd: boolean = false): Pai {
-    let pai: Array<Pai>
+    let paiName: Pai
     if (fromEnd) {
-      pai = [this.cloneTablePais.pop()]
+      paiName = this.cloneTablePais.pop()
     } else {
-      pai = this.cloneTablePais.splice(0, 1)
+      paiName = _.first(this.cloneTablePais.splice(0, 1))
     }
 
-    if (_.isEmpty(pai)) {
+    if (_.isNull(paiName) || _.isUndefined(paiName)) {
+      //todo: 无可用牌其实牌局就结束了，流局！
       throw new Error(chalk.red(`room.pai中无可用牌了`))
     }
-    //看用户的状态，如果快要胡牌了，发牌还不太一样！不需要用户再操作了！
+    //todo: 用户亮，可以自动打牌，如果有扛呢？
     if (player.is_liang) {
       console.log(`todo: ${player.username}已经亮牌，客户端应自动打牌，或者胡`)
     }
     //房间记录发牌给谁，以便分析哪个玩家拿牌了但是没有打，说明在等待其它玩家！
-    player.mo_pai = pai[0]
+    player.mo_pai = paiName
     this.fapai_to_who = player
     //发牌给谁，谁就是当前玩家
     this.current_player = player
@@ -728,13 +729,13 @@ export class Room {
     this.operation_sequence.push({
       who: player,
       action: Operate.mo,
-      pai: pai[0]
+      pai: paiName
     })
     //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
     //在这儿需要计算下胡牌，防止出现扛之后可以亮，但是没有把mo_pai算在内的情况！
     // player.calculateHu()
     //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
-    this.decideSelectShow(player, pai[0])
+    this.decideSelectShow(player, paiName)
 
     console.log(
       chalk.cyan("服务器发牌 %s 给：%s"),
@@ -755,7 +756,7 @@ export class Room {
       })
     })
     this.sendClient_can_dapai_ifcan(player)
-    return pai[0]
+    return paiName
   }
 
   /**决定玩家是否可以打牌 todo: 玩家的can_pai作为唯一能够打牌的判断 */
