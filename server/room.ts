@@ -618,7 +618,7 @@ export class Room {
     }
     //胡别人的打的牌
     else {
-      if (player.canHu(table_dapai)) {
+      if (player.canHu(table_dapai)) { //todo: 重复判断了，能够执行这个操作说明已经检测出来可以胡了
         this.recordHuOf(player, table_dapai)
         //剩下的其它玩家是否也能胡？如果是四个人，可能还有一炮三响。
         let remainPlayer = this.players.find(p => {
@@ -627,7 +627,6 @@ export class Room {
         if (remainPlayer.canHu(table_dapai)) {
           this.recordHuOf(remainPlayer, table_dapai)
         }
-
         this.sendAllResults(player, table_dapai)
       } else {
         console.warn(

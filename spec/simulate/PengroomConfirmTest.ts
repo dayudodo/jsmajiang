@@ -27,7 +27,7 @@ export function puts(obj: any) {
 
 var room: Room, player1: Player, player2: Player, player3: Player
 //使用beforeEach保证每个test之前都会有新的room, players！
-test.beforeEach(t=> {
+var init = function(paisData: Pai[] = TablePaiManager.zhuang_fangPeng()) {
   room = new Room()
   //玩家必须有socket, 用于传递消息！
   player1 = new Player({
@@ -72,12 +72,12 @@ test.beforeEach(t=> {
   room.join_player(player3)
   //开始游戏之前要先准备一下
   room.players.forEach(item => (item.ready = true))
-  room.serverGameStart(TablePaiManager.zhuang_fangPeng())
-})
+  room.serverGameStart(paisData)
+}
 
 // [isShowHu, isShowLiang, isShowGang, isShowPeng]
 test("player2有selectShow", function(t) {
-  // init()
+  init()
   room.client_da_pai(player1, to_number('fa'))
   t.deepEqual(player2.arr_selectShow, [false, false, false, true])
   t.deepEqual(player1.arr_selectShow, [])
@@ -86,21 +86,25 @@ test("player2有selectShow", function(t) {
   t.is(room.selectShowQue.canSelect(player2), true)
 })
 test("player2选择过，后selectShowQue变为空", function(t) {
-  // init()
+  init()
   room.client_da_pai(player1, to_number('fa'))
   room.client_confirm_guo(player1)//无效，没反应
   room.client_confirm_guo(player3) //无效，没反应
   room.client_confirm_guo(player2) 
   t.deepEqual(room.selectShowQue.players, [])
 })
-test.serial("player2选择碰", function(t) {
-  // init()
+test("player1打了fa, player2选择碰", function(t) {
+  init(TablePaiManager.zhuang_fangPeng())
   room.client_da_pai(player1, to_number('fa'))
+  t.is(player1.can_dapai, false) //打牌之后不能再打牌
   room.client_confirm_peng( player1 ) //无效
   room.client_confirm_peng( player3 ) //无效
   t.deepEqual(room.selectShowQue.players, [player2])
   room.client_confirm_peng( player2 )
   t.deepEqual(room.selectShowQue.players, []) //不再有操作选项
   t.deepEqual(player2.group_shou_pai.peng, pais("fa")) //player2记录下了碰牌
+  t.is(player2.can_dapai, true) //碰了之后可以打牌
+  t.is(player1.can_dapai, false)
+  t.is(player3.can_dapai, false)
 })
 
