@@ -77,6 +77,7 @@ export class Player {
   private _mo_pai = null
   /**判断玩家能亮的时候，给出玩家能够选择的隐藏牌 */
   canHidePais: Pai[] = []
+  /**能够扛的牌 */
   canGangPais: Pai[] = []
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
    * 一旦打出，才会清空
@@ -117,12 +118,12 @@ export class Player {
   public is_grouppai_changed = true
 
   /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
-  public gang_lose_data = [
-    // {type: config.FangGang, pai:''},
+  //数据类似于：
+      // {type: config.FangGang, pai:''},
     // {type: config.FangGangShangGang, pai:''},
     // {type: config.FangPihuPao, pai:''},
     // {type: config.FangDaHuPao, pai:''}
-  ]
+  public innerGang_lose_data = []
 
   /**玩家的积分 */
   public score = 0
@@ -187,7 +188,7 @@ export class Player {
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {
     this.gang_win_codes.push(config.HuisGangShangGang)
-    fangGangPlayer.gang_lose_data.push({
+    fangGangPlayer.innerGang_lose_data.push({
       type: config.LoseGangShangGang,
       pai: pai_name
     })
@@ -195,7 +196,7 @@ export class Player {
   /**保存普通杠消息，并通知放杠者 */
   saveGang(fangGangPlayer: Player, pai_name: Pai) {
     this.gang_win_codes.push(config.HuisGang)
-    fangGangPlayer.gang_lose_data.push({
+    fangGangPlayer.innerGang_lose_data.push({
       type: config.LoseGang,
       pai: pai_name
     })
@@ -204,7 +205,7 @@ export class Player {
   saveCaPao(other_players: Player[], pai_name: Pai) {
     this.gang_win_codes.push(config.HuisCaPao)
     other_players.forEach(person => {
-      person.gang_lose_data.push({
+      person.innerGang_lose_data.push({
         type: config.LoseCaPao,
         pai: pai_name
       })
@@ -215,7 +216,7 @@ export class Player {
   saveAnGang(other_players: Player[], pai_name: Pai) {
     this.gang_win_codes.push(config.HuisAnGang)
     other_players.forEach(person => {
-      person.gang_lose_data.push({
+      person.innerGang_lose_data.push({
         type: config.LoseAnGang,
         pai: pai_name
       })
@@ -223,12 +224,12 @@ export class Player {
   }
 
   /**到底要出哪些杠钱的名称！包括屁胡炮，大胡炮 */
-  get lose_names(): string[] {
-    return NMajiangAlgo.LoseNamesFrom(this.gang_lose_data)
+  get innerGanglose_names(): string[] {
+    return NMajiangAlgo.LoseNamesFrom(this.innerGang_lose_data)
   }
   /**出杠钱的数字代码 */
   get gang_lose_codes(): number[] {
-    return this.gang_lose_data.map(d => d.type)
+    return this.innerGang_lose_data.map(d => d.type)
   }
   /**赢了哪些杠 */
   get gang_win_names(): string[] {
@@ -272,7 +273,7 @@ export class Player {
     // }
     return {
       win_info: this.all_win_names.join(" "),
-      lose_info: this.lose_names.join(" ")
+      lose_info: this.innerGanglose_names.join(" ")
     }
   }
   /**返回result可用的手牌，把anGang移动到mingGang中，selfPeng移动到peng里面 */

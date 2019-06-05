@@ -481,7 +481,7 @@ export class Room {
       console.log("====================================")
       // puts(this.OperationsOf(this.daPai_player))
       console.log(`${this.dapai_player.username} lose_names:`)
-      console.dir(this.dapai_player.lose_names)
+      console.dir(this.dapai_player.gang_lose_names)
       console.log("====================================")
       //在杠玩家的group_shou_pai.peng中添加此dapai
       gangPlayer.confirm_mingGang(gangPai)
@@ -607,6 +607,7 @@ export class Room {
       player.is_zimo = true
       player.hupai_zhang = player.mo_pai
       //获取前2次的操作，因为上一次肯定是摸牌，摸牌的上一次是否是杠！
+      //todo: 特殊的胡能否写在player中？
       let prev2_operation = this.front_operationOf(player, 2)
       if (prev2_operation && prev2_operation.action == Operate.gang) {
         //保存杠上开花到胡牌类型码数组中
@@ -641,7 +642,7 @@ export class Room {
     console.dir(this.hupai_players)
     if (this.dapai_player) {
       console.log(chalk.red("放炮玩家信息："))
-      console.dir(this.dapai_player.gang_lose_data)
+      console.dir(this.dapai_player.all_win_codes)
     }
   }
 
@@ -955,7 +956,7 @@ export class Room {
       player.socket.sendmsg({
         type: g_events.server_can_select,
         select_opt: player.arr_selectShow,
-        canLiangPais: player.canHidePais,
+        canHidePais: player.canHidePais,
         canGangPais: player.canGangPais
       })
     }

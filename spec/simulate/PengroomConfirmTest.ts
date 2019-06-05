@@ -9,7 +9,7 @@ import chalk from "chalk"
 import { TablePaiManager } from "../../server/TablePaiManager"
 import _ = require("lodash")
 import { SocketTest } from "../SocketTest"
-import { toUnicode } from "punycode";
+import { toUnicode } from "punycode"
 
 /**直接将字符串转换成数类麻将数组 */
 function pais(strs): number[] {
@@ -78,7 +78,7 @@ var init = function(paisData: Pai[] = TablePaiManager.zhuang_fangPeng()) {
 // [isShowHu, isShowLiang, isShowGang, isShowPeng]
 test("player2有selectShow", function(t) {
   init()
-  room.client_da_pai(player1, to_number('fa'))
+  room.client_da_pai(player1, to_number("fa"))
   t.deepEqual(player2.arr_selectShow, [false, false, false, true])
   t.deepEqual(player1.arr_selectShow, [])
   t.deepEqual(player3.arr_selectShow, [])
@@ -87,24 +87,40 @@ test("player2有selectShow", function(t) {
 })
 test("player2选择过，后selectShowQue变为空", function(t) {
   init()
-  room.client_da_pai(player1, to_number('fa'))
-  room.client_confirm_guo(player1)//无效，没反应
+  room.client_da_pai(player1, to_number("fa"))
+  room.client_confirm_guo(player1) //无效，没反应
   room.client_confirm_guo(player3) //无效，没反应
-  room.client_confirm_guo(player2) 
+  room.client_confirm_guo(player2)
   t.deepEqual(room.selectShowQue.players, [])
 })
 test("player1打了fa, player2选择碰", function(t) {
   init(TablePaiManager.zhuang_fangPeng())
-  room.client_da_pai(player1, to_number('fa'))
+  room.client_da_pai(player1, to_number("fa"))
   t.is(player1.can_dapai, false) //打牌之后不能再打牌
-  room.client_confirm_peng( player1 ) //无效
-  room.client_confirm_peng( player3 ) //无效
+  room.client_confirm_peng(player1) //无效
+  room.client_confirm_peng(player3) //无效
   t.deepEqual(room.selectShowQue.players, [player2])
-  room.client_confirm_peng( player2 )
+  room.client_confirm_peng(player2)
   t.deepEqual(room.selectShowQue.players, []) //不再有操作选项
   t.deepEqual(player2.group_shou_pai.peng, pais("fa")) //player2记录下了碰牌
   t.is(player2.can_dapai, true) //碰了之后可以打牌
   t.is(player1.can_dapai, false)
   t.is(player3.can_dapai, false)
 })
-
+test("player2碰fa打t7后能亮", function(t) {
+  init(TablePaiManager.peng_da_liang())
+  room.client_da_pai(player1, to_number("fa"))
+  t.deepEqual(room.selectShowQue.players, [player2])
+  room.client_confirm_peng(player2)
+  t.deepEqual(room.selectShowQue.players, [])
+  room.client_da_pai(player2, to_number("t7"))
+  //碰打牌后可以亮牌！
+  t.deepEqual(room.selectShowQue.players, [player2])
+  t.deepEqual(player2.arr_selectShow, [false, true, false, false])
+  t.deepEqual((<SocketTest>player2.socket).latest_msg, {
+    type: "server_can_select",
+    select_opt: [false, true, false, false],
+    canHidePais: [],
+    canGangPais: []
+  })
+})

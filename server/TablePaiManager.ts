@@ -232,20 +232,21 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais)
     return newPais
   }
-  /**碰了打牌之后能亮 */
-  static penggang_da_liang(): Pai[] {
+  /**player2碰fa打t7后能亮 */
+  static peng_da_liang(): Pai[] {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 
     var player1 = pais("b1 t1 t1 t3 t7 t8 t9 zh zh fa di di di")
-    var player2 = pais("b1 b1 b7 b8 b9 t1 t2 t3 t4 t5 t6 fa fa")
+    var player2 = pais("b1 b1 b7 b8 b9 t1 t2 t3 t4 t5 t7 fa fa")
+    var player3 = pais("b5 b6 b7 b8 b9 t4 t4 t6 t7 t8 t9 zh zh")
     var newPais = []
     newPais = newPais.concat(player1)
     newPais = newPais.concat(player2)
-    player1.forEach((pai, index) => {
-      allpais.remove(pai)
-    })
-    player2.forEach((pai, index) => {
-      allpais.remove(pai)
+    newPais = newPais.concat(player3)
+    ;[player1, player2, player3].forEach(paiItems => {
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai)
+      })
     })
     newPais = newPais.concat(allpais)
     return newPais
@@ -261,14 +262,10 @@ export class TablePaiManager {
     newPais = newPais.concat(player1)
     newPais = newPais.concat(player2)
     newPais = newPais.concat(player3)
-    player1.forEach((pai, index) => {
-      allpais.remove(pai)
-    })
-    player2.forEach((pai, index) => {
-      allpais.remove(pai)
-    })
-    player3.forEach((pai, index) => {
-      allpais.remove(pai)
+    ;[player1, player2, player3].forEach(paiItems => {
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai)
+      })
     })
     newPais = newPais.concat(allpais)
     return newPais

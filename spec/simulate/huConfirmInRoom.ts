@@ -10,6 +10,7 @@ import { TablePaiManager } from "../../server/TablePaiManager"
 import _ = require("lodash")
 import { SocketTest } from "../SocketTest"
 import { toUnicode } from "punycode"
+import { Socket } from "dgram";
 
 /**直接将字符串转换成数类麻将数组 */
 function pais(strs): number[] {
@@ -110,10 +111,12 @@ test("player2可以胡并选择胡", function(t) {
   t.is(player2.is_hu, true)
   t.deepEqual(player2.hupai_typesCode(), [config.IsYise, config.HuisQidui])
   let players = room.players.map(person => room.player_result_filter(person))
-  t.deepEqual(player2.socket.last_msg, {
+  t.deepEqual((<SocketTest>player2.socket).latest_msg, {
     type: g_events.server_winner,
     players: players
   })
+  
+
 })
 
 // test("庄家打t6一炮双响", function(t) {
