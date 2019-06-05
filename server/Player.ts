@@ -76,7 +76,7 @@ export class Player {
 
   private _mo_pai = null
   /**判断玩家能亮的时候，给出玩家能够选择的隐藏牌 */
-  canHidepais: Pai[] = []
+  canHidePais: Pai[] = []
   canGangPais: Pai[] = []
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
    * 一旦打出，才会清空
@@ -257,7 +257,7 @@ export class Player {
     if (this.is_hu) {
       return this.hupai_data.hupai_dict[this.hupai_zhang]
     } else {
-      return null
+      return []
     }
   }
 

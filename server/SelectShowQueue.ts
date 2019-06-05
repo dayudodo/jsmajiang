@@ -69,9 +69,9 @@ export class SelectShowQueue {
       console.log(chalk.green(`下一个玩家可以选择操作： ${nextPlayer.username}`));
       nextPlayer.socket.sendmsg({
         type: g_events.server_can_select,
-        select_opt: player.arr_selectShow,
-        canLiangPais: player.canHidepais,
-        canGangPais: player.canGangPais
+        select_opt: nextPlayer.arr_selectShow,
+        canHidePais: nextPlayer.canHidePais,
+        canGangPais: nextPlayer.canGangPais
       })
     }
   }

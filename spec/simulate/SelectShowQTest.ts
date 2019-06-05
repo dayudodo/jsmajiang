@@ -139,9 +139,23 @@ test("选择操作完成，只剩下两个玩家可操作", function (t) {
   selectQue.selectCompleteBy(player2)
   t.deepEqual(player2.arr_selectShow, [])
   t.deepEqual(selectQue.players, [player3, player1])
+  //选择完成后msg是否发送正确
+  t.deepEqual(player3.socket.latest_msg, {
+    type: "server_can_select",
+    select_opt: [true,false,false,false],
+    canHidePais: [],
+    canGangPais: []
+  })
   //player2选择完成后player3可以选择了
   selectQue.selectCompleteBy(player3)
   t.deepEqual(player3.arr_selectShow, [])
+  //选择完成后msg是否发送正确
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    select_opt: [false,false,true,false],
+    canHidePais: [],
+    canGangPais: []
+  })
   t.deepEqual(selectQue.players, [ player1])
 
 })

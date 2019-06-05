@@ -104,18 +104,28 @@ test("player1选择亮", function(t) {
   t.deepEqual(room.selectShowQue.players, [player1])
   room.client_confirm_liang({ liangHidePais: [] }, player1)
   t.deepEqual(room.selectShowQue.players, []) //不再有操作选项
-  t.deepEqual(player1.hupai_data.all_hupai_zhang, _.sortBy(pais('t4 di')))
+  t.deepEqual(player1.hupai_data.all_hupai_zhang, _.sortBy(pais("t4 di")))
   // t.deepEqual(player2.group_shou_pai.peng, pais("fa")) //player2记录下了碰牌
 })
 
 test("player23能亮", function(t) {
   init(TablePaiManager.player23_liangTest())
-  t.deepEqual(room.selectShowQue.players,[player2,player3])
-  t.deepEqual(player2.arr_selectShow, [false,true,false,false])
-  t.deepEqual(player3.arr_selectShow, [false,true,false,false])
+  t.deepEqual(room.selectShowQue.players, [player2, player3])
+  t.deepEqual(player2.arr_selectShow, [false, true, false, false])
+  t.deepEqual(player3.arr_selectShow, [false, true, false, false])
 })
 test("player23能亮, 且选择了隐藏的牌", function(t) {
   init(TablePaiManager.player23_liangTest())
-  room.client_confirm_liang( {liangHidePais: [to_number('b1')]}, player2) //亮，并且把b1起来
-  t.deepEqual(player2.group_shou_pai.selfPeng, [to_number('b1')])
+  room.client_confirm_liang({ liangHidePais: [to_number("di")] }, player3) //无效，需要等player2先选择
+  t.deepEqual(player2.group_shou_pai.selfPeng, []) //无效，所以为空
+  room.client_confirm_liang({ liangHidePais: [to_number("b1")] }, player2) //亮，并且把b1隐藏起来
+  t.deepEqual(player2.group_shou_pai.selfPeng, [to_number("b1")])
+  t.deepEqual(player3.socket.latest_msg, {
+    type: "server_can_select",
+    select_opt: [false,true,false,false],
+    canHidePais: [to_number('di')],
+    canGangPais: []
+  })
+  room.client_confirm_liang({ liangHidePais: [to_number("di")] }, player3) //无效，需要等player2先选择
+  t.deepEqual(player3.group_shou_pai.selfPeng, [to_number('di')])
 })

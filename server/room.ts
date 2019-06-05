@@ -614,11 +614,12 @@ export class Room {
       }
       puts(this.operation_sequence)
       //并且扛牌是可以自己摸也可以求人！记录用户操作倒是对历史回放有一定帮助。
-      this.sendAllResults(player, player.mo_pai)
+      this.sendAllResultsOfOneJu(player, player.mo_pai)
     }
     //胡别人的打的牌
     else {
-      if (player.canHu(table_dapai)) { //todo: 重复判断了，能够执行这个操作说明已经检测出来可以胡了
+      if (player.canHu(table_dapai)) {
+        //todo: 重复判断了，能够执行这个操作说明已经检测出来可以胡了
         this.recordHuOf(player, table_dapai)
         //剩下的其它玩家是否也能胡？如果是四个人，可能还有一炮三响。
         let remainPlayer = this.players.find(p => {
@@ -627,7 +628,7 @@ export class Room {
         if (remainPlayer.canHu(table_dapai)) {
           this.recordHuOf(remainPlayer, table_dapai)
         }
-        this.sendAllResults(player, table_dapai)
+        this.sendAllResultsOfOneJu(player, table_dapai)
       } else {
         console.warn(
           `${player.user_id}, ${
@@ -677,25 +678,22 @@ export class Room {
   }
 
   /**所有玩家的牌面返回客户端 */
-  private sendAllResults(player: Player, hupaiZhang: Pai) {
+  private sendAllResultsOfOneJu(player: Player, hupaiZhang: Pai) {
     if (player.is_liang) {
       player.hupai_typesCode().push(config.HuisLiangDao)
     }
     //todo: 读秒结束才会发送所有结果，因为可能会有两个胡牌玩家！
     //暂时用思考变量来控制最终的发送！
-    if (this.isAllPlayersNormal) {
-      //所有玩家都选择完毕才去进行真正的结算
-      ScoreManager.cal_oneju_score(this.players)
-      let players = this.players.map(person =>
-        this.player_result_filter(person)
-      )
-      this.players.forEach(p => {
-        p.socket.sendmsg({
-          type: g_events.server_winner,
-          players: players
-        })
+    //有人胡就不管selectshow了，直接显示结果，在胡判断里面会有判断一炮双响的情况！
+    ScoreManager.cal_oneju_score(this.players)
+    //一局结束的时候会发送玩家所有的数据，除了一些敏感的
+    let players = this.players.map(person => this.player_result_filter(person))
+    this.players.forEach(p => {
+      p.socket.sendmsg({
+        type: g_events.server_winner,
+        players: players
       })
-    }
+    })
   }
 
   /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
@@ -851,7 +849,7 @@ export class Room {
       isShowPeng: boolean = false
     /**客户端亮之后可以隐藏的牌*/
     //首先要清空能够亮、能扛的牌
-    player.canHidepais = []
+    player.canHidePais = []
     player.canGangPais = []
     //流式处理，一次判断所有，然后结果发送给客户端
     //玩家能胡了就可以亮牌,已经亮过的就不需要再检测了
@@ -860,7 +858,7 @@ export class Room {
     if (!player.is_liang && !player.mo_pai) {
       if (player.canLiang()) {
         isShowLiang = true
-        player.canHidepais = player.PaiArr3A()
+        player.canHidePais = player.PaiArr3A()
         console.log(`房间${this.id} 玩家${player.username}可以亮牌`)
         puts(player.hupai_data)
       }
@@ -946,7 +944,7 @@ export class Room {
         `房间${this.id} 玩家${player.username} 可以显示选择对话框，其手牌为:`
       )
       puts(player.group_shou_pai)
-      console.log(`可以隐藏的牌：${player.canHidepais}`)
+      console.log(`可以隐藏的牌：${player.canHidePais}`)
       console.log(`可以杠的牌：${player.canGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
       //打牌之后应该清空此可选择菜单数组
@@ -957,7 +955,7 @@ export class Room {
       player.socket.sendmsg({
         type: g_events.server_can_select,
         select_opt: player.arr_selectShow,
-        canLiangPais: player.canHidepais,
+        canLiangPais: player.canHidePais,
         canGangPais: player.canGangPais
       })
     }
