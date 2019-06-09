@@ -313,12 +313,12 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais)
     return newPais
   }
-  /**庄家打牌放屁胡炮 */
+  /**庄家打t6放player2屁胡炮 */
   static zhuang_dapai_fangpao(): Pai[] {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 
     var player1 = pais("b1 b2 b3 b4 b5 b6 t3 t4 t6 t7 t8 di di")
-    var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t3 t6 fa fa di")
+    var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t3 t7 t8 fa fa")
     var player3 = pais("b4 b5 b6 b7 b8 b9 t1 t7 t7 t7 t8 t8 di")
     var fa_pais = pais("t4")
     var newPais = []
