@@ -171,7 +171,7 @@ test("自摸之后应该有自己的胡牌信息以及其它两家的出钱信�
 test("庄家打t6放player2屁胡炮, player2亮牌", function(t) {
   init(TablePaiManager.zhuang_dapai_fangpao())
   room.client_confirm_liang({},player2)
-  //player2可选择，然后player1才可以打牌！
+  //player2选择后player1才可以打牌！
   room.client_da_pai(player1, to_number("t6"))
   room.client_confirm_hu(player2)
   t.deepEqual(room.hupai_players, [player2])
@@ -181,6 +181,11 @@ test("庄家打t6放player2屁胡炮, player2亮牌", function(t) {
   t.is(player3.is_hu, false)
   t.deepEqual(player2.hupai_zhang, to_number("t6"))
 })
-// test("胡牌后的正确信息：屁胡", function(t) {
-
-// })
+test("胡牌后的正确信息：屁胡", function(t) {
+  init(TablePaiManager.zhuang_dapai_fangpao())
+  room.client_confirm_liang({},player2)
+  //player2选择后player1才可以打牌！
+  room.client_da_pai(player1, to_number("t6"))
+  room.client_confirm_hu(player2)
+  t.deepEqual(player2.all_win_names, ["屁胡"])
+})

@@ -270,24 +270,44 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais)
     return newPais
   }
-  /**庄家打牌就有人能杠 */
+  /**庄家打b1后player2能杠 */
   static zhuang_fangGang(): Pai[] {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 
     var player1 = pais("b1 t1 t1 t3 t7 t8 t9 zh zh fa di di di")
     var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t4 t5 zh fa fa")
     var player3 = pais("b5 b6 b7 b8 b9 t4 t4 t6 t7 t8 t9 zh zh")
+    var fa_pais = pais("t4 b9")
     var newPais = []
     newPais = newPais.concat(player1)
     newPais = newPais.concat(player2)
-    player1.forEach((pai, index) => {
-      allpais.remove(pai)
+    newPais = newPais.concat(player3)
+    newPais = newPais.concat(fa_pais)
+    ;[player1, player2, player3, fa_pais].forEach(paiItems => {
+      paiItems.forEach((pai) => {
+        allpais.remove(pai)
+      })
     })
-    player2.forEach((pai, index) => {
-      allpais.remove(pai)
-    })
-    player3.forEach((pai, index) => {
-      allpais.remove(pai)
+    newPais = newPais.concat(allpais)
+    return newPais
+  }
+  /**庄家打b1后player2能扛，打zh后player3扛上扛 */
+  static player2_fang_GangShangGang(): Pai[] {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random()
+
+    var player1 = pais("b1 b2 t1 t1 t3 t7 t8 t9 t9 fa di di di")
+    var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t4 t5 zh fa fa")
+    var player3 = pais("b2 b6 b7 b8 b9 t4 t4 t6 t7 t8 zh zh zh")
+    var fa_pais = pais("t4 b9")
+    var newPais = []
+    newPais = newPais.concat(player1)
+    newPais = newPais.concat(player2)
+    newPais = newPais.concat(player3)
+    newPais = newPais.concat(fa_pais)
+    ;[player1, player2, player3, fa_pais].forEach(paiItems => {
+      paiItems.forEach((pai) => {
+        allpais.remove(pai)
+      })
     })
     newPais = newPais.concat(allpais)
     return newPais

@@ -415,17 +415,17 @@ export class Room {
       }
     }
 
-    let gangPai: Pai
+    let otherDaGangPai: Pai
     //自己扛, 包括客户端能够发送selectedPai, 或者摸牌的玩家就是扛玩家
     // this.fapai_to_who === gangPlayer会有一个问题，正好是给下一家发牌且他能杠！就出错了。
     //所以，发牌的时候，要控制下，只有杠玩家打牌之后才能发牌！
     let selfGang = selectedPai || this.fapai_to_who === gangPlayer
     if (selfGang) {
-      gangPai = selectedPai ? selectedPai : gangPlayer.mo_pai
+      otherDaGangPai = selectedPai ? selectedPai : gangPlayer.mo_pai
       this.operation_sequence.push({
         who: gangPlayer,
         action: Operate.gang,
-        pai: gangPai,
+        pai: otherDaGangPai,
         self: true
       })
       //如果是玩家自己摸的4张牌
@@ -434,11 +434,11 @@ export class Room {
       } else {
         //如果是摸牌之后可以暗杠？不能暗杠就是擦炮了
         if (gangPlayer.canAnGang) {
-          console.log(`玩家${gangPlayer.username}自己摸牌${gangPai}可以扛`)
+          console.log(`玩家${gangPlayer.username}自己摸牌${otherDaGangPai}可以扛`)
 
           gangPlayer.confirm_anGang(gangPlayer.mo_pai)
         } else {
-          console.log(`玩家${gangPlayer.username}擦炮 ${gangPai}`)
+          console.log(`玩家${gangPlayer.username}擦炮 ${otherDaGangPai}`)
           //擦炮其实也是一种明杠
           gangPlayer.confirm_mingGang(gangPlayer.mo_pai)
         }
@@ -447,20 +447,17 @@ export class Room {
       console.log(`玩家自摸牌可杠，发牌给${gangPlayer.username}`)
       this.server_fa_pai(gangPlayer, true)
     } else {
-      //扛别人的牌, 暗杠还没有完成，别人又打了一个杠！这种情况下应该优先选择是否杠别人的牌，或者过，过了就不能再选自己的扛牌了
+      //扛别人的牌,
+      //暗杠还没有完成，别人又打了一个杠！这种情况下应该优先选择是否杠别人的牌，或者过，过了就不能再选自己的扛牌了
       //按理说应该一次只能来一次操作！扛了再扛已经是有点儿过份了！这种处理的话如果选择过，别人打牌后自己还是可以扛，编程来说也
       //方便的多
       //杠之后打牌玩家的打牌就跑到杠玩家手中了
-      gangPai = this.dapai_player.arr_dapai.pop()
-      if (gangPai != table_dapai) {
-        throw new Error(
-          `放杠者：${gangPai} 与 table_pai: ${table_dapai}不相同？`
-        )
-      }
+      otherDaGangPai = table_dapai
+
       this.operation_sequence.push({
         who: gangPlayer,
         action: Operate.gang,
-        pai: gangPai,
+        pai: otherDaGangPai,
         detail: {
           from: this.dapai_player,
           to: gangPlayer
@@ -473,10 +470,10 @@ export class Room {
         isGangShangGang = prev3_operation.action === Operate.gang
       }
       if (isGangShangGang) {
-        gangPlayer.saveGangShangGang(this.dapai_player, gangPai)
+        gangPlayer.saveGangShangGang(this.dapai_player, otherDaGangPai)
       } else {
         //不是杠上杠，就是普通杠了
-        gangPlayer.saveGang(this.dapai_player, gangPai)
+        gangPlayer.saveGang(this.dapai_player, otherDaGangPai)
       }
       console.log("====================================")
       // puts(this.OperationsOf(this.daPai_player))
@@ -484,7 +481,7 @@ export class Room {
       console.dir(this.dapai_player.gang_lose_names)
       console.log("====================================")
       //在杠玩家的group_shou_pai.peng中添加此dapai
-      gangPlayer.confirm_mingGang(gangPai)
+      gangPlayer.confirm_mingGang(otherDaGangPai)
       //自己摸杠和杠他人牌后的发牌分开处理！
       //杠别人的牌后就得发一张牌，当前还是加个判断比较好，没人摸牌的话，就给自己发一张。
       if (this.no_player_mopai()) {
@@ -777,7 +774,11 @@ export class Room {
       // throw new Error();
       console.log(
         chalk.red(
-          `房间${this.id} 玩家${player.username} 无法打牌，${this.selectShowQue.players.map(p=>p.username)}存在selectShow`
+          `房间${this.id} 玩家${
+            player.username
+          } 无法打牌，${this.selectShowQue.players.map(
+            p => p.username
+          )}存在selectShow`
         )
       )
       return

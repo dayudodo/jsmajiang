@@ -443,7 +443,7 @@ export class Player {
     //碰了之后能够打牌
     this.can_dapai = true
     //需要通知其它人我暗扛了，这样其它人才会去扣掉扛分
-    this.saveCaPao(this.otherPlayersInRoom, da_pai)
+    this.saveGang(this.room.dapai_player, da_pai)
   }
 
 
