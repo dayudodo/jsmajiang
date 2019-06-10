@@ -589,12 +589,12 @@ export class Room {
   }
 
   /**玩家选择胡牌*/
-  //todo: 选择胡还得看其它玩家更不也胡这张牌
+  //todo: 选择胡还得看其它玩家是不也胡这张牌
   client_confirm_hu(player: Player) {
     //能胡就不用再看其它人的操作了，操作了也无效，不过如果其它人也有胡呢？
     if (!this.selectShowQue.canSelect(player)) {
       console.warn(
-        "选胡但是无法选择操作，当然可以选择操作的玩家：",
+        "选胡但是无法选择操作，当前可以选择操作的玩家：",
         this.selectShowQue.players
       )
       return
@@ -640,9 +640,9 @@ export class Room {
     }
     console.log(chalk.red("胡牌玩家们的信息："))
     console.dir(this.hupai_players)
-    if (this.dapai_player) {
+    if (this.fangpao_player) {
       console.log(chalk.red("放炮玩家信息："))
-      console.dir(this.dapai_player.all_win_codes)
+      console.dir(this.fangpao_player.all_win_codes)
     }
   }
 
@@ -777,7 +777,7 @@ export class Room {
       // throw new Error();
       console.log(
         chalk.red(
-          `房间${this.id} 玩家${player.username} 无法打牌，房间中存在selectShow`
+          `房间${this.id} 玩家${player.username} 无法打牌，${this.selectShowQue.players.map(p=>p.username)}存在selectShow`
         )
       )
       return
