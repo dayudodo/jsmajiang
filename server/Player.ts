@@ -32,6 +32,34 @@ declare global {
 }
 
 export class Player {
+  set isShowHu(value: boolean) {
+    this.arr_selectShow[0] = value
+  }
+  get isShowHu() {
+    return this.arr_selectShow[0]
+  }
+
+  set isShowLiang(value: boolean) {
+    this.arr_selectShow[1] = value
+  }
+  get isShowLiang() {
+    return this.arr_selectShow[1]
+  }
+
+  set isShowGang(value: boolean) {
+    this.arr_selectShow[2] = value
+  }
+  get isShowGang() {
+    return this.arr_selectShow[2]
+  }
+
+  set isShowPeng(value: boolean) {
+    this.arr_selectShow[3] = value
+  }
+  get isShowPeng() {
+    return this.arr_selectShow[3]
+  }
+
   /**可以返回到客户端的玩家属性数组 */
   static filter_properties = [
     "username",
@@ -96,7 +124,7 @@ export class Player {
   get mo_pai() {
     return this._mo_pai
   }
-  
+
   /**玩家打牌形成的数组 */
   public arr_dapai: Array<Pai> = [] //打过的牌有哪些，断线后可以重新发送此数据
   /**玩家可以选择的操作数组 */
@@ -109,8 +137,8 @@ export class Player {
   //哪个玩家还在想，有人在想就不能打牌！记录好玩家本身的状态就好
   // public is_thinking = false
   /**是否胡了，依赖hupai_zhang */
-  get is_hu(){
-    return this.hupai_zhang!= null
+  get is_hu() {
+    return this.hupai_zhang != null
   }
   /**是否放炮 */
   public is_fangpao = false
@@ -119,10 +147,10 @@ export class Player {
 
   /**玩家放杠、放炮的记录，但于结算！user_id牌放给谁了，如果杠的玩家是自己，那么就得其它两家出钱了 */
   //数据类似于：
-      // {type: config.FangGang, pai:''},
-    // {type: config.FangGangShangGang, pai:''},
-    // {type: config.FangPihuPao, pai:''},
-    // {type: config.FangDaHuPao, pai:''}
+  // {type: config.FangGang, pai:''},
+  // {type: config.FangGangShangGang, pai:''},
+  // {type: config.FangPihuPao, pai:''},
+  // {type: config.FangDaHuPao, pai:''}
   public innerGang_lose_data = []
 
   /**玩家的积分 */
@@ -299,7 +327,7 @@ export class Player {
   //   // return this.gang_lose_data.some(item => item.type == config.LoseDaHuPao || item.type == config.LosePihuPao);
   //   return true;
   // }
-  get canAnGang():boolean{
+  get canAnGang(): boolean {
     return !_.isEmpty(this.canZhiGangPais())
   }
   /**能够自己杠的牌*/
@@ -322,7 +350,7 @@ export class Player {
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {
-    if(pai_name == null){
+    if (pai_name == null) {
       console.warn(`canHu参数pai_name为空！`)
     }
     this.calculateHu()
@@ -391,9 +419,8 @@ export class Player {
     this.can_dapai = true
   }
 
-  confirm_gang(pai_name: Pai){
+  confirm_gang(pai_name: Pai) {
     //除了不能扛自己的打牌，其它的都可以扛
-
   }
 
   /**自己摸的牌就是暗杠了*/
@@ -419,7 +446,7 @@ export class Player {
    * 杠别人的牌是明杠
    * @param da_pai 其他人打牌
    */
-  confirm_mingGang(da_pai: Pai) {
+  confirm_mingGang(da_pai: Pai, saved: boolean = false) {
     if (!this.canGangOther(da_pai)) {
       throw new Error(`无法扛${da_pai}`)
     }
@@ -443,10 +470,10 @@ export class Player {
     //碰了之后能够打牌
     this.can_dapai = true
     //需要通知其它人我暗扛了，这样其它人才会去扣掉扛分
-    this.saveGang(this.room.dapai_player, da_pai)
+    if (!saved) {
+      this.saveGang(this.room.dapai_player, da_pai)
+    }
   }
-
-
 
   /**亮牌时需要确定自碰牌，将三张pai从shouPai中移动到selfPeng之中！这样还有机会杠，并且不会展示 */
   confirm_selfPeng(pai: Pai) {
@@ -523,7 +550,9 @@ export class Player {
   /**玩家是否能够亮牌, 并获取到所有的隐藏牌selfPeng */
   private decideShowLiang(): boolean {
     //如果已经亮了，自然不能再亮
-    if (this.is_liang) { return false }
+    if (this.is_liang) {
+      return false
+    }
     //玩家没有摸牌，才去检测亮。如果不选择隐藏牌，那么就会全部亮出来！貌似不能再扛了？
     if (!this.mo_pai) {
       this.calculateHu()
@@ -586,6 +615,4 @@ export class Player {
     }
     return false
   }
-
-
 }

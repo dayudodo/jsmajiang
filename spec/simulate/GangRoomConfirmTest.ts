@@ -23,6 +23,15 @@ function to_number(str) {
 export function puts(obj: any) {
   console.log(chalk.green(util.inspect(obj)))
 }
+enum Operate {
+  mo = "mo",
+  da = "da",
+  peng = "peng",
+  gang = "gang",
+  hu = "hu",
+  liang = "liang",
+  guo = "guo"
+}
 
 var room: Room, player1: Player, player2: Player, player3: Player
 //使用beforeEach保证每个test之前都会有新的room, players！
@@ -115,11 +124,16 @@ test("庄家打b1后player2能扛，打zh后player3扛上扛", function(t) {
   t.deepEqual(room.selectShowQue.players, [])
   t.deepEqual(player2.group_shou_pai.mingGang, pais("b1"))
   //player2放杠牌zh
-  room.client_da_pai(player2, to_number('zh'))
+  room.client_da_pai(player2, to_number("zh"))
   t.deepEqual(room.selectShowQue.players, [player3])
   room.client_confirm_gang({ selectedPai: to_number("zh") }, player3)
   t.deepEqual(room.selectShowQue.players, [])
   t.deepEqual(player3.group_shou_pai.mingGang, pais("zh"))
+  t.deepEqual(room.front_operationOf(room.dapai_player, 3).action, Operate.gang)
+  t.deepEqual(room.dapai_player.innerGang_lose_data, [
+    { type: config.LoseGangShangGang, pai: to_number("zh") }
+  ])
+  t.deepEqual(player2.gang_lose_names,['放杠上杠'])
   t.deepEqual(player3.gang_win_codes,[config.HuisGangShangGang])
   t.deepEqual(player3.gang_win_names,['杠上杠'])
 })

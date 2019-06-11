@@ -85,7 +85,7 @@ export class NMajiangAlgo {
     if (_.isEmpty(test_arr)) {
       return []
     }
-    let allArr = new Set() //有可能检测到相同的，所以使用set保证唯一
+    let allArr = new Set<Pai>() //有可能检测到相同的，所以使用set保证唯一
     for (let index = 0; index < test_arr.length; index++) {
       const jiang = test_arr[index]
       if (jiang == test_arr[index + 1]) {

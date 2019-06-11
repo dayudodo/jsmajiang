@@ -434,7 +434,9 @@ export class Room {
       } else {
         //如果是摸牌之后可以暗杠？不能暗杠就是擦炮了
         if (gangPlayer.canAnGang) {
-          console.log(`玩家${gangPlayer.username}自己摸牌${otherDaGangPai}可以扛`)
+          console.log(
+            `玩家${gangPlayer.username}自己摸牌${otherDaGangPai}可以扛`
+          )
 
           gangPlayer.confirm_anGang(gangPlayer.mo_pai)
         } else {
@@ -469,6 +471,8 @@ export class Room {
       if (prev3_operation) {
         isGangShangGang = prev3_operation.action === Operate.gang
       }
+      // console.log("isGangShangGang:", isGangShangGang);
+
       if (isGangShangGang) {
         gangPlayer.saveGangShangGang(this.dapai_player, otherDaGangPai)
       } else {
@@ -480,8 +484,8 @@ export class Room {
       console.log(`${this.dapai_player.username} lose_names:`)
       console.dir(this.dapai_player.gang_lose_names)
       console.log("====================================")
-      //在杠玩家的group_shou_pai.peng中添加此dapai
-      gangPlayer.confirm_mingGang(otherDaGangPai)
+      //在杠玩家的group_shou_pai.peng中添加此dapai, 二参数为true表明前面已经save了
+      gangPlayer.confirm_mingGang(otherDaGangPai, true)
       //自己摸杠和杠他人牌后的发牌分开处理！
       //杠别人的牌后就得发一张牌，当前还是加个判断比较好，没人摸牌的话，就给自己发一张。
       if (this.no_player_mopai()) {
@@ -845,12 +849,9 @@ export class Room {
 
   /**玩家是否能显示（胡、亮、杠、碰）的选择窗口 */
   private decideSelectShow(player: Player, pai_name: Pai = null): boolean {
-    let isShowHu: boolean = false,
-      isShowLiang: boolean = false,
-      isShowGang: boolean = false,
-      isShowPeng: boolean = false
+    player.arr_selectShow = Array(4).fill(false)
     /**客户端亮之后可以隐藏的牌*/
-    //首先要清空能够亮、能扛的牌
+    //首先要清空能够亮、能扛的牌，因为需要重新计算
     player.canHidePais = []
     player.canGangPais = []
     //流式处理，一次判断所有，然后结果发送给客户端
@@ -859,7 +860,8 @@ export class Room {
     //如果没亮而且玩家没有摸牌，才去检测亮。
     if (!player.is_liang && !player.mo_pai) {
       if (player.canLiang()) {
-        isShowLiang = true
+        // isShowLiang = true
+        player.isShowLiang = true
         player.canHidePais = player.PaiArr3A()
         console.log(`房间${this.id} 玩家${player.username}可以亮牌`)
         puts(player.hupai_data)
@@ -869,17 +871,7 @@ export class Room {
     //如果玩家自己有杠，也是可以杠的，哪怕是别人打了牌！貌似有点儿小问题，啥呢？每次打牌我都不杠，这也叫气死个人！
     //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
     //不管摸不摸牌，都会检测有没有自扛的牌，因为玩家可能留着以后再扛
-    if (player.mo_pai) {
-      player.canGangPais = player.canZhiGangPais()
-      if (player.canGangPais.length > 0) {
-        isShowGang = true
-        console.log(
-          `房间${this.id} 玩家${player.username}可以自杠牌:${
-            player.canGangPais
-          }`
-        )
-      }
-    }
+    this.getCanGangPais(player);
 
     let otherPlayer_dapai = this.dapai_player !== player
     /**有pai_name, 说明是别人打或者自己摸的 */
@@ -888,15 +880,17 @@ export class Room {
       if (this.dapai_player && otherPlayer_dapai && !player.mo_pai) {
         //如果用户亮牌而且可以胡别人打的牌
         if (player.is_liang && player.canHu(pai_name)) {
-          isShowHu = true
+          // isShowHu = true
+          player.isShowHu = true
           console.log(
             `房间${this.id} 玩家${player.username}亮牌之后可以胡牌${pai_name}`
           )
         }
         // 大胡也可以显示胡牌
         //todo: 如果已经可以显示胡，其实这儿可以不用再检测了！
-        if (!isShowHu && player.isDaHu(pai_name)) {
-          isShowHu = true
+        if (!player.isShowHu && player.isDaHu(pai_name)) {
+          // isShowHu = true
+          player.isShowHu = true
           console.log(
             `房间${this.id} 玩家${player.username}可以大胡：${pai_name}`
           )
@@ -904,16 +898,16 @@ export class Room {
         }
         if (player.canGangOther(pai_name)) {
           //如果能够扛其它人的牌
-          isShowGang = true
+          player.isShowGang = true
           //还要把这张能够扛的牌告诉客户端，canGangPais是发往客户端告诉你哪些牌能扛的！
           //todo:如果canGangPais为空，那么就不要让用户选择！如果只有一个，也不需要用户选择，直接扛
           player.canGangPais.push(pai_name)
           console.log(
-            `房间${this.id} 玩家${player.username}可以的牌${player.canGangPais}`
+            `房间${this.id} 玩家${player.username}可以扛的牌${player.canGangPais}`
           )
         }
         if (player.canPeng(pai_name)) {
-          isShowPeng = true
+          player.isShowPeng = true
           console.log(
             `房间${this.id} 玩家${player.username}可以碰牌${pai_name}`
           )
@@ -931,15 +925,15 @@ export class Room {
         // }
         //摸牌后并没有重复计算胡牌，所以可以使用其判断胡牌！
         if (player.canHu(mo_pai)) {
-          isShowHu = true
+          player.isShowHu = true
           console.log(
             `房间${this.id} 玩家${player.username}可以自摸胡${mo_pai}`
           )
         }
       }
     }
-
-    let hasOperation = isShowHu || isShowLiang || isShowGang || isShowPeng
+    // [isShowHu, isShowLiang, isShowGang, isShowPeng]统计这个即可！
+    let hasOperation = player.arr_selectShow.some(s => s == true)
     if (hasOperation) {
       // player.is_thinking = true
       console.log(
@@ -949,8 +943,8 @@ export class Room {
       console.log(`可以隐藏的牌：${player.canHidePais}`)
       console.log(`可以杠的牌：${player.canGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
-      //打牌之后应该清空此可选择菜单数组
-      player.arr_selectShow = [isShowHu, isShowLiang, isShowGang, isShowPeng]
+      //todo: 打牌之后应该清空此可选择菜单数组, 四个变量已经改成player的属性值！
+      // player.arr_selectShow = [isShowHu, isShowLiang, isShowGang, isShowPeng]
       this.selectShowQue.addAndAdjustPriority(player)
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       //todo: 客户端需要更新名称allHidePais, allGangPais
@@ -960,8 +954,21 @@ export class Room {
         canHidePais: player.canHidePais,
         canGangPais: player.canGangPais
       })
+    }else{ //如果没有操作选项，则清空
+      player.arr_selectShow = []
     }
     return hasOperation
+  }
+
+  private getCanGangPais(player: Player) {
+    if (player.mo_pai) {
+      player.canGangPais = player.canZhiGangPais();
+      if (player.canGangPais.length > 0) {
+        // isShowGang = true
+        player.isShowGang = true;
+        console.log(`房间${this.id} 玩家${player.username}可以自杠牌:${player.canGangPais}`);
+      }
+    }
   }
 
   /**
