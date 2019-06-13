@@ -447,6 +447,7 @@ export class Room {
       }
       //只要扛了就从后面发牌，并且不用判断是否已经打牌！
       console.log(`玩家自摸牌可杠，发牌给${gangPlayer.username}`)
+      this.selectShowQue.selectCompleteBy(gangPlayer)
       this.server_fa_pai(gangPlayer, true)
     } else {
       //扛别人的牌,
@@ -735,6 +736,7 @@ export class Room {
     //在这儿需要计算下胡牌，防止出现扛之后可以亮，但是没有把mo_pai算在内的情况！
     // player.calculateHu()
     //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
+    //另外，玩家可以留杠，等摸牌后再去扛张牌，看能否胡！
     this.decideSelectShow(player, paiName)
 
     console.log(
@@ -915,20 +917,12 @@ export class Room {
         }
       } else {
         //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人
-        let mo_pai = pai_name
         //自己摸牌后其实已经有canGangPais, 不用再检查杠了。
-        // if (player.canGang(mo_pai)) {
-        //   isShowGang = true;
-        //   if (!_.isEmpty(canGangPais)) {
-        //     canGangPais.push(mo_pai);
-        //   }
-        //   console.log(`房间${this.id} 玩家${player.username}摸牌后可以杠牌${mo_pai}`);
-        // }
         //摸牌后并没有重复计算胡牌，所以可以使用其判断胡牌！
-        if (player.canHu(mo_pai)) {
+        if (player.canZhiMo()) {
           player.isShowHu = true
           console.log(
-            `房间${this.id} 玩家${player.username}可以自摸胡${mo_pai}`
+            `房间${this.id} 玩家${player.username}可以自摸${player.mo_pai}`
           )
         }
       }

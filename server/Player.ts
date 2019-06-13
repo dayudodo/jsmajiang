@@ -4,6 +4,7 @@ import { ScoreManager } from "./ScoreManager"
 //每一个玩家的数据保存在此类中
 import * as config from "./config"
 import { Room } from "./room"
+import chalk from "chalk";
 
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
@@ -347,6 +348,13 @@ export class Player {
     return (
       countPai.length === 4 || this.group_shou_pai.selfPeng.includes(pai_name)
     )
+  }
+  canZhiMo():boolean{
+    if(this.mo_pai == null){
+      console.warn(chalk.red(`${this.username} 没有摸牌怎么自摸？`));
+      return false
+    }
+    return this.canHu(this.mo_pai)
   }
   /**能否胡pai_name */
   canHu(pai_name: Pai): boolean {

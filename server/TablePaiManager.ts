@@ -375,6 +375,29 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais)
     return newPais
   }
+  /**庄家杠上花 */
+  static zhuang_GangShangHua(): Pai[] {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random()
+
+    var player1 = pais("b1 b2 b3 b4 b5 b6 t3 t3 t6 di di di di") //杠di摸t5胡牌
+    var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t4 t6 fa fa fa") 
+    var player3 = pais("b2 b2 b3 b3 b4 b4 t1 t3 t5 t7 t8 t8 t9") 
+    var fa_pais = pais("t7")
+    var tails = pais('t5')
+    var newPais = []
+    newPais = newPais.concat(player1)
+    newPais = newPais.concat(player2)
+    newPais = newPais.concat(player3)
+    newPais = newPais.concat(fa_pais)
+    ;[player1, player2, player3, fa_pais, tails].forEach(paiItems => {
+      paiItems.forEach((pai, index) => {
+        allpais.remove(pai)
+      })
+    })
+    newPais = newPais.concat(allpais)
+    newPais.push(...tails) //先删除掉，然后在数组最后添加这个t5, 以便杠上开花！
+    return newPais
+  }
 }
 
 // console.log('====================================');
