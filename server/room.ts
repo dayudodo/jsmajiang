@@ -827,6 +827,7 @@ export class Room {
         let refreshAllPlayersSelectShow = () => {
           for (let item_player of this.players) {
             //每次循环开始前都需要重置，返回并控制客户端是否显示胡、亮、杠、碰
+            //todo: 打牌玩家和其它看牌的玩家其实还是应该分开处理，以体现出差别。
             this.decideSelectShow(item_player, dapai_name)
           }
         }
@@ -871,7 +872,7 @@ export class Room {
     //如果玩家自己有杠，也是可以杠的，哪怕是别人打了牌！貌似有点儿小问题，啥呢？每次打牌我都不杠，这也叫气死个人！
     //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
     //不管摸不摸牌，都会检测有没有自扛的牌，因为玩家可能留着以后再扛
-    this.getCanGangPais(player);
+    this.getCanGangPaisTo(player);
 
     let otherPlayer_dapai = this.dapai_player !== player
     /**有pai_name, 说明是别人打或者自己摸的 */
@@ -960,7 +961,7 @@ export class Room {
     return hasOperation
   }
 
-  private getCanGangPais(player: Player) {
+  private getCanGangPaisTo(player: Player) {
     if (player.mo_pai) {
       player.canGangPais = player.canZhiGangPais();
       if (player.canGangPais.length > 0) {
