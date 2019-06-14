@@ -233,6 +233,57 @@ test("留杠，摸牌后再去扛牌，杠上开花", function(t) {
     canHidePais: [],
     canGangPais: []
   })
-  // room.client_confirm_hu(player1)
-  // t.is(player1.is_hu, true)
+  room.client_confirm_hu(player1)
+  t.is(player1.is_hu, true)
+})
+test("双杠上开花", function(t) {
+  init(TablePaiManager.zhuang_ShuangGangShangHua())
+  t.deepEqual(room.selectShowQue.players, [player1])
+  t.deepEqual(player1.arr_selectShow, [false, false, true, false]) //会有扛的选择条
+
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("b7 di")
+  })
+
+  //发牌完成后才应该有选择的消息
+  t.deepEqual(_.nth(player1.socket.arr_msg, -2), {
+    type: "server_table_fa_pai",
+    pai: to_number("b7")
+  })
+  t.deepEqual(player1.mo_pai, to_number("b7")) //服务器发牌保存在player1.mo_pai中
+  room.client_confirm_gang({ selectedPai: to_number("di") }, player1)
+  t.deepEqual(player1.group_shou_pai.anGang, pais("di"))
+
+  //选择扛之后会给个t7
+  t.deepEqual(
+    player1.group_shou_pai.shouPai,
+    pais("b1 b2 b3 b7 b7 b7 b7 t3 t3 t6")
+  )
+  t.deepEqual(_.nth(player1.socket.arr_msg, -2), {
+    type: "server_table_fa_pai",
+    pai: to_number("t7")
+  })
+  t.deepEqual(player1.mo_pai, to_number('t7'))
+
+  //最后的消息应该是又可以扛
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("b7")
+  })
+  room.client_confirm_gang({ selectedPai: to_number("b7") }, player1)
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [true, false, false, false],
+    canHidePais: [],
+    canGangPais: []
+  })
+
+  room.client_confirm_hu(player1)
+  t.is(player1.is_hu, true)
+  t.is(player1.is_zimo, true)
 })

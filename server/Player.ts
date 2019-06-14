@@ -449,7 +449,7 @@ export class Player {
     this._mo_pai = null //清空摸牌
     this.group_shou_pai.anGang.push(pai_name)
     this.shouPaiInGroupReOrder()
-    //杠之后需要重新算下胡牌！
+    // todo: 扛之后会发牌，所以需要在发牌里面算胡！或者还是在算胡的时候判断下牌有没有变化！
     this.calculateHu()
     //碰了之后能够打牌
     this.can_dapai = true
@@ -459,6 +459,7 @@ export class Player {
   /**
    * 杠别人的牌是明杠
    * @param da_pai 其他人打牌
+   * @param saved 是否已经通知过他人明扛，默认是没通知
    */
   confirm_mingGang(da_pai: Pai, saved: boolean = false) {
     if (!this.canGangOther(da_pai)) {
