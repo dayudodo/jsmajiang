@@ -194,17 +194,18 @@ test("留杠，摸牌后再去扛牌，杠上开花", function(t) {
   init(TablePaiManager.zhuang_GangShangHua())
   t.deepEqual(room.selectShowQue.players, [player1])
   t.deepEqual(player1.arr_selectShow, [false, false, true, false]) //会有扛的选择条
-  //倒数第二个socket是可以选择的socket，这种似乎应该一次发送？
+  //发牌完成后才应该有选择的消息
   t.deepEqual(_.nth(player1.socket.arr_msg, -2), {
-    type: "server_can_select",
-    select_opt: [false, false, true, false],
-    canHidePais: [],
-    canGangPais: [to_number("di")]
-  })
-  t.deepEqual(player1.socket.latest_msg, {
     type: "server_table_fa_pai",
     pai: to_number("t7")
   })
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: [to_number("di")]
+  })
+
   //其它玩家应该收到player1的发牌消息，这是为了改变中间的指向箭头！
   t.deepEqual(player2.socket.latest_msg, {
     type: "server_table_fa_pai_other",
@@ -214,17 +215,24 @@ test("留杠，摸牌后再去扛牌，杠上开花", function(t) {
     type: "server_table_fa_pai_other",
     user_id: player1.user_id
   })
-  t.deepEqual(player1.mo_pai, to_number('t7'))  //服务器发牌保存在player1.mo_pai中
-  room.client_confirm_gang({ selectedPai: to_number("di")}, player1)
-  t.deepEqual(player1.group_shou_pai.anGang, pais('di'))
+  t.deepEqual(player1.mo_pai, to_number("t7")) //服务器发牌保存在player1.mo_pai中
+  room.client_confirm_gang({ selectedPai: to_number("di") }, player1)
+  t.deepEqual(player1.group_shou_pai.anGang, pais("di"))
   //选择扛之后会给个t5
-  t.deepEqual(player1.mo_pai, to_number('t5'))
+  t.deepEqual(
+    player1.group_shou_pai.shouPai,
+    pais("b1 b2 b3 b4 b5 b6 t3 t3 t6 t7")
+  )
+  t.deepEqual(player1.mo_pai, to_number("t5"))
+  t.is(player1.canZhiMo(), true)
   //这时候就应该会有胡的选择项了
   t.deepEqual(player1.arr_selectShow, [true, false, false, false])
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: player1.arr_selectShow,
+    canHidePais: [],
+    canGangPais: []
+  })
   // room.client_confirm_hu(player1)
   // t.is(player1.is_hu, true)
-  // t.deepEqual(player1.socket.latest_msg, {
-  //   type: g_events.server_winner,
-  //   players: [player1]
-  // })
 })

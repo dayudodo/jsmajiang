@@ -4,7 +4,7 @@ import { ScoreManager } from "./ScoreManager"
 //每一个玩家的数据保存在此类中
 import * as config from "./config"
 import { Room } from "./room"
-import chalk from "chalk";
+import chalk from "chalk"
 
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
@@ -103,7 +103,6 @@ export class Player {
   /** 玩家在房间的座位号，也是加入房间的顺序号 */
   public seat_index = null //玩家的座位号，关系到发牌的顺序，以及碰之后顺序的改变需要使用
 
-  private _mo_pai = null
   /**判断玩家能亮的时候，给出玩家能够选择的隐藏牌 */
   canHidePais: Pai[] = []
   /**能够扛的牌 */
@@ -111,6 +110,8 @@ export class Player {
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
    * 一旦打出，才会清空
    */
+
+  private _mo_pai = null
   set mo_pai(pai: Pai) {
     if (this._mo_pai) {
       //设置的时候一定要保证其是个空
@@ -349,9 +350,9 @@ export class Player {
       countPai.length === 4 || this.group_shou_pai.selfPeng.includes(pai_name)
     )
   }
-  canZhiMo():boolean{
-    if(this.mo_pai == null){
-      console.warn(chalk.red(`${this.username} 没有摸牌怎么自摸？`));
+  canZhiMo(): boolean {
+    if (this.mo_pai == null) {
+      console.warn(chalk.red(`${this.username} 没有摸牌怎么自摸？`))
       return false
     }
     return this.canHu(this.mo_pai)
@@ -422,9 +423,13 @@ export class Player {
       this.delete_pai(this.group_shou_pai.shouPai, pai)
     }
     //删除掉重新排序
-    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    this.shouPaiInGroupReOrder()
     //碰了之后能够打牌
     this.can_dapai = true
+  }
+
+  private shouPaiInGroupReOrder() {
+    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
   }
 
   confirm_gang(pai_name: Pai) {
@@ -433,16 +438,17 @@ export class Player {
 
   /**自己摸的牌就是暗杠了*/
   confirm_anGang(pai_name: Pai) {
-    this._mo_pai = null
     // this.is_thinking = false
     this.after_mo_gang_dapai = false
-    //首先从手牌中删除四！张牌，
-    // 因为自己摸牌后会添加到手牌之中，这样就会有4张牌
-    for (var i = 0; i < 3; i++) {
+    //摸牌会添加到手牌之中，这样就会有4张牌
+    this.group_shou_pai.shouPai.push(this._mo_pai)
+    //不管是扛牌还是其它牌，总还是要删除4张
+    for (var i = 0; i < 4; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai_name)
     }
+    this._mo_pai = null //清空摸牌
     this.group_shou_pai.anGang.push(pai_name)
-    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    this.shouPaiInGroupReOrder()
     //杠之后需要重新算下胡牌！
     this.calculateHu()
     //碰了之后能够打牌
@@ -472,7 +478,7 @@ export class Player {
     for (var i = 0; i < 3; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, da_pai)
     }
-    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    this.shouPaiInGroupReOrder()
     //杠之后需要重新算下胡牌！
     this.calculateHu()
     //碰了之后能够打牌
@@ -492,7 +498,7 @@ export class Player {
       this.delete_pai(this.group_shou_pai.shouPai, pai)
     }
     this.group_shou_pai.selfPeng.push(pai)
-    this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+    this.shouPaiInGroupReOrder()
     // this.can_dapai = true
   }
 
@@ -513,7 +519,7 @@ export class Player {
       if (this._mo_pai != null) {
         this.group_shou_pai.shouPai.push(this._mo_pai)
       }
-      this.group_shou_pai.shouPai = _.orderBy(this.group_shou_pai.shouPai)
+      this.shouPaiInGroupReOrder()
       this.calculateHu()
     }
     this._mo_pai = null //打牌之后玩家处于非摸牌状态

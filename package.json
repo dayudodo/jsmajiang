@@ -9,7 +9,6 @@
     "start": "node server_build/server/app.js",
     "dev": "node server_build/app.js",
     "test": "karma start karma.conf.js",
-    "j": "jasmine spec/majiangTest.js",
     "a": "ava --watch"
   },
   "author": "",
@@ -26,7 +25,7 @@
     "ws": "^5.1.1"
   },
   "devDependencies": {
-    "ava": "^2.0.0",
+    "ava": "^2.1.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^6.0.4",

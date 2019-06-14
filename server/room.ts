@@ -9,6 +9,7 @@ import { ScoreManager } from "./ScoreManager"
 import { MyDataBase } from "./MyDataBase"
 import { LobbyManager } from "./LobbyManager"
 import { SelectShowQueue } from "./SelectShowQueue"
+import { S_IFBLK } from "constants";
 
 let room_valid_names = ["ange", "jack", "rose"]
 
@@ -445,10 +446,6 @@ export class Room {
           gangPlayer.confirm_mingGang(gangPlayer.mo_pai)
         }
       }
-      //只要扛了就从后面发牌，并且不用判断是否已经打牌！
-      console.log(`玩家自摸牌可杠，发牌给${gangPlayer.username}`)
-      this.selectShowQue.selectCompleteBy(gangPlayer)
-      this.server_fa_pai(gangPlayer, true)
     } else {
       //扛别人的牌,
       //暗杠还没有完成，别人又打了一个杠！这种情况下应该优先选择是否杠别人的牌，或者过，过了就不能再选自己的扛牌了
@@ -489,11 +486,9 @@ export class Room {
       gangPlayer.confirm_mingGang(otherDaGangPai, true)
       //自己摸杠和杠他人牌后的发牌分开处理！
       //杠别人的牌后就得发一张牌，当前还是加个判断比较好，没人摸牌的话，就给自己发一张。
-      if (this.no_player_mopai()) {
-        this.server_fa_pai(gangPlayer)
-        //并且让自己可以打牌
-        // this.decide_can_dapai(gangPlayer);
-      }
+      // if (this.no_player_mopai()) {
+      //   this.server_fa_pai(gangPlayer)
+      // }
     }
     //碰牌的人成为当家玩家，因为其还要打牌！下一玩家也是根据这个来判断的！
     this.current_player = gangPlayer
@@ -514,6 +509,12 @@ export class Room {
       })
     })
     this.selectShowQue.selectCompleteBy(gangPlayer)
+    if(selfGang){
+      console.log(chalk.green(`玩家摸牌可自己杠，发牌给${gangPlayer.username}`))
+      this.server_fa_pai(gangPlayer, true)
+    }else{
+      this.server_fa_pai(gangPlayer)
+    }
   }
 
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
@@ -735,9 +736,6 @@ export class Room {
     //判断完毕再保存到用户的手牌中！不然会出现重复判断的情况！
     //在这儿需要计算下胡牌，防止出现扛之后可以亮，但是没有把mo_pai算在内的情况！
     // player.calculateHu()
-    //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
-    //另外，玩家可以留杠，等摸牌后再去扛张牌，看能否胡！
-    this.decideSelectShow(player, paiName)
 
     console.log(
       chalk.cyan("服务器发牌 %s 给：%s"),
@@ -757,6 +755,10 @@ export class Room {
         user_id: player.user_id
       })
     })
+    //对发的牌进行判断，有可能扛或胡的。如果用户没有打牌，不再进行发牌后的选择检测
+    //另外，玩家可以留杠，等摸牌后再去扛张牌，看能否胡！
+    //没有第二个参数，表明只是用于自己的检测！
+    this.decideSelectShow(player, paiName)
     this.sendClient_can_dapai_ifcan(player)
     return paiName
   }
@@ -874,7 +876,7 @@ export class Room {
     //如果玩家自己有杠，也是可以杠的，哪怕是别人打了牌！貌似有点儿小问题，啥呢？每次打牌我都不杠，这也叫气死个人！
     //比如我碰了张牌，后来又起了一张，但是与其它牌是一句话，这样每次都会提醒杠！你每次都要选择过！
     //不管摸不摸牌，都会检测有没有自扛的牌，因为玩家可能留着以后再扛
-    this.getCanGangPaisTo(player);
+    this.get_canGangPais_To(player)
 
     let otherPlayer_dapai = this.dapai_player !== player
     /**有pai_name, 说明是别人打或者自己摸的 */
@@ -906,7 +908,9 @@ export class Room {
           //todo:如果canGangPais为空，那么就不要让用户选择！如果只有一个，也不需要用户选择，直接扛
           player.canGangPais.push(pai_name)
           console.log(
-            `房间${this.id} 玩家${player.username}可以扛的牌${player.canGangPais}`
+            `房间${this.id} 玩家${player.username}可以扛的牌${
+              player.canGangPais
+            }`
           )
         }
         if (player.canPeng(pai_name)) {
@@ -915,26 +919,26 @@ export class Room {
             `房间${this.id} 玩家${player.username}可以碰牌${pai_name}`
           )
         }
-      } else {
-        //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人
-        //自己摸牌后其实已经有canGangPais, 不用再检查杠了。
-        //摸牌后并没有重复计算胡牌，所以可以使用其判断胡牌！
-        if (player.canZhiMo()) {
-          player.isShowHu = true
-          console.log(
-            `房间${this.id} 玩家${player.username}可以自摸${player.mo_pai}`
-          )
-        }
+      }
+    }
+    //如果是自己打牌或者摸牌，就不再去检测碰他人、杠他人
+    //自己摸牌后其实已经有canGangPais, 不用再检查杠了。
+    //摸牌后并没有重复计算胡牌，所以可以使用其判断胡牌！
+    if (player.mo_pai) {
+      if (player.canZhiMo()) {
+        player.isShowHu = true
+        console.log(
+          `房间${this.id} 玩家${player.username}可以自摸${player.mo_pai}`
+        )
       }
     }
     // [isShowHu, isShowLiang, isShowGang, isShowPeng]统计这个即可！
-    let hasOperation = player.arr_selectShow.some(s => s == true)
+    let hasOperation = player.arr_selectShow.some(s => s === true)
     if (hasOperation) {
-      // player.is_thinking = true
       console.log(
         `房间${this.id} 玩家${player.username} 可以显示选择对话框，其手牌为:`
       )
-      puts(player.group_shou_pai)
+      // puts(player.group_shou_pai)
       console.log(`可以隐藏的牌：${player.canHidePais}`)
       console.log(`可以杠的牌：${player.canGangPais}`)
       //每次都是新的数组赋值，但是其它时候可能会读取到此数据，并不保险！
@@ -945,23 +949,28 @@ export class Room {
       //todo: 客户端需要更新名称allHidePais, allGangPais
       player.socket.sendmsg({
         type: g_events.server_can_select,
-        select_opt: player.arr_selectShow,
+        arr_selectShow: player.arr_selectShow,
         canHidePais: player.canHidePais,
         canGangPais: player.canGangPais
       })
-    }else{ //如果没有操作选项，则清空
+    } else {
+      //如果没有操作选项，则清空
       player.arr_selectShow = []
     }
     return hasOperation
   }
 
-  private getCanGangPaisTo(player: Player) {
+  private get_canGangPais_To(player: Player) {
     if (player.mo_pai) {
-      player.canGangPais = player.canZhiGangPais();
+      player.canGangPais = player.canZhiGangPais()
       if (player.canGangPais.length > 0) {
         // isShowGang = true
-        player.isShowGang = true;
-        console.log(`房间${this.id} 玩家${player.username}可以自杠牌:${player.canGangPais}`);
+        player.isShowGang = true
+        console.log(
+          `房间${this.id} 玩家${player.username}可以自杠牌:${
+            player.canGangPais
+          }`
+        )
       }
     }
   }
