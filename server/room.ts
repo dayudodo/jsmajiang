@@ -9,7 +9,7 @@ import { ScoreManager } from "./ScoreManager"
 import { MyDataBase } from "./MyDataBase"
 import { LobbyManager } from "./LobbyManager"
 import { SelectShowQueue } from "./SelectShowQueue"
-import { S_IFBLK } from "constants";
+import { S_IFBLK } from "constants"
 
 let room_valid_names = ["ange", "jack", "rose"]
 
@@ -383,6 +383,11 @@ export class Room {
   client_confirm_gang(client_message, gangPlayer: Player) {
     //如果玩家选择操作无效，直接返回
     if (!this.selectShowQue.canSelect(gangPlayer)) {
+      console.warn(
+        `现在还不能扛，有其它玩家选择操作优先级更高:${
+          this.selectShowQue.players[0].username
+        }`
+      )
       return
     }
     // let gangPlayer = this.find_player_by(socket)
@@ -509,23 +514,22 @@ export class Room {
       })
     })
     this.selectShowQue.selectCompleteBy(gangPlayer)
-    if(selfGang){
+    if (selfGang) {
       console.log(chalk.green(`玩家摸牌可自己杠，发牌给${gangPlayer.username}`))
-      this.server_fa_pai(gangPlayer, true)
-    }else{
-      this.server_fa_pai(gangPlayer)
-    }
+    } 
+    this.server_fa_pai(gangPlayer, true) //只要扛了就会从后面发牌
   }
 
   /**亮牌，胡后2番，打牌之后才能亮，表明已经听胡了*/
   client_confirm_liang(client_message, player: Player) {
     //如果玩家选择操作无效，直接返回
     if (!this.selectShowQue.canSelect(player)) {
+      console.log(chalk.red('无法亮牌，有其它人可操作！'))
       return
     }
     //玩家已经有决定，不再想了。
     // player.is_thinking = false
-    // player.is_liang = true
+    player.is_liang = true
     //如果liangHidePais有效
     if (
       client_message.liangHidePais &&
@@ -759,6 +763,10 @@ export class Room {
     //另外，玩家可以留杠，等摸牌后再去扛张牌，看能否胡！
     //没有第二个参数，表明只是用于自己的检测！
     this.decideSelectShow(player, paiName)
+    //发牌之后给其发送消息，如果有select选项的话！
+    if (this.selectShowQue.canSelect(player)) {
+      this.selectShowQue.send_can_select_to(player)
+    }
     this.sendClient_can_dapai_ifcan(player)
     return paiName
   }
@@ -836,6 +844,7 @@ export class Room {
           }
         }
         refreshAllPlayersSelectShow()
+        this.selectShowQue.send_can_select_to_TopPlayer()
         //todo: 打牌玩家其实还可以有操作，亮、自扛，但是不能碰、杠自己打的牌！
 
         //不能胡、杠、碰就发牌给下一个玩家
@@ -947,16 +956,17 @@ export class Room {
       this.selectShowQue.addAndAdjustPriority(player)
       // console.log(`${item_player.username} isShowHu: %s, isShowLiang: %s, isShowGang: %s, isShowPeng: %s`, isShowHu, isShowLiang, isShowGang, isShowPeng);
       //todo: 客户端需要更新名称allHidePais, allGangPais
-      player.socket.sendmsg({
-        type: g_events.server_can_select,
-        arr_selectShow: player.arr_selectShow,
-        canHidePais: player.canHidePais,
-        canGangPais: player.canGangPais
-      })
+      // player.socket.sendmsg({
+      //   type: g_events.server_can_select,
+      //   arr_selectShow: player.arr_selectShow,
+      //   canHidePais: player.canHidePais,
+      //   canGangPais: player.canGangPais
+      // })
     } else {
       //如果没有操作选项，则清空
       player.arr_selectShow = []
     }
+    //给队列头玩家发送消息，其它人不发送
     return hasOperation
   }
 

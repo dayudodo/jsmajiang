@@ -67,14 +67,24 @@ export class SelectShowQueue {
     let nextPlayer = _.first(this.players)
     if(nextPlayer){
       console.log(chalk.green(`下一个玩家可以选择操作： ${nextPlayer.username}`));
-      nextPlayer.socket.sendmsg({
-        type: g_events.server_can_select,
-        select_opt: nextPlayer.arr_selectShow,
-        canHidePais: nextPlayer.canHidePais,
-        canGangPais: nextPlayer.canGangPais
-      })
+      this.send_can_select_to(nextPlayer);
     }
   }
+  send_can_select_to(nextPlayer: Player) {
+    nextPlayer.socket.sendmsg({
+      type: g_events.server_can_select,
+      arr_selectShow: nextPlayer.arr_selectShow,
+      canHidePais: nextPlayer.canHidePais,
+      canGangPais: nextPlayer.canGangPais
+    });
+  }
+  //如果有头玩家，就发送消息给头玩家，其它人暂时不发送消息
+  send_can_select_to_TopPlayer(){
+    if(this.hasSelectShow()){
+      this.send_can_select_to(this.players[0])
+    }
+  }
+
   /**增加一个玩家并且重新排序 */
   addAndAdjustPriority(player: Player) {
     if (!_.isEmpty(this.players) && this.players.find(p => p == player)) {

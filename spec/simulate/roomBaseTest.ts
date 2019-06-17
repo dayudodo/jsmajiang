@@ -131,7 +131,7 @@ test("服务器发牌后player1手牌能扛", function(t) {
   // 然后才会出现用户的选择菜单
   t.deepEqual(player3.socket.latest_msg, {
     type: g_events.server_can_select,
-    select_opt: [false, false, true, false],
+    arr_selectShow: [false, false, true, false],
     canLiangPais: [],
     canGangPais: [pai_name]
   })

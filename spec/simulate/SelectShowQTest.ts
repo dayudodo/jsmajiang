@@ -142,7 +142,7 @@ test("选择操作完成，只剩下两个玩家可操作", function (t) {
   //选择完成后msg是否发送正确
   t.deepEqual(player3.socket.latest_msg, {
     type: "server_can_select",
-    select_opt: [true,false,false,false],
+    arr_selectShow: [true,false,false,false],
     canHidePais: [],
     canGangPais: []
   })
@@ -152,7 +152,7 @@ test("选择操作完成，只剩下两个玩家可操作", function (t) {
   //选择完成后msg是否发送正确
   t.deepEqual(player1.socket.latest_msg, {
     type: "server_can_select",
-    select_opt: [false,false,true,false],
+    arr_selectShow: [false,false,true,false],
     canHidePais: [],
     canGangPais: []
   })

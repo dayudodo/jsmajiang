@@ -119,7 +119,7 @@ test("player2碰fa打t7后能亮", function(t) {
   t.deepEqual(player2.arr_selectShow, [false, true, false, false])
   t.deepEqual((<SocketTest>player2.socket).latest_msg, {
     type: "server_can_select",
-    select_opt: [false, true, false, false],
+    arr_selectShow: [false, true, false, false],
     canHidePais: [],
     canGangPais: []
   })

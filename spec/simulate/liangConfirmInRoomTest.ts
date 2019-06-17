@@ -122,7 +122,7 @@ test("player23能亮, 且选择了隐藏的牌", function(t) {
   t.deepEqual(player2.group_shou_pai.selfPeng, [to_number("b1")])
   t.deepEqual(player3.socket.latest_msg, {
     type: "server_can_select",
-    select_opt: [false,true,false,false],
+    arr_selectShow: [false,true,false,false],
     canHidePais: [to_number('di')],
     canGangPais: []
   })

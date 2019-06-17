@@ -171,6 +171,7 @@ test("自摸之后应该有自己的胡牌信息以及其它两家的出钱信�
 test("庄家打t6放player2屁胡炮, player2亮牌", function(t) {
   init(TablePaiManager.zhuang_dapai_fangpao())
   room.client_confirm_liang({}, player2)
+  t.is(player2.is_liang, true)
   //player2选择后player1才可以打牌！
   room.client_da_pai(player1, to_number("t6"))
   room.client_confirm_hu(player2)
@@ -187,7 +188,7 @@ test("胡牌后的正确信息：屁胡", function(t) {
   //player2选择后player1才可以打牌！
   room.client_da_pai(player1, to_number("t6"))
   room.client_confirm_hu(player2)
-  t.deepEqual(player2.all_win_names, ["屁胡"])
+  t.deepEqual(player2.all_win_names, ["屁胡", '亮倒'])
 })
 
 test("留杠，摸牌后再去扛牌，杠上开花", function(t) {
@@ -236,6 +237,7 @@ test("留杠，摸牌后再去扛牌，杠上开花", function(t) {
   room.client_confirm_hu(player1)
   t.is(player1.is_hu, true)
 })
+
 test("双杠上开花", function(t) {
   init(TablePaiManager.zhuang_ShuangGangShangHua())
   t.deepEqual(room.selectShowQue.players, [player1])
@@ -266,7 +268,7 @@ test("双杠上开花", function(t) {
     type: "server_table_fa_pai",
     pai: to_number("t7")
   })
-  t.deepEqual(player1.mo_pai, to_number('t7'))
+  t.deepEqual(player1.mo_pai, to_number("t7"))
 
   //最后的消息应该是又可以扛
   t.deepEqual(player1.socket.latest_msg, {
@@ -286,4 +288,69 @@ test("双杠上开花", function(t) {
   room.client_confirm_hu(player1)
   t.is(player1.is_hu, true)
   t.is(player1.is_zimo, true)
+})
+
+test("庄家放t2杠,扛上扛di,胡扛上花t5 ", function(t) {
+  init(TablePaiManager.zhuang_FangGangHuGang())
+  //发牌t3,打t2, player扛后打di, player扛di之后摸t5, 胡牌！
+  t.deepEqual(room.selectShowQue.players, [])
+  t.deepEqual(player1.arr_selectShow, []) //会有扛的选择条
+  t.deepEqual(player1.mo_pai, to_number("t3"))
+  room.client_da_pai(player1, to_number("t2"))
+  t.deepEqual(room.selectShowQue.players, [player1, player2])
+  //player1已经可以亮牌了
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, true, false, false],
+    canHidePais: pais("di"),
+    canGangPais: []
+  })
+  //player2可以选择扛牌，但是socket并不会发送！
+  t.deepEqual(player2.socket.latest_msg, {
+    pai_name: to_number('t2'),
+    type: "server_dapai_other",
+    user_id: player1.user_id,
+    username: player1.username
+  })
+  // 直接扛是没效果的，因为player1的亮牌优先
+  room.client_confirm_gang({ selectedPai: to_number("t2") }, player2)
+  //player1选择亮牌，并隐藏牌di
+  room.client_confirm_liang({ liangHidePais: pais("di") }, player1)
+  t.deepEqual(player1.group_shou_pai.selfPeng, pais("di"))
+  t.is(player1.is_liang, true)
+  //这时候player2才会有选择项
+  t.deepEqual(player2.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("t2")
+  })
+  //最后一张牌应该是t5
+  t.deepEqual(room.cloneTablePais[room.cloneTablePais.length -1], to_number('t5'))
+  //player2扛t2
+  room.client_confirm_gang({ selectedPai: to_number("t2") }, player2)
+  //得到最后摸到的牌t5
+  t.deepEqual(player2.mo_pai, to_number('t5'))
+  t.is(player2.can_dapai, true)
+  room.client_da_pai(player2, to_number('di'))
+
+  t.deepEqual(room.selectShowQue.players, [player1])
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("di")
+  })
+  //此时庄家可扛di
+  room.client_confirm_gang({ selectedPai: to_number("di") }, player1)
+  //player1可以选择胡牌了，杠上花！
+  t.deepEqual(player1.mo_pai, to_number('t7'))
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [true, false, false, false],
+    canHidePais: [],
+    canGangPais: []
+  })
+  room.client_confirm_hu(player1)
+  t.is(player1.is_hu, true)
 })
