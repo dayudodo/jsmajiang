@@ -7,6 +7,7 @@
 - npm run start //开启服务器，端口为3333，可以从config.js文件中修改默认的端口号，前端自动读取
 - npm run a //使用ava进行测试，配置就在package.json之中
 - npm run test //使用karma进行测试
+- ava spec\simulate\huTest.ts //使用ava来单独测试某个文件，ava的配置见package.json。spec里面的simulate是专门用来模拟实际打牌的，测试项目比较多。待以后细化完成，客户端需要重写以便利于测试
 
 # 卡五星规则说明
 见项目内菜单中规则项，以下是节选
