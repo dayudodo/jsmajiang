@@ -93,25 +93,28 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais)
     return newPais
   }
-  /**开局双杠，他人放杠，测试杠选择 */
+  /**庄家开局双自杠，他人放杠，后自摸 */
   static player1_3gang() {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 
-    var player1 = pais("b1 b1 b1 b1 b2 b2 b2 b2 di di di t1 t9")
-    var player2 = pais("b3 t1 t1 t1 t4 t6 zh zh zh fa fa fa di")
-    var player3 = pais("t2 t2 t3 t3 t4 t5 t6 t6 t7 t7 t8 b8 b9")
+    var player1 = pais("b1 b1 b1 b1 b2 b2 b2 b2 t9 t9 di di di")
+    var player2 = pais("t1 t1 t1 t1 t4 t6 zh zh zh fa fa fa di") //放di扛给player1
+    var player3 = pais("b3 t3 t3 t3 t4 t5 t6 t6 t7 t7 t8 t9 zh")
     //发牌需要有个顺序，不能使用pais
-    // var fa_pais = "t2 di".split(" ")
+    var fa_pais = [6,7] //给b6,b7, 使用数字是因为pais会自动排序！
+    var tails = [14,15]
     var newPais = []
     newPais = newPais.concat(player1)
     newPais = newPais.concat(player2)
     newPais = newPais.concat(player3)
-    ;[player1, player2, player3].forEach(paiItems => {
-      paiItems.forEach((pai, index) => {
+    newPais = newPais.concat(fa_pais)
+    ;[player1, player2, player3,fa_pais].forEach(paiItems => {
+      paiItems.forEach((pai) => {
         allpais.remove(pai)
       })
     })
     newPais = newPais.concat(allpais)
+    newPais.push(...tails)
     return newPais
   }
   static playe3_gangshangGang(): Pai[] {
@@ -127,7 +130,7 @@ export class TablePaiManager {
     newPais = newPais.concat(player2)
     newPais = newPais.concat(player3)
     ;[player1, player2, player3].forEach(paiItems => {
-      paiItems.forEach((pai, index) => {
+      paiItems.forEach((pai) => {
         allpais.remove(pai)
       })
     })

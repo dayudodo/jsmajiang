@@ -505,6 +505,11 @@ export class Player {
 
   /**  从玩家手牌中删除pai并计算胡牌*/
   daPai(pai_name: Pai) {
+    //如果有摸牌，先保存，再删除，避免出现奇怪的问题。
+    if (this.mo_pai) {
+      this.group_shou_pai.shouPai.push(this.mo_pai)
+      this._mo_pai = null //添加之后清空，打牌之后玩家处于非摸牌状态
+    }
     if (this.delete_pai(this.group_shou_pai.shouPai, pai_name)) {
       this.arr_dapai.push(pai_name)
     } else {
@@ -512,18 +517,15 @@ export class Player {
     }
     //如果打的牌与摸牌相同，不用重复计算，就算是以前手牌里面有，其实也相当于是打了张摸牌
     //如果拿的是别人的牌，那么mo_pai为空，自然牌也改变了，需要重新算胡
-    this.is_grouppai_changed = pai_name != this.mo_pai
+    //todo: 如何判断牌改变了？
+    this.is_grouppai_changed = true
     if (this.is_grouppai_changed) {
       //手牌变化也说明这张牌有用，需要看mo_pai是否为空
       //不为空就需要把这张摸牌添加到shouPai中！如果已经碰了或者扛了，那么就不需要再次添加！
       //为空可能是碰的或者扛的别人牌，并非是摸牌
-      if (this._mo_pai != null) {
-        this.group_shou_pai.shouPai.push(this._mo_pai)
-      }
       this.shouPaiInGroupReOrder()
       this.calculateHu()
     }
-    this._mo_pai = null //打牌之后玩家处于非摸牌状态
     this.after_mo_gang_dapai = true
     this.can_dapai = false //打过后就不能再打牌了！
     this.arr_selectShow = [] //打牌之后，先清空，再去检测是否还能有选择菜单，比如亮牌

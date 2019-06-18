@@ -98,17 +98,21 @@ test("player1选择过", function(t) {
   room.client_confirm_guo(player3) //无效，没反应
   t.deepEqual(room.selectShowQue.players, [])
 })
-test("player1选择杠", function(t) {
+test("测试自扛与他扛，player1选择杠", function(t) {
   init()
   room.client_confirm_gang({ selectedPai: to_number("di") }, player2) //无效
   room.client_confirm_gang({ selectedPai: to_number("di") }, player3) //无效
   t.deepEqual(room.selectShowQue.players, [player1])
-  room.client_confirm_gang({ selectedPai: to_number("di") }, player1)
-  t.deepEqual(room.selectShowQue.players, [])
+  room.client_confirm_gang({ selectedPai: to_number("di") }, player1) 
   t.deepEqual(player1.group_shou_pai.anGang, pais("di"))
+  //扛了di其实还有一个t1的扛
+  t.deepEqual(room.selectShowQue.players, [player1])
+  t.deepEqual(player1.canGangPais, pais('t1'))
+  room.client_confirm_gang({ selectedPai: to_number("t1") }, player1) 
+  t.deepEqual(room.selectShowQue.players, [])
 })
 
-test("庄家打b1后player2能扛", function(t) {
+test("测试明扛，庄家打b1后player2能扛", function(t) {
   init(TablePaiManager.zhuang_fangGang())
   room.client_da_pai(player1, to_number("b1"))
   t.deepEqual(room.selectShowQue.players, [player2])
@@ -116,10 +120,12 @@ test("庄家打b1后player2能扛", function(t) {
   t.deepEqual(room.selectShowQue.players, [])
   t.deepEqual(player2.group_shou_pai.mingGang, pais("b1"))
 })
-test("庄家打b1后player2能扛，打zh后player3扛上扛", function(t) {
+test("测试扛输赢名称，庄家打b1后player2能扛，打zh后player3扛上扛", function(t) {
   init(TablePaiManager.player2_fang_GangShangGang())
+  // player1放扛牌b1
   room.client_da_pai(player1, to_number("b1"))
   t.deepEqual(room.selectShowQue.players, [player2])
+  //player2扛b1
   room.client_confirm_gang({ selectedPai: to_number("b1") }, player2)
   t.deepEqual(room.selectShowQue.players, [])
   t.deepEqual(player2.group_shou_pai.mingGang, pais("b1"))
@@ -136,4 +142,67 @@ test("庄家打b1后player2能扛，打zh后player3扛上扛", function(t) {
   t.deepEqual(player2.gang_lose_names,['放杠上杠'])
   t.deepEqual(player3.gang_win_codes,[config.HuisGangShangGang])
   t.deepEqual(player3.gang_win_names,['杠上杠'])
+})
+
+test("测试扛的消息发送,庄家开局双自杠，他人放杠", function(t) {
+  init(TablePaiManager.player1_3gang())
+  t.deepEqual(room.selectShowQue.players, [player1])
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("b1 b2")
+  })
+  t.deepEqual(player2.socket.latest_msg, {
+    type: "server_table_fa_pai_other",
+    user_id: player1.user_id
+  })
+  t.deepEqual(player3.socket.latest_msg, {
+    type: "server_table_fa_pai_other",
+    user_id: player1.user_id
+  })
+
+  //player1开始扛b1
+  room.client_confirm_gang({ selectedPai: to_number("b1")},player1)
+  //扛之后还能扛
+  t.deepEqual(room.selectShowQue.players, [player1])
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("b2")
+  })
+  t.deepEqual(player2.socket.latest_msg, {
+    type: "server_table_fa_pai_other",
+    user_id: player1.user_id
+  })
+  t.deepEqual(player1.mo_pai, to_number('t5'))
+  //再扛b2
+  room.client_confirm_gang({ selectedPai: to_number("b2")},player1)
+  //player1没有能扛的了
+  t.deepEqual(room.selectShowQue.players, [])
+  //todo: 应该能够看到他人扛牌，哪怕是暗扛
+  t.deepEqual(player2.socket.latest_msg, {
+    type: "server_table_fa_pai_other",
+    user_id: player1.user_id
+  })
+  t.deepEqual(player1.mo_pai,  to_number('t4'))
+  t.deepEqual(player1.group_shou_pai.anGang, pais('b1 b2'))
+  //player1打牌
+  room.client_da_pai(player1, to_number('t4'))
+  t.deepEqual(player2.socket.latest_msg, {
+    type: "server_can_select",
+    arr_selectShow: [false, false, true, false],
+    canHidePais: [],
+    canGangPais: pais("t1")
+  })
+  //一扛服务器就会发牌并通知player1, player3
+  t.deepEqual(player1.socket.latest_msg, {
+    type: "server_table_fa_pai_other",
+    user_id: player2.user_id
+  })
+  t.deepEqual(player3.socket.latest_msg, {
+    type: "server_table_fa_pai_other",
+    user_id: player2.user_id
+  })
 })
