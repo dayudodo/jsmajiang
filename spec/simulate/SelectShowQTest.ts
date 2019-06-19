@@ -15,7 +15,7 @@ function to_number(str) {
 }
 var player1: Player, player2: Player, player3: Player
 
-var init = function () {
+var init = function() {
   player1 = new Player({
     group_shou_pai: {
       anGang: [],
@@ -63,27 +63,51 @@ var init = function () {
   player3.arr_selectShow = [true, false, false, false]
 }
 
-test("发现胡", function (t) {
+test("测试排序算法", function(t) {
+  init()
+  var selectQue = new SelectShowQueue([player1, player2, player3])
+  var arr1 = [
+    { player: player1, selectNum: 10, seat_index: 0 },
+    { player: player2, selectNum: 100, seat_index: 1 },
+    { player: player3, selectNum: 1000, seat_index: 2 }
+  ]
+  let result = selectQue.getNumberSeatOfPlayers()
+  t.deepEqual(result, [
+    { player: player3, selectNum: 1000, seat_index: 2 },
+    { player: player2, selectNum: 100, seat_index: 1 },
+    { player: player1, selectNum: 10, seat_index: 0 }
+  ])
+  selectQue.sortByNumberSeatIndex(arr1)
+  t.deepEqual(arr1, [
+    { player: player3, selectNum: 1000, seat_index: 2 },
+    { player: player2, selectNum: 100, seat_index: 1 },
+    { player: player1, selectNum: 10, seat_index: 0 }
+  ])
+  // selectQue.addAndAdjustPriority(player3)
+  // t.deepEqual(selectQue.players,)
+})
+
+test("发现胡", function(t) {
   init()
   var selectQue = new SelectShowQueue([player1, player2, player3])
   t.deepEqual(selectQue.findHuPlayer(), player3)
 })
-test("发现亮", function (t) {
+test("发现亮", function(t) {
   init()
   var selectQue = new SelectShowQueue([player1, player2, player3])
   t.deepEqual(selectQue.findLiangPlayer(), player2)
 })
-test("发现杠", function (t) {
+test("发现杠", function(t) {
   init()
   var selectQue = new SelectShowQueue([player1, player2, player3])
   t.deepEqual(selectQue.findGangPlayer(), player1)
 })
-test("优先级排序正确", function (t) {
+test("优先级排序正确", function(t) {
   init()
   var selectQue = new SelectShowQueue([player1, player2, player3])
   t.deepEqual(selectQue.players, [player3, player2, player1])
 })
-test("双响优先级排序正确", function (t) {
+test("双响优先级排序正确", function(t) {
   init()
   player1.seat_index = 0
   player1.arr_selectShow = [false, false, true, false] //可扛
@@ -94,10 +118,11 @@ test("双响优先级排序正确", function (t) {
   player3.seat_index = 2
   player3.arr_selectShow = [true, false, false, false] //可胡
   var selectQue = new SelectShowQueue([player1, player2, player3])
+  //都有胡的情况下，会按照位置排序
   t.deepEqual(selectQue.players, [player2, player3, player1])
 })
 
-test("任一玩家有selectShow", function (t) {
+test("任一玩家有selectShow", function(t) {
   init()
   player1.seat_index = 0
   player1.arr_selectShow = [false, false, true, false] //可扛
@@ -110,7 +135,7 @@ test("任一玩家有selectShow", function (t) {
   var selectQue = new SelectShowQueue([player1, player2, player3])
   t.is(selectQue.hasSelectShow(), true)
 })
-test("player2选择操作有效，player1选择操作无效", function (t) {
+test("player2选择操作有效，player1选择操作无效", function(t) {
   init()
   player1.seat_index = 0
   player1.arr_selectShow = [false, false, true, false] //可扛
@@ -125,7 +150,7 @@ test("player2选择操作有效，player1选择操作无效", function (t) {
   t.is(selectQue.canSelect(player1), false)
 })
 
-test("选择操作完成，只剩下两个玩家可操作", function (t) {
+test("选择操作完成，只剩下两个玩家可操作", function(t) {
   init()
   player1.seat_index = 0
   player1.arr_selectShow = [false, false, true, false] //可扛
@@ -142,7 +167,7 @@ test("选择操作完成，只剩下两个玩家可操作", function (t) {
   //选择完成后msg是否发送正确
   t.deepEqual(player3.socket.latest_msg, {
     type: "server_can_select",
-    arr_selectShow: [true,false,false,false],
+    arr_selectShow: [true, false, false, false],
     canHidePais: [],
     canGangPais: []
   })
@@ -152,15 +177,14 @@ test("选择操作完成，只剩下两个玩家可操作", function (t) {
   //选择完成后msg是否发送正确
   t.deepEqual(player1.socket.latest_msg, {
     type: "server_can_select",
-    arr_selectShow: [false,false,true,false],
+    arr_selectShow: [false, false, true, false],
     canHidePais: [],
     canGangPais: []
   })
-  t.deepEqual(selectQue.players, [ player1])
-
+  t.deepEqual(selectQue.players, [player1])
 })
 
-test("任一玩家无selectShow", function (t) {
+test("任一玩家无selectShow", function(t) {
   init()
   player1.arr_selectShow = []
   player2.arr_selectShow = []
@@ -170,14 +194,15 @@ test("任一玩家无selectShow", function (t) {
   t.is(selectQue.hasSelectShow(), false)
   t.is(selectQue.isAllPlayersNormal(), true)
 })
-test("players为空也能正常工作", function (t) {
+test("players为空也能正常工作", function(t) {
   init()
   var selectQue = new SelectShowQueue([])
 
   t.is(selectQue.hasSelectShow(), false)
   t.is(selectQue.isAllPlayersNormal(), true)
 })
-test("增加player并重新排序", function (t) {
+
+test("增加player并重新排序", function(t) {
   init()
   var selectQue = new SelectShowQueue()
   player1.arr_selectShow = [false, false, true, false]
@@ -196,5 +221,18 @@ test("增加player并重新排序", function (t) {
   t.deepEqual(selectQue.players, [player3, player2, player1])
   t.is(selectQue.canSelect(player2), false)
   t.is(selectQue.canSelect(player3), true)
+})
 
+test("加入后能够正常排序", function(t) {
+  init()
+  var selectQue = new SelectShowQueue([])
+  player1.arr_selectShow = [false, false, true, false] //可扛
+  player2.arr_selectShow = [false, true, false, false] //可亮
+  player3.arr_selectShow = [false, true, false, false] //可亮
+  selectQue.addAndAdjustPriority(player1)
+  t.deepEqual(selectQue.players, [player1])
+  selectQue.addAndAdjustPriority(player2)
+  t.deepEqual(selectQue.players, [player2, player1])
+  selectQue.addAndAdjustPriority(player3)
+  t.deepEqual(selectQue.players, [ player2, player3, player1])
 })

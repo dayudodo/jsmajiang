@@ -449,6 +449,30 @@ export class TablePaiManager {
     newPais.push(...tails) //先删除掉，然后在数组最后添加tails, 以便杠上开花！
     return newPais
   }
+  /**庄家能扛。但player2扛牌后能能胡，player3能亮 */
+  static zhuangGang_Player2ZhiMo_player3Liang(): Pai[] {
+    var allpais: Array<Pai> = TablePaiManager.fapai_random()
+
+    var player1 = pais("b1 b1 b1 b1 b5 b6 t2 t3 t5 t6 di di di") //可扛
+    var player2 = pais("b2 b3 b4 b5 b6 b7 t2 t3 t4 t4 fa fa fa") //player2也能亮，摸牌可胡
+    var player3 = pais("b2 b3 b4 b7 b8 b9 t1 t2 t3 t7 t8 t8 t8") //也听胡
+    //发牌t3,打t2, player扛后打di, player扛di之后摸t5, 胡牌！
+    var fa_pais = pais("b2 t1 t3") //player1会先摸到b2
+    var tails = [17, 15] //pais会自动排序，所以不使用
+    var newPais = []
+    newPais = newPais.concat(player1)
+    newPais = newPais.concat(player2)
+    newPais = newPais.concat(player3)
+    newPais = newPais.concat(fa_pais)
+    ;[player1, player2, player3, fa_pais, tails].forEach(paiItems => {
+      paiItems.forEach((pai) => {
+        allpais.remove(pai)
+      })
+    })
+    newPais = newPais.concat(allpais)
+    newPais.push(...tails) //先删除掉，然后在数组最后添加tails, 以便杠上开花！
+    return newPais
+  }
 }
 
 // console.log('====================================');
