@@ -441,7 +441,9 @@ export class Player {
     // this.is_thinking = false
     this.after_mo_gang_dapai = false
     //摸牌会添加到手牌之中，这样就会有4张牌
-    this.group_shou_pai.shouPai.push(this._mo_pai)
+    if (this.mo_pai) {
+      this.group_shou_pai.shouPai.push(this._mo_pai)
+    }
     //不管是扛牌还是其它牌，总还是要删除4张
     for (var i = 0; i < 4; i++) {
       this.delete_pai(this.group_shou_pai.shouPai, pai_name)
@@ -486,7 +488,9 @@ export class Player {
     this.can_dapai = true
     //需要通知其它人我暗扛了，这样其它人才会去扣掉扛分
     if (!saved) {
-      this.saveGang(this.room.dapai_player, da_pai)
+      if (this.room && this.room.dapai_player) {
+        this.saveGang(this.room.dapai_player, da_pai)
+      }
     }
   }
 

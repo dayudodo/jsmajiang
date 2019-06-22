@@ -28,5 +28,5 @@ test("zhuangGang_Player2ZhiMo_player3Liang", function(t) {
     tablePais.slice(13*2, 13*3),
     pais("b2 b3 b4 b7 b8 b9 t1 t2 t3 t7 t8 t8 t8")
   )
-  t.deepEqual(tablePais.slice(13*3,13*3+1), pais('t1'))
+  t.deepEqual(tablePais.slice(13*3,13*3+1), pais('b2'))
 })
