@@ -4,3 +4,4 @@ build/
 server_build/
 */.DS_Store
 .DS_Store
+package-lock.json
