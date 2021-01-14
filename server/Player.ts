@@ -82,7 +82,7 @@ export class Player {
     "is_fangpao",
     "oneju_score"
   ]
-  //玩家在哪个房间，自己是知道的！
+  //玩家在哪个房间，自己是知道的！如此，也可以知道上下玩家是哪个！
   public room: Room
   // public socket: WebSocket
   public socket: any //just for test
@@ -96,7 +96,7 @@ export class Player {
   public master = false
   /**用户是否是东家*/
   public east = false
-  /**用户名称，以后可以显示微信名称*/
+  /**用户名称，以后可以显示微信名称, 而其实其它一些数值都是需要保存到数据库中的！*/
   public username
   /**用户唯一id号 */
   public user_id: number
@@ -109,15 +109,16 @@ export class Player {
   canGangPais: Pai[] = []
   /**玩家摸的牌，其实也就是服务器发的牌，保存到自己的group手牌中
    * 一旦打出，才会清空
-   */
+   */ 
 
   private _mo_pai = null
   set mo_pai(pai: Pai) {
     if (this._mo_pai) {
-      //设置的时候一定要保证其是个空
+      //设置的时候一定要保证其是个空，并且服务器没有发牌，你就摸了一张，肯定是有bug或者黑客入侵
       throw new Error(`已经摸过牌:${this._mo_pai}，需要先打一张`)
     }
     this._mo_pai = pai
+    //如果是杠别人的牌之后发的牌，那么此时mo_pai也肯定是空的。
     this.after_mo_gang_dapai = false
     //扛或者碰之后就会清除_mo_pai,由他们来添加这张摸牌
     // this.group_shou_pai.shouPai.push(pai);

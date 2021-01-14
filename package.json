@@ -9,7 +9,11 @@
     "start": "node server_build/server/app.js",
     "dev": "node server_build/app.js",
     "test": "karma start karma.conf.js",
-    "a": "ava --watch"
+    "a": "ava --watch",
+    "tplayer": "ava spec/simulate/playerTest.ts",
+    "tgang": "ava spec/simulate/GangRoomConfirmTest.ts",
+    "tselect": "ava spec/simulate/selectshowQTest.ts",
+    "troom": "ava spec/simulate/roomBaseTest.ts"
   },
   "author": "",
   "license": "ISC",
@@ -25,7 +29,8 @@
     "ws": "^5.1.1"
   },
   "devDependencies": {
-    "ava": "^2.1.0",
+    "@types/jest": "^26.0.20",
+    "ava": "^2.4.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^6.0.4",
@@ -35,7 +40,7 @@
     "babel-register": "^6.26.0",
     "jasmine": "^3.1.0",
     "jasmine-core": "^2.4.1",
-    "jest": "^22.4.2",
+    "jest": "^22.4.4",
     "karma": "^1.7.1",
     "karma-babel-preprocessor": "^7.0.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -43,6 +48,7 @@
     "karma-jasmine": "^1.1.1",
     "karma-requirejs": "^1.1.0",
     "requirejs": "^2.3.2",
+    "ts-jest": "^26.4.4",
     "ts-node": "^8.0.3",
     "typescript": "^3.5.1",
     "webpack": "^4.1.1",
