@@ -6,6 +6,7 @@ import chalk from "chalk"
 import * as g_events from "./events"
 import { Player } from "./player"
 
+/**玩家选择队列，当用户打牌后，可能触发多个玩家可操作从而形成队列，比如有人能碰，但可能还有人能胡，会有优先级的判断 */
 export class SelectShowQueue {
   public players: Player[] = []
   constructor(players: Player[] = []) {

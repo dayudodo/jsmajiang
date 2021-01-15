@@ -175,3 +175,4 @@ export const GangLoseSheet = [
   { type: LoseCaPao, name: "被擦炮", multiple: 1 }
   // { type: LoseZiMo, name: "被自摸", multiple: 1 },
 ]
+

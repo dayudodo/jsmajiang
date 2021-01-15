@@ -199,7 +199,7 @@ export class Player {
 
   /**摸扛之后是否打牌 */
   public after_mo_gang_dapai = false
-  /**客户端能打牌的控制变量 */
+  /**客户端能否打牌 */
   public can_dapai: boolean = false
   /**临时的赢代码，比如杠 */
   public gang_win_codes: number[] = []
@@ -215,6 +215,10 @@ export class Player {
   get otherPlayersInRoom(): Player[] {
     // console.log("查找本玩家%s的其它玩家", person.username);
     return this.room.players.filter(p => p.user_id != this.user_id)
+  }
+
+  client_da_pai(pai_name: number){
+    this.room.client_da_pai(this, pai_name);
   }
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {
@@ -637,4 +641,6 @@ export class Player {
     }
     return false
   }
+
+
 }
