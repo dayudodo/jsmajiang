@@ -5,6 +5,7 @@ import { ScoreManager } from "./ScoreManager"
 import * as config from "./config"
 import { Room } from "./room"
 import chalk from "chalk"
+import { PaiConvertor } from "./PaiConvertor"
 
 /**手牌组，根据这些来进行手牌的显示 */
 declare global {
@@ -217,8 +218,9 @@ export class Player {
     return this.room.players.filter(p => p.user_id != this.user_id)
   }
 
-  client_da_pai(pai_name: number){
-    this.room.client_da_pai(this, pai_name);
+  /**玩家打牌，测试写起来好读也方便todo:  */
+  client_da_pai(pai_name: number | string){
+    this.room.client_da_pai(this, PaiConvertor.ToNumber(pai_name));
   }
   /**保存杠上杠，并通知放杠家伙! */
   saveGangShangGang(fangGangPlayer: Player, pai_name: Pai) {

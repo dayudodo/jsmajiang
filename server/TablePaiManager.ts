@@ -26,6 +26,7 @@ Array.prototype.remove = function(val) {
   return this
 }
 
+/**桌面牌管理器，负责给玩家们发顺序牌、随机牌（正式牌局），以及其它一些特殊的发牌情况 */
 export class TablePaiManager {
   constructor() {}
   /**按顺序发牌 */
@@ -75,6 +76,7 @@ export class TablePaiManager {
     newPais = newPais.concat(allpais)
     return newPais
   }
+  /**明四归 */
   static player2_mingSiGui(): Pai[] {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 
@@ -117,6 +119,7 @@ export class TablePaiManager {
     newPais.push(...tails)
     return newPais
   }
+  /**杠上杠 */
   static playe3_gangshangGang(): Pai[] {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 
@@ -365,11 +368,11 @@ export class TablePaiManager {
     var player2 = pais("b1 b1 b1 b2 b3 b4 t1 t2 t3 t6 fa fa fa") //胡t6
     var player3 = pais("b2 b2 b3 b3 b4 b4 t6 t7 t7 t7 t8 t8 t8") //胡t6
     var fa_pais = pais("di")
-    var newPais = []
-    newPais = newPais.concat(player1)
-    newPais = newPais.concat(player2)
-    newPais = newPais.concat(player3)
-    newPais = newPais.concat(fa_pais)
+    var newPais = [...player1, ...player2, ...player3, ...fa_pais]
+    // newPais = newPais.concat(player1)
+    // newPais = newPais.concat(player2)
+    // newPais = newPais.concat(player3)
+    // newPais = newPais.concat(fa_pais)
     ;[player1, player2, player3, fa_pais].forEach(paiItems => {
       paiItems.forEach((pai, index) => {
         allpais.remove(pai)
@@ -449,7 +452,7 @@ export class TablePaiManager {
     newPais.push(...tails) //先删除掉，然后在数组最后添加tails, 以便杠上开花！
     return newPais
   }
-  /**庄家能扛。但player2扛牌后能能胡，player3能亮 */
+  /**庄家能扛。但player2扛牌后能能胡，player3能亮，以便检测可选择玩家队列情况 */
   static zhuangGang_Player2ZhiMo_player3Liang(): Pai[] {
     var allpais: Array<Pai> = TablePaiManager.fapai_random()
 

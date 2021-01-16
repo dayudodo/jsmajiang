@@ -32,7 +32,10 @@ export class PaiConvertor {
     }
   }
   //转换b1到11， t1到22，
-  static ToNumber(str: string): number {
+  static ToNumber(str: string | number): number {
+    if(typeof str == "number"){
+      return str
+    }
     let index = BING.indexOf(str);
     if (index > -1) {
       return N_BING[index];
