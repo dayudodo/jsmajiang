@@ -94,7 +94,7 @@ export class Player {
     //当前未连接，但房间不为空，意思就是还在房间的时候断开了，称为游戏中掉线
     return !this.connect && this.room != null
   }
-  /**是否空闲，当前连接并且没有加入任何房间 */
+  /**是否空闲，当前已经连接并且没有加入任何房间 */
   get isIdle(){
     return this.connect && this.room == null
   }
@@ -107,7 +107,7 @@ export class Player {
   /**用户是否是东家*/
   public east = false
   /**用户名称，以后可以显示微信名称, 而其实其它一些数值都是需要保存到数据库中的！*/
-  public username
+  public username = ""
   /**用户唯一id号 */
   public user_id: number
   /** 玩家在房间的座位号，也是加入房间的顺序号 */
