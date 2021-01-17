@@ -144,6 +144,7 @@ function client_da_pai(client_message, socket) {
   
 }
 
+/**用户加入房间，用户使用正确的用户名和密码登录之后才会有消息，client_message中包括了房间号的信息，而房间号是用户自己输入的。形式如下： */
 function client_join_room(client_message, socket) {
   let { room_number } = client_message;
   let room = g_lobby.find_room_by_id(room_number);

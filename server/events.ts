@@ -1,3 +1,4 @@
+//所有的事件均在此，分为server,client两大类
 
   export const client_testlogin = "client_testlogin";
   export const client_create_room = "client_create_room"
@@ -33,7 +34,7 @@
   export const server_ping = "server_ping";
   /**当有玩家碰、杠的时候，打牌玩家的牌会消失 */
   export const server_dapai_disappear = "server_dapai_disappear";
-  
+  //表明服务器里面已经处理好了玩家的操作。
   export const server_peng = "server_peng";
   export const server_mingGang = "server_mingGang";
   export const server_liang = "server_liang";

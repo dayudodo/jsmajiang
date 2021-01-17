@@ -83,12 +83,21 @@ export class Player {
     "is_fangpao",
     "oneju_score"
   ]
-  //玩家在哪个房间，自己是知道的！如此，也可以知道上下玩家是哪个！
-  public room: Room
+  /**玩家在哪个房间，自己是知道的！*/
+  public room: Room = null
   // public socket: WebSocket
-  public socket: any //just for test
-  /**用户是否连接？有可能掉线！*/
+  public socket: any // for test
+  /**用户是否连接？有可能掉线！todo: 掉线之后connect为false, 当用户再次登录之后，会检测其connect, 看其有没有房间，如果有，说明是断线！*/
   public connect = false
+  /**是否是游戏中掉线，而不是新玩家 */
+  get isDisConnect(){
+    //当前未连接，但房间不为空，意思就是还在房间的时候断开了，称为游戏中掉线
+    return !this.connect && this.room != null
+  }
+  /**是否空闲，当前连接并且没有加入任何房间 */
+  get isIdle(){
+    return this.connect && this.room == null
+  }
   /**IP地址 */
   public ip = null
   /**用户是否已经准备好，全部准备好后就可以开始了*/

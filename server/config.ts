@@ -30,8 +30,22 @@ if (!Array.prototype.repeat) {
   }
 }
 
+//todo: msg可以替换成probuf，以便提高速度
 var WebSocket = require("ws")
-//todo: 此处可以替换成probuf，以便提高速度
+/**为方便，sendmsg可以发送任何消息，一般是以type为开头，后面还有各种数据,其实应该把user_id, username抽象为data对象。
+ *socket.sendmsg({
+    type: g_events.server_welcome,
+    welcome: "与服务器建立连接，欢迎来到安哥世界"
+  });
+  或者是这样的
+  socket.sendmsg({
+    type: g_events.server_login,
+    user_id: s_player.user_id,
+    username: s_player.username,
+    score: s_player.score
+  });
+ * 
+ */
 WebSocket.prototype.sendmsg = function(msg: any) {
   this.send(JSON.stringify(msg))
 }
