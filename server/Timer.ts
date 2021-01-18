@@ -35,9 +35,7 @@ export class Timer {
    * 取消计时, 或者时间未到，由用户取消
    */
   cancel() {
-    if ("end" == this.state) {
-      console.log("已超时，自动打牌")
-    } else {
+    if ("waiting" == this.state) {
       console.log(`取消计时器${this.id}`)
       this.state = "end"
       clearTimeout(this.my_fn)
