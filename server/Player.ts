@@ -34,6 +34,8 @@ declare global {
 }
 
 export class Player {
+  /**要发送的数据，其实玩家是知道的，每次有可能不同，玩家的每次操作都会生成不同的发送数据 */
+  sendData: any
   set isShowHu(value: boolean) {
     this.arr_selectShow[0] = value
   }
