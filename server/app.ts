@@ -159,7 +159,7 @@ function client_join_room(client_message, socket) {
   if (room) {
     //todo: 检查房间玩家数量，超过3人就不能再添加了
     console.log(`${room_number}房间内全部玩家：${room.all_player_names}`);
-    if (room.players_count == config.LIMIT_IN_ROOM) {
+    if (room.players_count == config.PEOPLE_LIMIT_IN_ROOM) {
       console.log(`房间${room_number}已满，玩家有：${room.all_player_names}`);
       socket.sendmsg({ type: g_events.server_room_full });
     } else {

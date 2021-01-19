@@ -57,7 +57,7 @@ export class Room {
   public creator: Player
   //房间创建时间，房间肯定是有限时
   public createTime = Date.now()
-  //房间内的所有玩家，人数有上限，定义在config的LIMIT_IN_ROOM中
+  /**房间内的所有玩家数组，人数有上限，定义在config的PEOPLE_LIMIT_IN_ROOM中 */
   public players: Array<Player> = []
   //房间内的牌
   public cloneTablePais: Array<Pai> = []
@@ -74,8 +74,8 @@ export class Room {
   /**哪个玩家在杠！ */
   // public gang_player = null;
 
-  //计时器
-  public room_clock = null
+  //房间内计时器，新建之后就只会存在一个，除非取消
+  public room_timer = null
 
   /**玩家操作序列 */
   public operation_sequence: Array<Operation> = [
@@ -98,7 +98,7 @@ export class Room {
   selectShowQue: SelectShowQueue
 
   constructor() {
-    // 房间新建之后，就会拥有个id了
+    // 房间创建时即拥有唯一id了
     this.id = Room.getId()
     this.selectShowQue = new SelectShowQueue()
   }
@@ -116,10 +116,10 @@ export class Room {
       return
     }
     this.creator = person
-    this.setDongJia(person)
+    this.setDongJia(person) //创建者自动成为东家
     person.seat_index = 0 //创建者座位号从0开始
     person.room = this //玩家知道自己在哪个房间！
-    this.players.push(person)
+    this.players.push(person) //玩家数组中保存此玩家。
     //todo: 客户端要有相应的变化！
     person.socket.sendmsg({
       type: g_events.server_create_room_ok,
@@ -229,7 +229,7 @@ export class Room {
   get all_ready(): boolean {
     let player_ready_count = this.players.filter(item => item.ready).length
     console.log(`房间:${this.id}内玩家准备开始计数：${player_ready_count}`)
-    return player_ready_count == config.LIMIT_IN_ROOM
+    return player_ready_count == config.PEOPLE_LIMIT_IN_ROOM
   }
   //统计当前房间的玩家人数
   get players_count(): number {
@@ -247,7 +247,7 @@ export class Room {
   /** 房间中要发牌的下一个玩家 */
   get next_player(): Player {
     //下一家
-    let next_index = (this.current_player.seat_index + 1) % config.LIMIT_IN_ROOM
+    let next_index = (this.current_player.seat_index + 1) % config.PEOPLE_LIMIT_IN_ROOM
     //最后通过座位号来找到玩家,而不是数组序号,更不容易出错，哪怕是players数组乱序也不要紧
     return this.players.find(p => p.seat_index == next_index)
   }
@@ -263,13 +263,13 @@ export class Room {
   public left_player(person: Player): Player {
     //左手玩家
     let index = person.seat_index - 1
-    index = index == -1 ? config.LIMIT_IN_ROOM - 1 : index
+    index = index == -1 ? config.PEOPLE_LIMIT_IN_ROOM - 1 : index
     return this.players.find(p => p.seat_index == index)
   }
   public right_player(person: Player): Player {
     //右手玩家
     let index = person.seat_index + 1
-    index = index == config.LIMIT_IN_ROOM ? 0 : index
+    index = index == config.PEOPLE_LIMIT_IN_ROOM ? 0 : index
     return this.players.find(p => p.seat_index == index)
   }
   /**没有玩家摸牌 */
