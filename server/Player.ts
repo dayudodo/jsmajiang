@@ -32,10 +32,31 @@ declare global {
   //   isShowPeng: boolean
   // }
 }
+/**返回数据的级别，用于自动过滤 */
+enum DataLevel{
+  open,
+  hide
+}
+/**私人指示器，hide的时候只显示数量而不显示牌，open则会向所有人显示 */
+let PrivateIndicator={
+  "hide": ["anGang","selfPeng","shouPai"],
+  "open": ["mingGang","peng"]
+}
 
 export class Player {
   /**要发送的数据，其实玩家是知道的，每次有可能不同，玩家的每次操作都会生成不同的发送数据 */
-  sendData: any
+  getResponseData(isSelf: boolean){
+    let data = {}
+    if(isSelf){
+      
+    }else{
+      PrivateIndicator["hide"].forEach((item)=>{
+        data["group_shou_pai"][item] = []
+        data["group_shou_pai"][`${item}Count`] = this.group_shou_pai[item].length
+      })
+    }
+    return data
+  }
   set isShowHu(value: boolean) {
     this.arr_selectShow[0] = value
   }
