@@ -77,7 +77,7 @@ export class Room {
   //房间内计时器，新建之后就只会存在一个，除非取消
   public room_timer = null
 
-  /**玩家操作序列 */
+  /**玩家操作序列，记录当前房间内玩家的操作情况，也是玩家操作的历史，可以回放 */
   public operation_sequence: Array<Operation> = [
     // { who: this, action: Operate.mo, pai: "b2" },
     // { who: this, action: Operate.da, pai: "t3" },
@@ -95,6 +95,7 @@ export class Room {
     // { who: this, action: Operate.liang },
     // { who: this, action: Operate.guo }
   ]
+  /**玩家选择队列，用来处理打牌后多个玩家可以操作时的排队 */
   selectShowQue: SelectShowQueue
 
   constructor() {
@@ -680,7 +681,7 @@ export class Room {
 
   /**房间发一张给player, 让player记录此次发牌，只有本玩家能看到
    * @param player 发牌给哪个玩家
-   * @param fromEnd 是否从最后发牌
+   * @param fromEnd 是否从最后发牌，杠的时候是从最后面发牌，其实也可以不这样，真实和模拟是有区别的。
    */
   server_fa_pai(player: Player, fromEnd: boolean = false): Pai {
     let paiName: Pai
