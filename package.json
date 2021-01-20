@@ -21,7 +21,7 @@
     "react-dom": "^15.2.0",
     "react-route": "^1.0.3",
     "react-router": "^2.5.2",
-    "socket.io": "^1.7.4"
+    "socket.io": "^2.4.0"
   },
   "devDependencies": {
     "ava": "^0.25.0",
