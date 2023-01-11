@@ -21,7 +21,7 @@
     "react-dom": "^15.2.0",
     "react-route": "^1.0.3",
     "react-router": "^2.5.2",
-    "socket.io": "^1.7.4"
+    "socket.io": "^4.5.4"
   },
   "devDependencies": {
     "ava": "^0.25.0",
@@ -36,7 +36,7 @@
     "jasmine": "^3.1.0",
     "jasmine-core": "^2.4.1",
     "jest": "^22.4.2",
-    "karma": "^1.7.1",
+    "karma": "^6.4.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "latest",
     "karma-jasmine": "^1.1.1",
